@@ -22,7 +22,7 @@ Citrix ADC CPX can be deployed as a sidecar proxy in an application pod in the I
 
     ./create-certs-for-cpx-istio-chart.sh --namespace citrix-system
 
-    helm repo add citrix https://citrix.github.io/citrix-istio-adaptor/
+    helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
     helm install citrix/citrix-cpx-istio-sidecar-injector --namespace citrix-system --name cpx-sidecar-injector --set cpxProxy.EULA=YES
 
@@ -36,14 +36,14 @@ In Istio servicemesh, the namespace must be labelled before applying the deploym
 
 __Note: If a namespace is labelled with both `istio-injection` and `cpx-injection`, Envoy injection takes a priority! Citrix CPX won't be injected on top of the already injected Envoy sidecar. For using Citrix ADC as sidecar, ensure that `istio-injection` label is removed from the namespace.__
 
-For detailed information on different deployment options, see [Deployment Architecture](../../../docs//architecture.md).
+For detailed information on different deployment options, see [Deployment Architecture](https://github.com/citrix/citrix-istio-adaptor/blob/master/docs/architecture.md).
 
 ### Prerequisites
 
 The following prerequisites are required for deploying Citrix ADC as a sidecar to an application pod.
 
 - Ensure that **Istio version 1.3.0** is installed
-- Ensure that Helm is installed. Follow this [step](../../README.md) to install the same.
+- Ensure that Helm is installed. Follow this [step](https://github.com/citrix/citrix-helm-charts/blob/master/Helm_Installation_Kubernetes.md) to install the same.
 - Ensure that your cluster has Kubernetes version 1.14.0 or later and the `admissionregistration.k8s.io/v1beta1` API is enabled
 - Create namespace `citrix-system`
         
@@ -78,7 +78,7 @@ To create a suitable certificate for the Istio webhook service, perform the foll
  To deploy resources for automatic installation of Citrix ADC CPX as a sidecar in Istio, perform the following step. In this example, release name is specified as `cpx-sidecar-injector`  and namespace is used as `citrix-system`.
 
 
-    helm repo add citrix https://citrix.github.io/citrix-istio-adaptor/
+    helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
     helm citrix/install citrix-cpx-istio-sidecar-injector --name cpx-sidecar-injector --namespace citrix-system --set cpxProxy.EULA=YES
 
@@ -86,7 +86,7 @@ This step installs a mutating webhook and a service resource to application pods
 
 "Note:" The `cpx-injection=enabled` label is mandatory for injecting sidecars.
 
-An example to deploy application along with Citrix ADC CPX sidecar is provided [here](../../../examples/citrix-adc-in-istio).
+An example to deploy application along with Citrix ADC CPX sidecar is provided [here](https://github.com/citrix/citrix-helm-charts/tree/master/examples/citrix-adc-in-istio).
 
 ## <a name="limitations">Limitations</a>
 
@@ -132,7 +132,7 @@ The following table lists the configurable parameters and their default values i
 | `cpxProxy.imagePullPolicy`           | Image pull policy for Citrix ADC                                                                                  | IfNotPresent                                                               |
 | `cpxProxy.EULA`              |  End User License Agreement(EULA) terms and conditions. If yes, then user agrees to EULA terms and conditions.                                                     | Yes                                                               |
 | `cpxProxy.cpxSidecarMode`            | Environment variable for Citrix ADC CPX. It indicates that Citrix ADC CPX is running as sidecar mode or not.                                                                                               | NO                                                                    |
-| `cpxProxy.licenseServerIP`          | Provide the Citrix Application Delivery Management (ADM) IP address to license Citrix ADC CPX. For more information, see [licensing](../../../docs/cpx-licensing.md).                                    |      Nil                                                            |
+| `cpxProxy.licenseServerIP`          | Provide the Citrix Application Delivery Management (ADM) IP address to license Citrix ADC CPX. For more information, see [licensing](https://github.com/citrix/citrix-istio-adaptor/blob/master/docs/cpx-licensing.md).                                    |      Nil                                                            |
 | `cpxProxy.licenseServerPort`   | Citrix ADM port if a non-default port is used                                                                                      | 27000                                                          |
 | `sidecarWebHook.webhookImage`   | Mutating webhook associated with the sidecar injector. It invokes a service `cpx-sidecar-injector` to inject sidecar proxies in the application pod.                                                                                      | gcr.io/istio-release/sidecar_injector|
 | `sidecarWebHook.webhookImageVersion`   | Image version                                                                         |1.0.0|
