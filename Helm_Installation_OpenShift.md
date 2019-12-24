@@ -24,7 +24,7 @@ Please note your helm client and server deployment should be the same version.
 Installing using package managers:
 
 ```
-curl -s https://storage.googleapis.com/kubernetes-helm/helm-v2.12.1-linux-amd64.tar.gz | tar xz
+curl -s https://storage.googleapis.com/kubernetes-helm/helm-v2.14.3-linux-amd64.tar.gz | tar xz
 cd linux-amd64
 sudo cp helm /usr/local/bin && chmod +x /usr/local/bin/helm 
 helm init --client-only
@@ -32,7 +32,7 @@ helm init --client-only
 
 ## `4`. Install the Tiller server
 
-In principle this can be done using helm init, but currently the helm client doesn’t fully set up the service account rolebindings that OpenShift expects. To try to keep things simple, we’ll use a pre-prepared OpenShift template instead created by [RedHat](https://www.redhat.com/en) people. The template sets up a dedicated service account for the Tiller server, gives it the necessary permissions, then deploys a Tiller pod that runs under the newly created SA.
+In principle this can be done using helm init, but currently the helm client doesn't fully set up the service account rolebindings that OpenShift expects. To try to keep things simple, we'll use a pre-prepared OpenShift template instead created by [RedHat](https://www.redhat.com/en) people. The template sets up a dedicated service account for the Tiller server, gives it the necessary permissions, then deploys a Tiller pod that runs under the newly created SA.
 
 Get the file.
 ```wget -q https://github.com/openshift/origin/raw/master/examples/helm/tiller-template.yaml```
@@ -56,7 +56,7 @@ Add clusterRoleBinding required to deploy Citrix ingress Controller.
 
 Deploy the yaml:
 
-```oc process -f tiller-template.yaml -p TILLER_NAMESPACE="${TILLER_NAMESPACE}" -p HELM_VERSION=v2.12.1 | oc create -f -```
+```oc process -f tiller-template.yaml -p TILLER_NAMESPACE="${TILLER_NAMESPACE}" -p HELM_VERSION=v2.14.3 | oc create -f -```
 
 > NOTE: Again, please note helm client and server versions should be the same. 
 
@@ -75,6 +75,6 @@ You can verify that you have the correct version and that it installed properly 
 If helm is initialised properly you will get output for helm version something like:
 
    ```
-   Client: &version.Version{SemVer:"v2.12.1", GitCommit:"02a47c7249b1fc6d8fd3b94e6b4babf9d818144e", GitTreeState:"clean"}
-   Server: &version.Version{SemVer:"v2.12.1", GitCommit:"02a47c7249b1fc6d8fd3b94e6b4babf9d818144e", GitTreeState:"clean"}
+   Client: &version.Version{SemVer:"v2.14.3", GitCommit:"02a47c7249b1fc6d8fd3b94e6b4babf9d818144e", GitTreeState:"clean"}
+   Server: &version.Version{SemVer:"v2.14.3", GitCommit:"02a47c7249b1fc6d8fd3b94e6b4babf9d818144e", GitTreeState:"clean"}
    ```

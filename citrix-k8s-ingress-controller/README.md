@@ -198,15 +198,15 @@ For example:
 
 > **Tip:** 
 >
-> The [values.yaml](https://github.com/citrix/citrix-helm-charts/blob/master/citrix-k8s-cpx-ingress-controller/values.yaml) contains the default values of the parameters.
+> The [values.yaml](https://github.com/citrix/citrix-helm-charts/blob/master/citrix-k8s-ingress-controller/values.yaml) contains the default values of the parameters.
 
 > **Note:**
 > 
-> Please provide frontend-ip (VIP) in your application ingress yaml file. For more info refer [this](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/annotations.md)
+> Please provide frontend-ip (VIP) in your application ingress yaml file. For more info refer [this](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/configure/annotations.md).
 
 ## Route Addition in MPX/VPX
 For seamless functioning of services deployed in the Kubernetes cluster, it is essential that Ingress NetScaler device should be able to reach the underlying overlay network over which Pods are running. 
-`feature-node-watch` knob of Citrix Ingress Controller can be used for automatic route configuration on NetScaler towards the pod network. Refer [Network Configuration](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/network-config.md) for further details regarding the same.
+`feature-node-watch` knob of Citrix Ingress Controller can be used for automatic route configuration on NetScaler towards the pod network. Refer [Static Route Configuration](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/network/staticrouting.md) for further details regarding the same.
 By default, `feature-node-watch` is false. It needs to be explicitly set to true if auto route configuration is required.
 
 For configuring static routes manually on Citrix ADC VPX or MPX to reach the pods inside the cluster follow:

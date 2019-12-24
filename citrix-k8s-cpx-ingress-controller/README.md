@@ -65,7 +65,7 @@ Use the following command for this:
 ```
 
 ### For OpenShift:
-If Citrix ADC CPX with Citrix ingress controller running as side car needs to be deployed in the OpenShift platform please install Helm and Tiller using instruction given [here](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/charts/Helm_Installation_OpenShift.md). It will make sure Helm and Tiller have the proper permission that is needed to install Citrix ingress controller on OpenShift.
+If Citrix ADC CPX with Citrix ingress controller running as side car needs to be deployed in the OpenShift platform please install Helm and Tiller using instruction given [here](https://github.com/citrix/citrix-helm-charts/blob/master/Helm_Installation_OpenShift.md). It will make sure Helm and Tiller have the proper permission that is needed to install Citrix ingress controller on OpenShift.
 
 Add the service account named "cpx-ingress-k8s-role" to the privileged Security Context Constraints of OpenShift:
 
