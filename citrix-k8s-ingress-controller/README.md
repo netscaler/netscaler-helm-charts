@@ -29,7 +29,7 @@ This Helm chart deploys Citrix ingress controller in the [Kubernetes](https://ku
 
 -  The [Kubernetes](https://kubernetes.io/) version 1.6 or later if using Kubernetes environment.
 -  The [Openshift](https://www.openshift.com) version 3.11.x or later if using OpenShift platform.
--  The [Helm](https://helm.sh/) version is 2.8.x or later. You can follow instruction given [here](https://github.com/citrix/citrix-helm-charts/blob/master/Helm_Installation_Kubernetes.md) to install Helm in Kubernetes environment and [here](https://github.com/citrix/citrix-helm-charts/blob/master/Helm_Installation_OpenShift.md) for OpenShift platform.
+-  The [Helm](https://helm.sh/) version is between 2.8.x and 2.9.x. You can follow instruction given [here](https://github.com/citrix/citrix-helm-charts/blob/master/Helm_Installation_Kubernetes.md) to install Helm in Kubernetes environment and [here](https://github.com/citrix/citrix-helm-charts/blob/master/Helm_Installation_OpenShift.md) for OpenShift platform.
 -  You determine the NS_IP IP address needed by the controller to communicate with Citrix ADC. The IP address might be anyone of the following depending on the type of Citrix ADC deployment:
 
    -  (Standalone appliances) NSIP - The management IP address of a standalone Citrix ADC appliance. For more information, see [IP Addressing in Citrix ADC](https://docs.citrix.com/en-us/citrix-adc/12-1/networking/ip-addressing.html).

@@ -16,7 +16,7 @@ Citrix ADC CPX can be deployed as a sidecar proxy in an application pod in the I
 
     kubectl create namespace citrix-system
     
-    curl -L https://raw.githubusercontent.com/citrix/citrix-istio-adaptor/master/charts/stable/citrix-cpx-istio-sidecar-injector/create-certs-for-cpx-istio-chart.sh > create-certs-for-cpx-istio-chart.sh 
+    curl -L https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/citrix-cpx-istio-sidecar-injector/create-certs-for-cpx-istio-chart.sh > create-certs-for-cpx-istio-chart.sh
 
     chmod +x create-certs-for-cpx-istio-chart.sh
 
