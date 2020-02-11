@@ -72,7 +72,7 @@ The following table lists the mandatory and optional parameters that you can con
 | Parameters | Mandatory or Optional | Default value | Description |
 | --------- | --------------------- | ------------- | ----------- |
 | license.accept | Mandatory | no | Set `yes` to accept the CIC end user license agreement. |
-| cic.image | Mandatory | `quay.io/citrix/citrix-k8s-ingress-controller:1.6.1` | The CIC image. |
+| cic.image | Mandatory | `quay.io/citrix/citrix-k8s-ingress-controller:1.7.6` | The CIC image. |
 | cic.pullPolicy | Mandatory | Always | The CIC image pull policy. |
 | loginFileName | Mandatory | nslogin | The secret key to log on to the Citrix ADC VPX or MPX. For information on how to create the secret keys, see [Prerequisites](#prerequistes). |
 | nsIP | Mandatory | N/A | The IP address of the Citrix ADC device. For details, see [Prerequisites](#prerequistes). |
@@ -114,9 +114,9 @@ Configure static routes on Citrix ADC VPX or MPX to reach the pods inside the cl
 3. Ensure that Ingress MPX/VPX has a SNIP present in the host-network (i.e. network over which K8S nodes communicate with each other. Usually eth0 IP is from this network).
 
    Example: 
-   * Node1 IP = 10.102.53.101 
+   * Node1 IP = 192.168.0.1
    * podCIDR  = 10.244.1.0/24
-   * add route 10.244.1.0 255.255.255.0 10.102.53.101
+   * add route 10.244.1.0 255.255.255.0 192.168.0.1
 
 ### For OpenShift:
 1. Use the following command to get the information about host names, host IP addresses, and subnets for static route configuration.
@@ -130,11 +130,11 @@ Configure static routes on Citrix ADC VPX or MPX to reach the pods inside the cl
     * oc get hostsubnet
 
         NAME            HOST           HOST IP        SUBNET
-        os.example.com  os.example.com 192.168.122.46 10.1.1.0/24
+        os.example.com  os.example.com 192.168.0.2 10.1.1.0/24
 
     * The required static route is as follows:
 
-           add route 10.1.1.0 255.255.255.0 192.168.122.46
+           add route 10.1.1.0 255.255.255.0 192.168.0.2
 
 ## Secret Keys
 To generate secret keys use
