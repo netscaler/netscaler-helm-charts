@@ -114,9 +114,9 @@ Configure static routes on Citrix ADC VPX or MPX to reach the pods inside the cl
 3. Ensure that Ingress MPX/VPX has a SNIP present in the host-network (i.e. network over which K8S nodes communicate with each other. Usually eth0 IP is from this network).
 
    Example: 
-   * Node1 IP = 192.168.0.1
+   * Node1 IP = 192.0.2.1
    * podCIDR  = 10.244.1.0/24
-   * add route 10.244.1.0 255.255.255.0 192.168.0.1
+   * add route 10.244.1.0 255.255.255.0 192.0.2.1
 
 ### For OpenShift:
 1. Use the following command to get the information about host names, host IP addresses, and subnets for static route configuration.
@@ -130,11 +130,11 @@ Configure static routes on Citrix ADC VPX or MPX to reach the pods inside the cl
     * oc get hostsubnet
 
         NAME            HOST           HOST IP        SUBNET
-        os.example.com  os.example.com 192.168.0.2 10.1.1.0/24
+        os.example.com  os.example.com 192.0.2.1 10.1.1.0/24
 
     * The required static route is as follows:
 
-           add route 10.1.1.0 255.255.255.0 192.168.0.2
+           add route 10.1.1.0 255.255.255.0 192.0.2.1
 
 ## Secret Keys
 To generate secret keys use
