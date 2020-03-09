@@ -30,7 +30,7 @@ This Helm chart deploys a Citrix ADC CPX with Citrix ingress controller as a sid
 
 -  The [Kubernetes](https://kubernetes.io/) version is 1.6 or later if using Kubernetes environment.
 -  The [Openshift](https://www.openshift.com) version 3.11.x or later if using OpenShift platform.
--  The [Helm](https://helm.sh/) version is between 2.8.x and 2.9.x. You can follow instruction given [here](https://github.com/citrix/citrix-helm-charts/blob/master/Helm_Installation_Kubernetes.md) to install Helm in Kubernetes environment and [here](https://github.com/citrix/citrix-helm-charts/blob/master/Helm_Installation_OpenShift.md) for OpenShift platform.
+-  The [Helm](https://helm.sh/) version is 3.x.x. You can follow instruction given [here](https://github.com/citrix/citrix-helm-charts/blob/master/Helm_Installation_Kubernetes.md) to install Helm in Kubernetes environment and [here](https://github.com/citrix/citrix-helm-charts/blob/master/Helm_Installation_OpenShift.md) for OpenShift platform.
 -  You have installed [Prometheus Operator](https://github.com/coreos/prometheus-operator), if you want to view the metrics of the Citrix ADC CPX collected by the [metrics exporter](https://github.com/citrix/citrix-k8s-ingress-controller/tree/master/metrics-visualizer#visualization-of-metrics).
 
 ## Installing the Chart
@@ -135,6 +135,52 @@ For example:
 > **Tip:**
 >
 > The [values.yaml](https://github.com/citrix/citrix-helm-charts/blob/master/citrix-k8s-cpx-ingress-controller/values.yaml) contains the default values of the parameters.
+
+## CRDs configuration
+
+CRDs will get installed automatically when we install the CIC.
+
+There are a few examples of how to use these CRDs, which are placed in the folder: example-crds. Refer to them and install as needed, using the following command:
+```kubectl create -f <crd-example.yaml>```
+
+
+Details of the supported CRDs:
+
+- auth: 
+
+Authentication policies are used to enforce access restrictions to resources hosted by an application or an API server.
+
+Citrix provides a Kubernetes CustomResourceDefinitions (CRDs) called the Auth CRD that you can use with the Citrix ingress controller to define authentication policies on the ingress Citrix ADC.
+
+Example file: auth_example.yaml
+ 
+- canary:
+
+Canary release is a technique to reduce the risk of introducing a new software version in production by first rolling out the change to a small subset of users. After user validation, the application is rolled out to the larger set of users. Citrix ADC-Integrated Canary Deployment solution stitches together all components of continuous delivery (CD) and makes canary deployment easier for the application developers. 
+
+- contentrouting:
+
+Content Routing (CR) is the execution of defined rules that determine the placement and configuration of network traffic between users and web applications, based on the content being sent – for example, a pattern in the URL or header fields of the request.
+
+Example files: HTTPRoute_crd.yaml, Listener_crd.yaml
+
+- ratelimit:
+
+In a Kubernetes deployment, you can rate limit the requests to the resources on the back end server or services using rate limiting feature provided by the ingress Citrix ADC.
+
+Example files: ratelimit-example1.yaml, ratelimit-example2.yaml
+
+- vip:
+
+Citrix provides a CustomResourceDefinitions (CRD) called VIP for asynchronous communication between the IPAM controller and Citrix ingress controller.
+
+The IPAM controller is provided by Citrix for IP address management. It allocates IP address to the service from a defined IP address range. The Citrix ingress controller configures the IP address allocated to the service as virtual IP (VIP) in Citrix ADX VPX. And, the service is exposed using the IP address.
+
+When a new service is created, the Citrix ingress controller creates a CRD object for the service with an empty IP address field. The IPAM Controller listens to addition, deletion, or modification of the CRD and updates it with an IP address to the CRD. Once the CRD object is updated, the Citrix ingress controller automatically configures Citrix ADC-specfic configuration in the tier-1 Citrix ADC VPX.
+
+- rewrite-responder-policies-deployment.yaml
+
+In kubernetes environment, to deploy specific layer 7 policies to handle scenarios such as, redirecting HTTP traffic to a specific URL, blocking a set of IP addresses to mitigate DDoS attacks, imposing HTTP to HTTPS and so on, requires you to add appropriate libraries within the microservices and manually configure the policies. Instead, you can use the Rewrite and Responder features provided by the Ingress Citrix ADC device to deploy these policies.
 
 ## Uninstalling the Chart
 To uninstall/delete the ```my-release``` deployment:
