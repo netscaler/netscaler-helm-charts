@@ -12,13 +12,13 @@ Bookinfo application is the Helloworld of Istio environment. This application di
 
 ## <a name="citrix-ingress-gateway">A) Deploying Citrix ADC as Ingress Gateway</a>
 
-Follow the link "Deploy Citrix ADC as an Ingress Gateway using Helm charts" in [deployment guide](../../README.md#deployment-options). Citrix ADC can either be CPX or VPX/MPX. The given bookinfo deployment should work fine in both cases. 
+Follow the link "Deploy Citrix ADC as an Ingress Gateway using Helm charts" in [deployment guide](https://github.com/citrix/citrix-istio-adaptor#deployment-options). Citrix ADC can either be CPX or VPX/MPX. The given bookinfo deployment should work fine in both cases. 
 
-- **Important Note:** _For deploying Citrix ADC VPX or MPX as ingress gateway, you should establish the connectivity between Citrix ADC VPX or MPX and cluster nodes. This connectivity can be established by configuring routes on Citrix ADC as mentioned [here](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/network/staticrouting.md) or by deploying [Citrix Node Controller](https://github.com/citrix/citrix-k8s-node-controller).
+- **Important Note:** For deploying Citrix ADC VPX or MPX as ingress gateway, you should establish the connectivity between Citrix ADC VPX or MPX and cluster nodes. This connectivity can be established by configuring routes on Citrix ADC as mentioned [here](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/network/staticrouting.md) or by deploying [Citrix Node Controller](https://github.com/citrix/citrix-k8s-node-controller).
 
 ## <a name="citrix-sidecar-injector">B) Deploying Citrix ADC Sidecar Injector </a>
 
-Follow the link "Deploy Citrix ADC CPX as a sidecar using Helm charts" in [deployment guide](../../README.md#deployment-options). Citrix ADC CPX will be injected as a sidecar on the labeled namespace. If you do not wish to inject sidecar, this step can be skipped. In that case, Citrix ADC will only act as an Ingress Gateway. 
+Follow the link "Deploy Citrix ADC CPX as a sidecar using Helm charts" in [deployment guide](https://github.com/citrix/citrix-istio-adaptor#deployment-options). Citrix ADC CPX will be injected as a sidecar on the labeled namespace. If you do not wish to inject sidecar, this step can be skipped. In that case, Citrix ADC will only act as an Ingress Gateway. 
 
 ## <a name="deploying-bookinfo">C) Deploying Bookinfo</a>
 
@@ -61,7 +61,7 @@ kubectl create -n citrix-system secret tls citrix-ingressgateway-certs --key boo
 
 ### C.3) Deploy Bookinfo application 
 
-Bookinfo application can either be deployed using helm chart or deployment yaml files. If you want to deploy bookinfo along with Citrix ADC CPX as sidecar proxies, then make sure that [Citrix ADC Sidecar Injector](../../charts/stable/citrix-cpx-istio-sidecar-injector/README.md) is deployed, and the namespace is labeled with `cpx-injection=enabled`.
+Bookinfo application can either be deployed using helm chart or deployment yaml files. If you want to deploy bookinfo along with Citrix ADC CPX as sidecar proxies, then make sure that [Citrix ADC Sidecar Injector](../../citrix-cpx-istio-sidecar-injector/README.md) is deployed, and the namespace is labeled with `cpx-injection=enabled`.
 
 #### Enable Namespace for Sidecar Injection
 
@@ -84,9 +84,9 @@ Follow *any one of these two methods* to deploy the application.
 Ensure that the namespace of Citrix ADC Ingress gateway is provided correctly.
 
 ```
-git clone https://github.com/citrix/citrix-istio-adaptor.git
+git clone https://github.com/citrix/citrix-helm-charts.git
 
-cd citrix-istio-adaptor/examples/citrix-adc-in-istio/bookinfo/charts/stable
+cd citrix-helm-charts/examples/citrix-adc-in-istio/bookinfo/charts/stable
 
 helm install bookinfo-citrix-ingress --name bookinfo-citrix-ingress --namespace bookinfo --set citrixIngressGateway.namespace=citrix-system
 ```
@@ -96,9 +96,9 @@ By default, this bookinfo application is deployed with TLS mode disabled.
 To deploy it with the mTLS, use `mtlsEnabled=true` option in helm chart.
 
 ```
-git clone https://github.com/citrix/citrix-istio-adaptor.git
+git clone https://github.com/citrix/citrix-helm-charts.git
 
-cd citrix-istio-adaptor/examples/citrix-adc-in-istio/bookinfo/charts/stable
+cd citrix-helm-charts/examples/citrix-adc-in-istio/bookinfo/charts/stable
 
 helm install bookinfo-citrix-ingress --name bookinfo-citrix-ingress --namespace bookinfo --set citrixIngressGateway.namespace=citrix-system --set mtlsEnabled=true
 ```
@@ -107,7 +107,7 @@ helm install bookinfo-citrix-ingress --name bookinfo-citrix-ingress --namespace 
 
 ```
 
-kubectl apply -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-istio-adaptor/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/bookinfo.yaml  
+kubectl apply -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/bookinfo.yaml  
 
 ```
 
@@ -123,14 +123,14 @@ Ingress Gateway can be configured using Istio Gateway resource for secure (https
 ##### Configure HTTPS Gateway
 
 ```
-kubectl apply -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-istio-adaptor/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/bookinfo_https_gateway.yaml
+kubectl apply -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/bookinfo_https_gateway.yaml
 
 ```
 
 ##### Configure HTTP Gateway
 
 ```
-kubectl apply -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-istio-adaptor/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/bookinfo_http_gateway.yaml
+kubectl apply -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/bookinfo_http_gateway.yaml
 ```
 
 #### Traffic Management using VirtualService and DestinationRule
@@ -138,14 +138,14 @@ kubectl apply -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-ist
 Create [VirtualService](https://istio.io/docs/reference/config/istio.networking.v1alpha3/#VirtualService) for productpage service which is a frontend microservice of bookinfo app.
 
 ```
-kubectl apply -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-istio-adaptor/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/productpage_vs.yaml
+kubectl apply -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/productpage_vs.yaml
 
 ```
 
 Create [DestinationRule](https://istio.io/docs/reference/config/istio.networking.v1alpha3/#DestinationRule) for productpage.
 
 ```
-kubectl apply -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-istio-adaptor/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/productpage_dr.yaml
+kubectl apply -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/productpage_dr.yaml
 
 ```
 
@@ -156,7 +156,7 @@ kubectl apply -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-ist
 If mTLS is enabled, non-istio services in which sidecar is not running won't be able to communicate with istio services. To enable such inter-service communication, TLS policy should be disabled. This is usually needed when some services are yet to be migrated to Service Mesh and we need to keep the communication between services active during transition to fully enabled service mesh application deployment.
 
 ```
-kubectl apply -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-istio-adaptor/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/bookinfo_policy_tls_disabled.yaml
+kubectl apply -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/bookinfo_policy_tls_disabled.yaml
 
 ```
 
@@ -165,7 +165,7 @@ kubectl apply -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-ist
 Once all services are migrated to servicemesh, i.e. sidecar is deployed in all services, mTLS can be enabled by reconfiguring the policy.
 
 ```
-kubectl apply -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-istio-adaptor/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/bookinfo_policy_istio_mutual.yaml
+kubectl apply -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/bookinfo_policy_istio_mutual.yaml
 
 ```
 
@@ -240,19 +240,19 @@ kubectl delete secret citrix-ingressgateway-certs -n citrix-system
 Delete the Gateway configuration, VirtualService, DestinationRule and the secret, and shutdown the bookinfo application.
 
 ```
-kubectl delete -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-istio-adaptor/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/bookinfo_http_gateway.yaml
+kubectl delete -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/bookinfo_http_gateway.yaml
 
-kubectl delete -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-istio-adaptor/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/bookinfo_https_gateway.yaml
+kubectl delete -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/bookinfo_https_gateway.yaml
 
-kubectl delete -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-istio-adaptor/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/productpage_vs.yaml
+kubectl delete -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/productpage_vs.yaml
 
-kubectl delete -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-istio-adaptor/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/productpage_dr.yaml
+kubectl delete -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/productpage_dr.yaml
 
-kubectl delete -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-istio-adaptor/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/bookinfo_policy_istio_mutual.yaml
+kubectl delete -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/bookinfo_policy_istio_mutual.yaml
 
 kubectl delete secret -n citrix-system citrix-ingressgateway-certs
 
-kubectl delete -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-istio-adaptor/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/bookinfo.yaml
+kubectl delete -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/bookinfo.yaml
 
 kubectl delete namespace bookinfo
 ```

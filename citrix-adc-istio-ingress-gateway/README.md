@@ -20,15 +20,17 @@ Citrix Application Delivery Controller (ADC) can be deployed as an Istio Ingress
 
 ### To deploy Citrix ADC VPX or MPX as an Ingress Gateway:
 
-    helm repo add citrix https://citrix.github.io/citrix-helm-charts/
+       kubectl create secret generic nslogin --from-literal=username=<citrix-adc-user> --from-literal=password=<citrix-adc-password> -n citrix-system
 
-    helm install citrix/citrix-adc-istio-ingress-gateway --namespace citrix-system --name citrix-adc-istio-ingress-gateway --set ingressGateway.EULA=YES --set istioAdaptor.netscalerUrl=https://<nsip>[:port] --set istioAdaptor.vserverIP=<IPv4 Address> --set nslogin.username=<username> --set nslogin.password=<password> 
+       helm repo add citrix https://citrix.github.io/citrix-helm-charts/
+
+       helm install citrix/citrix-adc-istio-ingress-gateway --namespace citrix-system --name citrix-adc-istio-ingress-gateway --set ingressGateway.EULA=YES --set istioAdaptor.netscalerUrl=https://<nsip>[:port] --set istioAdaptor.vserverIP=<IPv4 Address> 
 
 ### To deploy Citrix ADC CPX as an Ingress Gateway:
 
-    helm repo add citrix https://citrix.github.io/citrix-helm-charts/
+       helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-    helm install citrix/citrix-adc-istio-ingress-gateway --namespace citrix-system --name citrix-adc-istio-ingress-gateway --set ingressGateway.EULA=YES --set citrixCPX=true
+       helm install citrix/citrix-adc-istio-ingress-gateway --namespace citrix-system --name citrix-adc-istio-ingress-gateway --set ingressGateway.EULA=YES --set citrixCPX=true
 
 
 ## <a name="introduction">Introduction</a>
@@ -42,6 +44,11 @@ The following prerequisites are required for deploying Citrix ADC as an Ingress 
 - Ensure that **Istio version 1.3.0** is installed
 - Ensure that Helm is installed. Follow this [step](https://github.com/citrix/citrix-helm-charts/blob/master/Helm_Installation_Kubernetes.md) to install the same.
 - Ensure that your cluster has Kubernetes version 1.14.0 or later and the `admissionregistration.k8s.io/v1beta1` API is enabled
+- **For deploying Citrix ADC VPX or MPX as an Ingress gateway:**
+
+  Create a Kubernetes secret for the Citrix ADC user name and password using the following command:
+  
+        kubectl create secret generic nslogin --from-literal=username=<citrix-adc-user> --from-literal=password=<citrix-adc-password> -n citrix-system
 
 You can verify the API by using the following command:
 
@@ -51,26 +58,26 @@ The following output indicates that the API is enabled:
 
         admissionregistration.k8s.io/v1beta1
 
-- **Important Note:** _For deploying Citrix ADC VPX or MPX as ingress gateway, you should establish the connectivity between Citrix ADC VPX or MPX and cluster nodes. This connectivity can be established by configuring routes on Citrix ADC as mentioned [here](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/network/staticrouting.md) or by deploying [Citrix Node Controller](https://github.com/citrix/citrix-k8s-node-controller).
-
-*
+- **Important Note:** For deploying Citrix ADC VPX or MPX as ingress gateway, you should establish the connectivity between Citrix ADC VPX or MPX and cluster nodes. This connectivity can be established by configuring routes on Citrix ADC as mentioned [here](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/network/staticrouting.md) or by deploying [Citrix Node Controller](https://github.com/citrix/citrix-k8s-node-controller).
   
+
 ## <a name="deploy-citrix-adc-vpx-or-mpx-as-an-ingress-gateway">Deploy Citrix ADC VPX or MPX as an Ingress Gateway</a>
 
  To deploy Citrix ADC VPX or MPX as an Ingress Gateway in the Istio service mesh, do the following step. In this example, release name is specified as `citrix-adc-istio-ingress-gateway` and namespace as `citrix-system`.
 
-
+        kubectl create secret generic nslogin --from-literal=username=<citrix-adc-user> --from-literal=password=<citrix-adc-password> -n citrix-system
+        
         helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-        helm install citrix/citrix-adc-istio-ingress-gateway --namespace citrix-system --name citrix-adc-istio-ingress-gateway --set ingressGateway.EULA=YES --set istioAdaptor.netscalerUrl=https://<nsip>[:port] --set istioAdaptor.vserverIP=<IPv4 Address> --set nslogin.username=<username> --set nslogin.password=<password> 
+        helm install citrix/citrix-adc-istio-ingress-gateway --namespace citrix-system --name citrix-adc-istio-ingress-gateway --set ingressGateway.EULA=YES --set istioAdaptor.netscalerUrl=https://<nsip>[:port] --set istioAdaptor.vserverIP=<IPv4 Address> 
 
 ## <a name="deploy-citrix-adc-cpx-as-an-ingress-gateway">Deploy Citrix ADC CPX as an Ingress Gateway</a>
 
  To deploy Citrix ADC CPX as an Ingress Gateway, do the following step. In this example, release name is specified as `my-release` and namespace is used as `citrix-system`.
 
-    helm repo add citrix https://citrix.github.io/citrix-helm-charts/
+        helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-    helm install citrix/citrix-adc-istio-ingress-gateway --name my-release --namespace citrix-system --set ingressGateway.EULA=YES --set citrixCPX=true
+        helm install citrix/citrix-adc-istio-ingress-gateway --name my-release --namespace citrix-system --set ingressGateway.EULA=YES --set citrixCPX=true
 
 
 ## <a name="using-existing-certificates-to-deploy-citrix-adc-as-an-ingress-gateway">Using Existing Certificates to deploy Citrix ADC as an Ingress Gateway</a>
@@ -79,21 +86,23 @@ You may want to use the existing certificate and key for authenticating access t
 
 To create a Kubernetes secret using an existing key named `test_key.pem` and a certificate named `test.pem`, use the following command:
 
-    kubectl create -n citrix-system secret tls citrix-ingressgateway-certs --key test_key.pem --cert test.pem 
+        kubectl create -n citrix-system secret tls citrix-ingressgateway-certs --key test_key.pem --cert test.pem 
 
 Note: Ensure that Kubernetes secret is created in the same namespace where Citrix ADC Ingress Gateway is deployed.
 
 To deploy Citrix ADC VPX or MPX with secret volume, do the following step:
 
-    helm repo add citrix https://citrix.github.io/citrix-helm-charts/
+        kubectl create secret generic nslogin --from-literal=username=<citrix-adc-user> --from-literal=password=<citrix-adc-password> -n citrix-system
 
-    helm install citrix/citrix-adc-istio-ingress-gateway --namespace citrix-system --name my-release --set ingressGateway.EULA=YES --set istioAdaptor.netscalerUrl=https://<nsip>[:port] --set istioAdaptor.vserverIP=<IPv4 Address>  --set nslogin.username=<username> --set nslogin.password=<password> --set ingressGateway.secretVolumes[0].name=test-ingressgateway-certs --set ingressGateway.secretVolumes[0].secretName=test-ingressgateway-certs --set ingressGateway.secretVolumes[0].mountPath=/etc/istio/test-ingressgateway-certs 
+        helm repo add citrix https://citrix.github.io/citrix-helm-charts/
+
+        helm install citrix/citrix-adc-istio-ingress-gateway --namespace citrix-system --name my-release --set ingressGateway.EULA=YES --set istioAdaptor.netscalerUrl=https://<nsip>[:port] --set istioAdaptor.vserverIP=<IPv4 Address>  --set ingressGateway.secretVolumes[0].name=test-ingressgateway-certs --set ingressGateway.secretVolumes[0].secretName=test-ingressgateway-certs --set ingressGateway.secretVolumes[0].mountPath=/etc/istio/test-ingressgateway-certs 
 
 To deploy Citrix ADC CPX with secret volume, do the following step:
 
-    helm repo add citrix https://citrix.github.io/citrix-helm-charts/
+        helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-    helm install citrix/citrix-adc-istio-ingress-gateway --namespace citrix-system --name my-release --set ingressGateway.EULA=YES --set citrixCPX=true --set ingressGateway.secretVolumes[0].name=test-ingressgateway-certs --set ingressGateway.secretVolumes[0].secretName=test-ingressgateway-certs --set ingressGateway.secretVolumes[0].mountPath=/etc/istio/test-ingressgateway-certs 
+        helm install citrix/citrix-adc-istio-ingress-gateway --namespace citrix-system --name my-release --set ingressGateway.EULA=YES --set citrixCPX=true --set ingressGateway.secretVolumes[0].name=test-ingressgateway-certs --set ingressGateway.secretVolumes[0].secretName=test-ingressgateway-certs --set ingressGateway.secretVolumes[0].mountPath=/etc/istio/test-ingressgateway-certs 
 
 ## <a name="segregating-traffic-with-multiple-ingress-gateways">Segregating traffic with multiple Ingress Gateways</a>
 
@@ -101,6 +110,8 @@ You can deploy multiple Citrix ADC Ingress Gateway devices and segregate traffic
 
 To deploy Citrix ADC CPX Ingress Gateway with the label `my_custom_ingressgateway`, do the following step:
 
+        kubectl create secret generic nslogin --from-literal=username=<citrix-adc-user> --from-literal=password=<citrix-adc-password> -n citrix-system
+        
         helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
         helm install citrix/citrix-adc-istio-ingress-gateway --name my-release --namespace citrix-system --set ingressGateway.EULA=YES --set citrixCPX=true  --set ingressGateway.lightWeightCPX=NO --set ingressGateway.label=my_custom_ingressgateway
@@ -109,7 +120,7 @@ To deploy Citrix ADC VPX or MPX as an Ingress Gateway with the label `my_custom_
 
         helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-        helm install citrix/citrix-adc-istio-ingress-gateway --name my-release --namespace citrix-system --set ingressGateway.EULA=YES --set istioAdaptor.netscalerUrl=https://<nsip>[:port] --set istioAdaptor.vserverIP=<IPv4 Address> --set nslogin.username=<username> --set nslogin.password=<password> --set ingressGateway.label=my_custom_ingressgateway
+        helm install citrix/citrix-adc-istio-ingress-gateway --name my-release --namespace citrix-system --set ingressGateway.EULA=YES --set istioAdaptor.netscalerUrl=https://<nsip>[:port] --set istioAdaptor.vserverIP=<IPv4 Address> --set ingressGateway.label=my_custom_ingressgateway
 
 ## <a name="visualizing-statistics-of-citrix-adc-ingress-gateway-with-metrics-exporter">Visualizing statistics of Citrix ADC Ingress Gateway with Metrics Exporter</a>
 
@@ -122,9 +133,11 @@ When Citrix ADC CPX is deployed as Ingress Gateway, Metrics Exporter runs along 
 To deploy Citrix ADC as Ingress Gateway without Metrics Exporter, set the value of `metricExporter.required` as false.
 
 
-    helm repo add citrix https://citrix.github.io/citrix-helm-charts/
+        kubectl create secret generic nslogin --from-literal=username=<citrix-adc-user> --from-literal=password=<citrix-adc-password> -n citrix-system
+    
+        helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-    helm install citrix/citrix-adc-istio-ingress-gateway --namespace citrix-system --name citrix-adc-istio-ingress-gateway --set ingressGateway.EULA=YES --set istioAdaptor.netscalerUrl=https://<nsip>[:port] --set istioAdaptor.vserverIP=<IPv4 Address>  --set nslogin.username=<username> --set nslogin.password=<password>  --set metricExporter.required=false
+        helm install citrix/citrix-adc-istio-ingress-gateway --namespace citrix-system --name citrix-adc-istio-ingress-gateway --set ingressGateway.EULA=YES --set istioAdaptor.netscalerUrl=https://<nsip>[:port] --set istioAdaptor.vserverIP=<IPv4 Address> --set metricExporter.required=false
 
 "Note:" To remotely access telemetry addons such as Prometheus and Grafana, see [Remotely Accessing Telemetry Addons](https://istio.io/docs/tasks/telemetry/gateways/).
 
@@ -136,16 +149,18 @@ To deploy Citrix ADC MPX or VPX, and expose a service running on a TCP port, do 
 
 In this example, a service running on TCP port 5000 is exposed using port 10000 on Citrix ADC.
 
-    helm repo add citrix https://citrix.github.io/citrix-helm-charts/
+        kubectl create secret generic nslogin --from-literal=username=<citrix-adc-user> --from-literal=password=<citrix-adc-password> -n citrix-system
 
-    helm install citrix/citrix-adc-istio-ingress-gateway --namespace citrix-system --name my-release --set ingressGateway.EULA=YES --set istioAdaptor.netscalerUrl=https://<nsip>[:port] --set istioAdaptor.vserverIP=<IPv4 Address> --set nslogin.username=<username> --set nslogin.password=<password> --set ingressGateway.tcpPort[0].name=tcp1 --set ingressGateway.tcpPort[0].port=10000 --set ingressGateway.tcpPort[0].targetPort=5000 
+        helm repo add citrix https://citrix.github.io/citrix-helm-charts/
+
+        helm install citrix/citrix-adc-istio-ingress-gateway --namespace citrix-system --name my-release --set ingressGateway.EULA=YES --set istioAdaptor.netscalerUrl=https://<nsip>[:port] --set istioAdaptor.vserverIP=<IPv4 Address> --set ingressGateway.tcpPort[0].name=tcp1 --set ingressGateway.tcpPort[0].port=10000 --set ingressGateway.tcpPort[0].targetPort=5000 
 
  To deploy Citrix ADC CPX and expose a service running on a TCP port, do the following step.
  In this example, port 10000 on the Citrix ADC CPX instance is exposed using TCP port 30000 (node port configuration) on the host machine.
 
-    helm repo add citrix https://citrix.github.io/citrix-helm-charts/
+        helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-    helm install citrix/citrix-adc-istio-ingress-gateway --namespace citrix-system --name my-release --set ingressGateway.EULA=YES --set citrixCPX=true --set ingressGateway.tcpPort[0].name=tcp1 --set ingressGateway.tcpPort[0].nodePort=30000 --set ingressGateway.tcpPort[0].port=10000 --set ingressGateway.tcpPort[0].targetPort=5000
+        helm install citrix/citrix-adc-istio-ingress-gateway --namespace citrix-system --name my-release --set ingressGateway.EULA=YES --set citrixCPX=true --set ingressGateway.tcpPort[0].name=tcp1 --set ingressGateway.tcpPort[0].nodePort=30000 --set ingressGateway.tcpPort[0].port=10000 --set ingressGateway.tcpPort[0].targetPort=5000
 
 
 
@@ -157,7 +172,7 @@ A sample deployment of Citrix ADC as an Ingress gateway for the Bookinfo applica
 
 To uninstall or delete a chart with release name as `my-release`, do the following step.
 
-    helm delete --purge my-release
+        helm delete --purge my-release
 
 The command removes all the Kubernetes components associated with the chart and deletes the release.
 
@@ -171,17 +186,18 @@ The following table lists the configurable parameters in the Helm chart and thei
 | Parameter                      | Description                   | Default                   | Optional/Mandatory                  |
 |--------------------------------|-------------------------------|---------------------------|---------------------------|
 | `citrixCPX`                    | Citrix ADC CPX                    | FALSE                  | Mandatory for Citrix ADC CPX |
-| `nslogin.username`             | User name for Citrix ADC       | nsroot                 | Mandatory for Citrix ADC MPX or VPX|
-| `nslogin.password`             | Password for Citrix ADC       |                 |Mandatory for Citrix ADC MPX or VPX|
 | `istioAdaptor.image`            | Image of the Citrix Istio-adaptor container |quay.io/citrix/citrix-istio-adaptor| Mandatory|
-| `istioAdaptor.tag`               | Tag of the Istio adaptor image | 1.1.0                 | Mandatory|
+| `istioAdaptor.tag`               | Tag of the Istio adaptor image | 1.2.0                 | Mandatory|
 | `istioAdaptor.imagePullPolicy`   | Image pull policy for Istio-adaptor | IfNotPresent       | Optional|
 | `istioAdaptor.vserverIP`       | Virtual server IP address on Citrix ADC (Mandatory if citrixCPX=false) | null | Mandatory for Citrix ADC MPX or VPX|
 | `istioAdaptor.netscalerUrl`       | URL or IP address of the Citrix ADC which Istio-adaptor configures (Mandatory if citrixCPX=false)| null   |Mandatory for Citrix ADC MPX or VPX|
 | `istioAdaptor.secureConnect`     | If this value is set to true, Istio-adaptor establishes secure gRPC channel with Istio Pilot   | TRUE                       | Optional|
 | `istioAdaptor.netProfile `          | Network profile name used by [CNC](https://github.com/citrix/citrix-k8s-node-controller) to configure Citrix ADC VPX or MPX which is deployed as Ingress Gateway  | null            | Optional|
+| `istioAdaptor.coeURL`          | Name of [Citrix Observability Exporter](https://github.com/citrix/citrix-observability-exporter) Service in the form of "<servicename>.<namespace>"  | null            | Optional|
+| `istioAdaptor.ADMIP `          | Citrix Application Delivery Management (ADM) IP address  | NIL            | Mandatory for Citrix ADC CPX |
+| `istioAdaptor.ADMFingerPrint `          | Citrix Application Delivery Management (ADM) Finger Print. For more information, see [this](https://docs.citrix.com/en-us/citrix-application-delivery-management-service/application-analytics-and-management/service-graph.html)  | NIL            | Optional|
 | `ingressGateway.image`             | Image of Citrix ADC CPX designated to run as Ingress Gateway                                                                       |quay.io/citrix/citrix-k8s-cpx-ingress|   Mandatory for Citrix ADC CPX                                                              |
-| `ingressGateway.tag`              | Version of Citrix ADC CPX                                                                                                          | 13.0-41.28
+| `ingressGateway.tag`              | Version of Citrix ADC CPX                                                                                                          | 13.0-47.22                  | Mandatory for Citrix ADC CPX |
 | `ingressGateway.imagePullPolicy`   | Image pull policy                                                                                                                  | IfNotPresent                                                          | Optional|
 | `ingressGateway.EULA`             | End User License Agreement(EULA) terms and conditions. If yes, then user agrees to EULA terms and conditions.                                     | NO                                                                    | Mandatory for Citrix ADC CPX 
 | `ingressGateway.mgmtHttpPort`      | Management port of the Citrix ADC CPX                                                                                              | 9080                                                                  | Optional|
@@ -189,7 +205,6 @@ The following table lists the configurable parameters in the Helm chart and thei
 | `ingressGateway.httpNodePort`      | Port on host machine which is used to expose HTTP port (80) of Citrix ADC CPX                                                       | 30180                                                                 |Optional|
 | `ingressGateway.httpsNodePort`     | Port on host machine which is used to expose HTTPS port (443) of Citrix ADC CPX                                                     | 31443                                                                 |Optional|
 | `ingressGateway.secretVolume`      | A map of user defined volumes to be mounted using Kubernetes secrets                                                               | null                                                                  |Optional|
-| `ingressGateway.licenseServerIP`   | Provide the Citrix Application Delivery Management (ADM) IP address to license Citrix ADC CPX. For more information, see [Licensing](https://github.com/citrix/citrix-istio-adaptor/blob/master/docs/cpx-licensing.md). | NIL |  Mandatory for Citrix ADC CPX |                                                                |
 | `ingressGateway.licenseServerPort` | Citrix ADM port if a non-default port is used                                                                                        | 27000                                                                 | Optional|
 | `ingressGateway.label` | Custom label for the Ingress Gateway service                                                                                       | citrix-ingressgateway                                                                 |Optional|
 | `ingressGateway.tcpPort` | For exposing multiple TCP ingress                                                                                      | NIL                                                                 |Optional|
@@ -200,7 +215,7 @@ The following table lists the configurable parameters in the Helm chart and thei
 | `istioPilot.SAN`                 | Subject alternative name for Istio Pilot which is the secure production identity framework for everyone (SPIFFE) ID of Istio Pilot                                                        | spiffe://cluster.local/ns/istio-system/sa/istio-pilot-service-account |Optional|
 | `metricExporter.required`          | Metrics exporter for Citrix ADC                                                                                                    | TRUE                                                                  |Optional|
 | `metricExporter.image`             | Image of the Citrix ADC Metrics Exporter                                                                                   | quay.io/citrix/citrix-adc-metrics-exporter                             |Optional|
-| `metricExporter.version`           | Version of the Citrix ADC Metrics Exporter image                                                                                   | 1.2                                                            |Optional|
+| `metricExporter.version`           | Version of the Citrix ADC Metrics Exporter image                                                                                   | 1.4.0                                                            |Optional|
 | `metricExporter.port`              | Port over which Citrix ADC Metrics Exporter collects metrics of Citrix ADC.                                                      | 8888                                                                  |Optional|
 | `metricExporter.secure`            | Enables collecting metrics over TLS                                                                                                | YES                                                                    |Optional|
 | `metricExporter.logLevel`          | Level of logging in Citrix ADC Metrics Exporter. Possible values are: DEBUG, INFO, WARNING, ERROR, CRITICAL                                       | ERROR                                                                 |Optional|

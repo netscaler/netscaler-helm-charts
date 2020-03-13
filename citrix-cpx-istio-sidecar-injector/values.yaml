@@ -3,14 +3,16 @@
 # Declare variables to be passed into your templates.
 
 istioAdaptor:
-    image: quay.io/citrix/citrix-istio-adaptor
-    tag: 1.1.0
+    image: quay.io/citrix/citrix-istio-adaptor 
+    tag: 1.2.0
     imagePullPolicy: IfNotPresent
     netscalerUrl: "http://127.0.0.1"
     proxyType: sidecar
     secureConnect: true
     ADMIP: 
-
+    ADMFingerPrint: 
+    coeURL:
+ 
 istioPilot:
     name: istio-pilot
     namespace: istio-system
@@ -19,13 +21,14 @@ istioPilot:
     SAN: "spiffe://cluster.local/ns/istio-system/sa/istio-pilot-service-account"
 
 cpxProxy:
-    image: quay.io/citrix/citrix-k8s-cpx-ingress
-    tag: 13.0-41.28
+    image: quay.io/citrix/citrix-k8s-cpx-ingress 
+    tag: 13.0-47.22
     imagePullPolicy: IfNotPresent
     EULA: NO
     cpxSidecarMode: YES
     mgmtHttpPort: 10080
     mgmtHttpsPort: 10443
+    #licenseServerIP: this value is taken from istio.Adaptor.ADMIP
     licenseServerPort: 27000
 
 sidecarWebHook:
