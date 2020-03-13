@@ -69,6 +69,10 @@ data:
 {{- else }}
         - ""
 {{- end }}
+{{- if .Values.istioAdaptor.coeURL }}
+        - -coe-url
+        - {{ .Values.istioAdaptor.coeURL }}
+{{- end }}
         volumeMounts:
         - mountPath: /etc/certs/
           name: istio-certs
@@ -93,11 +97,23 @@ data:
         - name: "KUBERNETES_TASK_ID"
           value: ""
         - name: "NS_CPX_LITE"
-          value: "YES"
+          value: 1
         - name: "LS_IP"
           value: {{ .Values.istioAdaptor.ADMIP | default "" }}
         - name: "LS_PORT"
-          value: {{ .Values.cpxProxy.licenseServerPort}} 
+          value: {{ .Values.cpxProxy.licenseServerPort}}
+{{- if .Values.istioAdaptor.ADMFingerPrint }}
+        - name: "NS_MGMT_SERVER"
+          value: {{ .Values.istioAdaptor.ADMIP }}
+        - name: "NS_MGMT_FINGER_PRINT"
+          value: {{ .Values.istioAdaptor.ADMFingerPrint | quote }}
+        - name: "NS_HTTP_PORT"
+          value: {{ .Values.cpxProxy.mgmtHttpPort | quote }}
+        - name: "NS_HTTPS_PORT"
+          value: {{ .Values.cpxProxy.mgmtHttpsPort | quote }}
+{{- end }}
+        - name: "LOGSTREAM_COLLECTOR_IP"
+          value: {{ .Values.istioAdaptor.ADMIP | default "" }}
       volumes:
       - name: nslogin
         secret:

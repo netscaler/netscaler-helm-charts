@@ -7,7 +7,7 @@ citrixCPX: false
 metricExporter:
     required: true
     image: quay.io/citrix/citrix-adc-metrics-exporter
-    version: 1.2
+    version: 1.4.0
     port: 8888
     secure: "YES"
     logLevel: ERROR
@@ -15,7 +15,7 @@ metricExporter:
 
 istioAdaptor:
     image: quay.io/citrix/citrix-istio-adaptor
-    tag: 1.1.0
+    tag: 1.2.0
     imagePullPolicy: IfNotPresent
     netscalerUrl: null 
     proxyType: router
@@ -23,7 +23,9 @@ istioAdaptor:
     vserverIP:
     netProfile:
     ADMIP: 
-
+    ADMFingerPrint:
+    coeURL:
+ 
 istioPilot:
     name: istio-pilot
     namespace: istio-system
@@ -33,20 +35,16 @@ istioPilot:
 
 ingressGateway:
     image: quay.io/citrix/citrix-k8s-cpx-ingress
-    tag: 13.0-41.28
+    tag: 13.0-47.22
     imagePullPolicy: IfNotPresent
     EULA: NO
     mgmtHttpPort: 10080
     mgmtHttpsPort: 10443
     httpNodePort: 30180
     httpsNodePort: 31443
-    lightWeightCPX: YES
+    lightWeightCPX: 1 
     secretVolumes:
-    licenseServerIP:
+    #licenseServerIP: this value will be taken from istioAdaptor.ADMIP
     licenseServerPort: 27000 
     label: citrix-ingressgateway
     tcpPort:
-
-nslogin:
-   username:
-   password:
