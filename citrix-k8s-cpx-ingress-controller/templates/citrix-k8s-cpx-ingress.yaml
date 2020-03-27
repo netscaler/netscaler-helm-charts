@@ -48,6 +48,8 @@ spec:
         - name: cic
           image: "{{ .Values.cic.image }}"
           imagePullPolicy: {{ .Values.cic.pullPolicy }}
+          securityContext:
+             readOnlyRootFilesystem: true
           env:
           - name: "EULA"
             value: "{{ .Values.license.accept }}"
