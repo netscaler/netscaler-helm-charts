@@ -45,8 +45,10 @@ spec:
         securityContext:
            readOnlyRootFilesystem: true
         args:
+{{- if .Values.defaultSSLCert }}
           - --default-ssl-certificate
-            {{ .Values.defaultSSLCert | default "{{ .Release.Namespace }}/default-cert" }}
+            {{ .Values.defaultSSLCert }}
+{{- end }}
 {{- if .Values.ingressClass }}
           - --ingress-class
 {{- range .Values.ingressClass}}
@@ -54,7 +56,11 @@ spec:
 {{- end }}
 {{- end }}
           - --feature-node-watch
-            {{.Values.nodeWatch}}
+            {{ .Values.nodeWatch }}
+{{- if .Values.ipam }}
+          - --ipam
+            citrix-ipam-controller
+{{- end }}
         env:
         - name: "NS_IP"
           value: "{{ .Values.nsIP }}"
@@ -65,12 +71,12 @@ spec:
         - name: "NS_USER"
           valueFrom:
             secretKeyRef:
-              name: {{ .Values.loginFileName | default "nslogin"}}
+              name: {{ .Values.loginFileName }}
               key: username
         - name: "NS_PASSWORD"
           valueFrom:
             secretKeyRef:
-              name: {{ .Values.loginFileName | default "nslogin"}}
+              name: {{ .Values.loginFileName }}
               key: password
         - name: "EULA"
           value: "{{ .Values.license.accept }}"
@@ -86,27 +92,27 @@ spec:
         - name: "kubernetes_url"
           value: "{{ .Values.kubernetesURL }}"
 {{- end}}
+{{- if .Values.logProxy }}
+        - name: "NS_LOGPROXY"
+          value: "{{ .Values.logProxy }}"
+{{- end }}
 {{- if .Values.exporter.required }}
       - name: exporter
         image: "{{ .Values.exporter.image }}"
+        imagePullPolicy: {{ .Values.exporter.pullPolicy }}
         args:
-          - "--secure=YES"
-          - "--username=$(NS_USERNAME)"
-          - "--password=$(NS_PASSWORD)"
           - "--target-nsip={{ .Values.nsIP }}"
           - "--port={{ .Values.exporter.ports.containerPort }}"
-        env:
-          - name: NS_USERNAME
-            valueFrom:
-              secretKeyRef:
-                name: {{ .Values.loginFileName | default "nslogin"}}
-                key: username
-          - name: NS_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: {{ .Values.loginFileName | default "nslogin"}}
-                key: password
-        imagePullPolicy: {{ .Values.exporter.pullPolicy }}
+        volumeMounts:
+          - name: nslogin
+            mountPath: "/mnt/nslogin"
+            readOnly: true
+        securityContext:
+          readOnlyRootFilesystem: true
+      volumes:
+      - name: nslogin
+        secret:
+          secretName: {{ .Values.loginFileName }}
 {{- end }}
 ---
 
