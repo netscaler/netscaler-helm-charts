@@ -109,7 +109,7 @@ Zipkin enables users to analyze tracing for East-West service to service communi
 ```
 helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-helm install citrix/citrix-cpx-istio-sidecar-injector --name cpx-sidecar-injector --namespace citrix-system --set cpxProxy.EULA=YES --istioAdaptor.coeURL=<coe-service-name>.<namespace>
+helm install citrix/citrix-cpx-istio-sidecar-injector --name cpx-sidecar-injector --namespace citrix-system --set cpxProxy.EULA=YES --set istioAdaptor.coeURL=<coe-service-name>.<namespace>
 ```
 
 For example, if COE is deployed as `coe` in `citrix-system` namespace, then below helm command will deploy sidecar injector webhook which will be deploying Citrix ADC CPX sidecar proxies in application pods, and these sidecar proxies will be configured to establish communication channels with COE.
