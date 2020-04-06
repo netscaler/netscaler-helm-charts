@@ -3,7 +3,7 @@ entries:
   citrix-adc-istio-ingress-gateway:
   - apiVersion: v1
     appVersion: 1.2.0
-    created: "2020-03-23T11:28:03.51035424+05:30"
+    created: "2020-04-06T17:11:54.220741703+05:30"
     description: A Helm chart for Citrix ADC as Ingress Gateway installation in Istio
       Service Mesh on Kubernetes platform
     digest: ba8ef6bbfb4e5710c1f4f919c6db783bafecfd7cfdefdcfcc4d87670091c001b
@@ -22,7 +22,7 @@ entries:
     version: 1.2.0
   - apiVersion: v1
     appVersion: 1.1.0
-    created: "2020-03-23T11:28:03.509648328+05:30"
+    created: "2020-04-06T17:11:54.219811898+05:30"
     description: A Helm chart for Citrix ADC as Ingress Gateway installation in Istio
       Service Mesh on Kubernetes platform
     digest: c92ba50d087ecff073587e211d3dabef999db03e8f4af8c9a0605f0b1c2a1bf1
@@ -41,7 +41,7 @@ entries:
     version: 1.1.0
   - apiVersion: v1
     appVersion: 1.0.1
-    created: "2020-03-23T11:28:03.508810938+05:30"
+    created: "2020-04-06T17:11:54.218855438+05:30"
     description: A Helm chart for Citrix ADC as Ingress Gateway installation in Istio
       Service Mesh on Kubernetes platform
     digest: 8d114612a5d3679d699d4cf16080f37eb1980e2d95d1a4429a0be6321d99e3f3
@@ -61,7 +61,7 @@ entries:
   citrix-cpx-istio-sidecar-injector:
   - apiVersion: v1
     appVersion: 1.2.0
-    created: "2020-03-23T11:28:03.512528615+05:30"
+    created: "2020-04-06T17:11:54.226462284+05:30"
     description: A Helm chart to deploy resources which install Citrix ADC CPX in
       Istio Service Mesh as sidecar in application pod
     digest: 15b29816573841563fccd156a86ae913aa979dc0696031f1f8b676641615667f
@@ -80,7 +80,7 @@ entries:
     version: 1.2.0
   - apiVersion: v1
     appVersion: 1.1.0
-    created: "2020-03-23T11:28:03.511803205+05:30"
+    created: "2020-04-06T17:11:54.22541359+05:30"
     description: A Helm chart to deploy resources which install Citrix ADC CPX in
       Istio Service Mesh as sidecar in application pod
     digest: 8e9d5934582d6058f305cd7873c64b09949216391887b0d34f744b4f1c5a75bc
@@ -99,7 +99,7 @@ entries:
     version: 1.1.0
   - apiVersion: v1
     appVersion: 1.0.1
-    created: "2020-03-23T11:28:03.511087465+05:30"
+    created: "2020-04-06T17:11:54.224128756+05:30"
     description: A Helm chart to deploy resources which install Citrix ADC CPX in
       Istio Service Mesh as sidecar in application pod
     digest: 6c457254e395fd3daa03e8a6285ac97b20b31b2f9f7e3f1b81537dc2673c6f29
@@ -117,19 +117,19 @@ entries:
     - https://citrix.github.io/citrix-helm-charts/citrix-cpx-istio-sidecar-injector-1.0.1.tgz
     version: 1.0.1
   citrix-k8s-cpx-ingress-controller:
-  - apiVersion: v1
+  - apiVersion: v2
     appVersion: 1.7.6
-    created: "2020-03-23T11:28:03.513445134+05:30"
+    created: "2020-04-06T17:11:54.228169575+05:30"
     description: A Helm chart for Citrix ADC CPX with Citrix ingress Controller running
       as sidecar.
-    digest: d3fe375282a0b73359ae93f669895aa5bcf0df2291c38b2ccd5803e119edfb64
+    digest: 4dc7c36763b51bb397fb8a9adffb3164c793d58efdeb131c821ebfd3c3f4db20
     home: https://www.citrix.com
     icon: https://raw.githubusercontent.com/citrix/citrix-helm-charts/gh-pages/icon.png
     maintainers:
     - email: priyanka.sharma@citrix.com
-      name: Priyanka Sharma
+      name: priyankash-citrix
     - email: subash.dangol@citrix.com
-      name: Subash Dangal
+      name: subashd
     name: citrix-k8s-cpx-ingress-controller
     sources:
     - https://github.com/citrix/citrix-k8s-ingress-controller
@@ -137,22 +137,22 @@ entries:
     - https://citrix.github.io/citrix-helm-charts/citrix-k8s-cpx-ingress-controller-1.7.6.tgz
     version: 1.7.6
   citrix-k8s-ingress-controller:
-  - apiVersion: v1
+  - apiVersion: v2
     appVersion: 1.7.6
-    created: "2020-03-23T11:28:03.514419281+05:30"
+    created: "2020-04-06T17:11:54.229863408+05:30"
     description: A Helm chart for Citrix Ingress Controller configuring MPX/VPX
-    digest: 08a7c3ace2620b3d36364f9d0aec3020b00897d1146e7a75d3f481d7e0fa6c34
+    digest: 4194c50770aa56476cfcd7fffb179e30f1340efbc70ba4be3307debef26e002e
     home: https://www.citrix.com
     icon: https://raw.githubusercontent.com/citrix/citrix-helm-charts/gh-pages/icon.png
     maintainers:
     - email: priyanka.sharma@citrix.com
-      name: Priyanka Sharma
+      name: priyankash-citrix
     - email: subash.dangol@citrix.com
-      name: Subash Dangal
+      name: subashd
     name: citrix-k8s-ingress-controller
     sources:
     - https://github.com/citrix/citrix-k8s-ingress-controller
     urls:
     - https://citrix.github.io/citrix-helm-charts/citrix-k8s-ingress-controller-1.7.6.tgz
     version: 1.7.6
-generated: "2020-03-23T11:28:03.506998729+05:30"
+generated: "2020-04-06T17:11:54.217767744+05:30"
