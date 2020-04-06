@@ -28,13 +28,18 @@ nsNamespace:
 kubernetesURL:
 # ingressClass is the name of the Ingress Class
 ingressClass:
+# Default SSL certificate
 defaultSSLCert:
+# Set this argument if you want to use the IPAM controller
+ipam: False
+# Elasticsearch or Kafka or Zipkin endpoint for Citrix observability exporter
+logProxy:
 #nodeWatch is used for automatic route configuration on NetScaler towards the pod network
 nodeWatch: false
 # exporter conatins information of prometheus-exporter
 exporter:
   required: false
-  image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.0
+  image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.1
   pullPolicy: Always
   ports:
        containerPort: 8888

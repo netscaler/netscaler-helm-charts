@@ -8,7 +8,7 @@
 ```
    helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-   helm install citrix/citrix-k8s-ingress-controller --set nsIP=<NSIP>,license.accept=yes
+   helm install cic citrix/citrix-k8s-ingress-controller --set nsIP=<NSIP>,license.accept=yes,loginFileName=<Secret-for-ADC-credentials>
 ```
 
 ### For OpenShift
@@ -16,7 +16,7 @@
 ```
    helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-   helm install citrix/citrix-k8s-ingress-controller --set nsIP=<NSIP>,license.accept=yes,openshift=true
+   helm install cic citrix/citrix-k8s-ingress-controller --set nsIP=<NSIP>,license.accept=yes,loginFileName=<Secret-for-ADC-credentials>,openshift=true
 ```
 > **Important:**
 >
@@ -29,7 +29,7 @@ This Helm chart deploys Citrix ingress controller in the [Kubernetes](https://ku
 
 -  The [Kubernetes](https://kubernetes.io/) version 1.6 or later if using Kubernetes environment.
 -  The [Openshift](https://www.openshift.com) version 3.11.x or later if using OpenShift platform.
--  The [Helm](https://helm.sh/) version is 3.x.x. You can follow instruction given [here](https://github.com/citrix/citrix-helm-charts/blob/master/Helm_Installation_Kubernetes.md) to install Helm in Kubernetes environment and [here](https://github.com/citrix/citrix-helm-charts/blob/master/Helm_Installation_OpenShift.md) for OpenShift platform.
+-  The [Helm](https://helm.sh/) version 3.0.0 or later. You can follow instruction given [here](https://github.com/citrix/citrix-helm-charts/blob/master/Helm_Installation_version_3.md) to install the same.
 -  You determine the NS_IP IP address needed by the controller to communicate with Citrix ADC. The IP address might be anyone of the following depending on the type of Citrix ADC deployment:
 
    -  (Standalone appliances) NSIP - The management IP address of a standalone Citrix ADC appliance. For more information, see [IP Addressing in Citrix ADC](https://docs.citrix.com/en-us/citrix-adc/12-1/networking/ip-addressing.html).
@@ -109,7 +109,7 @@ Add the Citrix Ingress Controller helm chart repository using command:
 #### 1. Citrix Ingress Controller
 To install the chart with the release name, `my-release`, use the following command:
 ```
-    helm install citrix/citrix-k8s-ingress-controller --name my-release --set nsIP=<NSIP>,license.accept=yes,ingressClass[0]=<ingressClassName>
+    helm install my-release citrix/citrix-k8s-ingress-controller --set nsIP=<NSIP>,license.accept=yes,loginFileName=<Secret-for-ADC-credentials>,ingressClass[0]=<ingressClassName>
 ```
 
 > **Note:**
@@ -126,7 +126,7 @@ The command deploys Citrix ingress controller on Kubernetes cluster with the def
 
 Use the following command for this:
 ```
-   helm install citrix/citrix-k8s-ingress-controller --name my-release --set nsIP=<NSIP>,license.accept=yes,ingressClass[0]=<ingressClassName>,exporter.required=true
+   helm install my-release citrix/citrix-k8s-ingress-controller --set nsIP=<NSIP>,license.accept=yes,loginFileName=<Secret-for-ADC-credentials>,ingressClass[0]=<ingressClassName>,exporter.required=true
 ```
 
 ### For Openshift:
@@ -141,7 +141,7 @@ Add the service account named "cic-k8s-role" to the privileged Security Context 
 #### 1. Citrix Ingress Controller
 To install the chart with the release name, `my-release`, use the following command:
 ```
-   helm install citrix/citrix-k8s-ingress-controller --name my-release --set nsIP=<NSIP>,license.accept=yes,openshift=true
+   helm install my-release citrix/citrix-k8s-ingress-controller --set nsIP=<NSIP>,license.accept=yes,loginFileName=<Secret-for-ADC-credentials>,openshift=true
 ```
 The command deploys Citrix ingress controller on your Openshift cluster in the default configuration. The [configuration](#configuration) section lists the mandatory and optional parameters that you can configure during installation.
 
@@ -153,7 +153,7 @@ The command deploys Citrix ingress controller on your Openshift cluster in the d
 
 Use the following command for this:
 ```
-   helm install citrix/citrix-k8s-ingress-controller --name my-release --set nsIP=<NSIP>,license.accept=yes,openshift=true,exporter.required=true
+   helm install my-release citrix/citrix-k8s-ingress-controller --set nsIP=<NSIP>,license.accept=yes,loginFileName=<Secret-for-ADC-credentials>,openshift=true,exporter.required=true
 ```
 
 ### Installed components
@@ -172,7 +172,7 @@ The following table lists the mandatory and optional parameters that you can con
 | license.accept | Mandatory | no | Set `yes` to accept the CIC end user license agreement. |
 | cic.image | Mandatory | `quay.io/citrix/citrix-k8s-ingress-controller:1.5.25` | The CIC image. |
 | cic.pullPolicy | Mandatory | Always | The CIC image pull policy. |
-| loginFileName | Mandatory | nslogin | The secret key to log on to the Citrix ADC VPX or MPX. For information on how to create the secret keys, see [Prerequisites](#prerequistes). |
+| loginFileName | Mandatory | N/A | The secret key to log on to the Citrix ADC VPX or MPX. For information on how to create the secret keys, see [Prerequisites](#prerequistes). |
 | nsIP | Mandatory | N/A | The IP address of the Citrix ADC device. For details, see [Prerequisites](#prerequistes). |
 | nsVIP | Optional | N/A | The Virtual IP address on the Citrix ADC device. |
 | nsPort | Optional | 443 | The port used by CIC to communicate with Citrix ADC. You can port 80 for HTTP. |
@@ -182,6 +182,8 @@ The following table lists the mandatory and optional parameters that you can con
 | ingressClass | Optional | N/A | If multiple ingress load balancers are used to load balance different ingress resources. You can use this parameter to specify CIC to configure Citrix ADC associated with specific ingress class. For more information on Ingress class, see [Ingress class support](https://developer-docs.citrix.com/projects/citrix-k8s-ingress-controller/en/latest/configure/ingress-classes/). |
 | nodeWatch | Optional | false | Use the argument if you want to automatically configure network route from the Ingress Citrix ADC VPX or MPX to the pods in the Kubernetes cluster. For more information, see [Automatically configure route on the Citrix ADC instance](https://developer-docs.citrix.com/projects/citrix-k8s-ingress-controller/en/latest/network/staticrouting/#automatically-configure-route-on-the-citrix-adc-instance). |
 | defaultSSLCert | Optional | N/A | Default SSL certificate that needs to be used as a non-SNI certificate in Citrix ADC. |
+| ipam | Optional | False | Set this argument if you want to use the IPAM controller to automatically allocate an IP address to the service of type LoadBalancer. |
+| logProxy | Optional | N/A | Provide Elasticsearch or Kafka or Zipkin endpoint for Citrix observability exporter. |
 | nsNamespace | Optional | k8s | The prefix for the resources on the Citrix ADC VPX/MPX. |
 | exporter.required | Optional | false | Use the argument, if you want to run the [Exporter for Citrix ADC Stats](https://github.com/citrix/citrix-adc-metrics-exporter) along with CIC to pull metrics for the Citrix ADC VPX or MPX|
 | exporter.image    | Optional | `quay.io/citrix/citrix-adc-metrics-exporter:1.4.0` | The Exporter image. |
@@ -193,7 +195,7 @@ Alternatively, you can define a YAML file with the values for the parameters and
 
 For example:
 ```
-   helm install citrix/citrix-k8s-ingress-controller --name my-release --set nsIP=<NSIP>,license.accept=yes,ingressClass[0]=<ingressClassName> -f values.yaml
+   helm install my-release citrix/citrix-k8s-ingress-controller -f values.yaml
 ```
 
 > **Tip:** 
@@ -305,7 +307,7 @@ In kubernetes environment, to deploy specific layer 7 policies to handle scenari
 To uninstall/delete the ```my-release``` deployment:
 
 ```
-   helm delete --purge my-release
+   helm delete my-release
 ```
 The command removes all the Kubernetes components associated with the chart and deletes the release.
 
