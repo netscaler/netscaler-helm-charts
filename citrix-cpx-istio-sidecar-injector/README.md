@@ -117,7 +117,7 @@ For example, if COE is deployed as `coe` in `citrix-system` namespace, then belo
 ```
 helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-helm install citrix/citrix-cpx-istio-sidecar-injector --name cpx-sidecar-injector --namespace citrix-system --set cpxProxy.EULA=YES --istioAdaptor.coeURL=coe.citrix-system
+helm install citrix/citrix-cpx-istio-sidecar-injector --name cpx-sidecar-injector --namespace citrix-system --set cpxProxy.EULA=YES --set istioAdaptor.coeURL=coe.citrix-system
 ```
 
 *Important*: Apply below mentioned annotations on COE deployment so that Prometheus can scrape data from COE.
