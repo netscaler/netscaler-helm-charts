@@ -42,8 +42,6 @@ spec:
       - name: cic-k8s-ingress-controller
         image: "{{ .Values.cic.image }}"
         imagePullPolicy: {{ .Values.cic.pullPolicy }}
-        securityContext:
-           readOnlyRootFilesystem: true
         args:
 {{- if .Values.defaultSSLCert }}
           - --default-ssl-certificate
