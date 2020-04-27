@@ -36,6 +36,8 @@ ipam: False
 logProxy:
 #nodeWatch is used for automatic route configuration on NetScaler towards the pod network
 nodeWatch: false
+# Set to ON to enables HTTP2 for Citrix ADC service group configurations
+http2ServerSide: OFF
 # exporter conatins information of prometheus-exporter
 exporter:
   required: false
