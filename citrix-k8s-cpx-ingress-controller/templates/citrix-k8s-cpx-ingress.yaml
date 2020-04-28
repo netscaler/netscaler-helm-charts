@@ -53,10 +53,6 @@ spec:
             value: "{{ .Values.license.accept }}"
           - name: "NS_IP"
             value: "127.0.0.1"
-          - name: "NS_PROTOCOL"
-            value: "HTTP"
-          - name: "NS_PORT"
-            value: "80"
           - name: "NS_APPS_NAME_PREFIX"
             value: {{ .Values.nsNamespace | default "k8s"}}
           - name: "NS_DEPLOYMENT_MODE"
@@ -82,6 +78,8 @@ spec:
             value: "{{ .Values.kubernetesURL }}"
 {{- end }}
           args:
+            - --configmap
+              {{ .Release.Namespace }}/cic-configmap
 {{- if .Values.ingressClass }}
             - --ingress-class
 {{- range .Values.ingressClass}}

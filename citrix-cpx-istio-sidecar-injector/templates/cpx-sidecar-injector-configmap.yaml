@@ -98,6 +98,10 @@ data:
           value: ""
         - name: "NS_CPX_LITE"
           value: 1
+{{- if or .Values.istioAdaptor.coeURL .Values.istioAdaptor.ADMIP }}
+        - name: "NS_ENABLE_NEWNSLOG"
+          value: 1
+{{- end }}
         - name: "LS_IP"
           value: {{ .Values.istioAdaptor.ADMIP | default "" }}
         - name: "LS_PORT"
@@ -114,6 +118,9 @@ data:
 {{- end }}
         - name: "LOGSTREAM_COLLECTOR_IP"
           value: {{ .Values.istioAdaptor.ADMIP | default "" }}
+        volumeMounts:
+        - mountPath: /cpx/conf/
+          name: cpx-conf
       volumes:
       - name: nslogin
         secret:
@@ -122,5 +129,11 @@ data:
       - name: istio-certs
         secret:
           optional: true
+          {{ "[[ if eq .Spec.ServiceAccountName \"\" -]]" }}
           secretName: istio.default
+          {{ "[[ else -]]" }}
+          secretName: {{ "[[ printf \"istio.%s\" .Spec.ServiceAccountName ]]"  }}
+          {{ "[[ end -]]" }}
+      - name: cpx-conf
+        emptyDir: {}
 ---

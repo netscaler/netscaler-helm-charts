@@ -26,10 +26,14 @@ license:
   accept: no
 # ingressClass is the  name of the Ingress Class
 ingressClass:
+# logLevel is to set level of CIC Logs
+logLevel: DEBUG
 # Default SSL certificate
 defaultSSLCert:
 # Elasticsearch or Kafka or Zipkin endpoint for Citrix observability exporter
 logProxy:
+# Set to ON to enables HTTP2 for Citrix ADC service group configurations
+http2ServerSide: OFF
 # exporter conatins information of prometheus-exporter
 exporter:
   required: false
