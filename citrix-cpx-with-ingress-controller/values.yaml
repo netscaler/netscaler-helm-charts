@@ -1,4 +1,4 @@
-# Default values for citrix-k8s-cpx-ingress-controller.
+# Default values for citrix-cpx-with-ingress-controller.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 

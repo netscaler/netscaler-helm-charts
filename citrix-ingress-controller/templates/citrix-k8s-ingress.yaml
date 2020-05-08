@@ -47,7 +47,7 @@ spec:
             {{ .Release.Namespace }}/cic-configmap
 {{- if .Values.defaultSSLCert }}
           - --default-ssl-certificate
-            {{ .Values.defaultSSLCert }}
+            {{ .Release.Namespace }}/{{ .Values.defaultSSLCert }}
 {{- end }}
 {{- if .Values.ingressClass }}
           - --ingress-class
