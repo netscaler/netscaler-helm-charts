@@ -173,23 +173,3 @@ cnc:
 
   serviceAccount:
     create: true
-
-coe:
-  enabled: False
-  image: "quay.io/citrix/citrix-observability-exporter:1.1.001"
-  pullPolicy: Always
-  replicas: 1
-  license:
-    accept: no 
-  ns_tracing:
-    enabled: false
-    server: "zipkin:9411/api/v1/spans" 
-  elasticsearch:
-    enabled: false
-    server:
-  kafka:
-    enabled: false
-    broker:
-    topic:
-  timeseries:
-    enabled: false

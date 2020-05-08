@@ -11,9 +11,6 @@ cpx:
 cnc:
   enabled: False
 
-coe:
-  enabled: False
-
 ia-ingress:
   enabled: False
 
