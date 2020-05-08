@@ -1,0 +1,84 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: coe-config
+data:
+  lstreamd_default.conf: |
+    {
+{{- if .Values.kafka.enabled }}
+        "RecordType": {
+            "HTTP": "all",
+            "TCP": "all",
+            "SWG": "all",
+            "VPN": "all",
+            "NGS": "all",
+            "ICA": "all",
+            "APPFW": "none",
+            "BOT": "none",
+            "VIDEOOPT": "none",
+            "BURST_CQA": "none",
+            "SLA": "none"
+        },
+{{- if .Values.ns_tracing.enabled }}
+        "EnableTracing": "yes",
+        "TracingServer": {{ .Values.ns_tracing.server  | default "zipkin:9411/api/v1/spans" | quote }},
+{{- end}}
+        "ProcessAlways": "yes",
+        "ProcessorMode": "avro",
+        "FileSizeMax": "40",
+        "SkipAvro": "no",
+        "EnableKafka": "yes",
+        "KafkaBroker": {{ .Values.kafka.broker | quote }},
+        "KafkaTopic": {{ .Values.kafka.topic  | default "HTTP" | quote }},
+        "ProcessYieldTimeOut": "500",
+        "FileStorageLimit": "1000"
+{{- else if .Values.elasticsearch.enabled }}
+       "RecordType": {
+            "HTTP": "all",
+            "TCP": "all",
+            "SWG": "all",
+            "VPN": "all",
+            "NGS": "all",
+            "ICA": "all",
+            "APPFW": "all",
+            "BOT": "none",
+            "VIDEOOPT": "none",
+            "BURST_CQA": "none",
+            "SLA": "none"
+        },
+{{- if .Values.ns_tracing.enabled }}
+       "EnableTracing": "yes",
+       "TracingServer": {{ .Values.ns_tracing.server | default "zipkin:9411/api/v1/spans" | quote }},
+{{- end}}
+       "ProcessAlways": "no",
+       "ProcessorMode": "json",
+       "ElkServer": {{ .Values.elasticsearch.server | default "elasticsearch:9200" | quote }},
+       "ElkMaxConnections": "512",
+       "ElkMaxSendBuffersPerSec": "128",
+       "ElkBufferingLimit": "1024*1024",
+       "ELKFileDump": "no",
+       "ProcessYieldTimeOut": "500"
+{{- else if .Values.ns_tracing.enabled }}
+        "RecordType": {
+            "HTTP": "all",
+            "TCP": "all",
+            "SWG": "all",
+            "VPN": "none",
+            "NGS": "none",
+            "ICA": "none",
+            "APPFW": "none",
+            "BOT": "none",
+            "VIDEOOPT": "none",
+            "BURST_CQA": "none",
+            "SLA": "none"
+        },
+        "EnableTracing": "yes",
+        "TracingServer": {{ .Values.ns_tracing.server | default "zipkin:9411/api/v1/spans" | quote }},
+        "ProcessAlways": "yes",
+        "ProcessorMode": "avro",
+        "SkipAvro": "yes",
+        "FileSizeMax": "40",
+        "ProcessYieldTimeOut": "500",
+        "FileStorageLimit": "1000"
+{{- end}}
+    }

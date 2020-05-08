@@ -1,0 +1,36 @@
+# YAML file for NS Logproxy service
+apiVersion: v1
+kind: Service
+metadata:
+  name: coe
+  labels:
+    app: coe
+spec:
+  clusterIP: None
+  ports:
+    - port: 5557
+      protocol: TCP
+{{- if .Values.timeseries.enabled }}
+    - port: 5563
+      protocol: TCP  
+{{- end}}
+  selector:
+      app: coe
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: coe-nodeport
+  labels:
+    app: coe
+spec:
+  type: NodePort
+  ports:
+    - port: 5557
+      protocol: TCP
+{{- if .Values.timeseries.enabled }}
+    - port: 5563
+      protocol: TCP
+{{- end}}
+  selector: 
+      app: coe

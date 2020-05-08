@@ -17,7 +17,7 @@ Citrix ADC CPX can be deployed as a sidecar proxy in an application pod in the I
 
     helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-    helm install cpx-sidecar-injector citrix/citrix-cpx-istio-sidecar-injector --namespace citrix-system --set cpxProxy.EULA=YES
+    helm install cpx-sidecar-injector citrix/citrix-cloud-native --namespace citrix-system --set ia-sidecar.enabled=true --set ia-sidecar.cpxProxy.EULA=YES
 
 ## <a name="introduction">Introduction</a>
 
@@ -60,7 +60,7 @@ To deploy resources for automatic installation of Citrix ADC CPX as a sidecar in
 
     helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-    helm install cpx-sidecar-injector citrix/citrix-cpx-istio-sidecar-injector --namespace citrix-system --set cpxProxy.EULA=YES
+    helm install cpx-sidecar-injector citrix/citrix-cloud-native --namespace citrix-system --set ia-sidecar.enabled=true,ia-sidecar.cpxProxy.EULA=YES
 
 This step installs a mutating webhook and a service resource to application pods in the namespace labeled as `cpx-injection=enabled`.
 
@@ -88,7 +88,7 @@ Zipkin enables users to analyze tracing for East-West service to service communi
 ```
 helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-helm install cpx-sidecar-injector citrix/citrix-cpx-istio-sidecar-injector --namespace citrix-system --set cpxProxy.EULA=YES,istioAdaptor.coeURL=<coe-service-name>.<namespace>
+helm install cpx-sidecar-injector citrix/citrix-cloud-native --namespace citrix-system --set ia-sidecar.enabled=true,ia-sidecar.cpxProxy.EULA=YES,ia-sidecar.istioAdaptor.coeURL=<coe-service-name>.<namespace>
 ```
 
 For example, if COE is deployed as `coe` in `citrix-system` namespace, then below helm command will deploy sidecar injector webhook which will be deploying Citrix ADC CPX sidecar proxies in application pods, and these sidecar proxies will be configured to establish communication channels with COE.
@@ -96,7 +96,7 @@ For example, if COE is deployed as `coe` in `citrix-system` namespace, then belo
 ```
 helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-helm install cpx-sidecar-injector citrix/citrix-cpx-istio-sidecar-injector --namespace citrix-system --set cpxProxy.EULA=YES,istioAdaptor.coeURL=coe.citrix-system
+helm install cpx-sidecar-injector citrix/citrix-cloud-native --namespace citrix-system --set ia-sidecar.enabled=true,ia-sidecar.cpxProxy.EULA=YES,ia-sidecar.istioAdaptor.coeURL=coe.citrix-system
 ```
 
 *Important*: Apply below mentioned annotations on COE deployment so that Prometheus can scrape data from COE.
@@ -132,29 +132,30 @@ The following table lists the configurable parameters and their default values i
 
 | Parameter                      | Description                   | Default                   |
 |--------------------------------|-------------------------------|---------------------------|
-| `istioAdaptor.image`                    | Image of the Citrix Istio Adaptor container                    |  quay.io/citrix/citrix-istio-adaptor   |
-| `istioAdaptor.tag`             | Tag of the Istio-adaptor image       | 1.2.0                |
-| `istioAdaptor.imagePullPolicy`   | Image pull policy for Istio-adaptor | IfNotPresent        |
-| `istioAdaptor.secureConnect`     | If this value is set to true, Istio-adaptor establishes secure gRPC channel with Istio Pilot   | TRUE                       |
-| `istioAdaptor.ADMIP`     | Provide the Citrix Application Delivery Management (ADM) IP address | NIL                       |
-| `istioAdaptor.ADMFingerPrint`          | Citrix Applicatin Delivery Management (ADM) FingerPrint. For more information, see [this](https://docs.citrix.com/en-us/citrix-application-delivery-management-service/application-analytics-and-management/service-graph.html)  | NIL           
-| `istioAdaptor.coeURL`          | Name of [Citrix Observability Exporter](https://github.com/citrix/citrix-observability-exporter) Service in the form of _servicename.namespace_  | NIL            | Optional|
-| `istioPilot.name`                 | Name of the Istio Pilot service     | istio-pilot                                                           |
-| `istioPilot.namespace`     | Namespace where Istio Pilot is running       | istio-system                                                          |
-| `istioPilot.secureGrpcPort`       | Secure GRPC port where Istio Pilot is listening (Default setting)                                                                  | 15011                                                                 |
-| `istioPilot.insecureGrpcPort`      | Insecure GRPC port where Istio Pilot is listening                                                                                  | 15010                                                                 |
-| `istioPilot.proxyType`      | Type of Citrix ADC associated with the Istio-adaptor. Possible values are: sidecar and router.                                                                              |   sidecar|
-| `istioPilot.netscalerUrl`   |    URL or IP address of the Citrix ADC which will be configured by Istio-adaptor.                                                            | http://127.0.0.1 |
-| `istioPilot.SAN`                 | Subject alternative name for Istio Pilot which is the Secure Production Identity Framework For Everyone (SPIFFE) ID of Istio Pilot.                                   | spiffe://cluster.local/ns/istio-system/sa/istio-pilot-service-account |
-| `cpxProxy.image`          | Citrix ADC CPX image used as sidecar proxy                                                                                                    | quay.io/citrix/citrix-k8s-cpx-ingress |  
-| `cpxProxy.tag`             | Version of the Citrix ADC CPX                                                                                   |13.0-47.22                            |
-| `cpxProxy.imagePullPolicy`           | Image pull policy for Citrix ADC                                                                                  | IfNotPresent                                                               |
-| `cpxProxy.EULA`              |  End User License Agreement(EULA) terms and conditions. If yes, then user agrees to EULA terms and conditions.                                                     | Yes                                                               |
-| `cpxProxy.cpxSidecarMode`            | Environment variable for Citrix ADC CPX. It indicates that Citrix ADC CPX is running as sidecar mode or not.                                                                                               | NO                                                                    |
-| `cpxProxy.licenseServerPort`   | Citrix ADM port if a non-default port is used                                                                                      | 27000                                                          |
-| `sidecarWebHook.webhookImage`   | Mutating webhook associated with the sidecar injector. It invokes a service `cpx-sidecar-injector` to inject sidecar proxies in the application pod.                                                                                      | gcr.io/istio-release/sidecar_injector|
-| `sidecarWebHook.webhookImageVersion`   | Image version                                                                         |1.0.0|
-| `sidecarWebHook.imagePullPolicy`   | Image pull policy                                                                          |IfNotPresent|
-| `webhook.injectionLabelName` |  Label of namespace where automatic Citrix ADC CPX sidecar injection is required. | cpx-injection |
+| `ia-sidecar.enabled` | Mandatory | False | Set to "True" for deploying Citrix ADC CPX as a sidecar in Istio environment. |
+| `ia-sidecar.istioAdaptor.image`                    | Image of the Citrix Istio Adaptor container                    |  quay.io/citrix/citrix-istio-adaptor   |
+| `ia-sidecar.istioAdaptor.tag`             | Tag of the Istio-adaptor image       | 1.2.0                |
+| `ia-sidecar.istioAdaptor.imagePullPolicy`   | Image pull policy for Istio-adaptor | IfNotPresent        |
+| `ia-sidecar.istioAdaptor.secureConnect`     | If this value is set to true, Istio-adaptor establishes secure gRPC channel with Istio Pilot   | TRUE                       |
+| `ia-sidecar.istioAdaptor.ADMIP`     | Provide the Citrix Application Delivery Management (ADM) IP address | NIL                       |
+| `ia-sidecar.istioAdaptor.ADMFingerPrint`          | Citrix Applicatin Delivery Management (ADM) FingerPrint. For more information, see [this](https://docs.citrix.com/en-us/citrix-application-delivery-management-service/application-analytics-and-management/service-graph.html)  | NIL           
+| `ia-sidecar.istioAdaptor.coeURL`          | Name of [Citrix Observability Exporter](https://github.com/citrix/citrix-observability-exporter) Service in the form of _servicename.namespace_  | NIL            | Optional|
+| `ia-sidecar.istioPilot.name`                 | Name of the Istio Pilot service     | istio-pilot                                                           |
+| `ia-sidecar.istioPilot.namespace`     | Namespace where Istio Pilot is running       | istio-system                                                          |
+| `ia-sidecar.istioPilot.secureGrpcPort`       | Secure GRPC port where Istio Pilot is listening (Default setting)                                                                  | 15011                                                                 |
+| `ia-sidecar.istioPilot.insecureGrpcPort`      | Insecure GRPC port where Istio Pilot is listening                                                                                  | 15010                                                                 |
+| `ia-sidecar.istioPilot.proxyType`      | Type of Citrix ADC associated with the Istio-adaptor. Possible values are: sidecar and router.                                                                              |   sidecar|
+| `ia-sidecar.istioPilot.netscalerUrl`   |    URL or IP address of the Citrix ADC which will be configured by Istio-adaptor.                                                            | http://127.0.0.1 |
+| `ia-sidecar.istioPilot.SAN`                 | Subject alternative name for Istio Pilot which is the Secure Production Identity Framework For Everyone (SPIFFE) ID of Istio Pilot.                                   | spiffe://cluster.local/ns/istio-system/sa/istio-pilot-service-account |
+| `ia-sidecar.cpxProxy.image`          | Citrix ADC CPX image used as sidecar proxy                                                                                                    | quay.io/citrix/citrix-k8s-cpx-ingress |  
+| `ia-sidecar.cpxProxy.tag`             | Version of the Citrix ADC CPX                                                                                   |13.0-47.22                            |
+| `ia-sidecar.cpxProxy.imagePullPolicy`           | Image pull policy for Citrix ADC                                                                                  | IfNotPresent                                                               |
+| `ia-sidecar.cpxProxy.EULA`              |  End User License Agreement(EULA) terms and conditions. If yes, then user agrees to EULA terms and conditions.                                                     | Yes                                                               |
+| `ia-sidecar.cpxProxy.cpxSidecarMode`            | Environment variable for Citrix ADC CPX. It indicates that Citrix ADC CPX is running as sidecar mode or not.                                                                                               | NO                                                                    |
+| `ia-sidecar.cpxProxy.licenseServerPort`   | Citrix ADM port if a non-default port is used                                                                                      | 27000                                                          |
+| `ia-sidecar.sidecarWebHook.webhookImage`   | Mutating webhook associated with the sidecar injector. It invokes a service `cpx-sidecar-injector` to inject sidecar proxies in the application pod.                                                                                      | gcr.io/istio-release/sidecar_injector|
+| `ia-sidecar.sidecarWebHook.webhookImageVersion`   | Image version                                                                         |1.0.0|
+| `ia-sidecar.sidecarWebHook.imagePullPolicy`   | Image pull policy                                                                          |IfNotPresent|
+| `ia-sidecar.webhook.injectionLabelName` |  Label of namespace where automatic Citrix ADC CPX sidecar injection is required. | cpx-injection |
 
 **Note:** You can use the `values.yaml` file packaged in the chart. This file contains the default configuration values for the chart.
