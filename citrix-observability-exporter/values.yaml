@@ -1,0 +1,22 @@
+# Default values for citrix-logproxy
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+image: "quay.io/citrix/citrix-observability-exporter:1.1.001"
+pullPolicy: Always
+replicas: 1
+# license is used accept the terms of the Citrix license
+license:
+  accept: no 
+ns_tracing:
+  enabled: false
+  server: "zipkin:9411/api/v1/spans" 
+elasticsearch:
+  enabled: false
+  server:
+kafka:
+  enabled: false
+  broker:
+  topic:
+timeseries:
+  enabled: false
