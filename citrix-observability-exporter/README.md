@@ -3,16 +3,16 @@
 Citrix Observability Exporter is a container which collects metrics and transactions from Citrix ADCs and transforms them to suitable formats (such as JSON, AVRO) for supported endpoints like Elasticsearch, Kafka, Tracer, Prometheus. You can export the data collected by Citrix Observability Exporter to the desired endpoint. By analyzing the data exported to the endpoint, you can get valuable insights at a microservices level for applications proxied by Citrix ADCs.
 
 ### TL; DR; 
-```
+   ```
    helm repo add citrix https://citrix.github.io/citrix-helm-charts/
    
    For Kafka as endpoint with timeseries enabled:
-   helm install citrix/citrix-observability-exporter --set kafka.enabled=true --set kafka.broker="X.X.X.X\,Y.Y.Y.Y" --set kafka.topic=HTTP --set timeseries.enabled=true
+   helm install coe citrix/citrix-observability-exporter --set kafka.enabled=true --set kafka.broker="X.X.X.X\,Y.Y.Y.Y" --set kafka.topic=HTTP --set timeseries.enabled=true
 
    For Elasticsearch as endpoint and Tracing enabled:
-   helm install citrix/citrix-observability-exporter --set elasticsearch.enabled=true --set elasticsearch.server=elasticsearch.9200 --set ns_tracing.enabled=true
+   helm install coe citrix/citrix-observability-exporter --set elasticsearch.enabled=true --set elasticsearch.server=elasticsearch.9200 --set ns_tracing.enabled=true
 
-```
+   ```
 
 ## Introduction
 This Helm chart deploys Citrix Observability Exporter in the [Kubernetes](https://kubernetes.io) cluster using [Helm](https://helm.sh) package manager.
@@ -20,7 +20,7 @@ This Helm chart deploys Citrix Observability Exporter in the [Kubernetes](https:
 ### Prerequisites
 
 -  The [Kubernetes](https://kubernetes.io/) version 1.6 or later if using Kubernetes environment.
--  The [Helm](https://helm.sh/) version is 3.x.x. You can follow instruction given [here](https://github.com/citrix/citrix-helm-charts/blob/master/Helm_Installation_Kubernetes.md) to install Helm in Kubernetes environment.
+-  The [Helm](https://helm.sh/) version is 3.x or later. You can follow instruction given [here](https://github.com/citrix/citrix-helm-charts/blob/master/Helm_Installation_version_3.md) to install Helm in Kubernetes environment.
 
    - To enable Tracing, set ns_tracing.enabled to true and ns_tracing.server to the tracer endpoint like `zipkin.default.cluster.svc.local:9411/api/v1/spans`. Default value for Zipkin server is `zipkin:9411/api/v1/spans`. 
 
@@ -33,16 +33,16 @@ This Helm chart deploys Citrix Observability Exporter in the [Kubernetes](https:
 ## Installing the Chart
 Add the Citrix Observability Exporter helm chart repository using command:
 
-```
+   ```
    helm repo add citrix https://citrix.github.io/citrix-helm-charts/
-```
+   ```
 
 ### For Kubernetes:
 #### 1. Citrix Ingress Controller
 To install the chart with the release name, `my-release`, use the following command, after setting the required endpoint in values.yaml:
-```
-    helm install citrix/citrix-observability-exporter --name my-release
-```
+   ```
+   helm install my-release citrix/citrix-observability-exporter
+   ```
 
 ### Configuration
 
@@ -66,14 +66,14 @@ Alternatively, you can define a YAML file with the values for the parameters and
 
 For example:
 ```
-   helm install citrix/citrix-k8s-ingress-controller --name my-release --set timeseries.enabled=true,elasticsearch.enabled=true,elasticsearch.server=`elasticsearch:9200` -f values.yaml
+   helm install my-release citrix/citrix-observability-exporter -f values.yaml
 ```
 
 ## Uninstalling the Chart
 To uninstall/delete the ```my-release``` deployment:
 
 ```
-   helm delete --purge my-release
+   helm delete my-release
 ```
 The command removes all the Kubernetes components associated with the chart and deletes the release.
 

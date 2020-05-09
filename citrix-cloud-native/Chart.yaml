@@ -1,0 +1,35 @@
+apiVersion: v2
+appVersion: "1.0.0"
+description: A Helm chart for deploying all Citrix Cloud Native products 
+name: citrix-cloud-native
+version: 1.0.0
+icon: https://raw.githubusercontent.com/citrix/citrix-helm-charts/gh-pages/icon.png
+home: https://www.citrix.com
+sources:
+- https://github.com/citrix/
+maintainers:
+- name: priyankash-citrix
+  email: priyanka.sharma@citrix.com
+- name: subashd
+  email: subash.dangol@citrix.com
+dependencies:
+  - name: citrix-ingress-controller
+    version: "1.7.46"
+    condition: cic.enabled
+    alias: cic
+  - name: citrix-cpx-with-ingress-controller
+    version: "1.7.46"
+    condition: cpx.enabled
+    alias: cpx
+  - name: citrix-node-controller
+    version: "2.0.0"
+    condition: cnc.enabled
+    alias: cnc
+  - name: citrix-adc-istio-ingress-gateway
+    version: "1.2.0"
+    condition: ia-ingress.enabled
+    alias: ia-ingress
+  - name: citrix-cpx-istio-sidecar-injector
+    version: "1.2.0"
+    condition: ia-sidecar.enabled
+    alias: ia-sidecar
