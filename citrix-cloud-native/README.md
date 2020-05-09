@@ -13,8 +13,13 @@ This helm chart can be used to:
 Depending on the architecture, it is sometimes needed to deploy multiple products in Citrix portfolio together. This can be achieved by setting required parameters for all products together while installing those products using this helm chart.
 For example, both Citrix Ingress Controller and Citrix ADC CPX with Citrix Ingress Controller as side car can be deployed using single helm install command as:
 
+  Add the Helm Chart Repo:
   ```
-  helm install cic citrix/citrix-cloud-native --set cic.enabled=true,cic.nsIP=<NSIP of Citrix VPX/MPX>,cic.license.accept=yes,cpx.enabled=true,cpx.license.accept=yes
+  helm repo add citrix https://citrix.github.io/citrix-helm-charts/
+  ```
+  Install:
+  ```
+  helm install cnn citrix/citrix-cloud-native --set cic.enabled=true,cic.nsIP=<NSIP of Citrix VPX/MPX>,cic.loginFileName=<Secret-for-ADC-credentials>,cic.license.accept=yes,cpx.enabled=true,cpx.license.accept=yes,cpx.crds.install=false
   ```
 
 For upgrading any existing deployment via this helm chart all the parameters that configures the desired state of system needs to be provided in the helm upgrade command.
