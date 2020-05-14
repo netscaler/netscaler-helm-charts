@@ -245,7 +245,7 @@ The following table lists the mandatory and optional parameters that you can con
 | cic.logProxy | Optional | N/A | Provide Elasticsearch or Kafka or Zipkin endpoint for Citrix observability exporter. |
 | cic.nsNamespace | Optional | k8s | The prefix for the resources on the Citrix ADC VPX/MPX. |
 | cic.exporter.required | Optional | false | Use the argument, if you want to run the [Exporter for Citrix ADC Stats](https://github.com/citrix/citrix-adc-metrics-exporter) along with CIC to pull metrics for the Citrix ADC VPX or MPX|
-| cic.exporter.image    | Optional | `quay.io/citrix/citrix-adc-metrics-exporter:1.4.2` | The Exporter image. |
+| cic.exporter.image    | Optional | `quay.io/citrix/citrix-adc-metrics-exporter:1.4.3` | The Exporter image. |
 | cic.exporter.pullPolicy | Optional | Always | The Exporter image pull policy. |
 | cic.exporter.ports.containerPort | Optional | 8888 | The Exporter container port. |
 | cic.openshift | Optional | false | Set this argument if OpenShift environment is being used. |

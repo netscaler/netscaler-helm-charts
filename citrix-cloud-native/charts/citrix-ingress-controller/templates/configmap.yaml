@@ -5,8 +5,8 @@ metadata:
   labels:
     app: citrix-ingress-controller
 data:
-  LOGLEVEL: {{ .Values.logLevel | quote }}
-  NS_PROTOCOL: {{ .Values.nsProtocol | quote }}
+  LOGLEVEL: {{ .Values.logLevel | quote | lower }}
+  NS_PROTOCOL: {{ .Values.nsProtocol | quote | lower }}
   NS_PORT: {{ .Values.nsPort | quote }}
-  NS_HTTP2_SERVER_SIDE: {{ .Values.http2ServerSide | quote }}
+  NS_HTTP2_SERVER_SIDE: {{ .Values.http2ServerSide | quote | upper }}
 

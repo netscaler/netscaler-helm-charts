@@ -177,7 +177,7 @@ The following table lists the configurable parameters of the Citrix ADC CPX with
 | cpx.logProxy | Optional | N/A | Provide Elasticsearch or Kafka or Zipkin endpoint for Citrix observability exporter. |
 | cpx.nsNamespace | Optional | k8s | The prefix for the resources on the Citrix ADC CPX. |
 | cpx.exporter.required | Optional | false | Use the argument if you want to run the [Exporter for Citrix ADC Stats](https://github.com/citrix/citrix-adc-metrics-exporter) along with Citrix ingress controller to pull metrics for the Citrix ADC CPX|
-| cpx.exporter.image | Optional | `quay.io/citrix/citrix-adc-metrics-exporter:1.4.2` | The Exporter for Citrix ADC Stats image. |
+| cpx.exporter.image | Optional | `quay.io/citrix/citrix-adc-metrics-exporter:1.4.3` | The Exporter for Citrix ADC Stats image. |
 | cpx.exporter.pullPolicy | Optional | Always | The Exporter for Citrix ADC Stats image pull policy. |
 | cpx.exporter.ports.containerPort | Optional | 8888 | The Exporter for Citrix ADC Stats container port. |
 | cpx.ingressClass | Optional | N/A | If multiple ingress load balancers are used to load balance different ingress resources. You can use this parameter to specify Citrix ingress controller to configure Citrix ADC associated with specific ingress class.|
