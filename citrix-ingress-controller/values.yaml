@@ -36,11 +36,11 @@ logProxy:
 #nodeWatch is used for automatic route configuration on NetScaler towards the pod network
 nodeWatch: false
 # Set to ON to enables HTTP2 for Citrix ADC service group configurations
-http2ServerSide: OFF
+http2ServerSide: "OFF"
 # exporter conatins information of prometheus-exporter
 exporter:
   required: false
-  image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.2
+  image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.3
   pullPolicy: Always
   ports:
        containerPort: 8888

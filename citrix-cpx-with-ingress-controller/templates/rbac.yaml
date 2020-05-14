@@ -5,9 +5,9 @@ metadata:
 rules:
   - apiGroups: [""]
 {{- if .Values.openshift }}
-    resources: ["endpoints", "ingresses", "pods", "secrets", "routes", "routes/status", "tokenreviews", "subjectaccessreviews", "nodes", "namespaces"]
+    resources: ["endpoints", "ingresses", "pods", "secrets", "routes", "tokenreviews", "subjectaccessreviews", "nodes", "namespaces",  "configmaps"]
 {{- else }}
-    resources: ["endpoints", "ingresses", "pods", "secrets", "routes", "routes/status", "nodes", "namespaces"]
+    resources: ["endpoints", "ingresses", "pods", "secrets", "routes", "nodes", "namespaces", "configmaps"]
 {{- end}}
     verbs: ["get", "list", "watch"]
   # services/status is needed to update the loadbalancer IP in service status for integrating
@@ -18,6 +18,9 @@ rules:
   - apiGroups: [""]
     resources: ["services"]
     verbs: ["get", "list", "watch", "patch"]
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["create"]
   - apiGroups: ["extensions"]
     resources: ["ingresses", "ingresses/status"]
     verbs: ["get", "list", "watch"]
