@@ -10,9 +10,11 @@ spec:
   ports:
     - port: 5557
       protocol: TCP
+      name: lstreamd
 {{- if .Values.timeseries.enabled }}
     - port: 5563
-      protocol: TCP  
+      protocol: TCP 
+      name: rest 
 {{- end}}
   selector:
       app: coe
@@ -28,9 +30,11 @@ spec:
   ports:
     - port: 5557
       protocol: TCP
+      name: lstreamd
 {{- if .Values.timeseries.enabled }}
     - port: 5563
       protocol: TCP
+      name: rest
 {{- end}}
   selector: 
       app: coe
