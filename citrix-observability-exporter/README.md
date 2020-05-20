@@ -3,16 +3,16 @@
 Citrix Observability Exporter is a container which collects metrics and transactions from Citrix ADCs and transforms them to suitable formats (such as JSON, AVRO) for supported endpoints like Elasticsearch, Kafka, Tracer, Prometheus. You can export the data collected by Citrix Observability Exporter to the desired endpoint. By analyzing the data exported to the endpoint, you can get valuable insights at a microservices level for applications proxied by Citrix ADCs.
 
 ### TL; DR; 
-   ```
+```
    helm repo add citrix https://citrix.github.io/citrix-helm-charts/
    
    For Kafka as endpoint with timeseries enabled:
    helm install coe citrix/citrix-observability-exporter --set kafka.enabled=true --set kafka.broker="X.X.X.X\,Y.Y.Y.Y" --set kafka.topic=HTTP --set timeseries.enabled=true
 
    For Elasticsearch as endpoint and Tracing enabled:
-   helm install coe citrix/citrix-observability-exporter --set elasticsearch.enabled=true --set elasticsearch.server=elasticsearch.9200 --set ns_tracing.enabled=true
+   helm install coe citrix/citrix-observability-exporter --set elasticsearch.enabled=true --set elasticsearch.server=elasticsearch:9200 --set ns_tracing.enabled=true
 
-   ```
+```
 
 ## Introduction
 This Helm chart deploys Citrix Observability Exporter in the [Kubernetes](https://kubernetes.io) cluster using [Helm](https://helm.sh) package manager.
@@ -33,16 +33,16 @@ This Helm chart deploys Citrix Observability Exporter in the [Kubernetes](https:
 ## Installing the Chart
 Add the Citrix Observability Exporter helm chart repository using command:
 
-   ```
+```
    helm repo add citrix https://citrix.github.io/citrix-helm-charts/
-   ```
+```
 
 ### For Kubernetes:
 #### 1. Citrix Ingress Controller
 To install the chart with the release name, `my-release`, use the following command, after setting the required endpoint in values.yaml:
-   ```
-   helm install my-release citrix/citrix-observability-exporter
-   ```
+```
+    helm install my-release citrix/citrix-observability-exporter
+```
 
 ### Configuration
 
