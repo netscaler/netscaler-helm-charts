@@ -66,7 +66,7 @@ Alternatively, you can define a YAML file with the values for the parameters and
 
 For example:
 ```
-   helm install my-release citrix/citrix-k8s-ingress-controller --set timeseries.enabled=true,elasticsearch.enabled=true,elasticsearch.server=`elasticsearch:9200` -f values.yaml
+   helm install my-release citrix/citrix-observability-exporter --set timeseries.enabled=true,elasticsearch.enabled=true,elasticsearch.server=`elasticsearch:9200` -f values.yaml
 ```
 
 ## Uninstalling the Chart
