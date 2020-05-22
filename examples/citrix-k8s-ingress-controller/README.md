@@ -72,7 +72,7 @@ The following table lists the mandatory and optional parameters that you can con
 | Parameters | Mandatory or Optional | Default value | Description |
 | --------- | --------------------- | ------------- | ----------- |
 | license.accept | Mandatory | no | Set `yes` to accept the CIC end user license agreement. |
-| cic.image | Mandatory | `quay.io/citrix/citrix-k8s-ingress-controller:1.7.6` | The CIC image. |
+| cic.image | Mandatory | `quay.io/citrix/citrix-k8s-ingress-controller:1.8.19` | The CIC image. |
 | cic.pullPolicy | Mandatory | Always | The CIC image pull policy. |
 | loginFileName | Mandatory | nslogin | The secret key to log on to the Citrix ADC VPX or MPX. For information on how to create the secret keys, see [Prerequisites](#prerequistes). |
 | nsIP | Mandatory | N/A | The IP address of the Citrix ADC device. For details, see [Prerequisites](#prerequistes). |
@@ -86,7 +86,7 @@ The following table lists the mandatory and optional parameters that you can con
 | defaultSSLCert | Optional | N/A | Default SSL certificate that needs to be used as a non-SNI certificate in Citrix ADC. |
 | nsNamespace | Optional | k8s | The prefix for the resources on the Citrix ADC VPX/MPX. |
 | exporter.required | Optional | false | Use the argument, if you want to run the [Exporter for Citrix ADC Stats](https://github.com/citrix/citrix-adc-metrics-exporter) along with CIC to pull metrics for the Citrix ADC VPX or MPX|
-| exporter.image    | Optional | `quay.io/citrix/citrix-adc-metrics-exporter:1.4.0` | The Exporter image. |
+| exporter.image    | Optional | `quay.io/citrix/citrix-adc-metrics-exporter:1.4.3` | The Exporter image. |
 | exporter.pullPolicy | Optional | Always | The Exporter image pull policy. |
 | exporter.ports.containerPort | Optional | 8888 | The Exporter container port. |
 | openshift | Optional | false | Set this argument if OpenShift environment is being used. |

@@ -8,7 +8,7 @@ cpx:
   pullPolicy: Always
 # cicimage contains information needed to fetch CIC image
 cic:
-  image: quay.io/citrix/citrix-k8s-ingress-controller:1.7.6
+  image: quay.io/citrix/citrix-k8s-ingress-controller:1.8.19
   pullPolicy: Always
   required: true
 # openshift is set to true if charts are being deployed in OpenShift environment.
@@ -30,7 +30,7 @@ defaultSSLCert:
 # exporter conatins information of prometheus-exporter
 exporter:
   required: false
-  image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.0
+  image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.3
   pullPolicy: Always
   ports:
     containerPort: 8888

@@ -14,11 +14,11 @@ maintainers:
   email: subash.dangol@citrix.com
 dependencies:
   - name: citrix-ingress-controller
-    version: "1.7.46"
+    version: "1.8.19"
     condition: cic.enabled
     alias: cic
   - name: citrix-cpx-with-ingress-controller
-    version: "1.7.46"
+    version: "1.8.19"
     condition: cpx.enabled
     alias: cpx
   - name: citrix-node-controller
