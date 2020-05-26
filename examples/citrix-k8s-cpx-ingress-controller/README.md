@@ -69,18 +69,18 @@ The following table lists the configurable parameters of the Citrix ADC CPX with
 | Parameters | Mandatory or Optional | Default value | Description |
 | ---------- | --------------------- | ------------- | ----------- |
 | license.accept | Mandatory | no | Set `yes` to accept the Citrix ingress controller end user license agreement. |
-| cpx.image | Mandatory | `quay.io/citrix/citrix-k8s-cpx-ingress:13.0-47.103` | The Citrix ADC CPX image. |
+| cpx.image | Mandatory | `quay.io/citrix/citrix-k8s-cpx-ingress:13.0-52.24` | The Citrix ADC CPX image. |
 | cpx.pullPolicy | Mandatory | Always | The Citrix ADC CPX image pull policy. |
 | lsIP | Optional | N/A | Provide the Citrix Application Delivery Management (ADM) IP address to license Citrix ADC CPX. For more information, see [Licensing](https://developer-docs.citrix.com/projects/citrix-k8s-ingress-controller/en/latest/licensing/)|
 | lsPort | Optional | 27000 | Citrix ADM port if non-default port is used. |
 | platform | Optional | N/A | Platform license. The platform is **CP1000**. |
-| cic.image | Mandatory | `quay.io/citrix/citrix-k8s-ingress-controller:1.7.6` | The Citrix ingress controller image. |
+| cic.image | Mandatory | `quay.io/citrix/citrix-k8s-ingress-controller:1.8.19` | The Citrix ingress controller image. |
 | cic.pullPolicy | Mandatory | Always | The Citrix ingress controller image pull policy. |
 | cic.required | Mandatory | true | CIC to be run as sidecar with Citrix ADC CPX |
 | defaultSSLCert | Optional | N/A | Default SSL certificate that needs to be used as a non-SNI certificate in Citrix ADC. |
 | nsNamespace | Optional | k8s | The prefix for the resources on the Citrix ADC CPX. |
 | exporter.required | Optional | false | Use the argument if you want to run the [Exporter for Citrix ADC Stats](https://github.com/citrix/citrix-adc-metrics-exporter) along with Citrix ingress controller to pull metrics for the Citrix ADC CPX|
-| exporter.image | Optional | `quay.io/citrix/citrix-adc-metrics-exporter:1.4.0` | The Exporter for Citrix ADC Stats image. |
+| exporter.image | Optional | `quay.io/citrix/citrix-adc-metrics-exporter:1.4.3` | The Exporter for Citrix ADC Stats image. |
 | exporter.pullPolicy | Optional | Always | The Exporter for Citrix ADC Stats image pull policy. |
 | exporter.ports.containerPort | Optional | 8888 | The Exporter for Citrix ADC Stats container port. |
 | ingressClass | Optional | Citrix | If multiple ingress load balancers are used to load balance different ingress resources. You can use this parameter to specify Citrix ingress controller to configure Citrix ADC associated with specific ingress class.|

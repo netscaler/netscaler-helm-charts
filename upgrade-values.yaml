@@ -1,7 +1,7 @@
 cic:
   enabled: False
   
-  image: quay.io/citrix/citrix-k8s-ingress-controller:1.7.46
+  image: quay.io/citrix/citrix-k8s-ingress-controller:1.8.19
   pullPolicy: Always
   openshift: false
   loginFileName:
@@ -27,7 +27,7 @@ cic:
 
   exporter:
     required: false
-    image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.0
+    image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.3
     pullPolicy: Always
     ports:
       containerPort: 8888
@@ -35,10 +35,10 @@ cic:
 cpx:
   enabled: False
 
-  image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-47.103
+  image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-52.24
   pullPolicy: Always
   cic:
-    image: quay.io/citrix/citrix-k8s-ingress-controller:1.7.46
+    image: quay.io/citrix/citrix-k8s-ingress-controller:1.8.19
     pullPolicy: Always
     required: true
   openshift: false
@@ -61,7 +61,7 @@ cpx:
 
   exporter:
     required: false
-    image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.0
+    image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.3
     pullPolicy: Always
     ports:
       containerPort: 8888
@@ -74,7 +74,7 @@ ci-ingress:
   metricExporter:
     required: true
     image: quay.io/citrix/citrix-adc-metrics-exporter
-    version: 1.4.0
+    version: 1.4.3
     port: 8888
     secure: "YES"
     logLevel: ERROR

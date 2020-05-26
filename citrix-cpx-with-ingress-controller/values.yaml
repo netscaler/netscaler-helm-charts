@@ -3,11 +3,11 @@
 # Declare variables to be passed into your templates.
 
 # cpximage contains information needed to fetch CPX image
-image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-47.103
+image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-52.24
 pullPolicy: Always
 # cicimage contains information needed to fetch CIC image
 cic:
-  image: quay.io/citrix/citrix-k8s-ingress-controller:1.7.46
+  image: quay.io/citrix/citrix-k8s-ingress-controller:1.8.19
   pullPolicy: Always
   required: true
 # openshift is set to true if charts are being deployed in OpenShift environment.
