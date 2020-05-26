@@ -4,7 +4,7 @@
 
 # cpximage contains information needed to fetch CPX image
 cpx:
-  image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-47.103
+  image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-52.24
   pullPolicy: Always
 # cicimage contains information needed to fetch CIC image
 cic:
