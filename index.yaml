@@ -3,7 +3,7 @@ entries:
   citrix-adc-istio-ingress-gateway:
   - apiVersion: v1
     appVersion: 1.2.0
-    created: "2020-05-26T13:19:30.574708386+05:30"
+    created: "2020-05-27T09:23:13.693840543+05:30"
     description: A Helm chart for Citrix ADC as Ingress Gateway installation in Istio
       Service Mesh on Kubernetes platform
     digest: 75d609ac5ba6fbf47232e0a01c75bfbba8800920595810218d70be7c689a1369
@@ -22,7 +22,7 @@ entries:
     version: 1.2.0
   - apiVersion: v1
     appVersion: 1.1.0
-    created: "2020-05-26T13:19:30.573883197+05:30"
+    created: "2020-05-27T09:23:13.69231915+05:30"
     description: A Helm chart for Citrix ADC as Ingress Gateway installation in Istio
       Service Mesh on Kubernetes platform
     digest: c92ba50d087ecff073587e211d3dabef999db03e8f4af8c9a0605f0b1c2a1bf1
@@ -41,7 +41,7 @@ entries:
     version: 1.1.0
   - apiVersion: v1
     appVersion: 1.0.1
-    created: "2020-05-26T13:19:30.573091936+05:30"
+    created: "2020-05-27T09:23:13.686508545+05:30"
     description: A Helm chart for Citrix ADC as Ingress Gateway installation in Istio
       Service Mesh on Kubernetes platform
     digest: 8d114612a5d3679d699d4cf16080f37eb1980e2d95d1a4429a0be6321d99e3f3
@@ -61,7 +61,7 @@ entries:
   citrix-cloud-native:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2020-05-26T13:19:30.581162916+05:30"
+    created: "2020-05-27T09:23:13.714520976+05:30"
     dependencies:
     - alias: cic
       condition: cic.enabled
@@ -106,7 +106,7 @@ entries:
   citrix-cpx-istio-sidecar-injector:
   - apiVersion: v1
     appVersion: 1.2.0
-    created: "2020-05-26T13:19:30.583542064+05:30"
+    created: "2020-05-27T09:23:13.730203255+05:30"
     description: A Helm chart to deploy resources which install Citrix ADC CPX in
       Istio Service Mesh as sidecar in application pod
     digest: abf95ac1e7e8890d13dd585dc08db1010f32fef248e371c3e23503fec02c698f
@@ -125,7 +125,7 @@ entries:
     version: 1.2.0
   - apiVersion: v1
     appVersion: 1.1.0
-    created: "2020-05-26T13:19:30.58271804+05:30"
+    created: "2020-05-27T09:23:13.728743741+05:30"
     description: A Helm chart to deploy resources which install Citrix ADC CPX in
       Istio Service Mesh as sidecar in application pod
     digest: 8e9d5934582d6058f305cd7873c64b09949216391887b0d34f744b4f1c5a75bc
@@ -144,7 +144,7 @@ entries:
     version: 1.1.0
   - apiVersion: v1
     appVersion: 1.0.1
-    created: "2020-05-26T13:19:30.581909268+05:30"
+    created: "2020-05-27T09:23:13.725125092+05:30"
     description: A Helm chart to deploy resources which install Citrix ADC CPX in
       Istio Service Mesh as sidecar in application pod
     digest: 6c457254e395fd3daa03e8a6285ac97b20b31b2f9f7e3f1b81537dc2673c6f29
@@ -164,7 +164,7 @@ entries:
   citrix-cpx-with-ingress-controller:
   - apiVersion: v1
     appVersion: 1.8.19
-    created: "2020-05-26T13:19:30.585641368+05:30"
+    created: "2020-05-27T09:23:13.734602947+05:30"
     description: A Helm chart for Citrix ADC CPX with Citrix ingress Controller running
       as sidecar.
     digest: b5f6311588abf668cae0a17d1ff4fa06fdb5253a5340ed075e3cce2c6950ade9
@@ -183,7 +183,7 @@ entries:
     version: 1.8.19
   - apiVersion: v1
     appVersion: 1.7.46
-    created: "2020-05-26T13:19:30.584562739+05:30"
+    created: "2020-05-27T09:23:13.731943987+05:30"
     description: A Helm chart for Citrix ADC CPX with Citrix ingress Controller running
       as sidecar.
     digest: ab2ee906223311a42c98ee9d99c57bb17680c8e333f9c078cd9fd3ce4773d4d0
@@ -203,7 +203,7 @@ entries:
   citrix-ingress-controller:
   - apiVersion: v1
     appVersion: 1.8.19
-    created: "2020-05-26T13:19:30.587986669+05:30"
+    created: "2020-05-27T09:23:13.739356331+05:30"
     description: A Helm chart for Citrix Ingress Controller configuring MPX/VPX.
     digest: 6025ed2e113b9a32d11360523ecf4bb9694ea6b66be13b11bdc9a9aceb774974
     home: https://www.citrix.com
@@ -221,7 +221,7 @@ entries:
     version: 1.8.19
   - apiVersion: v1
     appVersion: 1.7.46
-    created: "2020-05-26T13:19:30.586727816+05:30"
+    created: "2020-05-27T09:23:13.737226326+05:30"
     description: A Helm chart for Citrix Ingress Controller configuring MPX/VPX.
     digest: db99222a3abc2deba7701edddc62ee7fc55d83157ef391bc0ac748c5b32d4dfe
     home: https://www.citrix.com
@@ -240,7 +240,7 @@ entries:
   citrix-node-controller:
   - apiVersion: v1
     appVersion: 2.0.0
-    created: "2020-05-26T13:19:30.588589271+05:30"
+    created: "2020-05-27T09:23:13.745187073+05:30"
     description: A Helm chart for Citrix k8s node controller
     digest: d04d0daa9a5a69b29952aec83de9137fb9aceda54787aec41db81ff1b0dd7ebd
     home: https://www.citrix.com
@@ -257,9 +257,9 @@ entries:
   citrix-observability-exporter:
   - apiVersion: v1
     appVersion: 1.1.001
-    created: "2020-05-26T13:19:30.589070444+05:30"
+    created: "2020-05-27T09:23:13.74576155+05:30"
     description: A Helm chart for Citrix Observability Exporter
-    digest: 5e840599aaf895850fcbb5f5690e3c85962feb32afba48aa5db2a7fcd5784c12
+    digest: 571c8d65e5062f2d7a77702f9b0e68ea10deb037e2fc6d34ebca6336fdd8a298
     home: https://www.citrix.com
     icon: https://raw.githubusercontent.com/citrix/citrix-helm-charts/gh-pages/icon.png
     maintainers:
@@ -271,4 +271,4 @@ entries:
     urls:
     - https://citrix.github.io/citrix-helm-charts/citrix-observability-exporter-1.1.001.tgz
     version: 1.1.001
-generated: "2020-05-26T13:19:30.572048616+05:30"
+generated: "2020-05-27T09:23:13.682775237+05:30"
