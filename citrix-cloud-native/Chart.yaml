@@ -26,10 +26,10 @@ dependencies:
     condition: cnc.enabled
     alias: cnc
   - name: citrix-adc-istio-ingress-gateway
-    version: "1.2.0"
+    version: "1.2.1"
     condition: ia-ingress.enabled
     alias: ia-ingress
   - name: citrix-cpx-istio-sidecar-injector
-    version: "1.2.0"
+    version: "1.2.1"
     condition: ia-sidecar.enabled
     alias: ia-sidecar

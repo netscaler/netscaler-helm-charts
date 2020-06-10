@@ -113,6 +113,9 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.labels['app']
+          securityContext:
+            readOnlyRootFilesystem: true
+            runAsUser: 32024 # UID of istio-adaptor container's user
           volumeMounts:
           - mountPath: /etc/certs
             name: istio-certs
@@ -280,6 +283,9 @@ spec:
         - -coe-url
         - {{ .Values.istioAdaptor.coeURL }}
 {{- end }}
+        securityContext:
+          readOnlyRootFilesystem: true
+          runAsUser: 32024 # UID of istio-adaptor container's user
         volumeMounts:
         - mountPath: /etc/certs
           name: istio-certs

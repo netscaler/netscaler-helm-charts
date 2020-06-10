@@ -15,7 +15,7 @@ metricExporter:
 
 istioAdaptor:
     image: quay.io/citrix/citrix-istio-adaptor
-    tag: 1.2.0
+    tag: 1.2.1
     imagePullPolicy: IfNotPresent
     netscalerUrl: null 
     proxyType: router
