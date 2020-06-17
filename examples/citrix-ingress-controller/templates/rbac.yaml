@@ -1,13 +1,13 @@
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
-  name: cpx-ingress-k8s-role
+  name: cic-k8s-role
 rules:
   - apiGroups: [""]
 {{- if .Values.openshift }}
-    resources: ["endpoints", "ingresses", "pods", "secrets", "routes", "routes/status", "tokenreviews", "subjectaccessreviews", "nodes", "namespaces"]
+    resources: ["endpoints", "ingresses", "pods", "secrets", "routes", "tokenreviews", "subjectaccessreviews", "nodes", "namespaces","configmaps"]
 {{- else }}
-    resources: ["endpoints", "ingresses", "pods", "secrets", "routes", "routes/status", "nodes", "namespaces"]
+    resources: ["endpoints", "ingresses", "pods", "secrets", "routes", "nodes", "namespaces","configmaps"]
 {{- end}}
     verbs: ["get", "list", "watch"]
   # services/status is needed to update the loadbalancer IP in service status for integrating
@@ -18,6 +18,9 @@ rules:
   - apiGroups: [""]
     resources: ["services"]
     verbs: ["get", "list", "watch", "patch"]
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["create"]
   - apiGroups: ["extensions"]
     resources: ["ingresses", "ingresses/status"]
     verbs: ["get", "list", "watch"]
@@ -28,10 +31,10 @@ rules:
     resources: ["deployments"]
     verbs: ["get", "list", "watch"]
   - apiGroups: ["citrix.com"]
-    resources: ["rewritepolicies", "canarycrds", "authpolicies", "ratelimits"]
+    resources: ["rewritepolicies", "canarycrds", "authpolicies", "ratelimits", "listeners", "httproutes"]
     verbs: ["get", "list", "watch"]
   - apiGroups: ["citrix.com"]
-    resources: ["rewritepolicies/status", "canarycrds/status", "authpolicies/status", "ratelimits/status"]
+    resources: ["rewritepolicies/status", "canarycrds/status", "authpolicies/status", "ratelimits/status", "listeners/status", "httproutes/status"]
     verbs: ["get", "list", "patch"]
   - apiGroups: ["citrix.com"]
     resources: ["vips"]
@@ -45,14 +48,14 @@ rules:
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
-  name: cpx-ingress-k8s-role
+  name: cic-k8s-role
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: cpx-ingress-k8s-role
+  name: cic-k8s-role
 subjects:
 - kind: ServiceAccount
-  name: cpx-ingress-k8s-role
+  name: cic-k8s-role
   namespace: {{ .Release.Namespace }}
 apiVersion: rbac.authorization.k8s.io/v1
 
@@ -61,7 +64,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: cpx-ingress-k8s-role
+  name: cic-k8s-role
   namespace: {{ .Release.Namespace }}
 
 ---

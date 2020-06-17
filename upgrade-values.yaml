@@ -2,7 +2,7 @@ cic:
   enabled: False
   
   image: quay.io/citrix/citrix-k8s-ingress-controller:1.8.19
-  pullPolicy: Always
+  pullPolicy: IfNotPresent
   openshift: false
   loginFileName:
   nsIP: x.x.x.x
@@ -28,7 +28,7 @@ cic:
   exporter:
     required: false
     image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.3
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
     ports:
       containerPort: 8888
 
@@ -36,10 +36,10 @@ cpx:
   enabled: False
 
   image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-52.24
-  pullPolicy: Always
+  pullPolicy: IfNotPresent
   cic:
     image: quay.io/citrix/citrix-k8s-ingress-controller:1.8.19
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
     required: true
   openshift: false
   lsIP:
@@ -62,7 +62,7 @@ cpx:
   exporter:
     required: false
     image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.3
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
     ports:
       containerPort: 8888
 
@@ -160,7 +160,7 @@ cnc:
   enabled: False
   image: quay.io/citrix/citrix-k8s-node-controller
   tag: 2.0.0
-  pullPolicy: Always
+  pullPolicy: IfNotPresent
   license:
     accept: no
   nsIP:

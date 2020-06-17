@@ -62,12 +62,12 @@ spec:
           - name: "NS_USER"
             valueFrom:
              secretKeyRef:
-              name: {{ .Values.loginFileName }}
+              name: cpxlogin
               key: username
           - name: "NS_PASSWORD"
             valueFrom:
              secretKeyRef:
-              name: {{ .Values.loginFileName }}
+              name: cpxlogin
               key: password
 {{- if .Values.logProxy }}
           - name: "NS_LOGPROXY"
@@ -111,9 +111,15 @@ spec:
             - "--port={{ .Values.exporter.ports.containerPort }}"
           env:
           - name: "NS_USER"
-            value: "nsroot"
+            valueFrom:
+             secretKeyRef:
+              name: cpxlogin
+              key: username
           - name: "NS_PASSWORD"
-            value: "nsroot"
+            valueFrom:
+             secretKeyRef:
+              name: cpxlogin
+              key: password
           securityContext:
             readOnlyRootFilesystem: true
 {{- end }}

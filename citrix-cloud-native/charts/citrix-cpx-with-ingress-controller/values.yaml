@@ -18,8 +18,6 @@ lsIP:
 lsPort:
 # nsNamespace is the prefix for the resources on the Citrix ADC
 nsNamespace:
-#loginFileName is secret file for Citrix ADC CPX login
-loginFileName: cpxlogin
 # Specify the platform license here.
 platform:
 # license is used accept the terms of the Citrix license
@@ -38,7 +36,7 @@ http2ServerSide: "OFF"
 # exporter conatins information of prometheus-exporter
 exporter:
   required: false
-  image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.3
+  image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.4
   pullPolicy: Always
   ports:
     containerPort: 8888

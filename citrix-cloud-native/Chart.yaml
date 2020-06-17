@@ -25,6 +25,10 @@ dependencies:
     version: "2.0.0"
     condition: cnc.enabled
     alias: cnc
+  - name: citrix-ipam-controller
+    version: "0.0.1"
+    condition: ipam.enabled
+    alias: ipam
   - name: citrix-adc-istio-ingress-gateway
     version: "1.2.1"
     condition: ia-ingress.enabled

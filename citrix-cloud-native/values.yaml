@@ -11,6 +11,12 @@ cpx:
 cnc:
   enabled: False
 
+coe:
+  enabled: False
+
+ipam:
+  enabled: False
+
 ia-ingress:
   enabled: False
 
