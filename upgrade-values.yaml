@@ -51,7 +51,6 @@ cpx:
     accept: no
   ingressClass:
   logLevel: DEBUG
-  loginFileName: cpxlogin
   http2ServerSide: OFF
   defaultSSLCert:
 
