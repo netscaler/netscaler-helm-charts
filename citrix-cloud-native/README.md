@@ -7,9 +7,8 @@ This helm chart can be used to:
 2. [Deploy Citrix ADC CPX with Citrix Ingress Controller running as sidecar](./charts/citrix-cpx-with-ingress-controller/README.md)
 3. [Deploy Citrix Node Controller](./charts/citrix-node-controller/README.md)
 4. [Deploy Citrix IPAM Controller](./charts/citrix-ipam-controller/README.md)
-5. [Deploy Observability Exporter](./charts/citrix-observability-exporter/README.md)
-6. [Deploy Citrix ADC as an Ingress Gateway in Istio environment](./charts/citrix-adc-istio-ingress-gateway)
-7. [Deploy Citrix ADC CPX as a sidecar in Istio environment](./charts/citrix-cpx-istio-sidecar-injector)
+5. [Deploy Citrix ADC as an Ingress Gateway in Istio environment](./charts/citrix-adc-istio-ingress-gateway)
+6. [Deploy Citrix ADC CPX as a sidecar in Istio environment](./charts/citrix-cpx-istio-sidecar-injector)
 
 
 Depending on the architecture, it is sometimes needed to deploy multiple products in Citrix portfolio together. This can be achieved by setting required parameters for all products together while installing those products using this helm chart.
