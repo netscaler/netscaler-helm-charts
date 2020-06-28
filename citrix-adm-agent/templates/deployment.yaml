@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "citrix-adm-agent.fullname" . }}
+  labels:
+    {{- include "citrix-adm-agent.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "citrix-adm-agent.selectorLabels" . | nindent 8 }}
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        {{- include "citrix-adm-agent.labels" . | nindent 10 }}
+    spec:
+      containers:
+        - name: citrix-adm-agent
+          image: quay.io/citrix/adm-agent:{{ .Values.citrixAdmAgent.containerImageTag }}
+          imagePullPolicy: {{ .Values.citrixAdmAgent.imagePullPolicy }}
+          env:
+          - name: IP
+            value: {{ .Values.citrixAdmAgent.ip }}
+          - name: APP_ID
+            value: {{ .Values.citrixAdmAgent.appId }}
+          - name: DEPL
+            value: "service"
+          - name: ORCH
+            value: "Kubernetes"
+          - name: MY_NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+          - name: MY_POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: MY_POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          securityContext:
+            capabilities:
+              add:
+               - NET_ADMIN
+          ports:
+            - name: http
+              protocol: TCP
+              containerPort: 80
+            - name: https
+              protocol: TCP
+              containerPort: 443
+            - name: lichb
+              protocol: TCP
+              containerPort: 27000
+            - name: lic
+              protocol: TCP
+              containerPort: 7279
+            - name: snmp
+              protocol: UDP
+              containerPort: 162
+            - name: syslog
+              protocol: UDP
+              containerPort: 514
+            - name: ipfix
+              protocol: UDP
+              containerPort: 4739
+            - name: ulfd
+              protocol: TCP
+              containerPort: 5557
+          volumeMounts:
+            - name: secret-volume
+              mountPath: /etc/adm_agent/secret
+            - name: config-volume
+              mountPath: /etc/adm_agent/config
+      volumes:
+        - name: secret-volume
+          secret:
+            secretName: {{ .Values.secret.existingSecretName }}
+        - name: config-volume
+          configMap:
+            name: {{ .Values.configMap.existingConfigMapName }}

@@ -1,0 +1,12 @@
+# Copyright 2010-2016 Citrix Systems, Inc. All rights reserved.
+# This software and documentation contain valuable trade
+# secrets and proprietary property belonging to Citrix Systems, Inc.
+# None of this software and documentation may be copied,
+# duplicated or disclosed without the express
+# written permission of Citrix Systems, Inc.
+
+apiVersion: v1
+appVersion: 13.0-61.39
+description: Citrix ADM Agent Application
+name: citrix-adm-agent
+version: 13.0-61.39

@@ -1,0 +1,25 @@
+citrixAdmAgent:
+    ip: citrix-adm-agent
+    appId: kubernetes-dev
+    containerImageTag: 13.0-61.39
+    imagePullPolicy: IfNotPresent
+
+secret:
+  useExistingSecret: true
+  existingSecretName: citrix-adm-agent
+  # Base64 encoded - download from ADM Service
+  # It's not recommended to add these using the values file, add them outside of Helm if possible
+  # Set useExistingSecret to false to use the below
+  db_key_conf: ""
+  private_pem: ""
+  public_pem: ""
+  password: ""
+
+configMap:
+  useExistingConfigMap: true
+  existingConfigMapName: citrix-adm-agent
+  # Base64 encoded XML - download from ADM Service
+  # It's not recommended to add these using the values file, add them outside of Helm if possible
+  # Set useExistingConfigMap to false to use the below
+  agent_conf: ""
+  proxy_conf: ""

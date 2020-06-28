@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "citrix-adm-agent.fullname" . }}
+  labels:
+    {{- include "citrix-adm-agent.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 80
+    name: http
+  - port: 443
+    targetPort: 443
+    name: https
+  - port: 162
+    targetPort: 162
+    protocol: UDP
+    name: snmp
+  - port: 514
+    targetPort: 514
+    name: syslog
+    protocol: UDP
+  - port: 4739
+    targetPort: 4739
+    name: ipfix
+    protocol: UDP
+  - port: 5557
+    targetPort: 5557
+    name: ulfd
+    protocol: TCP
+  - port: 27000
+    targetPort: 27000
+    name: lichb
+    protocol: TCP
+  - port: 7279
+    targetPort: 7279
+    name: lic
+    protocol: TCP
+  selector:
+    {{- include "citrix-adm-agent.selectorLabels" . | nindent 6 }}
