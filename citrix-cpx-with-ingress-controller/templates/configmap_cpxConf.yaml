@@ -1,0 +1,52 @@
+{{- if .Values.cpxConfig.configmap.mount }}
+{{- if not .Values.cpxConfig.configmap.useExisting }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.cpxConfig.configmap.name }}
+data:
+  cpx.conf: |
+{{- if .Values.cpxConfig.scriptConfigmap.mount }}
+{{- if not .Values.cpxConfig.scriptConfigmap.useExisting }}
+    #Shell Commands
+    bash {{ .Values.cpxConfig.scriptConfigmap.mountPath }}/fix_licenseserver.sh
+    
+{{- end }}
+{{- end }}
+    #NetScaler Commands
+    set ssl param -defaultProfile ENABLED
+
+    add ssl cipher cpx-ciphers
+    bind ssl cipher cpx-ciphers -cipherName TLS1.2-ECDHE-RSA-CHACHA20-POLY1305 -cipherPriority 1
+    bind ssl cipher cpx-ciphers -cipherName TLS1.2-DHE-RSA-CHACHA20-POLY1305 -cipherPriority 2
+    bind ssl cipher cpx-ciphers -cipherName TLS1.2-ECDHE-RSA-AES256-GCM-SHA384 -cipherPriority 3
+    bind ssl cipher cpx-ciphers -cipherName TLS1.2-ECDHE-RSA-AES128-GCM-SHA256 -cipherPriority 4
+    bind ssl cipher cpx-ciphers -cipherName TLS1.2-DHE-RSA-AES256-GCM-SHA384 -cipherPriority 5
+    bind ssl cipher cpx-ciphers -cipherName TLS1.2-DHE-RSA-AES128-GCM-SHA256 -cipherPriority 6
+
+    set ssl profile ns_default_ssl_profile_frontend -dhCount 1000 -dh ENABLED -dhFile /cpxsecret/{{ .Values.cpxConfig.dhkeySecret.dhkeyName }} -denySSLReneg NONSECURE -snienable ENABLED -HSTS ENABLED -maxage 157680000 -IncludeSubdomain no -tls1 DISABLED -tls11 DISABLED
+    unbind ssl profile ns_default_ssl_profile_frontend -cipherName FlushAllCiphers
+    bind ssl profile ns_default_ssl_profile_frontend -cipherName cpx-ciphers -cipherPriority 1
+
+    add rewrite action rwa-add-xff insert_http_header X-Forwarded-For client.ip.src
+    add rewrite action rwa-replace-xff replace "HTTP.REQ.HEADER(\"X-Forwarded-For\")" "HTTP.REQ.HEADER(\"X-Forwarded-For\").APPEND(\",\").APPEND(CLIENT.IP.SRC)"
+    add rewrite action rwa-add-xfp_http insert_http_header X-Forwarded-Proto "\"http\""
+    add rewrite action rwa-replace-xfp_http replace "HTTP.REQ.HEADER(\"X-Forwarded-Proto\")" "\"http\""
+    add rewrite action rwa-add-xfp_https insert_http_header X-Forwarded-Proto "\"https\""
+    add rewrite action rwa-replace-xfp_https replace "HTTP.REQ.HEADER(\"X-Forwarded-Proto\")" "\"https\""
+
+    add rewrite policy rwp-add-xff "HTTP.REQ.HEADER(\"X-Forwarded-For\").EXISTS.NOT" rwa-add-xff
+    add rewrite policy rwp-replace-xff "HTTP.REQ.HEADER(\"X-Forwarded-For\").EXISTS" rwa-replace-xff
+    add rewrite policy rwp-add-xfp_http "HTTP.REQ.HEADER(\"X-Forwarded-Proto\").EXISTS.NOT && CLIENT.SSL.IS_SSL.NOT" rwa-add-xfp_http
+    add rewrite policy rwp-replace-xfp_http "HTTP.REQ.HEADER(\"X-Forwarded-For\").EXISTS && CLIENT.SSL.IS_SSL.NOT" rwa-replace-xfp_http
+    add rewrite policy rwp-add-xfp_https "HTTP.REQ.HEADER(\"X-Forwarded-Proto\").EXISTS.NOT && CLIENT.SSL.IS_SSL" rwa-add-xfp_https
+    add rewrite policy rwp-replace-xfp_https "HTTP.REQ.HEADER(\"X-Forwarded-For\").EXISTS && CLIENT.SSL.IS_SSL" rwa-replace-xfp_https
+
+    bind rewrite global rwp-add-xff 10 NEXT -type REQ_DEFAULT
+    bind rewrite global rwp-replace-xff 11 NEXT -type REQ_DEFAULT
+    bind rewrite global rwp-add-xfp_http 12 NEXT -type REQ_DEFAULT
+    bind rewrite global rwp-replace-xfp_http 13 NEXT -type REQ_DEFAULT
+    bind rewrite global rwp-add-xfp_https 14 NEXT -type REQ_DEFAULT
+    bind rewrite global rwp-replace-xfp_https 15 NEXT -type REQ_DEFAULT
+{{- end }}
+{{- end }}

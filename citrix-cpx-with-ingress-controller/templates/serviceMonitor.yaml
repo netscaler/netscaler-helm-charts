@@ -1,0 +1,22 @@
+{{- if .Values.exporter.required }}
+
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+ name: citrix-adc-cpx-servicemonitor
+ labels:
+   servicemonitor: citrix-adc-cpx
+spec:
+ endpoints:
+ - interval: 30s
+   port: exporter-port
+ selector:
+   matchLabels:
+     service-type: citrix-adc-cpx-monitor
+ namespaceSelector:
+   matchNames:
+   - monitoring
+   - default
+   - {{ .Release.Namespace }}
+
+{{- end }}

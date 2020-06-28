@@ -6,7 +6,7 @@ spec:
   selector:
     matchLabels:
       app: cpx-ingress
-  replicas: 1
+  replicas: {{ .Values.replics }}
   template:
     metadata:
       name: cpx-ingress
@@ -23,26 +23,44 @@ spec:
              privileged: true
           env:
           - name: "EULA"
-            value: "{{ .Values.license.accept }}"
+            value: {{ .Values.license.accept | quote }}
           - name: "KUBERNETES_TASK_ID"
             value: ""
 {{- if .Values.lsIP }}
           - name: "LS_IP"
-            value: {{ .Values.lsIP }}
+            value: {{ .Values.lsIP | quote }}
 {{- end }}
 {{- if .Values.lsPort }}
           - name: "LS_PORT"
-            value: {{ .Values.lsPort }}
+            value: {{ .Values.lsPort | quote }}
 {{- end }}
 {{- if .Values.platform }}
           - name: "PLATFORM"
-            value: {{ .Values.platform }}
+            value: {{ .Values.platform | quote }}
+{{- end }}
+{{- if .Values.bandwidth }}
+          - name: "BANDWIDTH"
+            value: {{ .Values.bandwidth | quote }}
 {{- end }}
           volumeMounts:
             - mountPath: /cpx/conf/
               name: cpx-volume1
             - mountPath: /cpx/crash/
               name: cpx-volume2
+{{- if .Values.cpxConfig.configmap.mount }}
+            - name: {{ .Values.cpxConfig.configmap.name }}
+              mountPath: /etc/cpx.conf
+              subPath: cpx.conf
+{{- end }}
+{{- if .Values.cpxConfig.scriptConfigmap.mount }}
+            - name: {{ .Values.cpxConfig.scriptConfigmap.name }}
+              mountPath: {{ .Values.cpxConfig.scriptConfigmap.mountPath }}
+{{- end }}
+{{- if .Values.cpxConfig.dhkeySecret.mount }}
+            - name: dhkey
+              mountPath: "/cpxsecret"
+              readOnly: true
+{{- end }}
 {{- if .Values.cic.required }}
         # Add cic as a sidecar
         - name: cic
@@ -59,16 +77,18 @@ spec:
             value: "SIDECAR"
           - name: "NS_ENABLE_MONITORING"
             value: "YES"
+{{- if .Values.cpxConfig.loginCredentials.mount }}
           - name: "NS_USER"
             valueFrom:
              secretKeyRef:
-              name: cpxlogin
+              name: {{ .Values.cpxConfig.loginCredentials.secretName }}
               key: username
           - name: "NS_PASSWORD"
             valueFrom:
              secretKeyRef:
-              name: cpxlogin
+              name: {{ .Values.cpxConfig.loginCredentials.secretName }}
               key: password
+{{- end }}
 {{- if .Values.logProxy }}
           - name: "NS_LOGPROXY"
             value: {{ .Values.logProxy | quote }}
@@ -100,6 +120,9 @@ spec:
             - --default-ssl-certificate
               {{ .Release.Namespace }}/{{ .Values.defaultSSLCert }}
 {{- end }}
+{{- if .Values.updateIngressStatus }}
+            - --update-ingress-status YES
+{{- end }}
 {{- end }}
 {{- if .Values.exporter.required }}
         - name: exporter
@@ -110,16 +133,18 @@ spec:
             - "--target-nsip=127.0.0.1"
             - "--port={{ .Values.exporter.ports.containerPort }}"
           env:
+{{- if .Values.cpxConfig.loginCredentials.mount }}
           - name: "NS_USER"
             valueFrom:
              secretKeyRef:
-              name: cpxlogin
+              name: {{ .Values.cpxConfig.loginCredentials.secretName }}
               key: username
           - name: "NS_PASSWORD"
             valueFrom:
              secretKeyRef:
-              name: cpxlogin
+              name: {{ .Values.cpxConfig.loginCredentials.secretName }}
               key: password
+{{- end }}
           securityContext:
             readOnlyRootFilesystem: true
 {{- end }}
@@ -128,53 +153,22 @@ spec:
           emptyDir: {}
         - name: cpx-volume2
           emptyDir: {}
----
-
-apiVersion: v1
-kind: Service
-metadata:
-  name: cpx-service
-  labels:
-    app: cpx-service
-    service-type: citrix-adc-cpx-monitor
-spec:
-  type: NodePort
-  ports:
-  - port: 80
-    protocol: TCP
-    name: http
-  - port: 443
-    protocol: TCP
-    name: https
-{{- if .Values.exporter.required }}
-  - port: {{ .Values.exporter.ports.containerPort }}
-    targetPort: {{ .Values.exporter.ports.containerPort }}
-    name: exporter-port
+{{- if .Values.cpxConfig.configmap.mount }}
+        - name: {{ .Values.cpxConfig.configmap.name }}
+          configMap:
+            name: {{ .Values.cpxConfig.configmap.name }}
 {{- end }}
-  selector:
-    app: cpx-ingress
-
----
-
-{{- if .Values.exporter.required }}
-
-apiVersion: monitoring.coreos.com/v1
-kind: ServiceMonitor
-metadata:
- name: citrix-adc-cpx-servicemonitor
- labels:
-   servicemonitor: citrix-adc-cpx
-spec:
- endpoints:
- - interval: 30s
-   port: exporter-port
- selector:
-   matchLabels:
-     service-type: citrix-adc-cpx-monitor
- namespaceSelector:
-   matchNames:
-   - monitoring
-   - default
-   - {{ .Release.Namespace }}
-
+{{- if .Values.cpxConfig.scriptConfigmap.mount }}
+        - name: {{ .Values.cpxConfig.scriptConfigmap.name }}
+          configMap:
+            name: {{ .Values.cpxConfig.scriptConfigmap.name }}
+            defaultMode: 0777
+{{- end }}
+{{- if .Values.cpxConfig.dhkeySecret.mount }}
+        - name: dhkey
+          secret:
+            secretName: {{ .Values.cpxConfig.dhkeySecret.secretName }}
+            items:
+            - key: {{ .Values.cpxConfig.dhkeySecret.dhkeyName }}
+              path: {{ .Values.cpxConfig.dhkeySecret.dhkeyName }}
 {{- end }}

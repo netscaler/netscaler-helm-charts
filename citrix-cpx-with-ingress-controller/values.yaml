@@ -4,12 +4,16 @@
 
 # cpximage contains information needed to fetch CPX image
 image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-52.24
-pullPolicy: Always
+pullPolicy: IfNotPresent
+# Number of replicas
+replicas: 1
 # cicimage contains information needed to fetch CIC image
 cic:
   image: quay.io/citrix/citrix-k8s-ingress-controller:1.8.19
-  pullPolicy: Always
+  pullPolicy: IfNotPresent
   required: true
+# Should CIC update the ingress status with the LB IP? Used by external-dns to update DNS
+updateIngressStatus: true
 # openshift is set to true if charts are being deployed in OpenShift environment.
 openshift: false
 # lsIP contains the Citrix Application Delivery Management (ADM) IP address to license Citrix ADC CPX.
@@ -20,6 +24,8 @@ lsPort:
 nsNamespace:
 # Specify the platform license here.
 platform:
+# Specify the bandwidth (to checkout from ADM)
+bandwidth: 
 # license is used accept the terms of the Citrix license
 license:
   accept: no
@@ -36,12 +42,45 @@ http2ServerSide: "OFF"
 # exporter conatins information of prometheus-exporter
 exporter:
   required: false
-  image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.4
-  pullPolicy: Always
+  image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.3
+  pullPolicy: IfNotPresent
   ports:
     containerPort: 8888
+# Additional configuration
+cpxConfig:
+  configmap:
+    useExisting: false      # Should an existing configmap containing cpx.conf be used?
+    mount: false            # Should the CPX container mount the configmap containing cpx.conf?
+    name: cpx-configuration # Name of the configmap containing cpx.conf
+  # Use to add custom scripts that can be executed from cpx.conf
+  scriptConfigmap:
+    useExisting: false            # Should an existing configmap be used?
+    mount: true                   # Should the configmap be mounted?
+    name: cpx-scripts             # Name of the configmap containing the scripts
+    mountPath: /etc/customscripts # Path where to mount the scripts
+  # Use the following operator to create the dhkey: https://github.com/XenitAB/dhkey-operator
+  dhkeySecret:
+    useExisting: false      # Should an existing secret containing the dhkey be used?
+    mount: false            # Should the secret containing the dhkey be mounted to the CPX container?
+    secretName: cpx-dhkey   # Name of the secret containing the dhkey
+    dhkeyName: dhKey        # Name of the key in the Secret containing the dh key
+    dhkey: ""               # Should not be used, better to creat it outside of helm. Should be the dhkey base 64 encoded
+  loginCredentials:
+    useExisting: false           # Should an existing secret be used?
+    mount: true                  # Should the secret be mounted into NS_USER and NS_PASSWORD for cic and exported?
+    secretName: cpx-credentials  # The existing secrets name or the secret that should be created
+    username: nsroot             # Username for the netscaler
+    password: nsroot             # Password for the netscaler
+    
+# CRD Installation
 crds:
 # If false, CustomResourceDefinitions  will not be installed.
   install: true
 # if set to true, then CustomResourceDefinitions will not be deleted during helm delete. This way, CustomResourceObjects will not be deleted from the database.
   retainOnDelete: false
+# Service configuration
+service:
+  externalTrafficPolicy: Cluster # Cluster | Local
+  type: NodePort                 # ClusterIP | NodePort | LoadBalancer
+  sessionAffinity: ClientIP      # None | ClientIP
+  annotations: {}                # Annotations to add to the service

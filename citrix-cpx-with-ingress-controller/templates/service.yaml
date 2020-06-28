@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: cpx-service
+  labels:
+    app: cpx-service
+    service-type: citrix-adc-cpx-monitor
+  {{- if .Values.service.annotations }}
+  annotations: {{ toYaml .Values.service.annotations | nindent 4 }}
+  {{- end }}
+spec:
+  externalTrafficPolicy: {{ .Values.service.externalTrafficPolicy }}
+  type: {{ .Values.service.type }}
+  sessionAffinity: {{ .Values.service.sessionAffinity }}
+  ports:
+  - port: 80
+    protocol: TCP
+    name: http
+  - port: 443
+    protocol: TCP
+    name: https
+{{- if .Values.exporter.required }}
+  - port: {{ .Values.exporter.ports.containerPort }}
+    targetPort: {{ .Values.exporter.ports.containerPort }}
+    name: exporter-port
+{{- end }}
+  selector:
+    app: cpx-ingress

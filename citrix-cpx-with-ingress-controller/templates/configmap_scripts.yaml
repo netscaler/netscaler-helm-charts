@@ -1,0 +1,43 @@
+{{- if .Values.cpxConfig.scriptConfigmap.mount }}
+{{- if not .Values.cpxConfig.scriptConfigmap.useExisting }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.cpxConfig.scriptConfigmap.name }}
+data:
+  fix_licenseserver.sh: |
+    for i in {1..10}
+    do
+      LICENSE_SUCCESS=false
+      PLATFROM_SUCCESS=false
+      echo "Setting license server try: ${i}"
+      CLI_OUTPUT=$(cli_script.sh "add licenseserver {{ .Values.lsIP }} -port {{ .Values.lsPort }}")
+      if [[ "${CLI_OUTPUT}" == *"ERROR: Unable to connect to licenseserver"* ]]; then
+        echo "Unable to add license server. Sleeping for 5 seconds."
+        sleep 5
+      elif [[ "${CLI_OUTPUT}" == *"ERROR: Resource already exists"* ]]; then
+        CLI_OUTPUT=$(cli_script.sh "set licenseserver {{ .Values.lsIP }} -port {{ .Values.lsPort }}")
+        if [[ "${CLI_OUTPUT}" != *"ERROR:"* ]]; then
+          echo "Successfully set license server."
+          LICENSE_SUCCESS=true
+        else
+          echo "Unable to set license server. Sleeping for 5 seconds."
+          sleep 5
+        fi
+      else
+        echo "Successfully added license server."
+        LICENSE_SUCCESS=true
+      fi
+      if ${LICENSE_SUCCESS}; then
+        CLI_OUTPUT=$(cli_script.sh "set capacity -platform {{ .Values.platform }}")
+        if [[ "${CLI_OUTPUT}" != *"ERROR:"* ]]; then
+          echo "Successfully configured platform."
+          break
+        else
+          echo "Unable to configure platform. Sleeping for 5 seconds."
+          sleep 5
+        fi
+      fi
+    done
+{{- end }}
+{{- end }}
