@@ -47,7 +47,6 @@ The following table lists the configurable parameters of the Citrix ADC CPX with
 
 | Parameters | Mandatory or Optional | Default value | Description |
 | ---------- | --------------------- | ------------- | ----------- |
-| license.accept | Mandatory | no | Set `yes` to accept the Citrix ingress controller end user license agreement. |
 | image | Mandatory | `quay.io/citrix/citrix-ipam-controller` | The Citrix IPAM Contoller image. |
 | tag | Mandatory | `0.0.1` | The Citrix IPAM Contoller image tag. |
 | pullPolicy | Mandatory | `IfNotPresent` | The Citrix IPAM Contoller image pull policy. |

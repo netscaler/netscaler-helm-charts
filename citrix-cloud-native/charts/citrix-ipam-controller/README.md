@@ -61,7 +61,7 @@ For example:
 
 > **Tip:**
 >
-> The [values.yaml](https://github.com/citrix/citrix-helm-charts/blob/master/citrix-cloud-native/values.yaml) contains the default values of the parameters.
+> The [values.yaml](https://github.com/citrix/citrix-helm-charts/blob/master/citrix_cloud_native_values.yaml) contains the default values of the parameters.
 
 ## Uninstalling the Chart
 To uninstall/delete the ```my-release``` deployment:

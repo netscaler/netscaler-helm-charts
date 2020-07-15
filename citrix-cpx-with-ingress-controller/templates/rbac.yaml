@@ -5,7 +5,7 @@ metadata:
 rules:
   - apiGroups: [""]
 {{- if .Values.openshift }}
-    resources: ["endpoints", "ingresses", "pods", "secrets", "routes", "tokenreviews", "subjectaccessreviews", "nodes", "namespaces",  "configmaps"]
+    resources: ["endpoints", "ingresses", "pods", "secrets", "routes", "tokenreviews", "subjectaccessreviews", "nodes", "namespaces", "configmaps"]
 {{- else }}
     resources: ["endpoints", "ingresses", "pods", "secrets", "routes", "nodes", "namespaces", "configmaps"]
 {{- end}}

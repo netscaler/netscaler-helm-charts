@@ -114,7 +114,7 @@ The following table lists the mandatory and optional parameters that you can con
 | cnc.license.accept | Mandatory | no | Set `yes` to accept the CNC end user license agreement. |
 | cnc.image | Mandatory | `quay.io/citrix/citrix-k8s-node-controller` | The CNC image. |
 | cnc.tag | Mandatory | `2.0.0` | The CNC image version. |
-| cnc.pullPolicy | Mandatory | Always | The CNC image pull policy. |
+| cnc.pullPolicy | Mandatory | IfNotPresent | The CNC image pull policy. |
 | cnc.loginFileName | Mandatory | N/A | The secret key to log on to the Citrix ADC VPX or MPX. For information on how to create the secret keys, see [Prerequisites](#prerequistes). |
 | cnc.nsIP | Mandatory | N/A | The IP address of the Citrix ADC device. For details, see [Prerequisites](#prerequistes). |
 | cnc.vtepIP | Mandatory | N/A | The Citrix ADC SNIP. |
@@ -137,7 +137,7 @@ For example:
 
 > **Tip:** 
 >
-> The [values.yaml](https://github.com/citrix/citrix-helm-charts/blob/master/citrix-cpx-with-ingress-controller/values.yaml) contains the default values of the parameters.
+> The [values.yaml](https://github.com/citrix/citrix-helm-charts/blob/master/citrix_cloud_native_values.yaml) contains the default values of the parameters.
 
 ## Uninstalling the Chart
 To uninstall/delete the ```my-release``` deployment:
