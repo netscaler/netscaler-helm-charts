@@ -1,0 +1,41 @@
+apiVersion: apps/v1 
+kind: Deployment
+metadata:
+  name: coe
+  labels: 
+    app: coe
+spec:
+  replicas: {{ .Values.replicas }} 
+  selector:
+    matchLabels:
+      app: coe
+  template:
+    metadata:
+      name: coe
+      labels:
+        app: coe
+{{- if .Values.timeseries.enabled }}
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "5563"
+{{- end}}
+    spec:
+      containers:
+        - name: coe
+          image: {{ .Values.image }} 
+          imagePullPolicy: {{ .Values.pullPolicy }}
+          ports:
+            - containerPort: 5557
+              name: lstream
+{{- if .Values.timeseries.enabled }}
+            - containerPort: 5563
+              name: rest
+{{- end}}
+          volumeMounts:
+            - name: lstreamd-config
+              mountPath: /var/logproxy/lstreamd/conf/lstreamd_default.conf
+              subPath: lstreamd_default.conf
+      volumes:
+        - name: lstreamd-config
+          configMap:
+            name: coe-config 

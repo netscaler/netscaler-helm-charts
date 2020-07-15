@@ -113,7 +113,7 @@ The following table lists the mandatory and optional parameters that you can con
 | license.accept | Mandatory | no | Set `yes` to accept the CNC end user license agreement. |
 | image | Mandatory | `quay.io/citrix/citrix-k8s-node-controller` | The CNC image. |
 | tag | Mandatory | `2.0.0` | The CNC image version. |
-| pullPolicy | Mandatory | Always | The CNC image pull policy. |
+| pullPolicy | Mandatory | IfNotPresent | The CNC image pull policy. |
 | loginFileName | Mandatory | N/A | The secret key to log on to the Citrix ADC VPX or MPX. For information on how to create the secret keys, see [Prerequisites](#prerequistes). |
 | nsIP | Mandatory | N/A | The IP address of the Citrix ADC device. For details, see [Prerequisites](#prerequistes). |
 | vtepIP | Mandatory | N/A | The Citrix ADC SNIP. |

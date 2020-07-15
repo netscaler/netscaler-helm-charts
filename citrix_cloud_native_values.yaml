@@ -14,23 +14,43 @@ cic:
   logLevel: DEBUG
   nsNamespace:
   kubernetesURL:
-  ipam: False
-  logProxy:
-  http2ServerSide: OFF
   ingressClass:
   defaultSSLCert:
+  ipam: False
+  logProxy:
   nodeWatch: false
+  http2ServerSide: "OFF"
+
+  exporter:
+    required: false
+    image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.4
+    pullPolicy: IfNotPresent
+    ports:
+      containerPort: 8888
 
   crds:
     install: true
     retainOnDelete: false
 
-  exporter:
+  coeConfig:
     required: false
-    image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.3
-    pullPolicy: IfNotPresent
-    ports:
-      containerPort: 8888
+    distributedTracing:
+      enable: false
+      samplingrate: 100
+    endpoint:
+      server:
+    timeseries:
+      port: 30002
+      metrics:
+        enable: false
+        mode: 'avro'
+      auditlogs:
+        enable: false
+      events:
+        enable: false
+    transactions:
+      enable: false
+      port: 30001
 
 cpx:
   enabled: False
@@ -46,24 +66,45 @@ cpx:
   lsPort:
   nsNamespace:
   platform:
-  logProxy:
   license:
     accept: no
   ingressClass:
   logLevel: DEBUG
   http2ServerSide: OFF
   defaultSSLCert:
+  logProxy:
+  http2ServerSide: "OFF"
+
+  exporter:
+    required: false
+    image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.4
+    pullPolicy: IfNotPresent
+    ports:
+      containerPort: 8888
 
   crds:
     install: true
     retainOnDelete: false
 
-  exporter:
+  coeConfig:
     required: false
-    image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.3
-    pullPolicy: IfNotPresent
-    ports:
-      containerPort: 8888
+    distributedTracing:
+      enable: false
+      samplingrate: 100
+    endpoint:
+      server:
+    timeseries:
+      port: 5563
+      metrics:
+        enable: false
+        mode: 'avro'
+      auditlogs:
+        enable: false
+      events:
+        enable: false
+    transactions:
+      enable: false
+      port: 5557
 
 ci-ingress:
   enabled: False
@@ -73,7 +114,7 @@ ci-ingress:
   metricExporter:
     required: true
     image: quay.io/citrix/citrix-adc-metrics-exporter
-    version: 1.4.3
+    version: 1.4.0
     port: 8888
     secure: "YES"
     logLevel: ERROR
@@ -172,3 +213,34 @@ cnc:
 
   serviceAccount:
     create: true
+
+coe:
+  enabled: False
+  image: "quay.io/citrix/citrix-observability-exporter:1.1.001"
+  pullPolicy: IfNotPresent
+  replicas: 1
+  license:
+    accept: no 
+  transaction:
+    nodePort: 30001
+  ns_tracing:
+    enabled: false
+    server: "zipkin:9411/api/v1/spans" 
+  elasticsearch:
+    enabled: false
+    server:
+  kafka:
+    enabled: false
+    broker:
+    topic:
+  timeseries:
+    enabled: false
+    nodePort: 30002
+
+ipam:
+  enabled: False
+  image: quay.io/citrix/citrix-ipam-controller
+  tag: 0.0.1
+  pullPolicy: IfNotPresent
+
+  vipRange:

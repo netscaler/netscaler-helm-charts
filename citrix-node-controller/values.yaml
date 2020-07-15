@@ -4,7 +4,7 @@
 
 image: quay.io/citrix/citrix-k8s-node-controller
 tag: 2.0.0
-pullPolicy: Always
+pullPolicy: IfNotPresent
 license:
   accept: no
 nsIP:

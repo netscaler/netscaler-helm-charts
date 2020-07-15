@@ -229,7 +229,7 @@ The following table lists the mandatory and optional parameters that you can con
 | cic.enabled | Mandatory | False | Set to "True" for deploying Citrix Ingress Controller for Citrix ADC VPX/MPX. |
 | cic.license.accept | Mandatory | no | Set `yes` to accept the CIC end user license agreement. |
 | cic.image | Mandatory | `quay.io/citrix/citrix-k8s-ingress-controller:1.8.19` | The CIC image. |
-| cic.pullPolicy | Mandatory | Always | The CIC image pull policy. |
+| cic.pullPolicy | Mandatory | IfNotPresent | The CIC image pull policy. |
 | cic.loginFileName | Mandatory | N/A | The secret key to log on to the Citrix ADC VPX or MPX. For information on how to create the secret keys, see [Prerequisites](#prerequistes). |
 | cic.nsIP | Mandatory | N/A | The IP address of the Citrix ADC device. For details, see [Prerequisites](#prerequistes). |
 | cic.nsVIP | Optional | N/A | The Virtual IP address on the Citrix ADC device. |
@@ -246,11 +246,22 @@ The following table lists the mandatory and optional parameters that you can con
 | cic.nsNamespace | Optional | k8s | The prefix for the resources on the Citrix ADC VPX/MPX. |
 | cic.exporter.required | Optional | false | Use the argument, if you want to run the [Exporter for Citrix ADC Stats](https://github.com/citrix/citrix-adc-metrics-exporter) along with CIC to pull metrics for the Citrix ADC VPX or MPX|
 | cic.exporter.image    | Optional | `quay.io/citrix/citrix-adc-metrics-exporter:1.4.4` | The Exporter image. |
-| cic.exporter.pullPolicy | Optional | Always | The Exporter image pull policy. |
+| cic.exporter.pullPolicy | Optional | IfNotPresent | The Exporter image pull policy. |
 | cic.exporter.ports.containerPort | Optional | 8888 | The Exporter container port. |
 | cic.openshift | Optional | false | Set this argument if OpenShift environment is being used. |
 | cic.crds.install | Optional | true | Unset this argument if you don't want to install CustomResourceDefinitions which are consumed by CIC. |
 | cic.crds.retainOnDelete | Optional | false | Set this argument if you want to retain CustomResourceDefinitions even after uninstalling CIC. This will avoid data-loss of Custom Resource Objects created before uninstallation. |
+| cic.coeConfig.required | Mandatory | false | Set this to true if you want to configure Citrix ADC to send metrics and transaction records to COE. |
+| cic.coeConfig.distributedTracing.enable | Optional | false | Set this value to true to enable OpenTracing in Citrix ADC. |
+| cic.coeConfig.distributedTracing.samplingrate | Optional | 100 | Specifies the OpenTracing sampling rate in percentage. |
+| cic.coeConfig.endpoint.server | Optional | N/A | Set this value as the IP address or DNS address of the  analytics server. |
+| cic.coeConfig.timeseries.port | Optional | 30002 | Specify the port used to expose COE service outside cluster for timeseries endpoint. |
+| cic.coeConfig.timeseries.metrics.enable | Optional | Set this value to true to enable sending metrics from Citrix ADC. |
+| cic.coeConfig.timeseries.metrics.mode | Optional | avro |  Specifies the mode of metric endpoint. |
+| cic.coeConfig.timeseries.auditlogs.enable | Optional | false | Set this value to true to export audit log data from Citrix ADC. |
+| cic.coeConfig.timeseries.events.enable | Optional | false | Set this value to true to export events from the Citrix ADC. |
+| cic.coeConfig.transactions.enable | Optional | false | Set this value to true to export transactions from Citrix ADC. |
+| cic.coeConfig.transactions.port | Optional | 30001 | Specify the port used to expose COE service outside cluster for transaction endpoint. |
 
 Alternatively, you can define a YAML file with the values for the parameters and pass the values while installing the chart.
 
@@ -262,7 +273,7 @@ For example:
 
 > **Tip:** 
 >
-> The [values.yaml](https://github.com/citrix/citrix-helm-charts/blob/master/upgrade-values.yaml) contains the default values of the parameters.
+> The [values.yaml](https://github.com/citrix/citrix-helm-charts/blob/master/citrix_cloud_native_values.yaml) contains the default values of the parameters.
 
 > **Note:**
 > 

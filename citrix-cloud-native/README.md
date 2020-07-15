@@ -7,8 +7,9 @@ This helm chart can be used to:
 2. [Deploy Citrix ADC CPX with Citrix Ingress Controller running as sidecar](./charts/citrix-cpx-with-ingress-controller/README.md)
 3. [Deploy Citrix Node Controller](./charts/citrix-node-controller/README.md)
 4. [Deploy Citrix IPAM Controller](./charts/citrix-ipam-controller/README.md)
-5. [Deploy Citrix ADC as an Ingress Gateway in Istio environment](./charts/citrix-adc-istio-ingress-gateway)
-6. [Deploy Citrix ADC CPX as a sidecar in Istio environment](./charts/citrix-cpx-istio-sidecar-injector)
+5. [Deploy Observability Exporter](./charts/citrix-observability-exporter/README.md)
+6. [Deploy Citrix ADC as an Ingress Gateway in Istio environment](./charts/citrix-adc-istio-ingress-gateway)
+7. [Deploy Citrix ADC CPX as a sidecar in Istio environment](./charts/citrix-cpx-istio-sidecar-injector)
 
 
 Depending on the architecture, it is sometimes needed to deploy multiple products in Citrix portfolio together. This can be achieved by setting required parameters for all products together while installing those products using this helm chart.
@@ -34,10 +35,10 @@ then the Citrix Ingress Controller image can be updated in the already existing 
   ```
   helm upgrade cic citrix/citrix-cloud-native --set cic.enabled=true,cic.nsIP=1.1.1.1,cic.loginFileName=nslogin,cic.license.accept=yes,cic.ingressClass[0]=citrix,cic.image=<new-image>
   ```
-Alternatively, it is recommended to use same [upgrade-values.yaml](../upgrade-values.yaml) and modify the parameters necessary for upgrade. The yaml file can be used for upgrade like:
+Alternatively, it is recommended to use same [citrix_cloud_native_values.yaml](https://github.com/citrix/citrix-helm-charts/blob/master/citrix_cloud_native_values.yaml) and modify the parameters necessary for upgrade. The yaml file can be used for upgrade like:
 
   ```
-  helm upgrade cic citrix/citrix-cloud-native -f upgrade-values.yaml
+  helm upgrade cic citrix/citrix-cloud-native -f citrix_cloud_native_values.yaml
   ```
 
 > **Important::** 

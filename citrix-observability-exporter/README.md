@@ -38,11 +38,14 @@ Add the Citrix Observability Exporter helm chart repository using command:
 ```
 
 ### For Kubernetes:
-#### 1. Citrix Ingress Controller
+#### 1. Citrix Observability Exporter
 To install the chart with the release name, `my-release`, use the following command, after setting the required endpoint in values.yaml:
 ```
     helm install my-release citrix/citrix-observability-exporter
 ```
+> **Important:**
+>
+> Citrix Observability Exporter is exposed using Nodeport 30001 and 30002 by default. Please make sure these ports are available for use in your cluster before deploying this helm chart.
 
 ### Configuration
 
@@ -52,7 +55,8 @@ The following table lists the mandatory and optional parameters that you can con
 | --------- | --------------------- | ------------- | ----------- |
 | license.accept | Mandatory | no | Set `yes` to accept the CIC end user license agreement. |
 | image | Mandatory | `quay.io/citrix/citrix-observability-exporter:1.1.001` | The COE image. |
-| pullPolicy | Mandatory | Always | The COE image pull policy. |
+| pullPolicy | Mandatory | IfNotPresent | The COE image pull policy. |
+| transaction.nodePort | Optional | 30001 | Specify the port used to expose COE service outside cluster for transaction endpoint. |
 | ns_tracing.enabled | Optional | false | Set true to enable sending trace data to tracing server. |
 | ns_tracing.server | Optional | `zipkin:9411/api/v1/spans` | The tracing server api endpoint. |
 | elasticsearch.enabled | Optional | false | Set true to enable sending transaction data to elasticsearch server. |
@@ -61,6 +65,7 @@ The following table lists the mandatory and optional parameters that you can con
 | kafka.broker | Optional |  | The kafka broker IP details. |
 | kafka.topic | Optional | `HTTP` | The kafka topic details to upload data. |
 | timeseries.enabled | Optional | false | Set true to enable sending timeseries data to prometheus. |
+| timeseries.nodePort | Optional | 30002 | Specify the port used to expose COE service outside cluster for timeseries endpoint. |
 
 Alternatively, you can define a YAML file with the values for the parameters and pass the values while installing the chart.
 
@@ -68,6 +73,10 @@ For example:
 ```
    helm install my-release citrix/citrix-observability-exporter -f values.yaml
 ```
+
+> **Tip:**
+>
+> The [values.yaml](https://github.com/citrix/citrix-helm-charts/blob/master/citrix-observability-exporter/values.yaml) contains the default values of the parameters.
 
 ## Uninstalling the Chart
 To uninstall/delete the ```my-release``` deployment:
