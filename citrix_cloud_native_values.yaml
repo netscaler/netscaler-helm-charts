@@ -1,7 +1,7 @@
 cic:
   enabled: False
   
-  image: quay.io/citrix/citrix-k8s-ingress-controller:1.8.19
+  image: quay.io/citrix/citrix-k8s-ingress-controller:1.8.28
   pullPolicy: IfNotPresent
   openshift: false
   loginFileName:
@@ -20,6 +20,9 @@ cic:
   logProxy:
   nodeWatch: false
   http2ServerSide: "OFF"
+  nodeSelector:
+    key:
+    value:
 
   exporter:
     required: false
@@ -55,10 +58,10 @@ cic:
 cpx:
   enabled: False
 
-  image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-52.24
+  image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-58.30
   pullPolicy: IfNotPresent
   cic:
-    image: quay.io/citrix/citrix-k8s-ingress-controller:1.8.19
+    image: quay.io/citrix/citrix-k8s-ingress-controller:1.8.28
     pullPolicy: IfNotPresent
     required: true
   openshift: false
@@ -74,6 +77,9 @@ cpx:
   defaultSSLCert:
   logProxy:
   http2ServerSide: "OFF"
+  nodeSelector:
+    key:
+    value:
 
   exporter:
     required: false

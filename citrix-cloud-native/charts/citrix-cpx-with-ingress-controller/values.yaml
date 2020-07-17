@@ -3,11 +3,11 @@
 # Declare variables to be passed into your templates.
 
 # cpximage contains information needed to fetch CPX image
-image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-52.24
+image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-58.30
 pullPolicy: IfNotPresent
 # cicimage contains information needed to fetch CIC image
 cic:
-  image: quay.io/citrix/citrix-k8s-ingress-controller:1.8.19
+  image: quay.io/citrix/citrix-k8s-ingress-controller:1.8.28
   pullPolicy: IfNotPresent
   required: true
 # openshift is set to true if charts are being deployed in OpenShift environment.
@@ -33,6 +33,9 @@ defaultSSLCert:
 logProxy:
 # Set to ON to enables HTTP2 for Citrix ADC service group configurations
 http2ServerSide: "OFF"
+nodeSelector:
+  key:
+  value:
 
 # exporter conatins information of prometheus-exporter
 exporter:
