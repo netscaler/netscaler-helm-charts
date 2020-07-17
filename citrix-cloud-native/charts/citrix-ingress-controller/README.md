@@ -228,7 +228,7 @@ The following table lists the mandatory and optional parameters that you can con
 | --------- | --------------------- | ------------- | ----------- |
 | cic.enabled | Mandatory | False | Set to "True" for deploying Citrix Ingress Controller for Citrix ADC VPX/MPX. |
 | cic.license.accept | Mandatory | no | Set `yes` to accept the CIC end user license agreement. |
-| cic.image | Mandatory | `quay.io/citrix/citrix-k8s-ingress-controller:1.8.19` | The CIC image. |
+| cic.image | Mandatory | `quay.io/citrix/citrix-k8s-ingress-controller:1.8.28` | The CIC image. |
 | cic.pullPolicy | Mandatory | IfNotPresent | The CIC image pull policy. |
 | cic.loginFileName | Mandatory | N/A | The secret key to log on to the Citrix ADC VPX or MPX. For information on how to create the secret keys, see [Prerequisites](#prerequistes). |
 | cic.nsIP | Mandatory | N/A | The IP address of the Citrix ADC device. For details, see [Prerequisites](#prerequistes). |
@@ -249,6 +249,8 @@ The following table lists the mandatory and optional parameters that you can con
 | cic.exporter.pullPolicy | Optional | IfNotPresent | The Exporter image pull policy. |
 | cic.exporter.ports.containerPort | Optional | 8888 | The Exporter container port. |
 | cic.openshift | Optional | false | Set this argument if OpenShift environment is being used. |
+| cic.nodeSelector.key | Optional | N/A | Node label key to be used for nodeSelector option in CIC deployment. |
+| cic.nodeSelector.value | Optional | N/A | Node label value to be used for nodeSelector option in CIC deployment. |
 | cic.crds.install | Optional | true | Unset this argument if you don't want to install CustomResourceDefinitions which are consumed by CIC. |
 | cic.crds.retainOnDelete | Optional | false | Set this argument if you want to retain CustomResourceDefinitions even after uninstalling CIC. This will avoid data-loss of Custom Resource Objects created before uninstallation. |
 | cic.coeConfig.required | Mandatory | false | Set this to true if you want to configure Citrix ADC to send metrics and transaction records to COE. |
