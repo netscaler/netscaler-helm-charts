@@ -64,16 +64,15 @@ cpx:
     image: quay.io/citrix/citrix-k8s-ingress-controller:1.8.28
     pullPolicy: IfNotPresent
     required: true
+
+  mgmtHttpPort: 9080
+  mgmtHttpsPort: 9443
   openshift: false
-  lsIP:
-  lsPort:
   nsNamespace:
-  platform:
   license:
     accept: no
   ingressClass:
   logLevel: DEBUG
-  http2ServerSide: OFF
   defaultSSLCert:
   logProxy:
   http2ServerSide: "OFF"
@@ -81,16 +80,23 @@ cpx:
     key:
     value:
 
+  ADMSettings:
+    licenseServerIP:
+    licenseServerPort: 27000
+    ADMIP:
+    ADMFingerPrint:
+    loginSecret:
+    bandWidthLicense: false
+    bandWidth:
+    vCPULicense: false
+    cpxCores:
+
   exporter:
     required: false
     image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.4
     pullPolicy: IfNotPresent
     ports:
       containerPort: 8888
-
-  crds:
-    install: true
-    retainOnDelete: false
 
   coeConfig:
     required: false
@@ -111,6 +117,10 @@ cpx:
     transactions:
       enable: false
       port: 5557
+
+  crds:
+    install: true
+    retainOnDelete: false
 
 ci-ingress:
   enabled: False
