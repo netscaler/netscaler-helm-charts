@@ -193,7 +193,7 @@ The following table lists the configurable parameters of the Citrix ADC CPX with
 | cpx.ADMSettings.cpxCores | Optional | 1 | Desired number of vCPU to be set for Citrix ADC CPX. |
 
 | cpx.exporter.required | Optional | false | Use the argument if you want to run the [Exporter for Citrix ADC Stats](https://github.com/citrix/citrix-adc-metrics-exporter) along with Citrix ingress controller to pull metrics for the Citrix ADC CPX|
-| cpx.exporter.image | Optional | `quay.io/citrix/citrix-adc-metrics-exporter:1.4.4` | The Exporter for Citrix ADC Stats image. |
+| cpx.exporter.image | Optional | `quay.io/citrix/citrix-adc-metrics-exporter:1.4.5` | The Exporter for Citrix ADC Stats image. |
 | cpx.exporter.pullPolicy | Optional | IfNotPresent | The Exporter for Citrix ADC Stats image pull policy. |
 | cpx.exporter.ports.containerPort | Optional | 8888 | The Exporter for Citrix ADC Stats container port. |
 
