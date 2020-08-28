@@ -26,7 +26,7 @@ cic:
 
   exporter:
     required: false
-    image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.5
+    image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.6
     pullPolicy: IfNotPresent
     ports:
       containerPort: 8888
@@ -93,7 +93,7 @@ cpx:
 
   exporter:
     required: false
-    image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.5
+    image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.6
     pullPolicy: IfNotPresent
     ports:
       containerPort: 8888
