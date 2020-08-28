@@ -8,6 +8,9 @@ cic:
 cpx:
   enabled: False
 
+gslb:
+  enabled: False
+
 cnc:
   enabled: False
 

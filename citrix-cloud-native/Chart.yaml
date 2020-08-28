@@ -21,6 +21,10 @@ dependencies:
     version: "1.8.28"
     condition: cpx.enabled
     alias: cpx
+  - name: citrix-gslb-controller
+    version: "1.9.2"
+    condition: gslb.enabled
+    alias: gslb
   - name: citrix-node-controller
     version: "2.0.0"
     condition: cnc.enabled

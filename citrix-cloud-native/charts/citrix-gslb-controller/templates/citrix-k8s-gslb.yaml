@@ -1,0 +1,78 @@
+{{- if .Values.openshift }}
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+{{- else }}
+apiVersion: apps/v1
+kind: Deployment
+{{- end}}
+metadata:
+  name: gslb-controller
+spec:
+  selector:
+{{- if .Values.openshift }}
+     router: gslb-controller
+{{- else }}
+    matchLabels:
+      app: gslb-controller
+{{- end}}
+  replicas: 1
+{{- if .Values.openshift }}
+  strategy:
+    resources: {}
+    rollingParams:
+      intervalSeconds: 1
+      maxSurge: 0
+      maxUnavailable: 25%
+      timeoutSeconds: 600
+      updatePeriodSeconds: 1
+    type: Rolling
+{{- end}}
+  template:
+    metadata:
+      name: gslb-controller
+      labels:
+{{- if .Values.openshift }}
+        router: gslb-controller
+{{- else }}
+        app: gslb-controller
+{{- end}}
+    spec:
+      serviceAccountName: gslb-k8s-role
+      containers:
+      - name: gslb-controller
+        image: "{{ .Values.image }}"
+        imagePullPolicy: {{ .Values.pullPolicy }}
+        env:
+        - name: "LOCAL_REGION"
+          value: {{ .Values.localRegion }}
+        - name: "LOCAL_CLUSTER"
+          value: {{ .Values.localCluster }}
+        - name: "SITENAMES"
+          value: {{ include "citrix-gslb-controller.sites" .}}
+        {{- range .Values.sitedata }}
+        - name: {{ include "citrix-gslb-controller.siteip" .}}
+          value: {{ .siteIp }}
+        - name: {{ include "citrix-gslb-controller.siteusername" .}}
+          valueFrom:
+            secretKeyRef:
+              name: {{ .secretName }}
+              key: username
+        - name: {{ include "citrix-gslb-controller.sitepassword" .}}
+          valueFrom:
+            secretKeyRef:
+              name: {{ .secretName }}
+              key: password
+        - name: {{ include "citrix-gslb-controller.siteregion" .}}
+          value: {{ .siteRegion }}
+        {{- end }}
+        - name: "EULA"
+          value: "{{ .Values.license.accept }}"
+        - name: "NS_APPS_NAME_PREFIX"
+          value: {{ .Values.nsNamespace | default "k8s"}}
+        args:
+        - --config-interface
+          gslb-endpoints
+{{- if .Values.kubernetesURL }}
+        - name: "kubernetes_url"
+          value: "{{ .Values.kubernetesURL }}"
+{{- end}}

@@ -55,6 +55,27 @@ cic:
       enable: false
       port: 30001
 
+gslb:
+  enabled: False
+
+  image: quay.io/citrix/citrix-k8s-ingress-controller:1.9.2
+  pullPolicy: IfNotPresent
+  openshift: false
+  localRegion:
+  localCluster:
+  license:
+    accept: no
+  nsPort: 443
+  nsProtocol: HTTPS
+  logLevel: DEBUG
+  nsNamespace:
+  kubernetesURL:
+  sitedata:
+
+  crds:
+    install: true
+    retainOnDelete: false
+
 cpx:
   enabled: False
 

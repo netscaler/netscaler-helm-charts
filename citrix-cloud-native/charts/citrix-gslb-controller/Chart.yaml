@@ -1,0 +1,14 @@
+apiVersion: v1
+appVersion: "1.9.2"
+description: A Helm chart for Citrix GSLB Controller configuring MPX/VPX.
+name: citrix-gslb-controller
+version: 1.9.2
+icon: https://raw.githubusercontent.com/citrix/citrix-helm-charts/gh-pages/icon.png
+home: https://www.citrix.com
+maintainers:
+- name: priyankash-citrix
+  email: priyanka.sharma@citrix.com
+- name: subashd
+  email: subash.dangol@citrix.com
+- name: apoorva-05
+  email: apoorva.kamath@citrix.com
