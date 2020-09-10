@@ -179,14 +179,24 @@ metadata:
     app: cpx-service
     service-type: citrix-adc-cpx-monitor
 spec:
+{{- if .Values.serviceType.loadBalancer.enabled }}
+  type: LoadBalancer
+{{- else if .Values.serviceType.nodePort.enabled }}
   type: NodePort
+{{- end}}
   ports:
   - port: 80
     protocol: TCP
     name: http
+{{- if and .Values.serviceType.nodePort.enabled .Values.serviceType.nodePort.httpPort }}
+    nodePort: {{ .Values.serviceType.nodePort.httpPort }}
+{{- end }}
   - port: 443
     protocol: TCP
     name: https
+{{- if and .Values.serviceType.nodePort.enabled .Values.serviceType.nodePort.httpsPort }}
+    nodePort: {{ .Values.serviceType.nodePort.httpsPort}}
+{{- end }}
 {{- if .Values.exporter.required }}
   - port: {{ .Values.exporter.ports.containerPort }}
     targetPort: {{ .Values.exporter.ports.containerPort }}
