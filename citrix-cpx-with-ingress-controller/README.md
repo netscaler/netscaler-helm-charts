@@ -176,7 +176,7 @@ Citrix ADC CPX can be installed with service having servicetype Nodeport. Follow
 helm install citrix-cpx-with-ingress-controller citrix/citrix-cpx-with-ingress-controller --set license.accept=yes,serviceType.nodePort.enabled=True
 ```
 
-Additionally `serviceType.nodePort.httpPort` and `serviceType.nodePort.httpsPort` arguments can be used to select the nodePort for the CPX service for HTTP and HTTPS ports.
+Additionally, `serviceType.nodePort.httpPort` and `serviceType.nodePort.httpsPort` arguments can be used to select the nodePort for the CPX service for HTTP and HTTPS ports.
  
 
 ## Configuration

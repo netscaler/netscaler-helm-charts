@@ -181,7 +181,7 @@ Citrix ADC CPX can be installed with service having servicetype Nodeport. Follow
 helm install citrix-cpx-with-ingress-controller citrix/citrix-cloud-native --set cpx.enabled=True,cpx.license.accept=yes,cpx.serviceType.nodePort.enabled=True
 ```
 
-Additionally `cpx.serviceType.nodePort.httpPort` and `cpx.serviceType.nodePort.httpsPort` arguments can be used to select the nodePort for the CPX service for HTTP and HTTPS ports.
+Additionally, `cpx.serviceType.nodePort.httpPort` and `cpx.serviceType.nodePort.httpsPort` arguments can be used to select the nodePort for the CPX service for HTTP and HTTPS ports.
 
 ## Configuration
 The following table lists the configurable parameters of the Citrix ADC CPX with Citrix ingress controller as side car chart and their default values.
