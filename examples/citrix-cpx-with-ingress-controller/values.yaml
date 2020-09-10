@@ -7,7 +7,7 @@ image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-58.30
 pullPolicy: IfNotPresent
 # cicimage contains information needed to fetch CIC image
 cic:
-  image: quay.io/citrix/citrix-k8s-ingress-controller:1.8.28
+  image: quay.io/citrix/citrix-k8s-ingress-controller:1.9.2
   pullPolicy: IfNotPresent
   required: true
 # openshift is set to true if charts are being deployed in OpenShift environment.
