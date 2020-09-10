@@ -8,7 +8,7 @@ In a [Kubernetes](https://kubernetes.io/) or [OpenShift](https://www.openshift.c
   ```
   helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-  helm install cpxcic citrix/citrix-cloud-native --set cpx.enabled=true,cpx.license.accept=yes
+  helm install citrix-cpx-with-ingress-controller citrix/citrix-cloud-native --set cpx.enabled=true,cpx.license.accept=yes
   ```
 
 ### For OpenShift
@@ -16,7 +16,7 @@ In a [Kubernetes](https://kubernetes.io/) or [OpenShift](https://www.openshift.c
   ```
   helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-  helm install cpxcic citrix/citrix-cloud-native --set cpx.enabled=true,cpx.license.accept=yes,cpx.openshift=true
+  helm install citrix-cpx-with-ingress-controller citrix/citrix-cloud-native --set cpx.enabled=true,cpx.license.accept=yes,cpx.openshift=true
   ```
 
 > **Important:**
@@ -167,8 +167,23 @@ In a Kubernetes deployment, you can enforce a web application firewall policy to
 
 Example files: [wafhtmlxsssql.yaml](https://github.com/citrix/citrix-helm-charts/tree/master/example-crds/wafhtmlxsssql.yaml)
 
-## Configuration
+## Citrix ADC CPX servicetype LoadBalancer
+Citrix ADC CPX can be installed with service having servicetype LoadBalancer. Following arguments can be used in the `helm install` command for the same:
 
+```
+helm install citrix-cpx-with-ingress-controller citrix/citrix-cloud-native --set cpx.enabled=True,cpx.license.accept=yes,cpx.serviceType.loadBalancer.enabled=True
+```
+
+## Citrix ADC CPX servicetype NodePort
+Citrix ADC CPX can be installed with service having servicetype Nodeport. Following arguments can be used in the `helm install` command for the same:
+
+```
+helm install citrix-cpx-with-ingress-controller citrix/citrix-cloud-native --set cpx.enabled=True,cpx.license.accept=yes,cpx.serviceType.nodePort.enabled=True
+```
+
+Additionally `cpx.serviceType.nodePort.httpPort` and `cpx.serviceType.nodePort.httpsPort` arguments can be used to select the nodePort for the CPX service for HTTP and HTTPS ports.
+
+## Configuration
 The following table lists the configurable parameters of the Citrix ADC CPX with Citrix ingress controller as side car chart and their default values.
 
 | Parameters | Mandatory or Optional | Default value | Description |
@@ -189,7 +204,11 @@ The following table lists the configurable parameters of the Citrix ADC CPX with
 | cpx.openshift | Optional | false | Set this argument if OpenShift environment is being used. |
 | cpx.nodeSelector.key | Optional | N/A | Node label key to be used for nodeSelector option for CPX-CIC deployment. |
 | cpx.nodeSelector.value | Optional | N/A | Node label value to be used for nodeSelector option in CPX-CIC deployment. |
-| cpx.ADMSettings.licenseServerIP | Optional | N/A | Provide the Citrix Application Delivery Management (ADM) IP address to license Citrix ADC CPX. For more information, see [Licensing](https://developer-docs.citrix.com/projects/citrix-k8s-ingress-controller/en/latest/licensing/) |
+| cpx.serviceType.loadBalancer.enabled | Optional | False | Set this argument if you want servicetype of CPX service to be LoadBalancer. |
+| cpx.serviceType.nodePort.enabled | Optional | False | Set this argument if you want servicetype of CPX service to be NodePort. |
+| cpx.serviceType.nodePort.httpPort | Optional | N/A | Specify the HTTP nodeport to be used for NodePort CPX service. |
+| cpx.serviceType.nodePort.httpsPort | Optional | N/A | Specify the HTTPS nodeport to be used for NodePort CPX service. |
+| cpx.ADMSettings.licenseServerIP | Optional | N/A | Provide the Citrix Application Delivery Management (ADM) IP address to license Citrix ADC CPX. For more information, see [Licensing](https://developer-docs.citrix.com/projects/citrix-k8s-ingress-controller/en/latest/licensing/)|
 | cpx.ADMSettings.licenseServerPort | Optional | 27000 | Citrix ADM port if non-default port is used. |
 | cpx.ADMSettings.ADMIP | Optional | |  Citrix Application Delivery Management (ADM) IP address. |
 | cpx.ADMSettings.ADMFingerPrint | Optional | N/A | Citrix Application Delivery Management (ADM) Finger Print. For more information, see [this](https://docs.citrix.com/en-us/citrix-application-delivery-management-service/application-analytics-and-management/service-graph.html). |
@@ -224,7 +243,7 @@ Alternatively, you can define a YAML file with the values for the parameters and
 
 For example:
     ```
-    helm install my-release citrix/citrix-cloud-native -f values.yaml
+    helm install citrix-cpx-with-ingress-controller citrix/citrix-cloud-native -f values.yaml
     ```
 
 > **Tip:**

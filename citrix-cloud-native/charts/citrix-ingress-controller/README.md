@@ -178,9 +178,7 @@ CRDs gets installed/upgraded automatically when we install/upgrade Citrix ingres
 > Installing again may fail due to the presence of CRDs. Make sure that you back up all CustomResource objects and clean up CRDs before re-installing Citrix Ingress Controller.
 
 There are a few examples of how to use these CRDs, which are placed in the folder: [Example-CRDs](https://github.com/citrix/citrix-helm-charts/tree/master/example-crds). Refer to them and install as needed, using the following command:
-```
-kubectl create -f <crd-example.yaml>
-```
+```kubectl create -f <crd-example.yaml>```
 
 ### Details of the supported CRDs:
 

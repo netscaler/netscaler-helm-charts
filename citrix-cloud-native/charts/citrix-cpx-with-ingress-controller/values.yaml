@@ -35,6 +35,14 @@ nodeSelector:
   key:
   value:
 
+serviceType:
+  loadBalancer:
+    enabled: False
+  nodePort:
+    enabled: False
+    httpPort:
+    httpsPort:
+
 ADMSettings:
   licenseServerIP:
   licenseServerPort: 27000
