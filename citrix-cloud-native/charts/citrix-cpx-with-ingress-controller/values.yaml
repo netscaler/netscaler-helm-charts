@@ -16,6 +16,7 @@ mgmtHttpPort: 9080
 mgmtHttpsPort: 9443
 # openshift is set to true if charts are being deployed in OpenShift environment.
 openshift: false
+aws: False
 # nsNamespace is the prefix for the resources on the Citrix ADC
 nsNamespace:
 # license is used accept the terms of the Citrix license
@@ -42,6 +43,15 @@ serviceType:
     enabled: False
     httpPort:
     httpsPort:
+
+cpxServiceAnnotations:
+  awsLB:
+    sslCert:
+    backendProtocol:
+    sslPorts:
+    negotiationPolicy:
+    proxyProtocol: False
+    resourcesTags:
 
 ADMSettings:
   licenseServerIP:

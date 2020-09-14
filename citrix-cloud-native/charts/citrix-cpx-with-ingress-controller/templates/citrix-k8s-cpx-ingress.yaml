@@ -178,6 +178,27 @@ metadata:
   labels:
     app: cpx-service
     service-type: citrix-adc-cpx-monitor
+  annotations:
+{{- if .Values.aws }}
+{{- if .Values.cpxServiceAnnotations.awsLB.sslCert }}
+    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: {{ .Values.cpxServiceAnnotations.awsLB.sslCert | quote }}
+{{- end}}
+{{- if .Values.cpxServiceAnnotations.awsLB.backendProtocol }}
+    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: {{ .Values.cpxServiceAnnotations.awsLB.backendProtocol | quote }}
+{{- end}}
+{{- if .Values.cpxServiceAnnotations.awsLB.sslPorts }}
+    service.beta.kubernetes.io/aws-load-balancer-ssl-ports: {{ .Values.cpxServiceAnnotations.awsLB.sslPorts | quote }}
+{{- end}}
+{{- if .Values.cpxServiceAnnotations.awsLB.negotiationPolicy }}
+    service.beta.kubernetes.io/aws-load-balancer-ssl-negotiation-policy: {{ .Values.cpxServiceAnnotations.awsLB.negotiationPolicy | quote }}
+{{- end}}
+{{- if .Values.cpxServiceAnnotations.awsLB.proxyProtocol }}
+    service.beta.kubernetes.io/aws-load-balancer-proxy-protocol: '*'
+{{- end}}
+{{- if .Values.cpxServiceAnnotations.awsLB.resourcesTags }}
+    service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags: {{ .Values.cpxServiceAnnotations.awsLB.resourcesTags | quote }}
+{{- end}}
+{{- end}}
 spec:
 {{- if .Values.serviceType.loadBalancer.enabled }}
   type: LoadBalancer
