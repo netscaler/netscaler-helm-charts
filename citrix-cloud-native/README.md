@@ -21,24 +21,24 @@ For example, both Citrix Ingress Controller and Citrix ADC CPX with Citrix Ingre
   ```
   Install:
   ```
-  helm install cnn citrix/citrix-cloud-native --set cic.enabled=true,cic.nsIP=<NSIP of Citrix VPX/MPX>,cic.loginFileName=<Secret-for-ADC-credentials>,cic.license.accept=yes,cpx.enabled=true,cpx.license.accept=yes,cpx.crds.install=false
+  helm install cloud-native citrix/citrix-cloud-native --set cic.enabled=true,cic.nsIP=<NSIP of Citrix VPX/MPX>,cic.loginFileName=<Secret-for-ADC-credentials>,cic.license.accept=yes,cpx.enabled=true,cpx.license.accept=yes,cpx.crds.install=false
   ```
 
 For upgrading any existing deployment via this helm chart all the parameters that configures the desired state of system needs to be provided in the helm upgrade command.
 For example, if Citrix Ingress Controller is already deployed in the cluster using command:
 
   ```
-  helm install cic citrix/citrix-cloud-native --set cic.enabled=true,cic.nsIP=1.1.1.1,cic.loginFileName=nslogin,cic.license.accept=yes,cic.ingressClass[0]=citrix
+  helm install citrix-ingress-controller citrix/citrix-cloud-native --set cic.enabled=true,cic.nsIP=1.1.1.1,cic.loginFileName=nslogin,cic.license.accept=yes,cic.ingressClass[0]=citrix
   ```
 then the Citrix Ingress Controller image can be updated in the already existing deployment using command:
 
   ```
-  helm upgrade cic citrix/citrix-cloud-native --set cic.enabled=true,cic.nsIP=1.1.1.1,cic.loginFileName=nslogin,cic.license.accept=yes,cic.ingressClass[0]=citrix,cic.image=<new-image>
+  helm upgrade citrix-ingress-controller citrix/citrix-cloud-native --set cic.enabled=true,cic.nsIP=1.1.1.1,cic.loginFileName=nslogin,cic.license.accept=yes,cic.ingressClass[0]=citrix,cic.image=<new-image>
   ```
 Alternatively, it is recommended to use same [citrix_cloud_native_values.yaml](https://github.com/citrix/citrix-helm-charts/blob/master/citrix_cloud_native_values.yaml) and modify the parameters necessary for upgrade. The yaml file can be used for upgrade like:
 
   ```
-  helm upgrade cic citrix/citrix-cloud-native -f citrix_cloud_native_values.yaml
+  helm upgrade citrix-ingress-controller citrix/citrix-cloud-native -f citrix_cloud_native_values.yaml
   ```
 
 > **Important::** 

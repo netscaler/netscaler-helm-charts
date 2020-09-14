@@ -101,6 +101,23 @@ cpx:
     key:
     value:
 
+  serviceType:
+    loadBalancer:
+      enabled: False
+    nodePort:
+      enabled: False
+      httpPort:
+      httpsPort:
+
+  cpxServiceAnnotations:
+    awsLB:
+      sslCert:
+      backendProtocol:
+      sslPorts:
+      negotiationPolicy:
+      proxyProtocol: False
+      resourcesTags:
+
   ADMSettings:
     licenseServerIP:
     licenseServerPort: 27000

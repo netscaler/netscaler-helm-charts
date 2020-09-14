@@ -222,7 +222,6 @@ In a Kubernetes deployment, you can enforce a web application firewall policy to
 
 Example files: [wafhtmlxsssql.yaml](https://github.com/citrix/citrix-helm-charts/tree/master/example-crds/wafhtmlxsssql.yaml)
 
-
 ### Configuration
 
 The following table lists the mandatory and optional parameters that you can configure during installation:

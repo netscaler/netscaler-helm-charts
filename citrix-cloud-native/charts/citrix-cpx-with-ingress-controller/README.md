@@ -202,12 +202,19 @@ The following table lists the configurable parameters of the Citrix ADC CPX with
 | cpx.nsNamespace | Optional | k8s | The prefix for the resources on the Citrix ADC CPX. |
 | cpx.ingressClass | Optional | N/A | If multiple ingress load balancers are used to load balance different ingress resources. You can use this parameter to specify Citrix ingress controller to configure Citrix ADC associated with specific ingress class.|
 | cpx.openshift | Optional | false | Set this argument if OpenShift environment is being used. |
+| cpx.aws | Optional | false | Set this argument if deploying Citrix ADC CPX in AWS. |
 | cpx.nodeSelector.key | Optional | N/A | Node label key to be used for nodeSelector option for CPX-CIC deployment. |
 | cpx.nodeSelector.value | Optional | N/A | Node label value to be used for nodeSelector option in CPX-CIC deployment. |
 | cpx.serviceType.loadBalancer.enabled | Optional | False | Set this argument if you want servicetype of CPX service to be LoadBalancer. |
 | cpx.serviceType.nodePort.enabled | Optional | False | Set this argument if you want servicetype of CPX service to be NodePort. |
 | cpx.serviceType.nodePort.httpPort | Optional | N/A | Specify the HTTP nodeport to be used for NodePort CPX service. |
 | cpx.serviceType.nodePort.httpsPort | Optional | N/A | Specify the HTTPS nodeport to be used for NodePort CPX service. |
+| cpxServiceAnnotations.awsLB.sslCert | Optional | N/A | Specify the ARN of the certificate to use for TLS/SSL support on a cluster running on AWS. |
+| cpxServiceAnnotations.awsLB.backendProtocol | Optional | N/A | Specify which protocol the Pod uses on a cluster running on AWS. |
+| cpxServiceAnnotations.awsLB.sslPorts | Optional | N/A | Specify which ports exposed by Pods would use the SSL certificate on a cluster running on AWS. |
+| cpxServiceAnnotations.awsLB.negotiationPolicy | Optional | N/A | Name of the any [Predefined AWS SSL policy](https://docs.aws.amazon.com/elasticloadbalancing/latest/classic/elb-security-policy-table.html) with HTTPS or SSL listeners for your Services on AWS. |
+| cpxServiceAnnotations.awsLB.proxyProtocol | Optional | False | Set this parameter to enable [PROXY protocol](https://www.haproxy.org/download/1.8/doc/proxy-protocol.txt) support for clusters running on AWS. |
+| cpxServiceAnnotations.awsLB.resourcesTags | Optional | N/A | A comma-separated list of key-value pairs which will be recorded as additional tags in the ELB on AWS. |
 | cpx.ADMSettings.licenseServerIP | Optional | N/A | Provide the Citrix Application Delivery Management (ADM) IP address to license Citrix ADC CPX. For more information, see [Licensing](https://developer-docs.citrix.com/projects/citrix-k8s-ingress-controller/en/latest/licensing/)|
 | cpx.ADMSettings.licenseServerPort | Optional | 27000 | Citrix ADM port if non-default port is used. |
 | cpx.ADMSettings.ADMIP | Optional | |  Citrix Application Delivery Management (ADM) IP address. |
