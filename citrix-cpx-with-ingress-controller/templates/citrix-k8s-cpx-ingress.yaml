@@ -180,23 +180,23 @@ metadata:
     service-type: citrix-adc-cpx-monitor
   annotations:
 {{- if .Values.aws }}
-{{- if .Values.cpxServiceAnnotations.awsLB.sslCert }}
-    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: {{ .Values.cpxServiceAnnotations.awsLB.sslCert | quote }}
+{{- if .Values.serviceAnnotations.awsLB.sslCert }}
+    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: {{ .Values.serviceAnnotations.awsLB.sslCert | quote }}
 {{- end}}
-{{- if .Values.cpxServiceAnnotations.awsLB.backendProtocol }}
-    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: {{ .Values.cpxServiceAnnotations.awsLB.backendProtocol | quote }}
+{{- if .Values.serviceAnnotations.awsLB.backendProtocol }}
+    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: {{ .Values.serviceAnnotations.awsLB.backendProtocol | quote }}
 {{- end}}
-{{- if .Values.cpxServiceAnnotations.awsLB.sslPorts }}
-    service.beta.kubernetes.io/aws-load-balancer-ssl-ports: {{ .Values.cpxServiceAnnotations.awsLB.sslPorts | quote }}
+{{- if .Values.serviceAnnotations.awsLB.sslPorts }}
+    service.beta.kubernetes.io/aws-load-balancer-ssl-ports: {{ .Values.serviceAnnotations.awsLB.sslPorts | quote }}
 {{- end}}
-{{- if .Values.cpxServiceAnnotations.awsLB.negotiationPolicy }}
-    service.beta.kubernetes.io/aws-load-balancer-ssl-negotiation-policy: {{ .Values.cpxServiceAnnotations.awsLB.negotiationPolicy | quote }}
+{{- if .Values.serviceAnnotations.awsLB.negotiationPolicy }}
+    service.beta.kubernetes.io/aws-load-balancer-ssl-negotiation-policy: {{ .Values.serviceAnnotations.awsLB.negotiationPolicy | quote }}
 {{- end}}
-{{- if .Values.cpxServiceAnnotations.awsLB.proxyProtocol }}
+{{- if .Values.serviceAnnotations.awsLB.proxyProtocol }}
     service.beta.kubernetes.io/aws-load-balancer-proxy-protocol: '*'
 {{- end}}
-{{- if .Values.cpxServiceAnnotations.awsLB.resourcesTags }}
-    service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags: {{ .Values.cpxServiceAnnotations.awsLB.resourcesTags | quote }}
+{{- if .Values.serviceAnnotations.awsLB.resourcesTags }}
+    service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags: {{ .Values.serviceAnnotations.awsLB.resourcesTags | quote }}
 {{- end}}
 {{- end}}
 spec:

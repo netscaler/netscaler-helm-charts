@@ -44,7 +44,7 @@ serviceType:
     httpPort:
     httpsPort:
 
-cpxServiceAnnotations:
+serviceAnnotations:
   awsLB:
     sslCert:
     backendProtocol:
