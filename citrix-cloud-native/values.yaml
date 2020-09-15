@@ -20,8 +20,12 @@ coe:
 ipam:
   enabled: False
 
-ia-ingress:
+iaIngress:
   enabled: False
 
-ia-sidecar:
+iaSidecar:
   enabled: False
+
+iaEgress:
+  enabled: False
+

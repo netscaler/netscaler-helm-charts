@@ -1,0 +1,25 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: citrix-egressgateway-tls
+spec:
+  selector:
+    app: citrix-egressgateway
+  servers:
+  - port:
+      number: 443
+      name: tls
+      protocol: TLS
+    hosts:
+    - edition.cnn.com
+    tls:
+      mode: PASSTHROUGH
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: citrix-egressgateway-for-cnn
+spec:
+  host: citrix-egressgateway.citrix-system.svc.cluster.local
+  subsets:
+  - name: cnn
