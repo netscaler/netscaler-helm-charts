@@ -1,0 +1,60 @@
+# Default values for egress-gateway.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+citrixCPX: false
+
+coe:
+    coeURL:
+
+metricExporter:
+    required: true
+    image: quay.io/citrix/citrix-adc-metrics-exporter
+    version: 1.4.6
+    port: 8888
+    secure: "FALSE"
+    logLevel: ERROR
+    imagePullPolicy: IfNotPresent
+
+istioPilot:
+    name: istiod
+    namespace: istio-system
+    secureGrpcPort: 15012
+    insecureGrpcPort: 15010
+    SAN:
+
+
+xDSAdaptor:
+    image: quay.io/citrix/citrix-xds-adaptor 
+    tag: 0.9.5 
+    imagePullPolicy: IfNotPresent
+    proxyType: router
+    secureConnect: true
+
+
+certProvider:
+    caAddr: istiod.istio-system.svc
+    caPort: 15012
+    trustDomain: cluster.local
+    certTTLinHours: 720
+    clusterId: Kubernetes    
+
+
+egressGateway:
+    image: quay.io/citrix/citrix-k8s-cpx-ingress
+    tag: 13.0-64.35
+    imagePullPolicy: IfNotPresent
+    EULA: false
+    mgmtHttpPort: 10080
+    mgmtHttpsPort: 10443
+    lightWeightCPX: "1"    
+    label: citrix-egressgateway
+
+ADMSettings:
+    ADMIP:
+    ADMFingerPrint:
+    licenseServerIP:
+    licenseServerPort: 27000
+    bandWidthLicense: false
+    bandWidth:
+    vCPULicense: false
+    cpxCores:

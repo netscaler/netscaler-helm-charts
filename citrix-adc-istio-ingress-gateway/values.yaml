@@ -4,38 +4,43 @@
 
 citrixCPX: false 
 
+coe:
+    coeURL:
+
 metricExporter:
     required: true
     image: quay.io/citrix/citrix-adc-metrics-exporter
-    version: 1.4.0
+    version: 1.4.6
     port: 8888
     secure: "YES"
     logLevel: ERROR
     imagePullPolicy: IfNotPresent
 
-istioAdaptor:
-    image: quay.io/citrix/citrix-istio-adaptor
-    tag: 1.2.1
+xDSAdaptor:
+    image: quay.io/citrix/citrix-xds-adaptor
+    tag: 0.9.5
     imagePullPolicy: IfNotPresent
-    netscalerUrl: null 
     proxyType: router
     secureConnect: true
-    vserverIP:
-    netProfile:
-    ADMIP: 
-    ADMFingerPrint:
-    coeURL:
  
 istioPilot:
-    name: istio-pilot
+    name: istiod
     namespace: istio-system
-    secureGrpcPort: 15011
+    secureGrpcPort: 15012
     insecureGrpcPort: 15010
-    SAN: spiffe://cluster.local/ns/istio-system/sa/istio-pilot-service-account
+    SAN:
+
+certProvider:
+    caAddr: istiod.istio-system.svc
+    caPort: 15012
+    trustDomain: cluster.local
+    certTTLinHours: 720
+    clusterId: Kubernetes
 
 ingressGateway:
+    netscalerUrl: null 
     image: quay.io/citrix/citrix-k8s-cpx-ingress
-    tag: 13.0-47.22
+    tag: 13.0-64.35
     imagePullPolicy: IfNotPresent
     EULA: NO
     mgmtHttpPort: 10080
@@ -44,7 +49,19 @@ ingressGateway:
     httpsNodePort: 31443
     lightWeightCPX: 1 
     secretVolumes:
-    #licenseServerIP: this value will be taken from istioAdaptor.ADMIP
-    licenseServerPort: 27000 
+    #licenseServerIP: this value will be taken from ADMSettings.ADMIP
     label: citrix-ingressgateway
     tcpPort:
+    vserverIP: nsip
+    adcServerName:
+    netProfile:
+
+ADMSettings:
+    ADMIP:
+    ADMFingerPrint:
+    licenseServerIP:
+    licenseServerPort: 27000
+    bandWidthLicense: false
+    bandWidth:
+    vCPULicense: false
+    cpxCores:

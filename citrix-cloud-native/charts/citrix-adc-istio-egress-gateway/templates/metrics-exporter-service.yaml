@@ -1,0 +1,17 @@
+{{- if eq .Values.metricExporter.required true }}
+kind: Service
+apiVersion: v1
+metadata:
+   name: exporter-egress
+   annotations:
+   labels:
+     service-type: citrix-adc-monitor
+spec:
+   selector:
+     app: {{ .Values.egressGateway.label | default "citrix-egressgateway" }}
+   ports:
+   - name: exporter-port
+     port: {{ .Values.metricExporter.port }}
+     targetPort: {{ .Values.metricExporter.port }}
+---
+{{- end }}

@@ -165,7 +165,7 @@ The following table lists the mandatory and optional parameters that you can con
 | Parameters | Mandatory or Optional | Default value | Description |
 | --------- | --------------------- | ------------- | ----------- |
 | gslb.license.accept | Mandatory | no | Set `yes` to accept the CIC end user license agreement. |
-| gslb.image | Optional | `quay.io/citrix/citrix-k8s-ingress-controller:1.9.2` | The CIC image. |
+| gslb.image | Optional | `quay.io/citrix/citrix-k8s-ingress-controller:1.9.9` | The CIC image. |
 | gslb.pullPolicy | Optional | Always | The CIC image pull policy. |
 | gslb.nsPort | Optional | 443 | The port used by CIC to communicate with Citrix ADC. You can use port 80 for HTTP. |
 | gslb.nsProtocol | Optional | HTTPS | The protocol used by CIC to communicate with Citrix ADC. You can also use HTTP on port 80. |
