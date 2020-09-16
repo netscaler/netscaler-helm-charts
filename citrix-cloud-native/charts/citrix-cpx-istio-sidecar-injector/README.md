@@ -33,7 +33,7 @@ In Istio servicemesh, the namespace must be labelled before applying the deploym
 
 __Note: If a namespace is labelled with both `istio-injection` and `cpx-injection`, Envoy injection takes a priority! Citrix CPX won't be injected on top of the already injected Envoy sidecar. For using Citrix ADC as sidecar, ensure that `istio-injection` label is removed from the namespace.__
 
-For detailed information on different deployment options, see [Deployment Architecture](https://github.com/citrix/citrix-istio-adaptor/blob/master/docs/architecture.md).
+For detailed information on different deployment options, see [Deployment Architecture](https://github.com/citrix/citrix-istio-adaptor/blob/master/docs/istio-integration/architecture.md).
 
 ### Prerequisites
 

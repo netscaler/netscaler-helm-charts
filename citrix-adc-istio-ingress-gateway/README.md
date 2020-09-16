@@ -38,7 +38,7 @@ Citrix Application Delivery Controller (ADC) can be deployed as an Istio Ingress
 
 ## <a name="introduction">Introduction</a>
 
-This chart deploys Citrix ADC VPX, MPX, or CPX as an Ingress Gateway in the Istio service mesh using the Helm package manager. For detailed information on different deployment options, see [Deployment Architecture](https://github.com/citrix/citrix-istio-adaptor/blob/master/docs/architecture.md).
+This chart deploys Citrix ADC VPX, MPX, or CPX as an Ingress Gateway in the Istio service mesh using the Helm package manager. For detailed information on different deployment options, see [Deployment Architecture](https://github.com/citrix/citrix-istio-adaptor/blob/master/docs/istio-integration/architecture.md).
 
 ### Prerequisites
 
