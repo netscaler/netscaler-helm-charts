@@ -10,11 +10,11 @@
 
 ## <a name="citrix-egress-gateway">A) Deploying Citrix ADC as egress Gateway</a>
 
-Follow the link "Deploy Citrix ADC as an Egress Gateway using Helm charts" in [deployment guide](https://github.com/citrix/citrix-xds-adaptor#deployment-options).  
+Follow the link "Deploy Citrix ADC as an Egress Gateway using Helm charts" in [deployment guide](https://github.com/citrix/citrix-istio-adaptor/tree/master/docs/istio-integration#deployment-options).  
 
 ## <a name="citrix-sidecar-injector">B) Deploying Citrix ADC Sidecar Injector </a>
 
-Follow the link "Deploy Citrix ADC CPX as a sidecar using Helm charts" in [deployment guide](https://github.com/citrix/citrix-istio-adaptor#deployment-options).
+Follow the link "Deploy Citrix ADC CPX as a sidecar using Helm charts" in [deployment guide](https://github.com/citrix/citrix-istio-adaptor/tree/master/docs/istio-integration#deployment-options).
 
 ## <a name="deploying-sample-example ">C) Deploying Sample Example</a>
 Deploy any sample application. In this example, `sleep` is deployed as sample application.
