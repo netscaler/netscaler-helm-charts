@@ -17,6 +17,8 @@ spec:
         app: {{default "citrix-egressgateway" .Values.egressGateway.label}}
       annotations:
         scheduler.alpha.kubernetes.io/critical-pod: ""
+        prometheus.io/port: "{{ .Values.metricExporter.port }}"
+        prometheus.io/scrape: "true"
     spec:
       volumes:
       - name: nsloginegress
