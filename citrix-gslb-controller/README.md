@@ -54,10 +54,6 @@ This Helm chart deploys Citrix ingress controller in the [Kubernetes](https://ku
     ```
     en feature lb,cs,ssl,gslb
     ```
-  - GSLB auto sync should be enabled on all ADC devices.
-    ```
-    set gslb parameter -AutomaticConfigSync enabled
-    ```
   - For static proximity, the location database has to be applied externally
     ```
     add locationfile /var/netscaler/inbuilt_db/Citrix_Netscaler_InBuilt_GeoIP_DB_IPv4
