@@ -38,14 +38,14 @@ dependencies:
     condition: ipam.enabled
     alias: ipam
   - name: citrix-adc-istio-ingress-gateway
-    version: "0.9.5"
+    version: "1.6.4"
     condition: iaIngress.enabled
     alias: iaIngress
   - name: citrix-cpx-istio-sidecar-injector
-    version: "0.9.5"
+    version: "1.6.4"
     condition: iaSidecar.enabled
     alias: iaSidecar
   - name: citrix-adc-istio-egress-gateway
-    version: "0.9.5"
+    version: "1.6.4"
     condition: iaEgress.enabled
     alias: iaEgress

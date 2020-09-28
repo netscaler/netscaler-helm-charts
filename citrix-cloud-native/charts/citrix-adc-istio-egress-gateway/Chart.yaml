@@ -7,7 +7,7 @@ type: application
 home: https://www.citrix.com
 sources:
 - https://github.com/citrix/citrix-istio-adaptor
-version: 0.9.5
+version: 1.6.4
 maintainers:
 - name: ajeetas
   email: ajeeta.shakeet@citrix.com
