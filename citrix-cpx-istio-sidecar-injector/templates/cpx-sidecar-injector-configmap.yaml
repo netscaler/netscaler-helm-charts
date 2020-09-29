@@ -22,7 +22,7 @@ data:
     template: |-
       containers:
       - name: istio-adaptor
-        image: {{ .Values.xDSAdaptor.image }}:{{ .Values.xDSAdaptor.tag }}
+        image: {{ .Values.xDSAdaptor.image }}
         imagePullPolicy: {{ .Values.xDSAdaptor.imagePullPolicy }} 
         env:
         - name: POD_NAME
@@ -106,7 +106,7 @@ data:
           readOnlyRootFilesystem: true
           runAsUser: 32024 # UID of xds-adaptor container's user
       - name: cpx-proxy
-        image: {{ .Values.cpxProxy.image }}:{{ .Values.cpxProxy.tag }}
+        image: {{ .Values.cpxProxy.image }}
         imagePullPolicy: IfNotPresent
         securityContext:
           privileged: true

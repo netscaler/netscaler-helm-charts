@@ -45,9 +45,9 @@ spec:
         args:
           - --configmap
             {{ .Release.Namespace }}/cic-configmap
-{{- if .Values.defaultSSLCert }}
+{{- if .Values.defaultSSLCertSecret }}
           - --default-ssl-certificate
-            {{ .Release.Namespace }}/{{ .Values.defaultSSLCert }}
+            {{ .Release.Namespace }}/{{ .Values.defaultSSLCertSecret }}
 {{- end }}
 {{- if .Values.ingressClass }}
           - --ingress-class
@@ -61,6 +61,10 @@ spec:
           - --ipam
             citrix-ipam-controller
 {{- end }}
+{{- if .Values.updateIngressStatus }}
+          - --update-ingress-status
+            yes
+{{- end }}
         env:
         - name: "NS_IP"
           value: "{{ .Values.nsIP }}"
@@ -71,17 +75,17 @@ spec:
         - name: "NS_USER"
           valueFrom:
             secretKeyRef:
-              name: {{ .Values.loginFileName }}
+              name: {{ .Values.adcCredentialSecret }}
               key: username
         - name: "NS_PASSWORD"
           valueFrom:
             secretKeyRef:
-              name: {{ .Values.loginFileName }}
+              name: {{ .Values.adcCredentialSecret }}
               key: password
         - name: "EULA"
           value: "{{ .Values.license.accept }}"
         - name: "NS_APPS_NAME_PREFIX"
-          value: {{ .Values.nsNamespace | default "k8s"}}
+          value: {{ .Values.entityPrefix | default "k8s"}}
 {{- if .Values.kubernetesURL }}
         - name: "kubernetes_url"
           value: "{{ .Values.kubernetesURL }}"
@@ -106,8 +110,13 @@ spec:
       volumes:
       - name: nslogin
         secret:
-          secretName: {{ .Values.loginFileName }}
+          secretName: {{ .Values.adcCredentialSecret }}
 {{- end }}
+{{- if and .Values.nodeSelector.key .Values.nodeSelector.value }}
+      nodeSelector:
+        {{ .Values.nodeSelector.key }}: {{ .Values.nodeSelector.value }}
+{{- end }}
+
 ---
 
 {{- if .Values.exporter.required }}

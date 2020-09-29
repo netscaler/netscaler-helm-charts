@@ -169,8 +169,7 @@ The following table lists the configurable parameters and their default values i
 | Parameter                      | Description                   | Default                   |
 |--------------------------------|-------------------------------|---------------------------|
 | `iaSidecar.enabled` | Mandatory | False | Set to "True" for deploying Citrix ADC CPX as a sidecar in Istio environment. |
-| `iaSidecar.xDSadaptor.image`                    | Image of the Citrix xDS Adaptor container                    |  quay.io/citrix/citrix-xds-adaptor   |
-| `iaSidecar.xDSadaptor.tag`             | Tag of the xDS-adaptor image       | 0.9.5                |
+| `iaSidecar.xDSadaptor.image`                    | Image of the Citrix xDS Adaptor container                    |  quay.io/citrix/citrix-xds-adaptor:0.9.5   |
 | `iaSidecar.xDSadaptor.imagePullPolicy`   | Image pull policy for xDS-adaptor | IfNotPresent        |
 | `iaSidecar.xDSadaptor.secureConnect`     | If this value is set to true, xDS-adaptor establishes secure gRPC channel with Istio Pilot   | TRUE                       |
 | `iaSidecar.coe.coeURL`          | Name of [Citrix Observability Exporter](https://github.com/citrix/citrix-observability-exporter) Service in the form of _servicename.namespace_  | NIL            | Optional|
@@ -187,13 +186,11 @@ The following table lists the configurable parameters and their default values i
 | `iaSidecar.istioPilot.proxyType`      | Type of Citrix ADC associated with the xDS-adaptor. Possible values are: sidecar and router.                                                                              |   sidecar|
 | `iaSidecar.istioPilot.SAN`                 | Subject alternative name for Istio Pilot which is the Secure Production Identity Framework For Everyone (SPIFFE) ID of Istio Pilot.                                   | null |
 | `iaSidecar.cpxProxy.netscalerUrl`   |    URL or IP address of the Citrix ADC which will be configured by xDS-adaptor.                                                            | http://127.0.0.1 |
-| `iaSidecar.cpxProxy.image`          | Citrix ADC CPX image used as sidecar proxy                                                                                                    | quay.io/citrix/citrix-k8s-cpx-ingress |  
-| `iaSidecar.cpxProxy.tag`             | Version of the Citrix ADC CPX                                                                                   |13.0-47.22                            |
+| `iaSidecar.cpxProxy.image`          | Citrix ADC CPX image used as sidecar proxy                                                                                                    | quay.io/citrix/citrix-k8s-cpx-ingress:13.0-64.35 |
 | `iaSidecar.cpxProxy.imagePullPolicy`           | Image pull policy for Citrix ADC                                                                                  | IfNotPresent                                                               |
 | `iaSidecar.cpxProxy.EULA`              |  End User License Agreement(EULA) terms and conditions. If yes, then user agrees to EULA terms and conditions.                                                     | NO |
 | `iaSidecar.cpxProxy.cpxSidecarMode`            | Environment variable for Citrix ADC CPX. It indicates that Citrix ADC CPX is running as sidecar mode or not.                                                                                               | YES                                                                    |
-| `iaSidecar.sidecarWebHook.webhookImage`   | Mutating webhook associated with the sidecar injector. It invokes a service `cpx-sidecar-injector` to inject sidecar proxies in the application pod.                                                                                      | gcr.io/istio-release/sidecar_injector|
-| `iaSidecar.sidecarWebHook.webhookImageVersion`   | Image version                                                                         |1.0.0|
+| `iaSidecar.sidecarWebHook.webhookImage`   | Mutating webhook associated with the sidecar injector. It invokes a service `cpx-sidecar-injector` to inject sidecar proxies in the application pod.                                                                                      | gcr.io/istio-release/sidecar_injector:1.0.0|
 | `iaSidecar.sidecarWebHook.imagePullPolicy`   | Image pull policy                                                                          |IfNotPresent|
 | `iaSidecar.webhook.injectionLabelName` |  Label of namespace where automatic Citrix ADC CPX sidecar injection is required. | cpx-injection |
 | `iaSidecar.certProvider.caAddr`   | Certificate Authority (CA) address issuing certificate to application                           | istiod.istio-system.svc                          | Optional |

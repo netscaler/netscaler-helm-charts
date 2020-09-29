@@ -53,7 +53,7 @@ spec:
       containers:
 {{- if eq .Values.metricExporter.required true }}
         - name: exporter
-          image: {{ .Values.metricExporter.image }}:{{ .Values.metricExporter.version }}
+          image: {{ .Values.metricExporter.image }}
           imagePullPolicy: IfNotPresent
           args:
           - "--target-nsip=127.0.0.1"
@@ -68,7 +68,7 @@ spec:
             readOnly: true
 {{- end }}
         - name: istio-adaptor
-          image: {{ .Values.xDSAdaptor.image }}:{{ .Values.xDSAdaptor.tag }}
+          image: {{ .Values.xDSAdaptor.image }}
           imagePullPolicy: {{ .Values.xDSAdaptor.imagePullPolicy }} 
           args:
           - -ads-server
@@ -173,7 +173,7 @@ spec:
             readOnly: true
           {{- end }}
         - name: citrix-ingressgateway
-          image: "{{ .Values.ingressGateway.image }}:{{ .Values.ingressGateway.tag }}"
+          image: "{{ .Values.ingressGateway.image }}"
           imagePullPolicy: {{ .Values.ingressGateway.imagePullPolicy }}
           securityContext:
             privileged: true
@@ -277,7 +277,7 @@ spec:
       containers:
 {{- if eq .Values.metricExporter.required true }}
       - name: exporter
-        image: {{ .Values.metricExporter.image }}:{{ .Values.metricExporter.version }}
+        image: {{ .Values.metricExporter.image }}
         imagePullPolicy: {{ .Values.metricExporter.imagePullPolicy }}
         args:
         - "--target-nsip={{- include "exporter_nsip" . -}}"
@@ -292,7 +292,7 @@ spec:
           readOnly: true
 {{- end }}
       - name: istio-adaptor
-        image: {{ .Values.xDSAdaptor.image }}:{{ .Values.xDSAdaptor.tag }} 
+        image: {{ .Values.xDSAdaptor.image }}
         imagePullPolicy: {{ .Values.xDSAdaptor.imagePullPolicy }}  
         env:
         - name: POD_NAME

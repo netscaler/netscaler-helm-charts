@@ -21,20 +21,25 @@ For example, both Citrix Ingress Controller and Citrix ADC CPX with Citrix Ingre
   helm repo add citrix https://citrix.github.io/citrix-helm-charts/
   ```
   Install:
+  There are two ways to install this chart, either by providing all parameters required in the `helm install` command itself, for example:
   ```
-  helm install cloud-native citrix/citrix-cloud-native --set cic.enabled=true,cic.nsIP=<NSIP of Citrix VPX/MPX>,cic.loginFileName=<Secret-for-ADC-credentials>,cic.license.accept=yes,cpx.enabled=true,cpx.license.accept=yes,cpx.crds.install=false
+  helm install cloud-native citrix/citrix-cloud-native --set cic.enabled=true,cic.nsIP=<NSIP of Citrix VPX/MPX>,cic.adcCredentialSecret=<Secret-for-ADC-credentials>,cic.license.accept=yes,cpx.enabled=true,cpx.license.accept=yes
+  ```
+  or all the required parameters can be set in [citrix_cloud_native_values.yaml](https://github.com/citrix/citrix-helm-charts/blob/master/citrix_cloud_native_values.yaml) and this yaml can be used to install the chart using command:
+  ```
+  helm install cloud-native citrix/citrix-cloud-native -f citrix_cloud_native_values.yaml
   ```
 
 For upgrading any existing deployment via this helm chart all the parameters that configures the desired state of system needs to be provided in the helm upgrade command.
 For example, if Citrix Ingress Controller is already deployed in the cluster using command:
 
   ```
-  helm install citrix-ingress-controller citrix/citrix-cloud-native --set cic.enabled=true,cic.nsIP=1.1.1.1,cic.loginFileName=nslogin,cic.license.accept=yes,cic.ingressClass[0]=citrix
+  helm install citrix-ingress-controller citrix/citrix-cloud-native --set cic.enabled=true,cic.nsIP=1.1.1.1,cic.adcCredentialSecret=nslogin,cic.license.accept=yes,cic.ingressClass[0]=citrix
   ```
 then the Citrix Ingress Controller image can be updated in the already existing deployment using command:
 
   ```
-  helm upgrade citrix-ingress-controller citrix/citrix-cloud-native --set cic.enabled=true,cic.nsIP=1.1.1.1,cic.loginFileName=nslogin,cic.license.accept=yes,cic.ingressClass[0]=citrix,cic.image=<new-image>
+  helm upgrade citrix-ingress-controller citrix/citrix-cloud-native --set cic.enabled=true,cic.nsIP=1.1.1.1,cic.adcCredentialSecret=nslogin,cic.license.accept=yes,cic.ingressClass[0]=citrix,cic.image=<new-image>
   ```
 Alternatively, it is recommended to use same [citrix_cloud_native_values.yaml](https://github.com/citrix/citrix-helm-charts/blob/master/citrix_cloud_native_values.yaml) and modify the parameters necessary for upgrade. The yaml file can be used for upgrade like:
 
@@ -42,5 +47,7 @@ Alternatively, it is recommended to use same [citrix_cloud_native_values.yaml](h
   helm upgrade citrix-ingress-controller citrix/citrix-cloud-native -f citrix_cloud_native_values.yaml
   ```
 
-> **Important::** 
-> Both the charts [Citrix Ingress Controller](https://github.com/citrix/citrix-helm-charts/tree/master/citrix-cloud-native/charts/citrix-ingress-controller/README.md) and [Citrix ADC CPX with Citrix Ingress Controller](https://github.com/citrix/citrix-helm-charts/tree/master/citrix-cloud-native/charts/citrix-cpx-with-ingress-controller/README.md) contains all the CRDs that are supported by Citrix. The CRDs gets installed by default whenever these charts are deployed. So whenever you are installing both these charts together please make sure you are deploying CRDs only once. You can do this either by setting `cic.crds.install=false` or by setting `cpx.crds.install=false`.
+-> **Important::**
+-> Both the charts [Citrix Ingress Controller](https://github.com/citrix/citrix-helm-charts/tree/master/citrix-cloud-native/charts/citrix-ingress-controller/R
+EADME.md) and [Citrix ADC CPX with Citrix Ingress Controller](https://github.com/citrix/citrix-helm-charts/tree/master/citrix-cloud-native/charts/citrix-cpx-w
+ith-ingress-controller/README.md) contains all the CRDs that are supported by Citrix. So whenever you are installing both these charts together please make sure you are deploying CRDs only once. You can do this either by setting `cic.crds.install=false` or by setting `cpx.crds.install=false`.

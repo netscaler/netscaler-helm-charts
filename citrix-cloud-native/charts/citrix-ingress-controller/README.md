@@ -9,7 +9,7 @@
   ```
   helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-  helm install cic citrix/citrix-cloud-native --set cic.enabled=true,cic.nsIP=<NSIP>,cic.loginFileName=<Secret-of-Citrix-ADC-credentials>,cic.license.accept=yes
+  helm install cic citrix/citrix-cloud-native --set cic.enabled=true,cic.nsIP=<NSIP>,cic.adcCredentialSecret=<Secret-of-Citrix-ADC-credentials>,cic.license.accept=yes
   ```
 
 ### For OpenShift
@@ -17,7 +17,7 @@
   ```
   helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-  helm install cic citrix/citrix-cloud-native --set cic.enabled=true,cic.nsIP=<NSIP>,cic.loginFileName=<Secret-of-Citrix-ADC-credentials>,cic.license.accept=yes,cic.openshift=true
+  helm install cic citrix/citrix-cloud-native --set cic.enabled=true,cic.nsIP=<NSIP>,cic.adcCredentialSecret=<Secret-of-Citrix-ADC-credentials>,cic.license.accept=yes,cic.openshift=true
   ```
 
 > **Important:**
@@ -115,7 +115,7 @@ Add the Citrix Ingress Controller helm chart repository using command:
 To install the chart with the release name, `my-release`, use the following command:
 
   ```
-  helm install my-release citrix/citrix-cloud-native --set cic.enabled=true,cic.nsIP=<NSIP>,cic.loginFileName=<Secret-of-Citrix-ADC-credentials>,cic.license.accept=yes,cic.ingressClass[0]=<ingressClassName>
+  helm install my-release citrix/citrix-cloud-native --set cic.enabled=true,cic.nsIP=<NSIP>,cic.adcCredentialSecret=<Secret-of-Citrix-ADC-credentials>,cic.license.accept=yes,cic.ingressClass[0]=<ingressClassName>
   ```
 
 > **Note:**
@@ -133,7 +133,7 @@ The command deploys Citrix ingress controller on Kubernetes cluster with the def
 Use the following command for this:
 
   ```
-  helm install my-release citrix/citrix-cloud-native --set cic.enabled=true,cic.nsIP=<NSIP>,cic.loginFileName=<Secret-of-Citrix-ADC-credentials>,cic.license.accept=yes,cic.ingressClass[0]=<ingressClassName>,cic.exporter.required=true
+  helm install my-release citrix/citrix-cloud-native --set cic.enabled=true,cic.nsIP=<NSIP>,cic.adcCredentialSecret=<Secret-of-Citrix-ADC-credentials>,cic.license.accept=yes,cic.ingressClass[0]=<ingressClassName>,cic.exporter.required=true
   ```
 
 ### For Openshift:
@@ -147,7 +147,7 @@ Add the service account named "cic-k8s-role" to the privileged Security Context 
 To install the chart with the release name, `my-release`, use the following command:
 
   ```
-  helm install my-release citrix/citrix-cloud-native --set cic.enabled=true,cic.nsIP=<NSIP>,cic.loginFileName=<Secret-of-Citrix-ADC-credentials>,cic.license.accept=yes,cic.openshift=true
+  helm install my-release citrix/citrix-cloud-native --set cic.enabled=true,cic.nsIP=<NSIP>,cic.adcCredentialSecret=<Secret-of-Citrix-ADC-credentials>,cic.license.accept=yes,cic.openshift=true
   ```
 The command deploys Citrix ingress controller on your Openshift cluster in the default configuration. The [configuration](#configuration) section lists the mandatory and optional parameters that you can configure during installation.
 
@@ -160,7 +160,7 @@ The command deploys Citrix ingress controller on your Openshift cluster in the d
 Use the following command for this:
 
   ```
-  helm install my-release citrix/citrix-cloud-native --set cic.enabled=true,cic.nsIP=<NSIP>,cic.loginFileName=<Secret-of-Citrix-ADC-credentials>,cic.license.accept=yes,cic.openshift=true,cic.exporter.required=true
+  helm install my-release citrix/citrix-cloud-native --set cic.enabled=true,cic.nsIP=<NSIP>,cic.adcCredentialSecret=<Secret-of-Citrix-ADC-credentials>,cic.license.accept=yes,cic.openshift=true,cic.exporter.required=true
   ```
 
 ### Installed components
@@ -238,7 +238,7 @@ The following table lists the mandatory and optional parameters that you can con
 | cic.license.accept | Mandatory | no | Set `yes` to accept the CIC end user license agreement. |
 | cic.image | Mandatory | `quay.io/citrix/citrix-k8s-ingress-controller:1.9.9` | The CIC image. |
 | cic.pullPolicy | Mandatory | IfNotPresent | The CIC image pull policy. |
-| cic.loginFileName | Mandatory | N/A | The secret key to log on to the Citrix ADC VPX or MPX. For information on how to create the secret keys, see [Prerequisites](#prerequistes). |
+| cic.adcCredentialSecret | Mandatory | N/A | The secret key to log on to the Citrix ADC VPX or MPX. For information on how to create the secret keys, see [Prerequisites](#prerequistes). |
 | cic.nsIP | Mandatory | N/A | The IP address of the Citrix ADC device. For details, see [Prerequisites](#prerequistes). |
 | cic.nsVIP | Optional | N/A | The Virtual IP address on the Citrix ADC device. |
 | cic.nsPort | Optional | 443 | The port used by CIC to communicate with Citrix ADC. You can use port 80 for HTTP. |
@@ -247,11 +247,14 @@ The following table lists the mandatory and optional parameters that you can con
 | cic.kubernetesURL | Optional | N/A | The kube-apiserver url that CIC uses to register the events. If the value is not specified, CIC uses the [internal kube-apiserver IP address](https://kubernetes.io/docs/tasks/access-application-cluster/access-cluster/#accessing-the-api-from-a-pod). |
 | cic.ingressClass | Optional | N/A | If multiple ingress load balancers are used to load balance different ingress resources. You can use this parameter to specify CIC to configure Citrix ADC associated with specific ingress class. For more information on Ingress class, see [Ingress class support](https://developer-docs.citrix.com/projects/citrix-k8s-ingress-controller/en/latest/configure/ingress-classes/). |
 | cic.nodeWatch | Optional | false | Use the argument if you want to automatically configure network route from the Ingress Citrix ADC VPX or MPX to the pods in the Kubernetes cluster. For more information, see [Automatically configure route on the Citrix ADC instance](https://developer-docs.citrix.com/projects/citrix-k8s-ingress-controller/en/latest/network/staticrouting/#automatically-configure-route-on-the-citrix-adc-instance). |
-| cic.defaultSSLCert | Optional | N/A | Default SSL certificate that needs to be used as a non-SNI certificate in Citrix ADC. |
-| cic.http2ServerSide | Optional | OFF | Enables HTTP2 for Citrix ADC service group configurations. |
+| cic.defaultSSLCertSecret | Optional | N/A | Provide Kubernetes secret name that needs to be used as a default non-SNI certificate in Citrix ADC. |
+| cic.cicSettings.required | Optional | False | Set this to `True` if you want to use oprtional settings for CIC present in configmap. |
+| cic.cicSettings.cicConfig.NS_HTTP2_SERVER_SIDE | Optional | OFF | Set this argument to `ON` for enabling HTTP2 for Citrix ADC service group configurations. This will be set in configmap of CIC only when `cic.cicSettings.required` argument is set to `True`. |
+| cic.cicSettings.cicConfig.NS_COOKIE_VERSION | Optional | 0 | Specify the persistence cookie version (0 or 1). | This will be set in configmap of CIC only when `cic.cicSettings.required` argument is set to `True`. |
 | cic.ipam | Optional | False | Set this argument if you want to use the IPAM controller to automatically allocate an IP address to the service of type LoadBalancer. |
 | cic.logProxy | Optional | N/A | Provide Elasticsearch or Kafka or Zipkin endpoint for Citrix observability exporter. |
-| cic.nsNamespace | Optional | k8s | The prefix for the resources on the Citrix ADC VPX/MPX. |
+| cic.entityPrefix | Optional | k8s | The prefix for the resources on the Citrix ADC VPX/MPX. |
+| cic.updateIngressStatus | Optional | False | Set this argurment if `Status.LoadBalancer.Ingress` field of the Ingress resources managed by the Citrix ingress controller needs to be updated with allocated IP addresses. For more information see [this](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/configure/ingress-classes.md#updating-the-ingress-status-for-the-ingress-resources-with-the-specified-ip-address). |
 | cic.exporter.required | Optional | false | Use the argument, if you want to run the [Exporter for Citrix ADC Stats](https://github.com/citrix/citrix-adc-metrics-exporter) along with CIC to pull metrics for the Citrix ADC VPX or MPX|
 | cic.exporter.image    | Optional | `quay.io/citrix/citrix-adc-metrics-exporter:1.4.6` | The Exporter image. |
 | cic.exporter.pullPolicy | Optional | IfNotPresent | The Exporter image pull policy. |

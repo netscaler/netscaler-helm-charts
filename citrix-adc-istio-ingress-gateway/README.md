@@ -230,8 +230,7 @@ The following table lists the configurable parameters in the Helm chart and thei
 | Parameter                      | Description                   | Default                   | Optional/Mandatory                  |
 |--------------------------------|-------------------------------|---------------------------|---------------------------|
 | `citrixCPX`                    | Citrix ADC CPX                    | FALSE                  | Mandatory for Citrix ADC CPX |
-| `xDSAdaptor.image`            | Image of the Citrix xDS adaptor container |quay.io/citrix/citrix-xds-adaptor| Mandatory|
-| `xDSAdaptor.tag`               | Tag of the xDS adaptor image | 0.9.5                 | Mandatory|
+| `xDSAdaptor.image`            | Image of the Citrix xDS adaptor container |quay.io/citrix/citrix-xds-adaptor:0.9.5 | Mandatory|
 | `xDSAdaptor.imagePullPolicy`   | Image pull policy for xDS adaptor | IfNotPresent       | Optional|
 | `xDSAdaptor.secureConnect`     | If this value is set to true, xDS-adaptor establishes secure gRPC channel with Istio Pilot   | TRUE                       | Optional|
 | `coe.coeURL`          | Name of [Citrix Observability Exporter](https://github.com/citrix/citrix-observability-exporter) Service in the form of "<servicename>.<namespace>"  | null            | Optional|
@@ -244,8 +243,7 @@ The following table lists the configurable parameters in the Helm chart and thei
 | `ingressGateway.netscalerUrl`       | URL or IP address of the Citrix ADC which Istio-adaptor configures (Mandatory if citrixCPX=false)| null   |Mandatory for Citrix ADC MPX or VPX|
 | `ingressGateway.vserverIP`       | Virtual server IP address on Citrix ADC (Mandatory if citrixCPX=false) | null | Mandatory for Citrix ADC MPX or VPX|
 | `ingressGateway.adcServerName `          | Citrix ADC ServerName used in the Citrix ADC certificate  | null            | Optional |
-| `ingressGateway.image`             | Image of Citrix ADC CPX designated to run as Ingress Gateway                                                                       |quay.io/citrix/citrix-k8s-cpx-ingress|   Mandatory for Citrix ADC CPX                                                              |
-| `ingressGateway.tag`              | Version of Citrix ADC CPX                                                                                                          | 13.0-58.30                  | Mandatory for Citrix ADC CPX |
+| `ingressGateway.image`             | Image of Citrix ADC CPX designated to run as Ingress Gateway                                                                       |quay.io/citrix/citrix-k8s-cpx-ingress:13.0-64.35 |   Mandatory for Citrix ADC CPX    |
 | `ingressGateway.imagePullPolicy`   | Image pull policy                                                                                                                  | IfNotPresent                                                          | Optional|
 | `ingressGateway.EULA`             | End User License Agreement(EULA) terms and conditions. If yes, then user agrees to EULA terms and conditions.                                     | NO                                                                    | Mandatory for Citrix ADC CPX 
 | `ingressGateway.mgmtHttpPort`      | Management port of the Citrix ADC CPX                                                                                              | 9080                                                                  | Optional|
@@ -262,8 +260,7 @@ The following table lists the configurable parameters in the Helm chart and thei
 | `istioPilot.insecureGrpcPort`      | Insecure GRPC port where Istiod (Istio Pilot) is listening                                                                                  | 15010                                                                 |Optional|
 | `istioPilot.SAN`                 | Subject alternative name for Istiod (Istio Pilot) which is the secure production identity framework for everyone (SPIFFE) ID of Istio Pilot                                                        | null |Optional|
 | `metricExporter.required`          | Metrics exporter for Citrix ADC                                                                                                    | TRUE                                                                  |Optional|
-| `metricExporter.image`             | Image of the Citrix ADC Metrics Exporter                                                                                   | quay.io/citrix/citrix-adc-metrics-exporter                             |Optional|
-| `metricExporter.version`           | Version of the Citrix ADC Metrics Exporter image                                                                                   | 1.4.6                                                            |Optional|
+| `metricExporter.image`             | Image of the Citrix ADC Metrics Exporter                                                                                   | quay.io/citrix/citrix-adc-metrics-exporter:1.4.6                             |Optional|
 | `metricExporter.port`              | Port over which Citrix ADC Metrics Exporter collects metrics of Citrix ADC.                                                      | 8888                                                                  |Optional|
 | `metricExporter.secure`            | Enables collecting metrics over TLS                                                                                                | YES                                                                    |Optional|
 | `metricExporter.logLevel`          | Level of logging in Citrix ADC Metrics Exporter. Possible values are: DEBUG, INFO, WARNING, ERROR, CRITICAL                                       | ERROR                                                                 |Optional|

@@ -26,19 +26,57 @@ spec:
             value: "{{ .Values.license.accept }}"
           - name: "KUBERNETES_TASK_ID"
             value: ""
-{{- if .Values.lsIP }}
+{{- if .Values.ADMSettings.licenseServerIP }}
           - name: "LS_IP"
-            value: {{ .Values.lsIP }}
+            value: {{ .Values.ADMSettings.licenseServerIP | quote }}
 {{- end }}
-{{- if .Values.lsPort }}
+{{- if .Values.ADMSettings.licenseServerPort }}
           - name: "LS_PORT"
-            value: {{ .Values.lsPort }}
+            value: {{ .Values.ADMSettings.licenseServerPort | quote }}
 {{- end }}
-{{- if .Values.platform }}
-          - name: "PLATFORM"
-            value: {{ .Values.platform }}
+          - name: "MGMT_HTTP_PORT"
+            value: {{ .Values.mgmtHttpPort | quote }}
+          - name: "MGMT_HTTPS_PORT"
+            value: {{ .Values.mgmtHttpsPort | quote }}
+{{- if .Values.ADMSettings.ADMIP }}
+          - name: "NS_MGMT_SERVER"
+            value: {{ .Values.ADMSettings.ADMIP | quote }}
+          - name: "NS_MGMT_FINGER_PRINT"
+            value: {{ .Values.ADMSettings.ADMFingerPrint | quote }}
+          - name: "NS_HTTP_PORT"
+            value: {{ .Values.mgmtHttpPort | quote }}
+          - name: "NS_HTTPS_PORT"
+            value: {{ .Values.mgmtHttpsPort | quote }}
+          - name: "LOGSTREAM_COLLECTOR_IP"
+            value: {{ .Values.ADMSettings.ADMIP | quote }}
+{{- end }}
+#To povision bandwidth based licensing to Citrix ADC CPX from ADM, needs bandwidth
+{{- if and ( .Values.ADMSettings.licenseServerIP ) (eq .Values.ADMSettings.bandWidthLicense true) }}
+          - name: "BANDWIDTH"
+            value: {{ required "Mention bandwidth for bandwidth based licensing" .Values.ADMSettings.bandWidth | quote }}
+{{- end }}
+#for multiple-PE support, need to set CPX_CORES
+{{- if .Values.ADMSettings.licenseServerIP }}
+{{- if or (eq .Values.ADMSettings.vCPULicense true) (eq .Values.ADMSettings.bandWidthLicense true) }}
+          - name: "CPX_CORES"
+            value: {{ .Values.ADMSettings.cpxCores | default 1 | quote }}
+{{- end }}
+{{- end }}
+{{- if or (.Values.ADMSettings.ADMIP) (.Values.ADMSettings.licenseServerIP) }}
+          - name: NS_MGMT_USER
+            valueFrom:
+              secretKeyRef:
+                name: {{ required "Provide Secret for ADM/LicenseServer credentials" .Values.ADMSettings.loginSecret }}
+                key: username
+          - name: NS_MGMT_PASS
+            valueFrom:
+              secretKeyRef:
+                name: {{ required "Provide Secret for ADM/LicenseServer credentials" .Values.ADMSettings.loginSecret }}
+                key: password
 {{- end }}
           volumeMounts:
+            - mountPath: /var/deviceinfo
+              name: shared-data
             - mountPath: /cpx/conf/
               name: cpx-volume1
             - mountPath: /cpx/crash/
@@ -54,21 +92,11 @@ spec:
           - name: "NS_IP"
             value: "127.0.0.1"
           - name: "NS_APPS_NAME_PREFIX"
-            value: {{ .Values.nsNamespace | default "k8s"}}
+            value: {{ .Values.entityPrefix | default "k8s"}}
           - name: "NS_DEPLOYMENT_MODE"
             value: "SIDECAR"
           - name: "NS_ENABLE_MONITORING"
             value: "YES"
-          - name: "NS_USER"
-            valueFrom:
-             secretKeyRef:
-              name: cpxlogin
-              key: username
-          - name: "NS_PASSWORD"
-            valueFrom:
-             secretKeyRef:
-              name: cpxlogin
-              key: password
 {{- if .Values.logProxy }}
           - name: "NS_LOGPROXY"
             value: {{ .Values.logProxy | quote }}
@@ -96,11 +124,14 @@ spec:
               {{.}}
 {{- end }}
 {{- end }}
-{{- if .Values.defaultSSLCert }}
+{{- if .Values.defaultSSLCertSecret }}
             - --default-ssl-certificate
-              {{ .Release.Namespace }}/{{ .Values.defaultSSLCert }}
+              {{ .Release.Namespace }}/{{ .Values.defaultSSLCertSecret }}
 {{- end }}
 {{- end }}
+          volumeMounts:
+            - mountPath: /var/deviceinfo
+              name: shared-data
 {{- if .Values.exporter.required }}
         - name: exporter
           image: "{{ .Values.exporter.image }}"
@@ -110,24 +141,26 @@ spec:
             - "--target-nsip=127.0.0.1"
             - "--port={{ .Values.exporter.ports.containerPort }}"
           env:
-          - name: "NS_USER"
-            valueFrom:
-             secretKeyRef:
-              name: cpxlogin
-              key: username
-          - name: "NS_PASSWORD"
-            valueFrom:
-             secretKeyRef:
-              name: cpxlogin
-              key: password
+          - name: "NS_DEPLOYMENT_MODE"
+            value: "SIDECAR"
           securityContext:
             readOnlyRootFilesystem: true
+          volumeMounts:
+            - mountPath: /var/deviceinfo
+              name: shared-data
 {{- end }}
       volumes:
+        - name: shared-data
+          emptyDir: {}
         - name: cpx-volume1
           emptyDir: {}
         - name: cpx-volume2
           emptyDir: {}
+{{- if and .Values.nodeSelector.key .Values.nodeSelector.value }}
+      nodeSelector:
+        {{ .Values.nodeSelector.key }}: {{ .Values.nodeSelector.value }}
+{{- end }}
+
 ---
 
 apiVersion: v1
@@ -137,15 +170,46 @@ metadata:
   labels:
     app: cpx-service
     service-type: citrix-adc-cpx-monitor
+  annotations:
+{{- if .Values.aws }}
+{{- if .Values.serviceAnnotations.awsLB.sslCert }}
+    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: {{ .Values.serviceAnnotations.awsLB.sslCert | quote }}
+{{- end}}
+{{- if .Values.serviceAnnotations.awsLB.backendProtocol }}
+    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: {{ .Values.serviceAnnotations.awsLB.backendProtocol | quote }}
+{{- end}}
+{{- if .Values.serviceAnnotations.awsLB.sslPorts }}
+    service.beta.kubernetes.io/aws-load-balancer-ssl-ports: {{ .Values.serviceAnnotations.awsLB.sslPorts | quote }}
+{{- end}}
+{{- if .Values.serviceAnnotations.awsLB.negotiationPolicy }}
+    service.beta.kubernetes.io/aws-load-balancer-ssl-negotiation-policy: {{ .Values.serviceAnnotations.awsLB.negotiationPolicy | quote }}
+{{- end}}
+{{- if .Values.serviceAnnotations.awsLB.proxyProtocol }}
+    service.beta.kubernetes.io/aws-load-balancer-proxy-protocol: '*'
+{{- end}}
+{{- if .Values.serviceAnnotations.awsLB.resourcesTags }}
+    service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags: {{ .Values.serviceAnnotations.awsLB.resourcesTags | quote }}
+{{- end}}
+{{- end}}
 spec:
+{{- if .Values.serviceType.loadBalancer.enabled }}
+  type: LoadBalancer
+{{- else if .Values.serviceType.nodePort.enabled }}
   type: NodePort
+{{- end}}
   ports:
   - port: 80
     protocol: TCP
     name: http
+{{- if and .Values.serviceType.nodePort.enabled .Values.serviceType.nodePort.httpPort }}
+    nodePort: {{ .Values.serviceType.nodePort.httpPort }}
+{{- end }}
   - port: 443
     protocol: TCP
     name: https
+{{- if and .Values.serviceType.nodePort.enabled .Values.serviceType.nodePort.httpsPort }}
+    nodePort: {{ .Values.serviceType.nodePort.httpsPort}}
+{{- end }}
 {{- if .Values.exporter.required }}
   - port: {{ .Values.exporter.ports.containerPort }}
     targetPort: {{ .Values.exporter.ports.containerPort }}

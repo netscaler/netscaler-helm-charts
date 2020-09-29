@@ -18,7 +18,7 @@ spec:
       serviceAccountName: {{ include "citrix-ipam-controller.serviceAccountName" . }}
       containers:
       - name: {{ include "citrix-ipam-controller.name" . }}
-        image: "{{ .Values.image }}:{{ .Values.tag }}"
+        image: "{{ .Values.image }}"
         imagePullPolicy: {{ .Values.pullPolicy }}
         env:
         # This IPAM controller takes environment variable VIP_RANGE. IPs in this range are used to assign values for IP range
