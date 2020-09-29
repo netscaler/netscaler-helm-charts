@@ -15,21 +15,21 @@ nsPort: 443
 nsProtocol: HTTPS
 # logLevel is to set level of CIC Logs
 logLevel: DEBUG
-# nsNamespace is the prefix for the resources on the Citrix ADC
-nsNamespace:
+# entityPrefix is the prefix for the resources on the Citrix ADC
+entityPrefix:
 # kubernetesURL is for registering events to kubeapi server
 kubernetesURL:
 # localRegion is the region where K8s cluster is deployed 
 localRegion:
 # localCluster is the clustername of the k8s cluster
 localCluster:
-# sitedata is list of dictionary containing site related information like name,IP, loginFileName for credentials.
+# sitedata is list of dictionary containing site related information like name,IP, adcCredentialSecret for credentials.
 sitedata:
   - siteName: 
     siteIp: 
     secretName: 
 crds:
 # If false, CustomResourceDefinitions  will not be installed.
-  install: true
+  install: false
 # if set to true, then CustomResourceDefinitions will not be deleted during helm delete. This way, CustomResourceObjects will not be deleted from the database.
   retainOnDelete: false

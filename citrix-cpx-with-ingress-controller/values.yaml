@@ -2,36 +2,14 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-# cpximage contains information needed to fetch CPX image
-image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-58.30
+# Citrix ADC CPX config details
+image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-64.35
 pullPolicy: IfNotPresent
-# cicimage contains information needed to fetch CIC image
-cic:
-  image: quay.io/citrix/citrix-k8s-ingress-controller:1.9.9
-  pullPolicy: IfNotPresent
-  required: true
 
 mgmtHttpPort: 9080
-
 mgmtHttpsPort: 9443
-# openshift is set to true if charts are being deployed in OpenShift environment.
 openshift: false
 aws: False
-# nsNamespace is the prefix for the resources on the Citrix ADC
-nsNamespace:
-# license is used accept the terms of the Citrix license
-license:
-  accept: no
-# ingressClass is the  name of the Ingress Class
-ingressClass:
-# logLevel is to set level of CIC Logs
-logLevel: DEBUG
-# Default SSL certificate
-defaultSSLCert:
-# Elasticsearch or Kafka or Zipkin endpoint for Citrix observability exporter
-logProxy:
-# Set to ON to enables HTTP2 for Citrix ADC service group configurations
-http2ServerSide: "OFF"
 nodeSelector:
   key:
   value:
@@ -53,6 +31,27 @@ serviceAnnotations:
     proxyProtocol: False
     resourcesTags:
 
+# Citrix Ingress Controller config details
+cic:
+  image: quay.io/citrix/citrix-k8s-ingress-controller:1.9.9
+  pullPolicy: IfNotPresent
+  required: true
+entityPrefix:
+license:
+  accept: no
+ingressClass:
+logLevel: DEBUG
+defaultSSLCertSecret:
+logProxy:
+kubernetesURL:
+
+cicSettings:
+  required: False
+  cicConfig:
+    NS_HTTP2_SERVER_SIDE: "OFF"
+    NS_COOKIE_VERSION: "0"
+
+# Citrix ADM/License Server config details
 ADMSettings:
   licenseServerIP:
   licenseServerPort: 27000
@@ -64,7 +63,7 @@ ADMSettings:
   vCPULicense: false
   cpxCores:
 
-# exporter conatins information of prometheus-exporter
+# Exporter config details
 exporter:
   required: false
   image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.6
@@ -72,6 +71,13 @@ exporter:
   ports:
     containerPort: 8888
 
+
+# For CRDs supported by Citrix Ingress Controller
+crds:
+  install: false
+  retainOnDelete: false
+
+# Config required to be done by Citrix Ingress Controller for sending metrics to Citrix Observability Exporter
 coeConfig:
   required: false
   distributedTracing:
@@ -91,9 +97,3 @@ coeConfig:
   transactions:
     enable: false
     port: 5557
-
-crds:
-# If false, CustomResourceDefinitions  will not be installed.
-  install: true
-# if set to true, then CustomResourceDefinitions will not be deleted during helm delete. This way, CustomResourceObjects will not be deleted from the database.
-  retainOnDelete: false

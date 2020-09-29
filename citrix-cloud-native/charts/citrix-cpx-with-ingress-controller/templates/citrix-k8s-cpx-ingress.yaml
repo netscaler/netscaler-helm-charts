@@ -75,6 +75,8 @@ spec:
                 key: password
 {{- end }}
           volumeMounts:
+            - mountPath: /var/deviceinfo
+              name: shared-data
             - mountPath: /cpx/conf/
               name: cpx-volume1
             - mountPath: /cpx/crash/
@@ -90,21 +92,11 @@ spec:
           - name: "NS_IP"
             value: "127.0.0.1"
           - name: "NS_APPS_NAME_PREFIX"
-            value: {{ .Values.nsNamespace | default "k8s"}}
+            value: {{ .Values.entityPrefix | default "k8s"}}
           - name: "NS_DEPLOYMENT_MODE"
             value: "SIDECAR"
           - name: "NS_ENABLE_MONITORING"
             value: "YES"
-          - name: "NS_USER"
-            valueFrom:
-             secretKeyRef:
-              name: cpxlogin
-              key: username
-          - name: "NS_PASSWORD"
-            valueFrom:
-             secretKeyRef:
-              name: cpxlogin
-              key: password
 {{- if .Values.logProxy }}
           - name: "NS_LOGPROXY"
             value: {{ .Values.logProxy | quote }}
@@ -132,11 +124,14 @@ spec:
               {{.}}
 {{- end }}
 {{- end }}
-{{- if .Values.defaultSSLCert }}
+{{- if .Values.defaultSSLCertSecret }}
             - --default-ssl-certificate
-              {{ .Release.Namespace }}/{{ .Values.defaultSSLCert }}
+              {{ .Release.Namespace }}/{{ .Values.defaultSSLCertSecret }}
 {{- end }}
 {{- end }}
+          volumeMounts:
+            - mountPath: /var/deviceinfo
+              name: shared-data
 {{- if .Values.exporter.required }}
         - name: exporter
           image: "{{ .Values.exporter.image }}"
@@ -146,20 +141,17 @@ spec:
             - "--target-nsip=127.0.0.1"
             - "--port={{ .Values.exporter.ports.containerPort }}"
           env:
-          - name: "NS_USER"
-            valueFrom:
-             secretKeyRef:
-              name: cpxlogin
-              key: username
-          - name: "NS_PASSWORD"
-            valueFrom:
-             secretKeyRef:
-              name: cpxlogin
-              key: password
+          - name: "NS_DEPLOYMENT_MODE"
+            value: "SIDECAR"
           securityContext:
             readOnlyRootFilesystem: true
+          volumeMounts:
+            - mountPath: /var/deviceinfo
+              name: shared-data
 {{- end }}
       volumes:
+        - name: shared-data
+          emptyDir: {}
         - name: cpx-volume1
           emptyDir: {}
         - name: cpx-volume2

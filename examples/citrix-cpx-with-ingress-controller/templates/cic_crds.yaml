@@ -443,7 +443,7 @@ spec:
           type: object 
           properties:
             servicenames:
-              description: 'Names of all services for which authentication policy should be applied'
+              description: 'Name of the service for which the policies applied'
               type: array
               items:
                 type: string
@@ -1096,14 +1096,14 @@ spec:
   subresources:
     status: {}
   additionalPrinterColumns:
-    - name: Status
-      type: string
-      description: "Current Status of the CRD"
-      JSONPath: .status.state
-    - name: Message
-      type: string
-      description: "Status Message"
-      JSONPath: .status.status_message
+   - name: Status
+     type: string
+     description: "Current Status of the CRD"
+     JSONPath: .status.state
+   - name: Message
+     type: string
+     description: "Status Message"
+     JSONPath: .status.status_message
   validation:
     openAPIV3Schema:
       required: [spec]
@@ -1112,7 +1112,7 @@ spec:
           type: object
           properties:
             servicenames:
-              description: 'Name of the services to which the WAF and IP Reputation policies are applied'
+              description: 'Name of the services to which the waf policies are applied.'
               type: array
               items:
                 type: string
