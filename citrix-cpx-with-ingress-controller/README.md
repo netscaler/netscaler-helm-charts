@@ -185,7 +185,7 @@ The following table lists the configurable parameters of the Citrix ADC CPX with
 | Parameters | Mandatory or Optional | Default value | Description |
 | ---------- | --------------------- | ------------- | ----------- |
 | license.accept | Mandatory | no | Set `yes` to accept the Citrix ingress controller end user license agreement. |
-| image | Mandatory | `quay.io/citrix/citrix-k8s-cpx-ingress:13.0-58.30` | The Citrix ADC CPX image. |
+| image | Mandatory | `quay.io/citrix/citrix-k8s-cpx-ingress:13.0-64.35` | The Citrix ADC CPX image. |
 | pullPolicy | Mandatory | IfNotPresent | The Citrix ADC CPX image pull policy. |
 | cic.image | Mandatory | `quay.io/citrix/citrix-k8s-ingress-controller:1.9.9` | The Citrix ingress controller image. |
 | cic.pullPolicy | Mandatory | IfNotPresent | The Citrix ingress controller image pull policy. |

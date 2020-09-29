@@ -46,3 +46,8 @@ Alternatively, it is recommended to use same [citrix_cloud_native_values.yaml](h
   ```
   helm upgrade citrix-ingress-controller citrix/citrix-cloud-native -f citrix_cloud_native_values.yaml
   ```
+
+-> **Important::**
+-> Both the charts [Citrix Ingress Controller](https://github.com/citrix/citrix-helm-charts/tree/master/citrix-cloud-native/charts/citrix-ingress-controller/R
+EADME.md) and [Citrix ADC CPX with Citrix Ingress Controller](https://github.com/citrix/citrix-helm-charts/tree/master/citrix-cloud-native/charts/citrix-cpx-w
+ith-ingress-controller/README.md) contains all the CRDs that are supported by Citrix. So whenever you are installing both these charts together please make sure you are deploying CRDs only once. You can do this either by setting `cic.crds.install=false` or by setting `cpx.crds.install=false`.
