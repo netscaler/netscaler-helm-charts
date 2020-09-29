@@ -43,7 +43,7 @@ spec:
       containers:
 {{- if eq .Values.metricExporter.required true }}
         - name: exporter
-          image: {{ .Values.metricExporter.image }}:{{ .Values.metricExporter.version }}
+          image: {{ .Values.metricExporter.image }}
           imagePullPolicy: IfNotPresent
           args:
           - "--target-nsip=127.0.0.1"
@@ -58,7 +58,7 @@ spec:
             readOnly: true
 {{- end }}
         - name: xds-adaptor
-          image: {{.Values.xDSAdaptor.image}}:{{.Values.xDSAdaptor.tag}}
+          image: {{.Values.xDSAdaptor.image}}
           imagePullPolicy: {{.Values.xDSAdaptor.imagePullPolicy}}
           args:
           - -ads-server
@@ -155,7 +155,7 @@ spec:
             name: citrix-ingressgateway-ca-certs
             readOnly: true            
         - name: citrix-egressgateway
-          image: {{ .Values.egressGateway.image }}:{{ .Values.egressGateway.tag }}
+          image: {{ .Values.egressGateway.image }}
           imagePullPolicy: {{ .Values.egressGateway.imagePullPolicy }}
           securityContext:
             privileged: true

@@ -8,8 +8,7 @@ coe:
 
 metricExporter:
     required: true
-    image: quay.io/citrix/citrix-adc-metrics-exporter
-    version: 1.4.6
+    image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.6
     port: 8888
     secure: "FALSE"
     logLevel: ERROR
@@ -24,8 +23,7 @@ istioPilot:
 
 
 xDSAdaptor:
-    image: quay.io/citrix/citrix-xds-adaptor 
-    tag: 0.9.5 
+    image: quay.io/citrix/citrix-xds-adaptor:0.9.5
     imagePullPolicy: IfNotPresent
     proxyType: router
     secureConnect: true
@@ -40,8 +38,7 @@ certProvider:
 
 
 egressGateway:
-    image: quay.io/citrix/citrix-k8s-cpx-ingress
-    tag: 13.0-64.35
+    image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-64.35
     imagePullPolicy: IfNotPresent
     EULA: false
     mgmtHttpPort: 10080

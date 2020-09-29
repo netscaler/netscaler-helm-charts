@@ -51,7 +51,7 @@ spec:
             mountPath: /tmp
       containers:
         - name: sidecar-injector-webhook
-          image: {{ .Values.sidecarWebHook.webhookImage }}:{{ .Values.sidecarWebHook.webhookImageVersion }}
+          image: {{ .Values.sidecarWebHook.webhookImage }}
           imagePullPolicy: {{ .Values.sidecarWebHook.imagePullPolicy }}
           args:
             - --caCertFile=/etc/istio/certs/cert.pem
