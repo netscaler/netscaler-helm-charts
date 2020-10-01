@@ -30,7 +30,7 @@ dependencies:
     condition: cnc.enabled
     alias: cnc
   - name: citrix-observability-exporter
-    version: "1.1.001"
+    version: "1.2.001"
     condition: coe.enabled
     alias: coe
   - name: citrix-ipam-controller

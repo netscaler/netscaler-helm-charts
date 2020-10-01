@@ -24,6 +24,8 @@ spec:
         - name: coe
           image: {{ .Values.image }} 
           imagePullPolicy: {{ .Values.pullPolicy }}
+          securityContext:
+            privileged: true
           ports:
             - containerPort: 5557
               name: lstream
@@ -35,7 +37,11 @@ spec:
             - name: lstreamd-config
               mountPath: /var/logproxy/lstreamd/conf/lstreamd_default.conf
               subPath: lstreamd_default.conf
+            - name: core-data
+              mountPath: /cores/
       volumes:
         - name: lstreamd-config
           configMap:
-            name: coe-config 
+            name: coe-config
+        - name: core-data
+          emptyDir: {}
