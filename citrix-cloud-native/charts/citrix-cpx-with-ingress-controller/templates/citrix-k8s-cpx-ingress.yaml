@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: cpx-ingress
+  name: {{ include "citrix-cpx-ingress-controller.fullname" . }}
 spec:
   selector:
     matchLabels:
-      app: cpx-ingress
+      app: {{ include "citrix-cpx-ingress-controller.fullname" . }}
   replicas: 1
   template:
     metadata:
-      name: cpx-ingress
+      name: {{ include "citrix-cpx-ingress-controller.fullname" . }}
       labels:
-        app: cpx-ingress
+        app: {{ include "citrix-cpx-ingress-controller.fullname" . }}
       annotations:
     spec:
-      serviceAccountName: cpx-ingress-k8s-role
+      serviceAccountName: {{ include "citrix-cpx-ingress-controller.serviceAccountName" . }}
       containers:
         - name: cpx-ingress
           image: "{{ .Values.image }}"
@@ -117,7 +117,7 @@ spec:
 {{- end }}
           args:
             - --configmap
-              {{ .Release.Namespace }}/cpx-cic-configmap
+              {{ .Release.Namespace }}/cpx-{{ .Release.Name }}-configmap
 {{- if .Values.ingressClass }}
             - --ingress-class
 {{- range .Values.ingressClass}}
@@ -166,7 +166,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: cpx-service
+  name: cpx-{{ .Release.Name }}-service
   labels:
     app: cpx-service
     service-type: citrix-adc-cpx-monitor
@@ -216,7 +216,7 @@ spec:
     name: exporter-port
 {{- end }}
   selector:
-    app: cpx-ingress
+    app: {{ include "citrix-cpx-ingress-controller.fullname" . }}
 
 ---
 
