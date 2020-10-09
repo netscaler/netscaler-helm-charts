@@ -35,6 +35,9 @@ cic:
     install: false
     retainOnDelete: false
 
+  serviceAccount:
+    create: true
+
   coeConfig:
     required: false
     distributedTracing:
@@ -129,6 +132,9 @@ cpx:
     bandWidth:
     vCPULicense: false
     cpxCores:
+
+  serviceAccount:
+    create: true
 
   exporter:
     required: false
