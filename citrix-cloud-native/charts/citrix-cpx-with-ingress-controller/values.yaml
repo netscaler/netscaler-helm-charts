@@ -33,7 +33,7 @@ serviceAnnotations:
 
 # Citrix Ingress Controller config details
 cic:
-  image: quay.io/citrix/citrix-k8s-ingress-controller:1.9.9
+  image: quay.io/citrix/citrix-k8s-ingress-controller:1.9.20
   pullPolicy: IfNotPresent
   required: true
 entityPrefix:
@@ -97,3 +97,10 @@ coeConfig:
   transactions:
     enable: false
     port: 5557
+
+# Specifies whether a ServiceAccount should be created
+serviceAccount:
+  create: true
+  # The name of the ServiceAccount to use.
+  # If not set and `create` is true, a name is generated using the fullname template
+  # name:

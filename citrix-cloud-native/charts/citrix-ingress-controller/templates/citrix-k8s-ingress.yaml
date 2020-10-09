@@ -6,14 +6,14 @@ apiVersion: apps/v1
 kind: Deployment
 {{- end}}
 metadata:
-  name: cic-k8s-ingress-controller
+  name: {{ include "citrix-ingress-controller.fullname" . }}
 spec:
   selector:
 {{- if .Values.openshift }}
-     router: cic-k8s-ingress-controller
+     router: {{ include "citrix-ingress-controller.fullname" . }}
 {{- else }}
     matchLabels:
-      app: cic-k8s-ingress-controller
+      app: {{ include "citrix-ingress-controller.fullname" . }}
 {{- end}}
   replicas: 1
 {{- if .Values.openshift }}
@@ -29,22 +29,22 @@ spec:
 {{- end}}
   template:
     metadata:
-      name: cic-k8s-ingress-controller
+      name: {{ include "citrix-ingress-controller.name" . }}
       labels:
 {{- if .Values.openshift }}
-        router: cic-k8s-ingress-controller
+        router: {{ include "citrix-ingress-controller.fullname" . }}
 {{- else }}
-        app: cic-k8s-ingress-controller
+        app: {{ include "citrix-ingress-controller.fullname" . }}
 {{- end}}
     spec:
-      serviceAccountName: cic-k8s-role
+      serviceAccountName: {{ include "citrix-ingress-controller.serviceAccountName" . }}
       containers:
-      - name: cic-k8s-ingress-controller
+      - name: {{ include "citrix-ingress-controller.name" . }}
         image: "{{ .Values.image }}"
         imagePullPolicy: {{ .Values.pullPolicy }}
         args:
           - --configmap
-            {{ .Release.Namespace }}/cic-configmap
+            {{ .Release.Namespace }}/{{ .Release.Name }}-configmap
 {{- if .Values.defaultSSLCertSecret }}
           - --default-ssl-certificate
             {{ .Release.Namespace }}/{{ .Values.defaultSSLCertSecret }}
@@ -137,9 +137,9 @@ spec:
      name: exporter-port
    selector:
 {{- if .Values.openshift }}
-     router: cic-k8s-ingress-controller
+     router: {{ include "citrix-ingress-controller.fullname" . }}
 {{- else }}
-     app: cic-k8s-ingress-controller
+     app: {{ include "citrix-ingress-controller.fullname" . }}
 {{- end }}
 
 ---

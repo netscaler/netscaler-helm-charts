@@ -1,7 +1,7 @@
 cic:
   enabled: False
   
-  image: quay.io/citrix/citrix-k8s-ingress-controller:1.9.9
+  image: quay.io/citrix/citrix-k8s-ingress-controller:1.9.20
   pullPolicy: IfNotPresent
   openshift: false
   adcCredentialSecret:
@@ -35,6 +35,9 @@ cic:
     install: false
     retainOnDelete: false
 
+  serviceAccount:
+    create: true
+
   coeConfig:
     required: false
     distributedTracing:
@@ -58,7 +61,7 @@ cic:
 gslb:
   enabled: False
 
-  image: quay.io/citrix/citrix-k8s-ingress-controller:1.9.9
+  image: quay.io/citrix/citrix-k8s-ingress-controller:1.9.20
   pullPolicy: IfNotPresent
   openshift: false
   localRegion:
@@ -82,7 +85,7 @@ cpx:
   image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-64.35
   pullPolicy: IfNotPresent
   cic:
-    image: quay.io/citrix/citrix-k8s-ingress-controller:1.9.9
+    image: quay.io/citrix/citrix-k8s-ingress-controller:1.9.20
     pullPolicy: IfNotPresent
     required: true
 
@@ -129,6 +132,9 @@ cpx:
     bandWidth:
     vCPULicense: false
     cpxCores:
+
+  serviceAccount:
+    create: true
 
   exporter:
     required: false

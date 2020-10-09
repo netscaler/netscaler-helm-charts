@@ -1,9 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: cic-configmap
-  labels:
-    app: citrix-ingress-controller
+  name: {{ .Release.Name }}-configmap 
 data:
   LOGLEVEL: {{ .Values.logLevel | quote | lower }}
   NS_PROTOCOL: {{ .Values.nsProtocol | quote | lower }}

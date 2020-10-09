@@ -1,9 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: cpx-cic-configmap
-  labels:
-    app: citrix-ingress-controller
+  name: cpx-{{ .Release.Name }}-configmap 
 data:
   LOGLEVEL: {{ .Values.logLevel | quote | lower }}
   NS_PROTOCOL: "http"

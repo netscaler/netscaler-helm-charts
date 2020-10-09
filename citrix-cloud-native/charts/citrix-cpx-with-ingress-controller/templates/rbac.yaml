@@ -1,7 +1,7 @@
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
-  name: cpx-ingress-k8s-role
+  name: {{ include "citrix-cpx-ingress-controller.serviceAccountName" . }}
 rules:
   - apiGroups: [""]
 {{- if .Values.openshift }}
@@ -37,7 +37,7 @@ rules:
     resources: ["rewritepolicies", "continuousdeployments", "authpolicies", "ratelimits", "listeners", "httproutes", "wafs"]
     verbs: ["get", "list", "watch"]
   - apiGroups: ["citrix.com"]
-    resources: ["rewritepolicies/status", "continuousdeployments/status", "authpolicies/status", "ratelimits/status", "listeners/status", "httproutes/status, wafs/status"]
+    resources: ["rewritepolicies/status", "continuousdeployments/status", "authpolicies/status", "ratelimits/status", "listeners/status", "httproutes/status", "wafs/status"]
     verbs: ["get", "list", "patch"]
   - apiGroups: ["citrix.com"]
     resources: ["vips"]
@@ -51,14 +51,14 @@ rules:
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
-  name: cpx-ingress-k8s-role
+  name: {{ include "citrix-cpx-ingress-controller.serviceAccountName" . }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: cpx-ingress-k8s-role
+  name: {{ include "citrix-cpx-ingress-controller.serviceAccountName" . }}
 subjects:
 - kind: ServiceAccount
-  name: cpx-ingress-k8s-role
+  name: {{ include "citrix-cpx-ingress-controller.serviceAccountName" . }}
   namespace: {{ .Release.Namespace }}
 apiVersion: rbac.authorization.k8s.io/v1
 
@@ -67,7 +67,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: cpx-ingress-k8s-role
+  name: {{ include "citrix-cpx-ingress-controller.serviceAccountName" . }}
   namespace: {{ .Release.Namespace }}
 
 ---
