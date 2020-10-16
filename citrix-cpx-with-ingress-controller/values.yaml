@@ -9,7 +9,10 @@ pullPolicy: IfNotPresent
 mgmtHttpPort: 9080
 mgmtHttpsPort: 9443
 openshift: false
+
 aws: False
+sslCertManagedByAWS: False
+
 nodeSelector:
   key:
   value:
@@ -17,13 +20,14 @@ nodeSelector:
 serviceType:
   loadBalancer:
     enabled: False
+    externalTrafficPolicy: "Local"
   nodePort:
     enabled: False
     httpPort:
     httpsPort:
 
 serviceAnnotations:
-  awsLB:
+  aws:
     sslCert:
     backendProtocol:
     sslPorts:
@@ -40,7 +44,7 @@ entityPrefix:
 license:
   accept: no
 ingressClass:
-logLevel: DEBUG
+logLevel: INFO
 defaultSSLCertSecret:
 logProxy:
 kubernetesURL:

@@ -40,7 +40,7 @@ entityPrefix:
 license:
   accept: no
 ingressClass: ["Citrix"]
-logLevel: DEBUG
+logLevel: INFO
 defaultSSLCertSecret:
 logProxy:
 kubernetesURL:

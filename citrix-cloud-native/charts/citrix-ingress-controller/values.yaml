@@ -13,7 +13,7 @@ license:
    accept: no
 nsPort: 443
 nsProtocol: HTTPS
-logLevel: DEBUG
+logLevel: INFO
 entityPrefix:
 kubernetesURL:
 ingressClass:

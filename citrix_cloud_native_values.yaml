@@ -11,7 +11,7 @@ cic:
     accept: no
   nsPort: 443
   nsProtocol: HTTPS
-  logLevel: DEBUG
+  logLevel: INFO
   entityPrefix:
   kubernetesURL:
   ingressClass:
@@ -70,7 +70,7 @@ gslb:
     accept: no
   nsPort: 443
   nsProtocol: HTTPS
-  logLevel: DEBUG
+  logLevel: INFO
   entityPrefix:
   kubernetesURL:
   sitedata:
@@ -97,7 +97,7 @@ cpx:
   license:
     accept: no
   ingressClass:
-  logLevel: DEBUG
+  logLevel: INFO
   defaultSSLCertSecret:
   logProxy:
   enableHTTP2: "OFF"

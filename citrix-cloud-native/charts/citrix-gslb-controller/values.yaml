@@ -14,7 +14,7 @@ nsPort: 443
 # nsProtocol is protocol for NetScaler NITRO
 nsProtocol: HTTPS
 # logLevel is to set level of CIC Logs
-logLevel: DEBUG
+logLevel: INFO
 # entityPrefix is the prefix for the resources on the Citrix ADC
 entityPrefix:
 # kubernetesURL is for registering events to kubeapi server

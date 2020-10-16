@@ -172,32 +172,39 @@ metadata:
     service-type: citrix-adc-cpx-monitor
   annotations:
 {{- if .Values.aws }}
-{{- if .Values.serviceAnnotations.awsLB.sslCert }}
-    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: {{ .Values.serviceAnnotations.awsLB.sslCert | quote }}
+{{- if or .Values.sslCertManagedByAWS .Values.serviceAnnotations.aws.sslCert }}
+    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: {{ required "Please provide details of SSL Cert" .Values.serviceAnnotations.aws.sslCert | quote }}
 {{- end}}
-{{- if .Values.serviceAnnotations.awsLB.backendProtocol }}
-    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: {{ .Values.serviceAnnotations.awsLB.backendProtocol | quote }}
+{{- if or .Values.sslCertManagedByAWS .Values.serviceAnnotations.aws.backendProtocol }}
+    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: {{ .Values.serviceAnnotations.aws.backendProtocol | default "http" | quote }}
 {{- end}}
-{{- if .Values.serviceAnnotations.awsLB.sslPorts }}
-    service.beta.kubernetes.io/aws-load-balancer-ssl-ports: {{ .Values.serviceAnnotations.awsLB.sslPorts | quote }}
+{{- if or .Values.sslCertManagedByAWS .Values.serviceAnnotations.aws.sslPorts }}
+    service.beta.kubernetes.io/aws-load-balancer-ssl-ports: {{ .Values.serviceAnnotations.aws.sslPorts | default "https" | quote }}
 {{- end}}
-{{- if .Values.serviceAnnotations.awsLB.negotiationPolicy }}
-    service.beta.kubernetes.io/aws-load-balancer-ssl-negotiation-policy: {{ .Values.serviceAnnotations.awsLB.negotiationPolicy | quote }}
+{{- if .Values.serviceAnnotations.aws.negotiationPolicy }}
+    service.beta.kubernetes.io/aws-load-balancer-ssl-negotiation-policy: {{ .Values.serviceAnnotations.aws.negotiationPolicy | quote }}
 {{- end}}
-{{- if .Values.serviceAnnotations.awsLB.proxyProtocol }}
+{{- if or .Values.sslCertManagedByAWS .Values.serviceAnnotations.aws.proxyProtocol }}
     service.beta.kubernetes.io/aws-load-balancer-proxy-protocol: '*'
 {{- end}}
-{{- if .Values.serviceAnnotations.awsLB.resourcesTags }}
-    service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags: {{ .Values.serviceAnnotations.awsLB.resourcesTags | quote }}
+{{- if .Values.serviceAnnotations.aws.resourcesTags }}
+    service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags: {{ .Values.serviceAnnotations.aws.resourcesTags | quote }}
 {{- end}}
 {{- end}}
 spec:
-{{- if .Values.serviceType.loadBalancer.enabled }}
+{{- if or ( and .Values.aws .Values.sslCertManagedByAWS) .Values.serviceType.loadBalancer.enabled }}
+  externalTrafficPolicy: {{ .Values.serviceType.loadBalancer.externalTrafficPolicy }}
   type: LoadBalancer
 {{- else if .Values.serviceType.nodePort.enabled }}
   type: NodePort
-{{- end}}
+{{- end }}
   ports:
+{{- if and .Values.aws .Values.sslCertManagedByAWS }}
+  - port: 443
+    protocol: TCP
+    name: https
+    targetPort: 80
+{{- else }}
   - port: 80
     protocol: TCP
     name: http
@@ -209,6 +216,7 @@ spec:
     name: https
 {{- if and .Values.serviceType.nodePort.enabled .Values.serviceType.nodePort.httpsPort }}
     nodePort: {{ .Values.serviceType.nodePort.httpsPort}}
+{{- end }}
 {{- end }}
 {{- if .Values.exporter.required }}
   - port: {{ .Values.exporter.ports.containerPort }}
