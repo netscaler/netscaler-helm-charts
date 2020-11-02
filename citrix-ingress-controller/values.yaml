@@ -26,6 +26,9 @@ nodeSelector:
   value:
 updateIngressStatus: False
 
+routeLabels:
+namespaceLabels:
+
 cicSettings:
   required: False
   cicConfig:
