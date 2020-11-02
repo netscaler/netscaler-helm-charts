@@ -24,6 +24,9 @@ cic:
     key:
     value:
 
+  routeLabels:
+  namespaceLabels:
+
   exporter:
     required: false
     image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.6
@@ -92,6 +95,10 @@ cpx:
   mgmtHttpPort: 9080
   mgmtHttpsPort: 9443
   openshift: false
+
+  routeLabels:
+  namespaceLabels:
+  
   aws: False
   entityPrefix:
   license:

@@ -199,6 +199,8 @@ The following table lists the configurable parameters of the Citrix ADC CPX with
 | entityPrefix | Optional | k8s | The prefix for the resources on the Citrix ADC CPX. |
 | ingressClass | Optional | N/A | If multiple ingress load balancers are used to load balance different ingress resources. You can use this parameter to specify Citrix ingress controller to configure Citrix ADC associated with specific ingress class.|
 | openshift | Optional | false | Set this argument if OpenShift environment is being used. |
+| routeLabels | Optional | N/A | You can use this parameter to provide the route labels selectors to be used by Citrix Ingress Controller for routeSharding in OpenShift cluster. |
+| namespaceLabels | Optional | N/A | You can use this parameter to provide the namespace labels selectors to be used by Citrix Ingress Controller for routeSharding in OpenShift cluster. |
 | aws | Optional | False | Set this argument if deploying Citrix ADC CPX in AWS. |
 | sslCertManagedByAWS | Optional | False | Set this argument if SSL certs used is managed by AWS while deploying Citrix ADC CPX in AWS. |
 | nodeSelector.key | Optional | N/A | Node label key to be used for nodeSelector option for CPX-CIC deployment. |

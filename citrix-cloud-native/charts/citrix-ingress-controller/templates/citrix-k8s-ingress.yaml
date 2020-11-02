@@ -4,7 +4,7 @@ kind: DeploymentConfig
 {{- else }}
 apiVersion: apps/v1
 kind: Deployment
-{{- end}}
+{{- end }}
 metadata:
   name: {{ include "citrix-ingress-controller.fullname" . }}
 spec:
@@ -14,7 +14,7 @@ spec:
 {{- else }}
     matchLabels:
       app: {{ include "citrix-ingress-controller.fullname" . }}
-{{- end}}
+{{- end }}
   replicas: 1
 {{- if .Values.openshift }}
   strategy:
@@ -26,7 +26,7 @@ spec:
       timeoutSeconds: 600
       updatePeriodSeconds: 1
     type: Rolling
-{{- end}}
+{{- end }}
   template:
     metadata:
       name: {{ include "citrix-ingress-controller.name" . }}
@@ -35,7 +35,7 @@ spec:
         router: {{ include "citrix-ingress-controller.fullname" . }}
 {{- else }}
         app: {{ include "citrix-ingress-controller.fullname" . }}
-{{- end}}
+{{- end }}
     spec:
       serviceAccountName: {{ include "citrix-ingress-controller.serviceAccountName" . }}
       containers:
@@ -71,7 +71,7 @@ spec:
 {{- if .Values.nsVIP }}
         - name: "NS_VIP"
           value: "{{ .Values.nsVIP }}"
-{{- end}}
+{{- end }}
         - name: "NS_USER"
           valueFrom:
             secretKeyRef:
@@ -84,12 +84,20 @@ spec:
               key: password
         - name: "EULA"
           value: "{{ .Values.license.accept }}"
+{{- if and .Values.openshift .Values.routeLabels }}
+        - name: "ROUTE_LABELS"
+          value: {{ .Values.routeLabels | quote}}
+{{- end }}
+{{- if and .Values.openshift .Values.namespaceLabels }}
+        - name: "NAMESPACE_LABELS"
+          value: {{ .Values.namespaceLabels | quote }}
+{{- end }}
         - name: "NS_APPS_NAME_PREFIX"
           value: {{ .Values.entityPrefix | default "k8s"}}
 {{- if .Values.kubernetesURL }}
         - name: "kubernetes_url"
           value: "{{ .Values.kubernetesURL }}"
-{{- end}}
+{{- end }}
 {{- if .Values.logProxy }}
         - name: "NS_LOGPROXY"
           value: "{{ .Values.logProxy }}"

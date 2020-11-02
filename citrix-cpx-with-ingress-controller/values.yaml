@@ -10,6 +10,9 @@ mgmtHttpPort: 9080
 mgmtHttpsPort: 9443
 openshift: false
 
+routeLabels:
+namespaceLabels:
+
 aws: False
 sslCertManagedByAWS: False
 
