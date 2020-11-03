@@ -41,7 +41,6 @@ spec:
     # shortNames allow shorter string to match your resource on the CLI
     shortNames:
     - gse
- 
   validation:
   # openAPIV3Schema is the schema for validating custom objects.
     openAPIV3Schema:
@@ -222,5 +221,5 @@ spec:
                 type: object
               type: array
           type: object
----
 {{- end }}
+

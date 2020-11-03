@@ -40,4 +40,3 @@ spec:
 {{- end}}
   selector: 
       app: coe
-

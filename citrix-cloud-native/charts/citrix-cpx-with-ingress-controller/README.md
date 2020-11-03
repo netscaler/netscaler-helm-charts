@@ -100,6 +100,164 @@ Use the following command for this:
   helm install my-release citrix/citrix-cloud-native --set cpx.enabled=true,cpx.license.accept=yes,cpx.openshift=true,cpx.exporter.required=true
   ```
 
+## Citrix ADC CPX DaemonSet with Citrix Ingress Controller as sidecar for BGP Advertisement
+The previous section of deploying CPX as a Deployment  requires a Tier-1 Loadbalancer such as Citrix VPX or cloud loadbalancers to route the traffic to CPX instances running in Kubernetes cluster, but you can also leverage  BGP network fabric in your on-prem environemnt to route the traffic to CPX instances in a Kubernetes or Openshift cluster. you need to deploy CPX with Citrix Ingress Controller as Daemonset to advertise the ExternalIPs of the K8s services of type LoadBalancer to your BGP Fabric. Citrix ADC CPX establishes a BGP peering session with your network routers, and uses that peering session to advertise the IP addresses of external cluster services. If your routers have ECMP capability, the traffic is load-balanced to multiple CPX instances by the upstream router, which in turn load-balances to actual application pods. When you deploy the Citrix ADC CPX with this mode, Citrix ADC CPX adds iptables rules for each service of type LoadBalancer on Kubernetes nodes. The traffic destined to the external IP address is routed to Citrix ADC CPX pods. You can also set the 'ingressIP' variable to an IP Address to advertise the External IP address for Ingress resources. Refer [documentation](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/network/cpx-bgp-router.md) for complete details about BGP advertisement with CPX.
+
+### Download the chart
+You can download the chart usimg `helm pull` command.
+```
+helm repo add citrix https://citrix.github.io/citrix-helm-charts/
+helm pull citrix/citrix-cpx-with-ingress-controller
+tar -zxvf citrix-cpx-with-ingress-controller-x.y.z.tgz
+```
+
+### Edit the BGP configuration in values.yaml
+BGP configurations enables CPX to peer with neighbor routers for advertisting the routes for Service of Type LoadBalancer. Citrix Ingress Controllers uses static IPs given in Service YAML or using an IPAM controller to allocate an External IP address, and same is advertisted to the neighbour router with the Gateway as Node IP. An example BGP configurations is given below.
+
+```
+# BGP configurations: local AS, remote AS and remote address is mandatory to provide.
+bgpSettings:
+  required: true
+  bgpConfig:
+  - bgpRouter:
+      # Local AS number for BGP advertisement
+      localAS:
+      neighbor:
+        # Address of the nighbor router for BGP advertisement
+      - address: xx.xx.xx.xx
+        # Remote AS number
+        remoteAS:
+        advertisementInterval: 10
+        ASOriginationInterval: 10
+```
+If the cluster spawns across multiple networks, you can also specify the NodeSelector to give different neighbors for different Cluster Nodes as shown below.
+
+```
+bgpSettings:
+  required: true
+  bgpConfig:
+  - nodeSelector: datacenter=ds1
+    bgpRouter:
+      localAS:
+      neighbor:
+      - address: xx.xx.xx.xx
+        remoteAS:
+        advertisementInterval: 10
+        ASOriginationInterval: 10
+  - nodeSelector: datacenter=ds2
+    bgpRouter:
+      localAS:
+      neighbor:
+      - address: yy.yy.yy.yy
+        remoteAS:
+        advertisementInterval: 10
+        ASOriginationInterval: 10
+```
+
+### Deploy the chart
+#### For Kubernetes:
+#### 1. Citrix ADC CPX DaemonSet with Citrix Ingress Controller running as side car for BGP Advertisement.
+
+
+To install the chart with the release name ``` my-release```:
+
+   ```
+   helm install my-release ./citrix-cpx-with-ingress-controller --set license.accept=yes,cpxBgpRouter=true
+   ```
+If you are running Citrix IPAM for auto allocation of IPs for Service of type LoadBalancer, you must enable the IPAM configurations in Citrix Ingress Controller as show below:
+
+   ```
+   helm install my-release ./citrix-cpx-with-ingress-controller --set license.accept=yes,cpxBgpRouter=true,ipam=true
+   ```
+
+If you are using ingress resources, you must set the `ingressIP` to a valid IP Address which will enable the BGP route advertisement for this IP when ingress resource is deployed.
+
+   ```
+   helm install my-release ./citrix-cpx-with-ingress-controller --set license.accept=yes,cpxBgpRouter=true,ingressIP=<Ingress External IP Address>
+   ```
+
+> **Note:**
+>
+> By default the chart installs the recommended [RBAC](https://kubernetes.io/docs/admin/authorization/rbac/) roles and role bindings.
+
+The command deploys Citrix ADC CPX Daemonset with Citrix ingress controller as a sidecar on the Kubernetes cluster with the default configuration. The [configuration](#configuration) section lists the mandatory and optional parameters that you can configure during installation.
+
+#### 2. Citrix ADC CPX with Citrix Ingress Controller and Exporter running as side car for BGP Advertisement.
+[Metrics exporter](https://github.com/citrix/citrix-k8s-ingress-controller/tree/master/metrics-visualizer#visualization-of-metrics) can be deployed as sidecar to the Citrix ADC CPX and collects metrics from the Citrix ADC CPX instance. You can then [visualize these metrics](https://developer-docs.citrix.com/projects/citrix-k8s-ingress-controller/en/latest/metrics/promotheus-grafana/) using Prometheus Operator and Grafana.
+> **Note:**
+>
+> Ensure that you have installed [Prometheus Operator](https://github.com/coreos/prometheus-operator).
+
+Use the following command for this:
+   ```
+   helm install my-release ./citrix-cpx-with-ingress-controller --set license.accept=yes,cpxBgpRouter=true,exporter.required=true
+   ```
+If you are running Citrix IPAM controller for auto allocation of IPs for Service of type LoadBalancer, you must enable the IPAM configurations in Citrix Ingress Controller as show below:
+
+   ```
+   helm install my-release ./citrix-cpx-with-ingress-controller --set license.accept=yes,cpxBgpRouter=true,ipam=true,exporter.required=true
+   ```
+
+   If you are using ingress resources, you must set the `ingressIP` to a valid IP Address which will enable the BGP route advertisement for this IP when ingress resource is deployed.
+
+   ```
+   helm install my-release ./citrix-cpx-with-ingress-controller --set license.accept=yes,cpxBgpRouter=true,ingressIP=<Ingress external IP>, exporter.required=true
+   ```
+
+#### For OpenShift:
+Add the service account named "cpx-ingress-k8s-role" to the privileged Security Context Constraints of OpenShift:
+
+   ```
+   oc adm policy add-scc-to-user privileged system:serviceaccount:<namespace>:cpx-ingress-k8s-role
+   ```
+
+#### 1. Citrix ADC CPX DaemonSet with Citrix Ingress Controller running as side car for BGP Advertisement.
+To install the chart with the release name, `my-release`, use the following command:
+   ```
+   helm install my-release ./citrix-cpx-with-ingress-controller --set license.accept=yes,cpxBgpRouter=true,openshift=true
+   ```
+If you are running Citrix IPAM controller for auto allocation of IPs for Service of type LoadBalancer, you must enable the IPAM configurations in Citrix Ingress Controller as show below:
+
+   ```
+   helm install my-release ./citrix-cpx-with-ingress-controller --set license.accept=yes,cpxBgpRouter=true,ipam=true,openshift=true
+   ```
+
+   If you are using ingress or Route resources, you must set the `ingressIP` to a valid IP Address which will enable the BGP route advertisement for this IP when ingress resource is deployed.
+
+   ```
+   helm install my-release ./citrix-cpx-with-ingress-controller --set license.accept=yes,cpxBgpRouter=true,ingressIP=<Ingress External IP Address>,openshift=true
+   ```
+
+#### 2. Citrix ADC CPX with Citrix Ingress Controller and Exporter running as side car for BGP Advertisement.
+[Metrics exporter](https://github.com/citrix/citrix-k8s-ingress-controller/tree/master/metrics-visualizer#visualization-of-metrics) can be deployed as sidecar to the Citrix ADC CPX and collects metrics from the Citrix ADC CPX instance. You can then [visualize these metrics](https://developer-docs.citrix.com/projects/citrix-k8s-ingress-controller/en/latest/metrics/promotheus-grafana/) using Prometheus Operator and Grafana.
+> **Note:**
+>
+> Ensure that you have installed [Prometheus Operator](https://github.com/coreos/prometheus-operator).
+
+Use the following command for this:
+   ```
+   helm install my-release ./citrix-cpx-with-ingress-controller --set license.accept=yes,openshift=true,openshift=true,exporter.required=true
+   ```
+If you are running Citrix IPAM controller for auto allocation of IPs for Service of type LoadBalancer, you must enable the IPAM configurations in Citrix Ingress Controller as show below:
+
+   ```
+   helm install my-release ./citrix-cpx-with-ingress-controller --set license.accept=yes,cpxBgpRouter=true,ipam=true,openshift=true,exporter.required=true
+   ```
+
+   If you are using ingress or Route resources, you must set the `ingressIP` to a valid IP Address which will enable the BGP route advertisement for this IP when ingress resource is deployed.
+
+   ```
+   helm install my-release ./citrix-cpx-with-ingress-controller --set license.accept=yes,cpxBgpRouter=true,ingressIP=<Ingress External IP Address>,openshift=true,exporter.required=true
+   ```
+
+### Installed components
+
+The following components are installed:
+
+-  [Citrix ADC CPX](https://docs.citrix.com/en-us/citrix-adc-cpx/netscaler-cpx.html)
+-  [Citrix ingress controller](https://github.com/citrix/citrix-k8s-ingress-controller) (if enabled)
+-  [Exporter](https://github.com/citrix/citrix-adc-metrics-exporter) (if enabled)
+
 ### Installed components
 
 The following components are installed:
@@ -121,17 +279,17 @@ There are a few examples of how to use these CRDs, which are placed in the folde
 
 ### Details of the supported CRDs:
 
-#### authpolicies CRD: 
+#### authpolicies CRD:
 
 Authentication policies are used to enforce access restrictions to resources hosted by an application or an API server.
 
 Citrix provides a Kubernetes CustomResourceDefinitions (CRDs) called the [Auth CRD](https://github.com/citrix/citrix-k8s-ingress-controller/tree/master/crd/auth) that you can use with the Citrix ingress controller to define authentication policies on the ingress Citrix ADC.
 
 Example file: [auth_example.yaml](https://github.com/citrix/citrix-helm-charts/tree/master/example-crds/auth_example.yaml)
- 
+
 #### continuousdeployments CRD  for canary:
 
-Canary release is a technique to reduce the risk of introducing a new software version in production by first rolling out the change to a small subset of users. After user validation, the application is rolled out to the larger set of users. Citrix ADC-Integrated [Canary Deployment solution](https://github.com/citrix/citrix-k8s-ingress-controller/tree/master/crd/canary) stitches together all components of continuous delivery (CD) and makes canary deployment easier for the application developers. 
+Canary release is a technique to reduce the risk of introducing a new software version in production by first rolling out the change to a small subset of users. After user validation, the application is rolled out to the larger set of users. Citrix ADC-Integrated [Canary Deployment solution](https://github.com/citrix/citrix-k8s-ingress-controller/tree/master/crd/canary) stitches together all components of continuous delivery (CD) and makes canary deployment easier for the application developers.
 
 #### httproutes and listeners CRDs for contentrouting:
 
@@ -190,9 +348,9 @@ The following table lists the configurable parameters of the Citrix ADC CPX with
 | ---------- | --------------------- | ------------- | ----------- |
 | cpx.enabled | Mandatory | False | Set to "True" for deploying Citrix ADC CPX with Citrix Ingress Controller running as sidecar. |
 | cpx.license.accept | Mandatory | no | Set `yes` to accept the Citrix ingress controller end user license agreement. |
-| cpx.image | Mandatory | `quay.io/citrix/citrix-k8s-cpx-ingress:13.0-64.35` | The Citrix ADC CPX image. |
+| cpx.image | Mandatory | `quay.io/citrix/citrix-k8s-cpx-ingress:13.0-67.39` | The Citrix ADC CPX image. |
 | cpx.pullPolicy | Mandatory | IfNotPresent | The Citrix ADC CPX image pull policy. |
-| cpx.cic.image | Mandatory | `quay.io/citrix/citrix-k8s-ingress-controller:1.9.20` | The Citrix ingress controller image. |
+| cpx.cic.image | Mandatory | `quay.io/citrix/citrix-k8s-ingress-controller:1.10.2` | The Citrix ingress controller image. |
 | cpx.cic.pullPolicy | Mandatory | IfNotPresent | The Citrix ingress controller image pull policy. |
 | cpx.cic.required | Mandatory | true | CIC to be run as sidecar with Citrix ADC CPX |
 | cpx.logLevel | Optional | DEBUG | The loglevel to control the logs generated by CIC. The supported loglevels are: CRITICAL, ERROR, WARNING, INFO, DEBUG and TRACE. For more information, see [Logging](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/configure/log-levels.md).|
@@ -201,6 +359,12 @@ The following table lists the configurable parameters of the Citrix ADC CPX with
 | cpx.cicSettings.cicConfig.NS_HTTP2_SERVER_SIDE | Optional | OFF | Set this argument to `ON` for enabling HTTP2 for Citrix ADC service group configurations. This will be set in configmap of CIC only when `cpx.cicSettings.required` argument is set to `True`. |
 | cpx.cicSettings.cicConfig.NS_COOKIE_VERSION | Optional | 0 | Specify the persistence cookie version (0 or 1). | This will be set in configmap of CIC only when `cpx.cicSettings.required` argument is set to `True`. |
 | cpx.logProxy | Optional | N/A | Provide Elasticsearch or Kafka or Zipkin endpoint for Citrix observability exporter. |
+| cpx.nsProtocol | Optional | http | Protocol http or https used for the communication between Citrix Ingress Controller and CPX |
+| cpx.cpxBgpRouter | Optional | false| If set to true, this CPX is deployed as daemonset in BGP controller mode wherein BGP advertisements are done for attracting external traffic to Kubernetes clusters |
+| cpx.nsIP | Optional | 192.168.1.2 | NSIP used by CPX for internal communication when run in Host mode, i.e when cpxBgpRouter is set to true. A /24 internal network is created in this IP range which is used for internal communications withing the network namespace. |
+| cpx.nsGateway | Optional | 192.168.1.1 | Gateway used by CPX for internal communication when run in Host mode, i.e when cpxBgpRouter is set to true. If not specified, first IP in the nsIP network is used as gateway. It must be in same network as nsIP |
+| cpx.bgpPort | Optional | 179 | BGP port used by CPX for BGP advertisement if cpxBgpRouter is set to true|
+| cpx.ingressIP | Optional | N/A | External IP address to be used by ingress resources if not overriden by ingress.com/frontend-ip annotation in Ingress resources. This is also advertised to external routers when pxBgpRouter is set to true|
 | cpx.entityPrefix | Optional | k8s | The prefix for the resources on the Citrix ADC CPX. |
 | cpx.ingressClass | Optional | N/A | If multiple ingress load balancers are used to load balance different ingress resources. You can use this parameter to specify Citrix ingress controller to configure Citrix ADC associated with specific ingress class.|
 | cpx.openshift | Optional | false | Set this argument if OpenShift environment is being used. |
@@ -246,6 +410,9 @@ The following table lists the configurable parameters of the Citrix ADC CPX with
 | cpx.coeConfig.transactions.port | Optional | 5557 | Specify the port used to expose COE service for transaction endpoint. |
 | cpx.crds.install | Optional | true | Unset this argument if you don't want to install CustomResourceDefinitions which are consumed by CIC. |
 | cpx.crds.retainOnDelete | Optional | false | Set this argument if you want to retain CustomResourceDefinitions even after uninstalling CIC. This will avoid data-loss of Custom Resource Objects created before uninstallation. |
+| cpx.bgpSettings.required | Optional | false | Set this argument if you want to enable BGP configurations for exposing service of Type Loadbalancer through BGP fabric|
+| cpx.bgpSettings.bgpConfig | Optional| N/A| This represents BGP configurations in YAML format. For the description about individual fields, please refer the [documentation](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/network/cpx-bgp-router.md) |
+
 
 > **Note:**
 >
@@ -274,3 +441,4 @@ To uninstall/delete the ```my-release``` deployment:
 - [Citrix ADC CPX Documentation](https://docs.citrix.com/en-us/citrix-adc-cpx/12-1/cpx-architecture-and-traffic-flow.html)
 - [Citrix ingress controller Documentation](https://developer-docs.citrix.com/projects/citrix-k8s-ingress-controller/en/latest/)
 - [Citrix ingress controller GitHub](https://github.com/citrix/citrix-k8s-ingress-controller)
+- [BGP advertisement for External IPs with CPX](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/network/cpx-bgp-router.md)
