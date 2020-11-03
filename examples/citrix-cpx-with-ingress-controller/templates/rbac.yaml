@@ -8,7 +8,7 @@ rules:
     resources: ["endpoints", "ingresses", "pods", "secrets", "routes", "tokenreviews", "subjectaccessreviews", "nodes", "namespaces", "configmaps"]
 {{- else }}
     resources: ["endpoints", "ingresses", "pods", "secrets", "routes", "nodes", "namespaces", "configmaps"]
-{{- end}}
+{{- end }}
     verbs: ["get", "list", "watch"]
   # services/status is needed to update the loadbalancer IP in service status for integrating
   # service of type LoadBalancer with external-dns
@@ -42,9 +42,14 @@ rules:
   - apiGroups: ["citrix.com"]
     resources: ["vips"]
     verbs: ["get", "list", "watch", "create", "delete"]
+{{- if .Values.openshift }}
   - apiGroups: ["route.openshift.io"]
     resources: ["routes"]
     verbs: ["get", "list", "watch"]
+  - apiGroups: ["network.openshift.io"]
+    resources: ["hostsubnets"]
+    verbs: ["get", "list", "watch"]
+{{- end }}
 
 ---
 

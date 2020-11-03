@@ -45,4 +45,3 @@ spec:
             name: coe-config
         - name: core-data
           emptyDir: {}
-

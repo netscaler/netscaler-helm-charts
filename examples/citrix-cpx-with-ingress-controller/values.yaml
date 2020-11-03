@@ -3,7 +3,7 @@
 # Declare variables to be passed into your templates.
 
 # Citrix ADC CPX config details
-image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-64.35
+image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-67.39
 pullPolicy: IfNotPresent
 
 mgmtHttpPort: 9080
@@ -33,7 +33,7 @@ serviceAnnotations:
 
 # Citrix Ingress Controller config details
 cic:
-  image: quay.io/citrix/citrix-k8s-ingress-controller:1.9.20
+  image: quay.io/citrix/citrix-k8s-ingress-controller:1.10.2
   pullPolicy: IfNotPresent
   required: true
 entityPrefix:

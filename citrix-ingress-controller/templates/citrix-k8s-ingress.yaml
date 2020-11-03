@@ -55,6 +55,12 @@ spec:
             {{.}}
 {{- end }}
 {{- end }}
+{{- if .Values.serviceClass }}
+          - --service-classes
+{{- range .Values.serviceClass}}
+            {{.}}
+{{- end }}
+{{- end }}
           - --feature-node-watch
             {{ .Values.nodeWatch }}
 {{- if .Values.ipam }}

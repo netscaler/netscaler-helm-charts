@@ -1,6 +1,6 @@
-# Citrix GSLB Controller  
+# Citrix Multi-Cluster Controller  
 
-[Citrix](https://www.citrix.com/en-in/) provides a multi-cluster ingress and load balancing solution which globally monitors applications, collect, and share metrics across different clusters, and provides intelligent load balancing decisions. It ensures better performance and reliability for your Kubernetes applications.[GSLB controller](https://github.com/citrix/citrix-k8s-ingress-controller/tree/master/multicluster) is the module responsible for the configuration of the Citrix ADC GSLB devices. 
+[Citrix](https://www.citrix.com/en-in/) provides a multi-cluster ingress and load balancing solution which globally monitors applications, collect, and share metrics across different clusters, and provides intelligent load balancing decisions. It ensures better performance and reliability for your Kubernetes applications.[Citrix Multi-Cluster Ingress Controller](https://github.com/citrix/citrix-k8s-ingress-controller/tree/master/multicluster) is the module responsible for the configuration of the Citrix ADC GSLB devices. 
 
 ## TL;DR;
 
@@ -8,7 +8,7 @@
    ```
    helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-   helm install gslb citrix/citrix-gslb-controller --set localRegion=<local-cluster-region>,localCluster=<local-cluster-name>,sitedata[0].siteName=<site1-name>,sitedata[0].siteIp=<site1-ip-address>,sitedata[0].secretName=<site1-login-file>,sitedata[1].siteName=<site2-name>,sitedata[1].siteIp=<site2-ip-address>,sitedata[1].secretName=<site2-login-file>,license.accept=yes
+   helm install multi-cluster citrix/citrix-multi-cluster-ingress-controller --set localRegion=<local-cluster-region>,localCluster=<local-cluster-name>,sitedata[0].siteName=<site1-name>,sitedata[0].siteIp=<site1-ip-address>,sitedata[0].secretName=<site1-login-file>,sitedata[1].siteName=<site2-name>,sitedata[1].siteIp=<site2-ip-address>,sitedata[1].secretName=<site2-login-file>,license.accept=yes
    ```
 
 ### For OpenShift
@@ -16,7 +16,7 @@
    ```
    helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-   helm install gslb citrix/citrix-gslb-controller --set localRegion=<local-cluster-region>,localCluster=<local-cluster-name>,sitedata[0].siteName=<site1-name>,sitedata[0].siteIp=<site1-ip-address>,sitedata[0].secretName=<site1-login-file>,sitedata[1].siteName=<site2-name>,sitedata[1].siteIp=<site2-ip-address>,sitedata[1].secretName=<site2-login-file>,license.accept=yes,openshift=true
+   helm install multi-cluster citrix/citrix-multi-cluster-ingress-controller --set localRegion=<local-cluster-region>,localCluster=<local-cluster-name>,sitedata[0].siteName=<site1-name>,sitedata[0].siteIp=<site1-ip-address>,sitedata[0].secretName=<site1-login-file>,sitedata[1].siteName=<site2-name>,sitedata[1].siteIp=<site2-ip-address>,sitedata[1].secretName=<site2-login-file>,license.accept=yes,openshift=true
    ```
 
 > **Important:**
@@ -101,17 +101,17 @@ To create the system user account, do the following:
     ```
 
 ## Installing the Chart
-Add the Citrix GSLB Controller helm chart repository using command:
+Add the Citrix Multi-Cluster Ingress Controller helm chart repository using command:
 
 ```
    helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 ```
 
 ### For Kubernetes:
-#### 1. Citrix GSLB Controller
+#### 1. Citrix Multi-Cluster Ingress Controller
 To install the chart with the release name, `my-release`, use the following command:
    ```
-   helm install my-release citrix/citrix-gslb-controller --set localRegion=<local-cluster-region>,localCluster=<local-cluster-name>,sitedata[0].siteName=<site1-name>,sitedata[0].siteIp=<site1-ip-address>,sitedata[0].secretName=<site1-login-file>,sitedata[1].siteName=<site2-name>,sitedata[1].siteIp=<site2-ip-address>,sitedata[1].secretName=<site2-login-file>,license.accept=yes
+   helm install my-release citrix/citrix-multi-cluster-ingress-controller --set localRegion=<local-cluster-region>,localCluster=<local-cluster-name>,sitedata[0].siteName=<site1-name>,sitedata[0].siteIp=<site1-ip-address>,sitedata[0].secretName=<site1-login-file>,sitedata[1].siteName=<site2-name>,sitedata[1].siteIp=<site2-ip-address>,sitedata[1].secretName=<site2-login-file>,license.accept=yes
 
    ```
 
@@ -119,14 +119,14 @@ To install the chart with the release name, `my-release`, use the following comm
 >
 > By default the chart installs the recommended [RBAC](https://kubernetes.io/docs/admin/authorization/rbac/) roles and role bindings.
 
-The command deploys Citrix GSLB controller on Kubernetes cluster with the default configuration. The [configuration](#configuration) section lists the mandatory and optional parameters that you can configure during installation.
+The command deploys Citrix Multi-Cluster Ingress controller on Kubernetes cluster with the default configuration. The [configuration](#configuration) section lists the mandatory and optional parameters that you can configure during installation.
 
 ### For Openshift:
-#### 1. Citrix GSLB Controller
-Add the service account named "gslb-k8s-role" to the privileged Security Context Constraints of OpenShift:
+#### 1. Citrix Multi-Cluster Ingress Controller
+Add the service account named "mcingress-k8s-role" to the privileged Security Context Constraints of OpenShift:
 
    ```
-   oc adm policy add-scc-to-user privileged system:serviceaccount:<namespace>:gslb-k8s-role
+   oc adm policy add-scc-to-user privileged system:serviceaccount:<namespace>:mcingress-k8s-role
    ```
 
 To install the chart with the release name, `my-release`, use the following command:
@@ -134,21 +134,21 @@ To install the chart with the release name, `my-release`, use the following comm
    helm install my-release citrix/citrix-ingress-controller --set localRegion=<local-cluster-region>,localCluster=<local-cluster-name>,sitedata[0].siteName=<site1-name>,sitedata[0].siteIp=<site1-ip-address>,sitedata[0].secretName=<site1-login-file>,sitedata[1].siteName=<site2-name>,sitedata[1].siteIp=<site2-ip-address>,sitedata[1].secretName=<site2-login-file>,license.accept=yes,openshift=true
    ```
 
-The command deploys Citrix GSLB controller on your Openshift cluster in the default configuration. The [configuration](#configuration) section lists the mandatory and optional parameters that you can configure during installation.
+The command deploys Citrix Multi-Cluster Ingress controller on your Openshift cluster in the default configuration. The [configuration](#configuration) section lists the mandatory and optional parameters that you can configure during installation.
 
 ### Installed components
 
 The following components are installed:
 
--  [Citrix Ingress controller](https://github.com/citrix/citrix-k8s-ingress-controller) running as GSLB Controller
+-  [Citrix Ingress controller](https://github.com/citrix/citrix-k8s-ingress-controller) running as Multi-Cluster Ingress Controller
 
 
 ## CRDs configuration
 
-CRDs gets installed/upgraded automatically when we install/upgrade Citrix GSLB controller using Helm. If you do not want to install CRDs, then set the option `crds.install` to `false`. By default, CRDs too get deleted if you uninstall through Helm. This means, even the CustomResource objects created by the customer will get deleted. If you want to avoid this data loss set `crds.retainOnDelete` to `true`.
+CRDs gets installed/upgraded automatically when we install/upgrade Citrix Multi-Cluster Ingress controller using Helm. If you do not want to install CRDs, then set the option `crds.install` to `false`. By default, CRDs too get deleted if you uninstall through Helm. This means, even the CustomResource objects created by the customer will get deleted. If you want to avoid this data loss set `crds.retainOnDelete` to `true`.
 
 > **Note:**
-> Installing again may fail due to the presence of CRDs. Make sure that you back up all CustomResource objects and clean up CRDs before re-installing Citrix GSLB Controller.
+> Installing again may fail due to the presence of CRDs. Make sure that you back up all CustomResource objects and clean up CRDs before re-installing Citrix Multi-Cluster Ingress Controller.
 
 There are a few examples of how to use these CRDs, which are placed in the folder: [Example-CRDs](https://github.com/citrix/citrix-helm-charts/tree/master/example-crds). Refer to them and install as needed, using the following command:
 ```kubectl create -f <crd-example.yaml>```
@@ -161,7 +161,7 @@ The following table lists the mandatory and optional parameters that you can con
 | Parameters | Mandatory or Optional | Default value | Description |
 | --------- | --------------------- | ------------- | ----------- |
 | license.accept | Mandatory | no | Set `yes` to accept the CIC end user license agreement. |
-| image | Optional | `quay.io/citrix/citrix-k8s-ingress-controller:1.9.20` | The CIC image. |
+| image | Optional | `quay.io/citrix/citrix-k8s-ingress-controller:1.10.2` | The CIC image. |
 | pullPolicy | Optional | Always | The CIC image pull policy. |
 | nsPort | Optional | 443 | The port used by CIC to communicate with Citrix ADC. You can use port 80 for HTTP. |
 | nsProtocol | Optional | HTTPS | The protocol used by CIC to communicate with Citrix ADC. You can also use HTTP on port 80. |
@@ -183,7 +183,7 @@ Alternatively, you can define a YAML file with the values for the parameters and
 
 For example:
    ```
-   helm install my-release citrix/citrix-gslb-controller -f values.yaml
+   helm install my-release citrix/citrix-multi-cluster-ingress-controller -f values.yaml
    ```
 
 Your values.yaml should look something like this:
@@ -218,6 +218,6 @@ The command removes all the Kubernetes components associated with the chart and 
 
 ## Related documentation
 
-- [Citrix GSLB controller Documentation](https://developer-docs.citrix.com/projects/citrix-k8s-ingress-controller/en/latest/multicluster/multi-cluster/)
-- [Citrix GSLB controller GitHub](https://github.com/citrix/citrix-k8s-ingress-controller/tree/master/multicluster)
+- [Citrix Multi-Cluster Ingress controller Documentation](https://developer-docs.citrix.com/projects/citrix-k8s-ingress-controller/en/latest/multicluster/multi-cluster/)
+- [Citrix Multi-Cluster Ingress controller GitHub](https://github.com/citrix/citrix-k8s-ingress-controller/tree/master/multicluster)
 
