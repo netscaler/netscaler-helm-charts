@@ -1,7 +1,7 @@
 cic:
   enabled: False
   
-  image: quay.io/citrix/citrix-k8s-ingress-controller:1.9.20
+  image: quay.io/citrix/citrix-k8s-ingress-controller:1.10.2
   pullPolicy: IfNotPresent
   openshift: false
   adcCredentialSecret:
@@ -15,6 +15,7 @@ cic:
   entityPrefix:
   kubernetesURL:
   ingressClass:
+  serviceClass:
   defaultSSLCertSecret:
   ipam: False
   logProxy:
@@ -23,6 +24,8 @@ cic:
   nodeSelector:
     key:
     value:
+
+  updateIngressStatus: False
 
   routeLabels:
   namespaceLabels:
@@ -61,10 +64,10 @@ cic:
       enable: false
       port: 30001
 
-gslb:
+mcIngress:
   enabled: False
 
-  image: quay.io/citrix/citrix-k8s-ingress-controller:1.9.20
+  image: quay.io/citrix/citrix-k8s-ingress-controller:1.10.2
   pullPolicy: IfNotPresent
   openshift: false
   localRegion:
@@ -82,23 +85,32 @@ gslb:
     install: false
     retainOnDelete: false
 
+  serviceAccount:
+    create: true
+
 cpx:
   enabled: False
 
-  image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-64.35
+  image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-67.39
   pullPolicy: IfNotPresent
   cic:
-    image: quay.io/citrix/citrix-k8s-ingress-controller:1.9.20
+    image: quay.io/citrix/citrix-k8s-ingress-controller:1.10.2
     pullPolicy: IfNotPresent
     required: true
 
   mgmtHttpPort: 9080
   mgmtHttpsPort: 9443
+  cpxBgpRouter: false
+  nsIP: 192.168.1.2
+  nsGateway: 192.168.1.1
+  nsProtocol: http
+  ingressIP:
+  bgpPort: 179
   openshift: false
 
   routeLabels:
   namespaceLabels:
-  
+
   aws: False
   entityPrefix:
   license:
@@ -169,6 +181,17 @@ cpx:
     transactions:
       enable: false
       port: 5557
+
+  bgpSettings:
+    required: false
+    bgpConfig:
+    - bgpRouter:
+        localAS: 100
+        neighbor:
+        - address:
+          remoteAS: 100
+          advertisementInterval: 10
+          ASOriginationInterval: 10
 
   crds:
     install: false
