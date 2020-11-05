@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: citrix-egressgateway
+  name: {{ .Values.egressGateway.label | default "citrix-egressgateway" }}
   namespace: {{.Release.Namespace}}
   labels:
     app: {{default "citrix-egressgateway" .Values.egressGateway.label}}
@@ -10,7 +10,7 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-        app: {{default "citrix-egressgateway" .Values.egressGateway.label}} #ns-istio-egressgateway
+        app: {{default "citrix-egressgateway" .Values.egressGateway.label}}
   template:
     metadata:
       labels:
@@ -23,24 +23,19 @@ spec:
       volumes:
       - name: nsloginegress
         secret:
-          optional: true
           secretName: nsloginegress
-      - name: citrix-egressgateway-certs
+      - name: citrix-egressgateway-ca-certs
         secret:
           optional: true
-          secretName: citrix-egressgateway-certs
-      - name: citrix-ingressgateway-ca-certs
-        secret:
-          optional: true
-          secretName: "citrix-ingressgateway-ca-certs" # IMPORTANT: This secret MUST BE created before deploying gateway and egress-gateway       
-      - name: cpx-pwd          
+          secretName: "citrix-egressgateway-ca-certs" # IMPORTANT: This secret MUST BE created before deploying gateway and egress-gateway       
+      - name: cpx-pwd
         emptyDir: {}
       - name: certs
         emptyDir: {}
       - name: istiod-ca-cert
         configMap:
           defaultMode: 0777
-          name: istio-ca-root-cert         
+          name: istio-ca-root-cert
       containers:
 {{- if eq .Values.metricExporter.required true }}
         - name: exporter
@@ -83,7 +78,7 @@ spec:
           - "/var/deviceinfo/random_id"
 {{- if .Values.ADMSettings.ADMIP }}
           - -citrix-adm
-          - {{ .Values.ADMSettings.ADMIP }}            
+          - {{ .Values.ADMSettings.ADMIP }}
 {{- end }}
 {{- if .Values.ADMSettings.licenseServerIP }}
           - -citrix-license-server
@@ -115,7 +110,7 @@ spec:
               fieldRef:
                 fieldPath: metadata.labels['app']
           - name: SERVICE_ACCOUNT
-            valueFrom:            
+            valueFrom:
               fieldRef:
                 apiVersion: v1
                 fieldPath: spec.serviceAccountName
@@ -124,9 +119,9 @@ spec:
             value: {{ .Values.certProvider.caAddr }}:{{ .Values.certProvider.caPort}} #istiod.istio-system.svc:15012
           - name: TRUST_DOMAIN
             value: {{ .Values.certProvider.trustDomain }} #cluster.local
-          - name: CLUSTER_ID 
+          - name: CLUSTER_ID
             value: {{ .Values.certProvider.clusterId }} #Kubernetes
-          - name: CERT_TTL_IN_HOURS 
+          - name: CERT_TTL_IN_HOURS
             value: {{ .Values.certProvider.certTTLinHours | quote }}
 {{- end }}
           - name: NS_USER
@@ -147,14 +142,11 @@ spec:
             name: cpx-pwd
           - mountPath: /etc/certs/
             name: certs
-          - mountPath: /etc/istio/egress-certs
-            name: citrix-egressgateway-certs
-            readOnly: true
           - name: istiod-ca-cert
             mountPath: /etc/rootcert/
-          - mountPath: /etc/istio/ingressgateway-ca-certs # Make sure that Gateway definition has this path mentioned in server.tls     section for MUTUAL TLS
-            name: citrix-ingressgateway-ca-certs
-            readOnly: true            
+          - mountPath: /etc/istio/egressgateway-ca-certs # Make sure that Gateway definition has this path mentioned in server.tls     section for MUTUAL TLS
+            name: citrix-egressgateway-ca-certs
+            readOnly: true
         - name: citrix-egressgateway
           image: {{ .Values.egressGateway.image }}
           imagePullPolicy: {{ .Values.egressGateway.imagePullPolicy }}
@@ -165,12 +157,9 @@ spec:
             name: cpx-pwd
           - mountPath: /etc/certs/
             name: certs
-          - mountPath: /etc/istio/egress-certs
-            name: citrix-egressgateway-certs
+          - mountPath: /etc/istio/egressgateway-ca-certs # Make sure that Gateway definition has this path mentioned in server.tls section for MUTUAL TLS
+            name: citrix-egressgateway-ca-certs
             readOnly: true
-          - mountPath: /etc/istio/ingressgateway-ca-certs # Make sure that Gateway definition has this path mentioned in server.tls section for MUTUAL TLS
-            name: citrix-ingressgateway-ca-certs
-            readOnly: true            
           ports:
             - containerPort: 80
             - containerPort: 443
@@ -188,7 +177,7 @@ spec:
           - name: "MGMT_HTTPS_PORT"
             value: "{{ .Values.egressGateway.mgmtHttpsPort }}"
           - name: "NS_CPX_LITE"
-            value: "{{ .Values.egressGateway.lightWeightCPX }}"            
+            value: "{{ .Values.egressGateway.lightWeightCPX }}"
 {{- if or .Values.coe.coeURL .Values.ADMSettings.ADMIP }}
           - name: "NS_ENABLE_NEWNSLOG"
             value: "1"
@@ -232,5 +221,175 @@ spec:
               secretKeyRef:
                 name: admloginegress
                 key: password
-{{- end }} 
+{{- end }}
+---
+{{ else }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.egressGateway.label | default "citrix-egressgateway" }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Values.egressGateway.label | default "citrix-egressgateway" }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.egressGateway.label | default "citrix-egressgateway" }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.egressGateway.label | default "citrix-egressgateway" }}
+      annotations:
+        scheduler.alpha.kubernetes.io/critical-pod: ""
+        prometheus.io/port: "{{ .Values.metricExporter.port }}"
+        prometheus.io/scrape: "true"
+    spec:
+      containers:
+{{- if eq .Values.metricExporter.required true }}
+      - name: exporter
+        image: {{ .Values.metricExporter.image }}
+        imagePullPolicy: {{ .Values.metricExporter.imagePullPolicy }}
+        args:
+        - "--target-nsip={{- include "exporter_nsip" . -}}"
+        - "--port={{ .Values.metricExporter.port }}"
+        - "--secure={{ .Values.metricExporter.secure | lower}}"
+        - "--log-level={{ .Values.metricExporter.logLevel }}"
+        securityContext:
+          readOnlyRootFilesystem: true
+        volumeMounts:
+        - name: nsloginegress
+          mountPath: "/mnt/nslogin"
+          readOnly: true
+{{- end }}
+      - name: istio-adaptor
+        image: {{ .Values.xDSAdaptor.image }}
+        imagePullPolicy: {{ .Values.xDSAdaptor.imagePullPolicy }}
+        env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: INSTANCE_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: APPLICATION_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.labels['app']
+        - name: SERVICE_ACCOUNT
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: spec.serviceAccountName
+{{- if .Values.certProvider.caAddr }}
+        - name: CA_ADDR
+          value: {{ .Values.certProvider.caAddr }}:{{ .Values.certProvider.caPort}} #istiod.istio-system.svc:15012
+        - name: TRUST_DOMAIN
+          value: {{ .Values.certProvider.trustDomain }} #cluster.local
+        - name: CLUSTER_ID 
+          value: {{ .Values.certProvider.clusterId }} #Kubernetes
+        - name: CERT_TTL_IN_HOURS
+          value: {{ .Values.certProvider.certTTLinHours | quote }}
+{{- end }}
+        - name: NS_USER
+          valueFrom:
+            secretKeyRef:
+              name: nsloginegress
+              key: username
+        - name: NS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: nsloginegress
+              key: password
+        args:
+        - -ads-server
+{{- if eq .Values.xDSAdaptor.secureConnect true }}
+        - {{ .Values.istioPilot.name}}.{{ .Values.istioPilot.namespace }}.svc:{{ .Values.istioPilot.secureGrpcPort }} # istiod.istio-system.svc:15012
+{{- else }}
+        - {{ .Values.istioPilot.name}}.{{ .Values.istioPilot.namespace }}.svc:{{ .Values.istioPilot.insecureGrpcPort }} # istiod.istio-system.svc:15010
+{{- end }}
+        - -istio-proxy-type
+        - {{ .Values.xDSAdaptor.proxyType | default "router" | quote }}
+{{- if .Values.istioPilot.SAN }}
+        - -ads-server-SAN
+        - {{ .Values.istioPilot.SAN | default "" }}
+{{- end }}
+        - -ads-secure-connect={{ .Values.xDSAdaptor.secureConnect | default true }}
+        - -citrix-adc
+        - {{ required "Mention Citrix ADC IP/URL in https://<ip>[:port] format" .Values.egressGateway.netscalerUrl }}
+        - -citrix-adc-vip
+        - {{ required "Mention Vserver IP to be configured on Citrix ADC" .Values.egressGateway.vserverIP }}
+        - -citrix-adc-user
+        - "/etc/nslogin/username"
+        - -citrix-adc-password
+        - "/etc/nslogin/password"
+        # If using VPX/MPX as Egress gateway, then specify the network profile name 
+        # which was provided to Citrix Node Controller (CNC)
+{{- if .Values.egressGateway.netProfile }}
+        - -citrix-adc-net-profile
+        - {{ .Values.egressGateway.netProfile }}
+{{- end }}
+        - -citrix-adm
+        - "" 
+{{- if .Values.coe.coeURL }}
+        - -coe
+        - {{ .Values.coe.coeURL }}
+{{- end }}
+{{- if .Values.egressGateway.adcServerName }}
+        - -citrix-adc-server-name
+        - {{ .Values.egressGateway.adcServerName }}
+        - -citrix-adc-server-ca
+        - "/etc/nitro/root-cert.pem"
+{{- end }}
+        securityContext:
+          readOnlyRootFilesystem: true
+          runAsUser: 32024 # UID of istio-adaptor container's user
+        volumeMounts:
+        - mountPath: /etc/certs
+          name: certs
+        - name: istiod-ca-cert
+          mountPath: /etc/rootcert/
+        - mountPath: /etc/nslogin
+          name: nsloginegress
+          readOnly: true
+        - mountPath: /etc/istio/egressgateway-ca-certs # Make sure that Gateway definition has this path mentioned in server.tls section for MUTUAL TLS
+          name: citrix-egressgateway-ca-certs
+          readOnly: true
+{{- if .Values.egressGateway.adcServerName }}
+        - mountPath: /etc/nitro/
+          name: citrix-adc-cert
+          readOnly: true
+{{- end }}
+      volumes:
+      - name: nsloginegress
+        secret:
+          optional: true
+          secretName: nsloginegress
+      - name: certs
+        emptyDir: {}
+      - name: istiod-ca-cert
+        configMap:
+          defaultMode: 0777
+          name: istio-ca-root-cert
+      - name: citrix-egressgateway-ca-certs
+        secret:
+          optional: true
+          secretName: "citrix-egressgateway-ca-certs" # IMPORTANT: This secret MUST BE created before deploying gateway and egress-gateway
+{{- if .Values.egressGateway.adcServerName }}
+      - name: citrix-adc-cert
+        secret:
+          optional: true
+          secretName: "citrix-adc-cert" # IMPORTANT: This secret MUST BE created before deploying gateway and egress-gateway
+{{- end }}
+---
 {{- end }}

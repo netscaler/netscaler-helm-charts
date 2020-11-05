@@ -1,3 +1,4 @@
+
 # Deploy Citrix ADC as an egress Gateway in Istio environment using Helm charts
 
 Citrix Application Delivery Controller (ADC) can be deployed as an Istio Egress Gateway to control the egress traffic to Istio service mesh.
@@ -5,20 +6,31 @@ Citrix Application Delivery Controller (ADC) can be deployed as an Istio Egress 
 # Table of Contents
 1. [TL; DR;](#tldr)
 2. [Introduction](#introduction)
-3. [Deploy Citrix ADC CPX as an Egress Gateway](#deploy-citrix-adc-cpx-as-an-egress-gateway)
-4. [Visualizing statistics of Citrix ADC Egress Gateway with Metrics Exporter](#visualizing-statistics-of-citrix-adc-Egress-gateway-with-metrics-exporter)
-5. [Citrix ADC CPX License Provisioning](#citrix-adc-cpx-license-provisioning)
-6. [Generate Certificate for Egress Gateway](#generate-certificate-for-egress-gateway)
-7. [Citrix ADC as Egress Gateway: a sample deployment](#citrix-adc-as-egress-gateway-a-sample-deployment)
-8. [Uninstalling the Helm chart](#uninstalling-the-helm-chart)
-9. [Configuration Parameters](#configuration-parameters)
+3. [Deploy Citrix ADC VPX or MPX as an Egress Gateway](#deploy-citrix-adc-vpx-or-mpx-as-an-egress-gateway)
+4. [Deploy Citrix ADC CPX as an Egress Gateway](#deploy-citrix-adc-cpx-as-an-egress-gateway)
+5. [Visualizing statistics of Citrix ADC Egress Gateway with Metrics Exporter](#visualizing-statistics-of-citrix-adc-Egress-gateway-with-metrics-exporter)
+6. [Citrix ADC CPX License Provisioning](#citrix-adc-cpx-license-provisioning)
+7. [Generate Certificate for Egress Gateway](#generate-certificate-for-egress-gateway)
+8. [Citrix ADC as Egress Gateway: a sample deployment](#citrix-adc-as-egress-gateway-a-sample-deployment)
+9. [Uninstalling the Helm chart](#uninstalling-the-helm-chart)
+10. [Configuration Parameters](#configuration-parameters)
 ## <a name="tldr">TL; DR;</a>
+  
+### To deploy Citrix ADC VPX or MPX as an Egress Gateway:
+
+       kubectl create secret generic nslogin --from-literal=username=<citrix-adc-user> --from-literal=password=<citrix-adc-password> -n citrix-system
+
+       helm repo add citrix https://citrix.github.io/citrix-helm-charts/
+
+       helm install citrix-adc-istio-egress-gateway citrix/citrix-adc-istio-egress-gateway --namespace citrix-system --set egressGateway.EULA=YES --set egressGateway.netscalerUrl=https://<nsip>[:port] --set egressGateway.vserverIP=<IPv4 Address>
+
 
 ### To deploy Citrix ADC CPX as an Egress Gateway:
 
        helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
        helm install citrix-adc-istio-egress-gateway citrix/citrix-adc-istio-egress-gateway --namespace citrix-system --set egressGateway.EULA=true --set citrixCPX=true
+
 
 ## <a name="introduction">Introduction</a>
 
@@ -30,6 +42,11 @@ The following prerequisites are required for deploying Citrix ADC as an Egress G
 
 - Ensure that **Istio version 1.6.0** is installed
 - Ensure that Helm with version 3.x is installed. Follow this [step](https://github.com/citrix/citrix-helm-charts/blob/master/Helm_Installation_version_3.md) to install the same.
+- **For deploying Citrix ADC VPX or MPX as an Egress gateway:**
+
+  Create a Kubernetes secret for the Citrix ADC user name and password using the following command:
+  
+        kubectl create secret generic nsloginegress --from-literal=username=<citrix-adc-user> --from-literal=password=<citrix-adc-password> -n citrix-system
 - Ensure that your cluster has Kubernetes version 1.14.0 or later and the `admissionregistration.k8s.io/v1beta1` API is enabled
 
 - **Registration of Citrix ADC CPX in ADM**
@@ -38,6 +55,17 @@ Create a secret for ADM username and password
 
         kubectl create secret generic admloginegress --from-literal=username=<adm-username> --from-literal=password=<adm-password> -n citrix-system
 
+- **Important Note:** For deploying Citrix ADC VPX or MPX as egress gateway, you should establish the connectivity between Citrix ADC VPX or MPX and cluster nodes. This connectivity can be established by configuring routes on Citrix ADC as mentioned [here](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/network/staticrouting.md) or by deploying [Citrix Node Controller](https://github.com/citrix/citrix-k8s-node-controller).
+
+## <a name="deploy-citrix-adc-vpx-or-mpx-as-an-egress-gateway">Deploy Citrix ADC VPX or MPX as an Egress Gateway</a>
+
+ To deploy Citrix ADC VPX or MPX as an Egress Gateway in the Istio service mesh, do the following step. In this example, release name is specified as `citrix-adc-istio-egress-gateway` and namespace as `citrix-system`.
+
+        kubectl create secret generic nsloginegress --from-literal=username=<citrix-adc-user> --from-literal=password=<citrix-adc-password> -n citrix-system
+        
+        helm repo add citrix https://citrix.github.io/citrix-helm-charts/
+
+        helm install citrix-adc-istio-egress-gateway citrix/citrix-adc-istio-egress-gateway --namespace citrix-system --set egressGateway.EULA=YES,egressGateway.netscalerUrl=https://<nsip>[:port],egressGateway.vserverIP=<IPv4 Address>
 ## <a name="deploy-citrix-adc-cpx-as-an-egress-gateway">Deploy Citrix ADC CPX as an Egress Gateway</a>
 
  To deploy Citrix ADC CPX as an egress Gateway, do the following step. In this example, release name is specified as `citrix-adc-istio-egress-gateway` and namespace is used as `citrix-system`.
@@ -50,16 +78,25 @@ Create a secret for ADM username and password
 
 By default, [Citrix ADC Metrics Exporter](https://github.com/citrix/citrix-adc-metrics-exporter) is also deployed along with Citrix ADC Egress Gateway. Citrix ADC Metrics Exporter fetches statistical data from Citrix ADC and exports it to Prometheus running in Istio service mesh. When you add Prometheus as a data source in Grafana, you can visualize this statistical data in the Grafana dashboard.
 
-Metrics Exporter requires the IP address of Citrix ADC CPX as Egress Gateway. It is retrieved from the value specified for `EgressGateway.netscalerUrl`.
+Metrics Exporter requires the IP address of Citrix ADC CPX or VPX as Egress Gateway. It is retrieved from the value specified for `EgressGateway.netscalerUrl`.
 
 When Citrix ADC CPX is deployed as Egress Gateway, Metrics Exporter runs along with Citrix CPX Egress Gateway in the same pod and specifying IP address is optional.
 
-To deploy Citrix ADC as Egress Gateway without Metrics Exporter, set the value of `metricExporter.required` as false.
+To deploy Citrix ADC CPX as Egress Gateway without Metrics Exporter, set the value of `metricExporter.required` as false.
 
-    
+  
         helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
         helm install citrix-adc-istio-egress-gateway citrix/citrix-adc-istio-egress-gateway --namespace citrix-system --set egressGateway.EULA=YES --set citrixCPX=true --set metricExporter.required=false
+
+To deploy Citrix ADC VPX or MPX as Egress Gateway without Metrics Exporter, set the value of `metricExporter.required` as false.
+
+
+        kubectl create secret generic nsloginegress --from-literal=username=<citrix-adc-user> --from-literal=password=<citrix-adc-password> -n citrix-system
+    
+        helm repo add citrix https://citrix.github.io/citrix-helm-charts/
+
+        helm install citrix-adc-istio-egress-gateway citrix/citrix-adc-istio-egress-gateway --namespace citrix-system --set egressGateway.EULA=YES,egressGateway.netscalerUrl=https://<nsip>[:port],egressGateway.vserverIP=<IPv4 Address>,metricExporter.required=false
 
 "Note:" To remotely access telemetry addons such as Prometheus and Grafana, see [Remotely Accessing Telemetry Addons](https://istio.io/docs/tasks/telemetry/gateways/).
 
@@ -115,12 +152,15 @@ The following table lists the configurable parameters in the Helm chart and thei
 | `ADMSettings.licenseServerPort` | Citrix ADM port if a non-default port is used                                                                                        | 27000                                                                 | Optional|
 | `ADMSettings.bandWidth`          | Desired bandwidth capacity to be set for Citrix ADC CPX in Mbps  | null            | Optional |
 | `ADMSettings.bandWidthLicense`          | To specify bandwidth based licensing  | false            | Optional |
+ `egressGateway.netscalerUrl`       | URL or IP address of the Citrix ADC which Istio-adaptor configures (Mandatory if citrixCPX=false)| null   |Mandatory for Citrix ADC MPX or VPX|
+| `egressGateway.vserverIP`       | Virtual server IP address on Citrix ADC (Mandatory if citrixCPX=false) | null | Mandatory for Citrix ADC MPX or VPX|
+| `egressGateway.adcServerName `          | Citrix ADC ServerName used in the Citrix ADC certificate  | null            | Optional |
 | `egressGateway.image`             | Image of Citrix ADC CPX designated to run as egress Gateway                                                                       |quay.io/citrix/citrix-k8s-cpx-ingress:13.0-64.35 |   Mandatory for Citrix ADC CPX |
 | `egressGateway.imagePullPolicy`   | Image pull policy                                                                                                                  | IfNotPresent                                                          | Optional|
 | `egressGateway.mgmtHttpPort`      | Management port of the Citrix ADC CPX                                                                                              | 9080                                                                  | Optional|
 | `egressGateway.mgmtHttpsPort`    | Secure management port of Citrix ADC CPX                                                                                           | 9443                                                                  | Optional|
 | `egressGateway.EULA`             | End User License Agreement(EULA) terms and conditions. If yes, then user agrees to EULA terms and conditions.                                     | false                                                                    | Mandatory for Citrix ADC CPX
-| `egressGateway.label` | Custom label for the egress Gateway service                                                                                       | citrix-ingressgateway                                                                 |Optional|
+| `egressGateway.label` | Custom label for the egress Gateway service                                                                                       | citrix-egressgateway                                                                 |Optional|
 | `istioPilot.name`                 | Name of the Istio Pilot (Istiod) service                                                                                                        | istiod                                                           |Optional|
 | `istioPilot.namespace`     | Namespace where Istio Pilot is running                                                                                        | istio-system                                                          |Optional|
 | `istioPilot.secureGrpcPort`       | Secure GRPC port where Istiod (Istio Pilot) is listening (default setting)                                                                  | 15012                                                                 |Optional|
@@ -131,9 +171,8 @@ The following table lists the configurable parameters in the Helm chart and thei
 | `metricExporter.port`              | Port over which Citrix ADC Metrics Exporter collects metrics of Citrix ADC.                                                      | 8888                                                                  |Optional|
 | `metricExporter.secure`            | Enables collecting metrics over TLS                                                                                                | YES                                                                    |Optional|
 | `metricExporter.logLevel`          | Level of logging in Citrix ADC Metrics Exporter. Possible values are: DEBUG, INFO, WARNING, ERROR, CRITICAL                                       | ERROR                                                                 |Optional|
-| `metricExporter.imagePullPolicy`   | Image pull policy for Citrix ADC Metrics Exporter                                                                                       | IfNotPresent 
+| `metricExporter.imagePullPolicy`   | Image pull policy for Citrix ADC Metrics Exporter                                                                                       | IfNotPresent|
 | `certProvider.caAddr`   | Certificate Authority (CA) address issuing certificate to application                           | istiod.istio-system.svc                          | Optional |
 | `certProvider.caPort`   | Certificate Authority (CA) port issuing certificate to application                              | 15012 | Optional |
 | `certProvider.trustDomain`   | SPIFFE Trust Domain                         | cluster.local | Optional |
-| `certProvider.certTTLinHours`   | Validity of certificate generated by xds-adaptor and signed by Istiod (Istio Citadel) in hours. Default is 30 days validity              | 720 | Optional 
-
+| `certProvider.certTTLinHours`   | Validity of certificate generated by xds-adaptor and signed by Istiod (Istio Citadel) in hours. Default is 30 days validity              | 720 | Optional |

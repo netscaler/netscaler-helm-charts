@@ -61,3 +61,8 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{- define "exporter_nsip" -}}
+{{- $match := .Values.egressGateway.netscalerUrl | toString | regexFind "//.*[:]*" -}}
+{{- $match | trimAll ":" | trimAll "/" -}}
+{{- end -}}

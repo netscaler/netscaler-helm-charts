@@ -1,7 +1,7 @@
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
-    name: citrix-egressgateway
+    name: {{ .Values.egressGateway.label | default "citrix-egressgateway" }} 
     namespace: {{ .Release.Namespace }}
 spec:
     maxReplicas: 1
@@ -9,17 +9,18 @@ spec:
     scaleTargetRef:
       apiVersion: apps/v1beta1
       kind: Deployment
-      name: citrix-egressgateway
+      name: {{ .Values.egressGateway.label | default "citrix-egressgateway" }} 
     metrics:
       - type: Resource
         resource:
           name: cpu
           targetAverageUtilization: 60
 ---
+
 apiVersion: v1
 kind: Service
 metadata:
-  name: citrix-egressgateway
+  name: {{ .Values.egressGateway.label | default "citrix-egressgateway" }}
   namespace: {{ .Release.Namespace }}
   annotations:
   labels:
@@ -32,3 +33,40 @@ spec:
     name: https
   selector:
     app: {{ .Values.egressGateway.label | default "citrix-egressgateway" }}
+---
+
+{{- if eq .Values.citrixCPX false }}
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: egress-gateway
+spec:
+  hosts:
+  - citrix-egressgateway.{{ .Release.Namespace }}.svc.cluster.local
+  ports:
+  - number: 443
+    name: https
+    protocol: HTTPS
+  resolution: STATIC
+  location: MESH_EXTERNAL
+  endpoints:
+  - address: {{ .Values.egressGateway.vserverIP }}
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: egress-gateway-http
+spec:
+  hosts:
+  - citrix-egressgateway.{{ .Release.Namespace }}.svc.cluster.local
+  ports:
+  - number: 80
+    name: http
+    protocol: HTTP
+  resolution: STATIC 
+  location: MESH_EXTERNAL
+  endpoints:
+  - address: {{ .Values.egressGateway.vserverIP }}
+---
+{{ end }}
+
