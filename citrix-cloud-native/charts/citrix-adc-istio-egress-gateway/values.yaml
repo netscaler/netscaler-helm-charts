@@ -19,7 +19,7 @@ istioPilot:
     namespace: istio-system
     secureGrpcPort: 15012
     insecureGrpcPort: 15010
-    SAN: 
+    SAN:
 
 
 xDSAdaptor:
@@ -38,13 +38,17 @@ certProvider:
 
 
 egressGateway:
+    netscalerUrl: null
     image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-64.35
     imagePullPolicy: IfNotPresent
     EULA: false
     mgmtHttpPort: 10080
     mgmtHttpsPort: 10443
-    lightWeightCPX: 1    
+    lightWeightCPX: "1"    
     label: citrix-egressgateway
+    vserverIP: nsip
+    adcServerName:
+    netProfile:
 
 ADMSettings:
     ADMIP:
