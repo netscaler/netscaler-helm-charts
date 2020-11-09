@@ -145,7 +145,7 @@ The following components are installed:
 
 ## CRDs configuration
 
-CRDs gets installed/upgraded automatically when we install/upgrade Citrix Multi-Cluster Ingress controller using Helm. If you do not want to install CRDs, then set the option `crds.install` to `false`. By default, CRDs too get deleted if you uninstall through Helm. This means, even the CustomResource objects created by the customer will get deleted. If you want to avoid this data loss set `crds.retainOnDelete` to `true`.
+CRDs can be installed/upgraded automatically when we install/upgrade Citrix Multi-Cluster Ingress controller using parameter `crds.install=true` in Helm. If you do not want to install CRDs, then set the option `crds.install` to `false`. By default, CRDs too get deleted if you uninstall through Helm. This means, even the CustomResource objects created by the customer will get deleted. If you want to avoid this data loss set `crds.retainOnDelete` to `true`.
 
 > **Note:**
 > Installing again may fail due to the presence of CRDs. Make sure that you back up all CustomResource objects and clean up CRDs before re-installing Citrix Multi-Cluster Ingress Controller.
@@ -176,7 +176,7 @@ The following table lists the mandatory and optional parameters that you can con
 | mcIngress.sitedata[0].siteIp | Mandatory | N/A | The siteIp of the first GSLB Site |
 | mcIngress.sitedata[0].secretName | Mandatory | N/A | The secret containing login credentials of first site |
 | mcIngress.sitedata[0].siteRegion | Mandatory | N/A | The SiteRegion of the first site |
-| mcIngress.crds.install | Optional | true | Unset this argument if you don't want to install CustomResourceDefinitions which are consumed by CIC. |
+| mcIngress.crds.install | Optional | False | Unset this argument if you don't want to install CustomResourceDefinitions which are consumed by CIC. |
 | mcIngress.crds.retainOnDelete | Optional | false | Set this argument if you want to retain CustomResourceDefinitions even after uninstalling CIC. This will avoid data-loss of Custom Resource Objects created before uninstallation. |
 
 Alternatively, you can define a YAML file with the values for the parameters and pass the values while installing the chart.

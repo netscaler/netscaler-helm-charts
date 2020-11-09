@@ -32,14 +32,6 @@ spec:
             value: "{{ .Values.license.accept }}"
           - name: "KUBERNETES_TASK_ID"
             value: ""
-{{- if and .Values.openshift .Values.routeLabels }}
-          - name: "ROUTE_LABELS"
-            value: {{ .Values.routeLabels | quote}}
-{{- end }}
-{{- if and .Values.openshift .Values.namespaceLabels }}
-          - name: "NAMESPACE_LABELS"
-            value: {{ .Values.namespaceLabels | quote }}
-{{- end }}
 {{- if .Values.ADMSettings.licenseServerIP }}
           - name: "LS_IP"
             value: {{ .Values.ADMSettings.licenseServerIP | quote }}
@@ -128,6 +120,14 @@ spec:
             value: {{ .Values.entityPrefix | default "k8s"}}
           - name: "NS_DEPLOYMENT_MODE"
             value: "SIDECAR"
+{{- if and .Values.openshift .Values.routeLabels }}
+          - name: "ROUTE_LABELS"
+            value: {{ .Values.routeLabels | quote}}
+{{- end }}
+{{- if and .Values.openshift .Values.namespaceLabels }}
+          - name: "NAMESPACE_LABELS"
+            value: {{ .Values.namespaceLabels | quote }}
+{{- end }}
 {{- if .Values.cpxBgpRouter }}
 {{- if eq (upper .Values.nsProtocol) "HTTPS" }}
           - name: NS_PROTOCOL
