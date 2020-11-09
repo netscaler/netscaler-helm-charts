@@ -263,7 +263,7 @@ The following components are installed:
 
 ## CRDs configuration
 
-CRDs gets installed/upgraded automatically when we install/upgrade  Citrix ADC CPX with Citrix ingress controller using Helm. If you do not want to install CRDs, then set the option `crds.install` to `false`. By default, CRDs too get deleted if you uninstall through Helm. This means, even the CustomResource objects created by the customer will get deleted. If you want to avoid this data loss set `crds.retainOnDelete` to `true`.
+CRDs can be installed/upgraded when we install/upgrade Citrix ADC CPX with Citrix ingress controller using `crds.install=true` parameter in Helm. If you do not want to install CRDs, then set the option `crds.install` to `false`. By default, CRDs too get deleted if you uninstall through Helm. This means, even the CustomResource objects created by the customer will get deleted. If you want to avoid this data loss set `crds.retainOnDelete` to `true`.
 
 > **Note:**
 > Installing again may fail due to the presence of CRDs. Make sure that you back up all CustomResource objects and clean up CRDs before re-installing Citrix ADC CPX with Citrix ingress controller.
@@ -402,7 +402,7 @@ The following table lists the configurable parameters of the Citrix ADC CPX with
 | coeConfig.timeseries.events.enable | Optional | false | Set this value to true to export events from the Citrix ADC. |
 | coeConfig.transactions.enable | Optional | false | Set this value to true to export transactions from Citrix ADC. |
 | coeConfig.transactions.port | Optional | 5557 | Specify the port used to expose COE service for transaction endpoint. |
-| crds.install | Optional | true | Unset this argument if you don't want to install CustomResourceDefinitions which are consumed by CIC. |
+| crds.install | Optional | False | Unset this argument if you don't want to install CustomResourceDefinitions which are consumed by CIC. |
 | crds.retainOnDelete | Optional | false | Set this argument if you want to retain CustomResourceDefinitions even after uninstalling CIC. This will avoid data-loss of Custom Resource Objects created before uninstallation. |
 | bgpSettings.required | Optional | false | Set this argument if you want to enable BGP configurations for exposing service of Type Loadbalancer through BGP fabric|
 | bgpSettings.bgpConfig | Optional| N/A| This represents BGP configurations in YAML format. For the description about individual fields, please refer the [documentation](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/network/cpx-bgp-router.md) |

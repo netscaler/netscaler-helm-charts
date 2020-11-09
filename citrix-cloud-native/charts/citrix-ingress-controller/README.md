@@ -172,7 +172,7 @@ The following components are installed:
 
 ## CRDs configuration
 
-CRDs gets installed/upgraded automatically when we install/upgrade Citrix ingress controller using Helm. If you do not want to install CRDs, then set the option `crds.install` to `false`. By default, CRDs too get deleted if you uninstall through Helm. This means, even the CustomResource objects created by the customer will get deleted. If you want to avoid this data loss set `crds.retainOnDelete` to `true`.
+CRDs can be installed/upgraded when we install/upgrade Citrix ingress controller using `crds.install=true` parameter in Helm. If you do not want to install CRDs, then set the option `crds.install` to `false`. By default, CRDs too get deleted if you uninstall through Helm. This means, even the CustomResource objects created by the customer will get deleted. If you want to avoid this data loss set `crds.retainOnDelete` to `true`.
 
 > **Note:**
 > Installing again may fail due to the presence of CRDs. Make sure that you back up all CustomResource objects and clean up CRDs before re-installing Citrix Ingress Controller.
@@ -265,7 +265,7 @@ The following table lists the mandatory and optional parameters that you can con
 | cic.openshift | Optional | false | Set this argument if OpenShift environment is being used. |
 | cic.nodeSelector.key | Optional | N/A | Node label key to be used for nodeSelector option in CIC deployment. |
 | cic.nodeSelector.value | Optional | N/A | Node label value to be used for nodeSelector option in CIC deployment. |
-| cic.crds.install | Optional | true | Unset this argument if you don't want to install CustomResourceDefinitions which are consumed by CIC. |
+| cic.crds.install | Optional | False | Unset this argument if you don't want to install CustomResourceDefinitions which are consumed by CIC. |
 | cic.crds.retainOnDelete | Optional | false | Set this argument if you want to retain CustomResourceDefinitions even after uninstalling CIC. This will avoid data-loss of Custom Resource Objects created before uninstallation. |
 | cic.coeConfig.required | Mandatory | false | Set this to true if you want to configure Citrix ADC to send metrics and transaction records to COE. |
 | cic.coeConfig.distributedTracing.enable | Optional | false | Set this value to true to enable OpenTracing in Citrix ADC. |
