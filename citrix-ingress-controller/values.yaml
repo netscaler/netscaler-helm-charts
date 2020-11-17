@@ -43,6 +43,9 @@ exporter:
   pullPolicy: IfNotPresent
   ports:
     containerPort: 8888
+  # serviceMonitor configuration
+  serviceMonitor:
+    additionalLabels: {}
 
 # For CRDs supported by Citrix Ingress Controller
 crds:
