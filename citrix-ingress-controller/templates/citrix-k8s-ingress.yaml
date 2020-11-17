@@ -139,10 +139,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-   name: exporter
+   name: {{ include "citrix-ingress-controller.fullname" . }}-exporter
    labels:
-     app: exporter
-     service-type: citrix-adc-monitor
+     app: {{ include "citrix-ingress-controller.fullname" . }}-exporter
+     service-type: {{ include "citrix-ingress-controller.fullname" . }}-citrix-adc-monitor
 spec:
    type: ClusterIP
    ports:
@@ -161,16 +161,16 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
- name: citrix-adc-servicemonitor
+ name: {{ include "citrix-ingress-controller.fullname" . }}-adc-servicemonitor
  labels:
-   servicemonitor: citrix-adc
+   servicemonitor: {{ include "citrix-ingress-controller.fullname" . }}-citrix-adc
 spec:
  endpoints:
  - interval: 30s
    port: exporter-port
  selector:
    matchLabels:
-     service-type: citrix-adc-monitor
+     service-type: {{ include "citrix-ingress-controller.fullname" . }}-citrix-adc-monitor
  namespaceSelector:
    matchNames:
    - monitoring
