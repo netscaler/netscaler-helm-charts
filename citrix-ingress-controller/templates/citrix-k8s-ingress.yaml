@@ -161,20 +161,23 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
- name: {{ include "citrix-ingress-controller.fullname" . }}-adc-servicemonitor
- labels:
-   servicemonitor: {{ include "citrix-ingress-controller.fullname" . }}-citrix-adc
+  name: {{ include "citrix-ingress-controller.fullname" . }}-adc-servicemonitor
+  labels:
+    servicemonitor: {{ include "citrix-ingress-controller.fullname" . }}-citrix-adc
+{{- if .Values.exporter.serviceMonitor.additionalLabels }}
+    {{ .Values.exporter.serviceMonitor.additionalLabels | nindent 4 }}
+{{ -end }}
 spec:
- endpoints:
- - interval: 30s
-   port: exporter-port
- selector:
-   matchLabels:
-     service-type: {{ include "citrix-ingress-controller.fullname" . }}-citrix-adc-monitor
- namespaceSelector:
-   matchNames:
-   - monitoring
-   - default
-   - {{ .Release.Namespace }}
+  endpoints:
+  - interval: 30s
+    port: exporter-port
+  selector:
+    matchLabels:
+      service-type: {{ include "citrix-ingress-controller.fullname" . }}-citrix-adc-monitor
+  namespaceSelector:
+    matchNames:
+    - monitoring
+    - default
+    - {{ .Release.Namespace }}
 
 {{- end }}
