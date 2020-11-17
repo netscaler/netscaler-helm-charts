@@ -10,7 +10,7 @@ metadata:
 spec:
   selector:
 {{- if .Values.openshift }}
-     router: {{ include "citrix-ingress-controller.fullname" . }}
+    router: {{ include "citrix-ingress-controller.fullname" . }}
 {{- else }}
     matchLabels:
       app: {{ include "citrix-ingress-controller.fullname" . }}
@@ -139,21 +139,21 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-   name: {{ include "citrix-ingress-controller.fullname" . }}-exporter
-   labels:
-     app: {{ include "citrix-ingress-controller.fullname" . }}-exporter
-     service-type: {{ include "citrix-ingress-controller.fullname" . }}-citrix-adc-monitor
+  name: {{ include "citrix-ingress-controller.fullname" . }}-exporter
+  labels:
+    app: {{ include "citrix-ingress-controller.fullname" . }}-exporter
+    service-type: {{ include "citrix-ingress-controller.fullname" . }}-citrix-adc-monitor
 spec:
-   type: ClusterIP
-   ports:
-   - port: {{ .Values.exporter.ports.containerPort }}
-     targetPort: {{ .Values.exporter.ports.containerPort }}
-     name: exporter-port
-   selector:
+  type: ClusterIP
+  ports:
+  - port: {{ .Values.exporter.ports.containerPort }}
+    targetPort: {{ .Values.exporter.ports.containerPort }}
+    name: exporter-port
+  selector:
 {{- if .Values.openshift }}
-     router: {{ include "citrix-ingress-controller.fullname" . }}
+    router: {{ include "citrix-ingress-controller.fullname" . }}
 {{- else }}
-     app: {{ include "citrix-ingress-controller.fullname" . }}
+    app: {{ include "citrix-ingress-controller.fullname" . }}
 {{- end }}
 
 ---
@@ -166,7 +166,7 @@ metadata:
     servicemonitor: {{ include "citrix-ingress-controller.fullname" . }}-citrix-adc
 {{- if .Values.exporter.serviceMonitor.additionalLabels }}
     {{ .Values.exporter.serviceMonitor.additionalLabels | nindent 4 }}
-{{ -end }}
+{{- end }}
 spec:
   endpoints:
   - interval: 30s
