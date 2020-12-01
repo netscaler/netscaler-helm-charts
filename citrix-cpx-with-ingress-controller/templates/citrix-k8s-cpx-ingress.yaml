@@ -1,20 +1,26 @@
 apiVersion: apps/v1
+{{- if .Values.cpxBgpRouter }}
+kind: DaemonSet
+{{- else }}
 kind: Deployment
+{{- end }}
 metadata:
-  name: cpx-ingress
+  name: {{ include "citrix-cpx-ingress-controller.fullname" . }}
 spec:
   selector:
     matchLabels:
-      app: cpx-ingress
+      app: {{ include "citrix-cpx-ingress-controller.fullname" . }}
+{{- if not .Values.cpxBgpRouter }}
   replicas: 1
+{{- end }}
   template:
     metadata:
-      name: cpx-ingress
+      name: {{ include "citrix-cpx-ingress-controller.fullname" . }}
       labels:
-        app: cpx-ingress
+        app: {{ include "citrix-cpx-ingress-controller.fullname" . }}
       annotations:
     spec:
-      serviceAccountName: cpx-ingress-k8s-role
+      serviceAccountName: {{ include "citrix-cpx-ingress-controller.serviceAccountName" . }}
       containers:
         - name: cpx-ingress
           image: "{{ .Values.image }}"
@@ -34,10 +40,24 @@ spec:
           - name: "LS_PORT"
             value: {{ .Values.ADMSettings.licenseServerPort | quote }}
 {{- end }}
+{{- if not .Values.cpxBgpRouter }}
           - name: "MGMT_HTTP_PORT"
             value: {{ .Values.mgmtHttpPort | quote }}
           - name: "MGMT_HTTPS_PORT"
             value: {{ .Values.mgmtHttpsPort | quote }}
+{{- end }}
+{{- if .Values.cpxBgpRouter }}
+          - name: NS_NETMODE
+            value: HOST
+{{- if .Values.nsIP }}
+          - name: "NS_IP"
+            value: "{{ .Values.nsIP }}"
+{{- end }}
+{{- if .Values.nsGateway }}
+          - name: "NS_GATEWAY"
+            value: "{{ .Values.nsGateway }}"
+{{- end }}
+{{- end }}
 {{- if .Values.ADMSettings.ADMIP }}
           - name: "NS_MGMT_SERVER"
             value: {{ .Values.ADMSettings.ADMIP | quote }}
@@ -75,6 +95,8 @@ spec:
                 key: password
 {{- end }}
           volumeMounts:
+            - mountPath: /var/deviceinfo
+              name: shared-data
             - mountPath: /cpx/conf/
               name: cpx-volume1
             - mountPath: /cpx/crash/
@@ -87,27 +109,51 @@ spec:
           env:
           - name: "EULA"
             value: "{{ .Values.license.accept }}"
+{{- if .Values.cpxBgpRouter }}
+          - name: "NS_IP"
+            value: {{ .Values.nsIP | default  "192.168.1.2" | quote }}
+{{- else }}
           - name: "NS_IP"
             value: "127.0.0.1"
+{{- end }}
           - name: "NS_APPS_NAME_PREFIX"
-            value: {{ .Values.nsNamespace | default "k8s"}}
+            value: {{ .Values.entityPrefix | default "k8s"}}
           - name: "NS_DEPLOYMENT_MODE"
             value: "SIDECAR"
+{{- if and .Values.openshift .Values.routeLabels }}
+          - name: "ROUTE_LABELS"
+            value: {{ .Values.routeLabels | quote}}
+{{- end }}
+{{- if and .Values.openshift .Values.namespaceLabels }}
+          - name: "NAMESPACE_LABELS"
+            value: {{ .Values.namespaceLabels | quote }}
+{{- end }}
+{{- if .Values.cpxBgpRouter }}
+{{- if eq (upper .Values.nsProtocol) "HTTPS" }}
+          - name: NS_PROTOCOL
+            value: HTTPS
+          - name: NS_PORT
+            value: "9443"
+{{- else }}
+          - name: NS_PROTOCOL
+            value: HTTP
+          - name: NS_PORT
+            value: "9080"
+{{- end }}
+{{- if .Values.bgpPort }}
+          - name: "BGP_PORT"
+            value: {{ .Values.bgpPort | quote }}
+{{- end }}
+{{- end }}
           - name: "NS_ENABLE_MONITORING"
             value: "YES"
-          - name: "NS_USER"
-            valueFrom:
-             secretKeyRef:
-              name: cpxlogin
-              key: username
-          - name: "NS_PASSWORD"
-            valueFrom:
-             secretKeyRef:
-              name: cpxlogin
-              key: password
 {{- if .Values.logProxy }}
           - name: "NS_LOGPROXY"
             value: {{ .Values.logProxy | quote }}
+{{- end }}
+{{- if .Values.ingressIP }}
+          - name: "NS_VIP"
+            value: {{ .Values.ingressIP | quote }}
 {{- end }}
           - name: POD_NAME
             valueFrom:
@@ -119,47 +165,71 @@ spec:
               fieldRef:
                 apiVersion: v1
                 fieldPath: metadata.namespace
+          - name: NODE_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: spec.nodeName
 {{- if .Values.kubernetesURL }}
           - name: "kubernetes_url"
             value: "{{ .Values.kubernetesURL }}"
 {{- end }}
+{{- if .Values.cpxBgpRouter }}
+          securityContext:
+            runAsUser: 0
+            capabilities:
+              add:
+              - NET_ADMIN
+{{- end }}
           args:
             - --configmap
-              {{ .Release.Namespace }}/cpx-cic-configmap
+              {{ .Release.Namespace }}/cpx-{{ .Release.Name }}-configmap
+{{- if .Values.ipam }}
+            - --ipam
+              citrix-ipam-controller
+{{- end }}
+{{- if .Values.cpxBgpRouter }}
+            - --deployment-type
+              kube-bgp-router
+{{- end }}
 {{- if .Values.ingressClass }}
             - --ingress-class
 {{- range .Values.ingressClass}}
               {{.}}
 {{- end }}
 {{- end }}
-{{- if .Values.defaultSSLCert }}
+{{- if .Values.defaultSSLCertSecret }}
             - --default-ssl-certificate
-              {{ .Release.Namespace }}/{{ .Values.defaultSSLCert }}
+              {{ .Release.Namespace }}/{{ .Values.defaultSSLCertSecret }}
 {{- end }}
 {{- end }}
+          volumeMounts:
+            - mountPath: /var/deviceinfo
+              name: shared-data
 {{- if .Values.exporter.required }}
         - name: exporter
           image: "{{ .Values.exporter.image }}"
           imagePullPolicy: {{ .Values.exporter.pullPolicy }}
           args:
             - "--secure=no"
+{{- if .Values.cpxBgpRouter }}
+            - --target-nsip={{ .Values.nsIP | default "192.168.1.2" }}:9080
+{{- else }}
             - "--target-nsip=127.0.0.1"
+{{- end }}
             - "--port={{ .Values.exporter.ports.containerPort }}"
           env:
-          - name: "NS_USER"
-            valueFrom:
-             secretKeyRef:
-              name: cpxlogin
-              key: username
-          - name: "NS_PASSWORD"
-            valueFrom:
-             secretKeyRef:
-              name: cpxlogin
-              key: password
+          - name: "NS_DEPLOYMENT_MODE"
+            value: "SIDECAR"
           securityContext:
             readOnlyRootFilesystem: true
+          volumeMounts:
+            - mountPath: /var/deviceinfo
+              name: shared-data
 {{- end }}
       volumes:
+        - name: shared-data
+          emptyDir: {}
         - name: cpx-volume1
           emptyDir: {}
         - name: cpx-volume2
@@ -170,30 +240,88 @@ spec:
 {{- end }}
 
 ---
-
+{{- if .Values.cpxBgpRouter }}
+{{- if .Values.exporter.required }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: cpx-service
+   name: exporter
+   labels:
+     app: exporter
+     service-type: citrix-adc-cpx-monitor
+spec:
+   type: ClusterIP
+   ports:
+   - port: {{ .Values.exporter.ports.containerPort }}
+     targetPort: {{ .Values.exporter.ports.containerPort }}
+     name: exporter-port
+   selector:
+     app: {{ include "citrix-cpx-ingress-controller.fullname" . }}
+{{- end }}
+{{- else }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: cpx-{{ .Release.Name }}-service
   labels:
     app: cpx-service
     service-type: citrix-adc-cpx-monitor
+  annotations:
+{{- if .Values.aws }}
+{{- if or .Values.sslCertManagedByAWS .Values.serviceAnnotations.aws.sslCert }}
+    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: {{ required "Please provide details of SSL Cert" .Values.serviceAnnotations.aws.sslCert | quote }}
+{{- end }}
+{{- if or .Values.sslCertManagedByAWS .Values.serviceAnnotations.aws.backendProtocol }}
+    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: {{ .Values.serviceAnnotations.aws.backendProtocol | default "http" | quote }}
+{{- end }}
+{{- if or .Values.sslCertManagedByAWS .Values.serviceAnnotations.aws.sslPorts }}
+    service.beta.kubernetes.io/aws-load-balancer-ssl-ports: {{ .Values.serviceAnnotations.aws.sslPorts | default "https" | quote }}
+{{- end }}
+{{- if .Values.serviceAnnotations.aws.negotiationPolicy }}
+    service.beta.kubernetes.io/aws-load-balancer-ssl-negotiation-policy: {{ .Values.serviceAnnotations.aws.negotiationPolicy | quote }}
+{{- end }}
+{{- if or .Values.sslCertManagedByAWS .Values.serviceAnnotations.aws.proxyProtocol }}
+    service.beta.kubernetes.io/aws-load-balancer-proxy-protocol: '*'
+{{- end }}
+{{- if .Values.serviceAnnotations.aws.resourcesTags }}
+    service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags: {{ .Values.serviceAnnotations.aws.resourcesTags | quote }}
+{{- end }}
+{{- end }}
 spec:
+{{- if or ( and .Values.aws .Values.sslCertManagedByAWS) .Values.serviceType.loadBalancer.enabled }}
+  externalTrafficPolicy: {{ .Values.serviceType.loadBalancer.externalTrafficPolicy }}
+  type: LoadBalancer
+{{- else if .Values.serviceType.nodePort.enabled }}
   type: NodePort
+{{- end }}
   ports:
-  - port: 80
-    protocol: TCP
-    name: http
+{{- if and .Values.aws .Values.sslCertManagedByAWS }}
   - port: 443
     protocol: TCP
     name: https
+    targetPort: 80
+{{- else }}
+  - port: 80
+    protocol: TCP
+    name: http
+{{- if and .Values.serviceType.nodePort.enabled .Values.serviceType.nodePort.httpPort }}
+    nodePort: {{ .Values.serviceType.nodePort.httpPort }}
+{{- end }}
+  - port: 443
+    protocol: TCP
+    name: https
+{{- if and .Values.serviceType.nodePort.enabled .Values.serviceType.nodePort.httpsPort }}
+    nodePort: {{ .Values.serviceType.nodePort.httpsPort}}
+{{- end }}
+{{- end }}
 {{- if .Values.exporter.required }}
   - port: {{ .Values.exporter.ports.containerPort }}
     targetPort: {{ .Values.exporter.ports.containerPort }}
     name: exporter-port
 {{- end }}
   selector:
-    app: cpx-ingress
+    app: {{ include "citrix-cpx-ingress-controller.fullname" . }}
+{{- end }}
 
 ---
 

@@ -1,0 +1,42 @@
+# Default values for citrix Multi-Cluster Ingress Controller
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# image contains information needed to fetch CIC image
+image: quay.io/citrix/citrix-k8s-ingress-controller:1.10.2
+pullPolicy: IfNotPresent
+# openshift is set to true if charts are being deployed in OpenShift environment.
+openshift: false
+license:
+   accept: no
+# nsPort is port for NetScaler NITRO
+nsPort: 443
+# nsProtocol is protocol for NetScaler NITRO
+nsProtocol: HTTPS
+# logLevel is to set level of CIC Logs
+logLevel: INFO
+# entityPrefix is the prefix for the resources on the Citrix ADC
+entityPrefix:
+# kubernetesURL is for registering events to kubeapi server
+kubernetesURL:
+# localRegion is the region where K8s cluster is deployed 
+localRegion:
+# localCluster is the clustername of the k8s cluster
+localCluster:
+# sitedata is list of dictionary containing site related information like name,IP, adcCredentialSecret for credentials.
+sitedata:
+  - siteName: 
+    siteIp: 
+    secretName: 
+crds:
+# If false, CustomResourceDefinitions  will not be installed.
+  install: false
+# if set to true, then CustomResourceDefinitions will not be deleted during helm delete. This way, CustomResourceObjects will not be deleted from the database.
+  retainOnDelete: false
+
+# Specifies whether a ServiceAccount should be created
+serviceAccount:
+  create: true
+  # The name of the ServiceAccount to use.
+  # If not set and `create` is true, a name is generated using the fullname template
+  # name:

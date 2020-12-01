@@ -2,59 +2,54 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-# image contains information needed to fetch CIC image
-image: quay.io/citrix/citrix-k8s-ingress-controller:1.8.28
+# Citrix Ingress Controller config details
+image: quay.io/citrix/citrix-k8s-ingress-controller:1.10.2
 pullPolicy: IfNotPresent
-# openshift is set to true if charts are being deployed in OpenShift environment.
 openshift: false
-#loginFileName is secret file for NetScaler login
-loginFileName:
-# nsIP is NetScaler NSIP/SNIP, SNIP in case of HA (mgmt has to be enabled)
+adcCredentialSecret:
 nsIP: x.x.x.x
 nsVIP:
-# license accept should be 'yes' to run Citrix Ingress Controller
 license:
    accept: no
-# nsPort is port for NetScaler NITRO
 nsPort: 443
-# nsProtocol is protocol for NetScaler NITRO
 nsProtocol: HTTPS
-# logLevel is to set level of CIC Logs
-logLevel: DEBUG
-# nsNamespace is the prefix for the resources on the Citrix ADC
-nsNamespace:
-# kubernetesURL is for registering events to kubeapi server
+logLevel: INFO
+entityPrefix:
 kubernetesURL:
-# ingressClass is the name of the Ingress Class
 ingressClass:
-# Default SSL certificate
-defaultSSLCert:
-# Set this argument if you want to use the IPAM controller
+serviceClass:
+defaultSSLCertSecret:
 ipam: False
-# Elasticsearch or Kafka or Zipkin endpoint for Citrix observability exporter
 logProxy:
-#nodeWatch is used for automatic route configuration on NetScaler towards the pod network
 nodeWatch: false
-# Set to ON to enables HTTP2 for Citrix ADC service group configurations
-http2ServerSide: "OFF"
 nodeSelector:
   key:
   value:
+updateIngressStatus: False
 
-# exporter conatins information of prometheus-exporter
+routeLabels:
+namespaceLabels:
+
+cicSettings:
+  required: False
+  cicConfig:
+    NS_HTTP2_SERVER_SIDE: "OFF"
+    NS_COOKIE_VERSION: "0"
+
+# Exporter config details
 exporter:
   required: false
-  image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.5
+  image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.6
   pullPolicy: IfNotPresent
   ports:
     containerPort: 8888
 
+# For CRDs supported by Citrix Ingress Controller
 crds:
-# If false, CustomResourceDefinitions  will not be installed.
-  install: true
-# if set to true, then CustomResourceDefinitions will not be deleted during helm delete. This way, CustomResourceObjects will not be deleted from the database.
+  install: false
   retainOnDelete: false
 
+# Config required to be done by Citrix Ingress Controller for sending metrics to Citrix Observability Exporter
 coeConfig:
   required: false
   distributedTracing:
@@ -74,3 +69,10 @@ coeConfig:
   transactions:
     enable: false
     port: 30001
+
+# Specifies whether a ServiceAccount should be created
+serviceAccount:
+  create: true
+  # The name of the ServiceAccount to use.
+  # If not set and `create` is true, a name is generated using the fullname template
+  # name:

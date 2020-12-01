@@ -1,14 +1,31 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: cpx-cic-configmap
-  labels:
-    app: citrix-ingress-controller
+  name: cpx-{{ .Release.Name }}-configmap
 data:
   LOGLEVEL: {{ .Values.logLevel | quote | lower }}
+{{- if eq (upper .Values.nsProtocol) "HTTPS" }}
+  NS_PROTOCOL: "https"
+{{- if .Values.cpxBgpRouter }}
+  NS_PORT: "9443"
+{{- else }}
+  NS_PORT: "443"
+{{- end }}
+{{- else }}
   NS_PROTOCOL: "http"
+{{- if .Values.cpxBgpRouter }}
+  NS_PORT: "9080"
+{{- else }}
   NS_PORT: "80"
-  NS_HTTP2_SERVER_SIDE: {{ .Values.http2ServerSide | quote | upper }}
+{{- end }}
+{{- end }}
+
+{{- if .Values.cicSettings.required }}
+{{- with .Values.cicSettings.cicConfig }}
+{{ toYaml . | indent 2 }}
+{{- end }}
+{{- end }}
+
 {{- if .Values.coeConfig.required }}
   NS_ANALYTICS_CONFIG: |
     distributed_tracing:
@@ -28,4 +45,14 @@ data:
     transactions:
       enable: {{ .Values.coeConfig.transactions.enable | quote }}
       port: {{ .Values.coeConfig.transactions.port }}
+{{- end }}
+
+{{- if .Values.cpxBgpRouter }}
+{{- if .Values.bgpSettings.required }}
+  NS_BGP_CONFIG: |
+{{- with .Values.bgpSettings.bgpConfig }}
+    bgpConfig:
+{{ toYaml . | indent 4 }}
+{{- end }}
+{{- end }}
 {{- end }}

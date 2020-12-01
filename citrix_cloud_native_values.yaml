@@ -1,39 +1,48 @@
 cic:
   enabled: False
   
-  image: quay.io/citrix/citrix-k8s-ingress-controller:1.8.28
+  image: quay.io/citrix/citrix-k8s-ingress-controller:1.10.2
   pullPolicy: IfNotPresent
   openshift: false
-  loginFileName:
+  adcCredentialSecret:
   nsIP: x.x.x.x
   nsVIP:
   license:
     accept: no
   nsPort: 443
   nsProtocol: HTTPS
-  logLevel: DEBUG
-  nsNamespace:
+  logLevel: INFO
+  entityPrefix:
   kubernetesURL:
   ingressClass:
-  defaultSSLCert:
+  serviceClass:
+  defaultSSLCertSecret:
   ipam: False
   logProxy:
   nodeWatch: false
-  http2ServerSide: "OFF"
+  enableHTTP2: "OFF"
   nodeSelector:
     key:
     value:
 
+  updateIngressStatus: False
+
+  routeLabels:
+  namespaceLabels:
+
   exporter:
     required: false
-    image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.5
+    image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.6
     pullPolicy: IfNotPresent
     ports:
       containerPort: 8888
 
   crds:
-    install: true
+    install: false
     retainOnDelete: false
+
+  serviceAccount:
+    create: true
 
   coeConfig:
     required: false
@@ -55,30 +64,82 @@ cic:
       enable: false
       port: 30001
 
+mcIngress:
+  enabled: False
+
+  image: quay.io/citrix/citrix-k8s-ingress-controller:1.10.2
+  pullPolicy: IfNotPresent
+  openshift: false
+  localRegion:
+  localCluster:
+  license:
+    accept: no
+  nsPort: 443
+  nsProtocol: HTTPS
+  logLevel: INFO
+  entityPrefix:
+  kubernetesURL:
+  sitedata:
+
+  crds:
+    install: false
+    retainOnDelete: false
+
+  serviceAccount:
+    create: true
+
 cpx:
   enabled: False
 
-  image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-58.30
+  image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-67.39
   pullPolicy: IfNotPresent
   cic:
-    image: quay.io/citrix/citrix-k8s-ingress-controller:1.8.28
+    image: quay.io/citrix/citrix-k8s-ingress-controller:1.10.2
     pullPolicy: IfNotPresent
     required: true
 
   mgmtHttpPort: 9080
   mgmtHttpsPort: 9443
+  cpxBgpRouter: false
+  nsIP: 192.168.1.2
+  nsGateway: 192.168.1.1
+  nsProtocol: http
+  ingressIP:
+  bgpPort: 179
   openshift: false
-  nsNamespace:
+
+  routeLabels:
+  namespaceLabels:
+
+  aws: False
+  entityPrefix:
   license:
     accept: no
   ingressClass:
-  logLevel: DEBUG
-  defaultSSLCert:
+  logLevel: INFO
+  defaultSSLCertSecret:
   logProxy:
-  http2ServerSide: "OFF"
+  enableHTTP2: "OFF"
   nodeSelector:
     key:
     value:
+
+  serviceType:
+    loadBalancer:
+      enabled: False
+    nodePort:
+      enabled: False
+      httpPort:
+      httpsPort:
+
+  serviceAnnotations:
+    awsLB:
+      sslCert:
+      backendProtocol:
+      sslPorts:
+      negotiationPolicy:
+      proxyProtocol: False
+      resourcesTags:
 
   ADMSettings:
     licenseServerIP:
@@ -91,9 +152,12 @@ cpx:
     vCPULicense: false
     cpxCores:
 
+  serviceAccount:
+    create: true
+
   exporter:
     required: false
-    image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.5
+    image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.6
     pullPolicy: IfNotPresent
     ports:
       containerPort: 8888
@@ -118,95 +182,173 @@ cpx:
       enable: false
       port: 5557
 
+  bgpSettings:
+    required: false
+    bgpConfig:
+    - bgpRouter:
+        localAS: 100
+        neighbor:
+        - address:
+          remoteAS: 100
+          advertisementInterval: 10
+          ASOriginationInterval: 10
+
   crds:
-    install: true
+    install: false
     retainOnDelete: false
 
-ci-ingress:
+iaIngress:
   enabled: False
 
   citrixCPX: false 
 
   metricExporter:
     required: true
-    image: quay.io/citrix/citrix-adc-metrics-exporter
-    version: 1.4.0
+    image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.6
     port: 8888
     secure: "YES"
     logLevel: ERROR
     imagePullPolicy: IfNotPresent
 
-  istioAdaptor:
-    image: quay.io/citrix/citrix-istio-adaptor
-    tag: 1.2.0
+  xDSAdaptor:
+    image: quay.io/citrix/citrix-xds-adaptor:0.9.5
     imagePullPolicy: IfNotPresent
-    netscalerUrl: null 
     proxyType: router
     secureConnect: true
-    vserverIP:
-    netProfile:
-    ADMIP: 
-    ADMFingerPrint:
-    coeURL:
- 
+
   istioPilot:
-    name: istio-pilot
+    name: istiod
     namespace: istio-system
-    secureGrpcPort: 15011
+    secureGrpcPort: 15012
     insecureGrpcPort: 15010
-    SAN: spiffe://cluster.local/ns/istio-system/sa/istio-pilot-service-account
+    SAN:
+
+  certProvider:
+    caAddr: istiod.istio-system.svc
+    caPort: 15012
+    trustDomain: cluster.local
+    certTTLinHours: 720
+    clusterId: Kubernetes 
+
 
   ingressGateway:
-    image: quay.io/citrix/citrix-k8s-cpx-ingress
-    tag: 13.0-47.22
+    netscalerUrl: null
+    image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-64.35
     imagePullPolicy: IfNotPresent
     EULA: NO
     mgmtHttpPort: 10080
     mgmtHttpsPort: 10443
     httpNodePort: 30180
     httpsNodePort: 31443
-    lightWeightCPX: 1 
+    lightWeightCPX: 1
     secretVolumes:
-    #licenseServerIP: this value will be taken from istioAdaptor.ADMIP
-    licenseServerPort: 27000 
+    #licenseServerIP: this value will be taken from ADMSettings.ADMIP
     label: citrix-ingressgateway
     tcpPort:
+    vserverIP: nsip
+    adcServerName:
+    netProfile:
 
-ci-sidecar:
+
+  ADMSettings:
+    ADMIP:
+    ADMFingerPrint:
+    licenseServerIP:
+    licenseServerPort: 27000
+    bandWidthLicense: false
+    bandWidth:
+    vCPULicense: false
+    cpxCores:
+
+iaEgress:
   enabled: False
 
-  istioAdaptor:
-    image: quay.io/citrix/citrix-istio-adaptor 
-    tag: 1.2.0
+  citrixCPX: false
+
+  coe:
+      coeURL: 
+
+  istioPilot:
+    name: istiod
+    namespace: istio-system
+    secureGrpcPort: 15012
+    insecureGrpcPort: 15010
+    SAN: ""
+
+  certProvider:
+    caAddr: istiod.istio-system.svc
+    caPort: 15012
+    trustDomain: cluster.local
+    certTTLinHours: 720
+    clusterId: Kubernetes
+
+  xDSAdaptor:
+    image: quay.io/citrix/citrix-xds-adaptor:0.9.5
     imagePullPolicy: IfNotPresent
-    netscalerUrl: "http://127.0.0.1"
+    proxyType: router
+    secureConnect: true
+
+
+  egressGateway:
+    netscalerUrl: null
+    image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-64.35
+    imagePullPolicy: IfNotPresent
+    EULA: false
+    mgmtHttpPort: 10080
+    mgmtHttpsPort: 10443
+    lightWeightCPX: 1
+    label: citrix-egressgateway
+    vserverIP: nsip
+    adcServerName:
+    netProfile:
+
+ ADMSettings:
+    ADMIP:
+    ADMFingerPrint:
+    licenseServerIP:
+    licenseServerPort: 27000
+    bandWidthLicense: false
+    bandWidth:
+    vCPULicense: false
+    cpxCores:
+
+             
+iaSidecar:
+  enabled: False
+
+  xDSAdaptor:
+    image: quay.io/citrix/citrix-xds-adaptor:0.9.5
+    imagePullPolicy: IfNotPresent
     proxyType: sidecar
     secureConnect: true
-    ADMIP: 
-    ADMFingerPrint: 
-    coeURL:
- 
+
   istioPilot:
-    name: istio-pilot
+    name: istiod
     namespace: istio-system
-    secureGrpcPort: 15011
+    secureGrpcPort: 15012
     insecureGrpcPort: 15010
-    SAN: "spiffe://cluster.local/ns/istio-system/sa/istio-pilot-service-account"
+    SAN: #"spiffe://cluster.local/ns/istio-system/sa/istiod-service-account"
 
   cpxProxy:
-    image: quay.io/citrix/citrix-k8s-cpx-ingress 
-    tag: 13.0-47.22
+    netscalerUrl: "http://127.0.0.1"
+    image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-64.35
     imagePullPolicy: IfNotPresent
     EULA: NO
     cpxSidecarMode: YES
     mgmtHttpPort: 10080
     mgmtHttpsPort: 10443
-    #licenseServerIP: this value is taken from istio.Adaptor.ADMIP
+    #licenseServerIP: this value is taken from ADMSettings.ADMIP
+
+  ADMSettings:
+    ADMIP:
+    ADMFingerPrint:
+    licenseServerIP:
     licenseServerPort: 27000
+    bandWidthLicense: false
+    bandWidth:
 
   sidecarWebHook:
-    webhookImage: gcr.io/istio-release/sidecar_injector
-    webhookImageVersion: 1.0.0
+    webhookImage: gcr.io/istio-release/sidecar_injector:1.0.0
     imagePullPolicy: IfNotPresent
 
   webhook:
@@ -214,13 +356,12 @@ ci-sidecar:
 
 cnc:
   enabled: False
-  image: quay.io/citrix/citrix-k8s-node-controller
-  tag: 2.1.0
+  image: quay.io/citrix/citrix-k8s-node-controller:2.1.0
   pullPolicy: IfNotPresent
   license:
     accept: no
   nsIP:
-  loginFileName:
+  adcCredentialSecret:
   network:
   vtepIP:
   vxlan:
@@ -232,7 +373,7 @@ cnc:
 
 coe:
   enabled: False
-  image: "quay.io/citrix/citrix-observability-exporter:1.1.001"
+  image: quay.io/citrix/citrix-observability-exporter:1.1.001
   pullPolicy: IfNotPresent
   replicas: 1
   license:
@@ -255,8 +396,7 @@ coe:
 
 ipam:
   enabled: False
-  image: quay.io/citrix/citrix-ipam-controller
-  tag: 0.0.1
+  image: quay.io/citrix/citrix-ipam-controller:0.0.1
   pullPolicy: IfNotPresent
 
   vipRange:

@@ -18,7 +18,7 @@ spec:
       serviceAccountName: {{ include "citrix-k8s-node-controller.serviceAccountName" . }}
       containers:
       - name: {{ include "citrix-k8s-node-controller.name" . }}
-        image: "{{ .Values.image }}:{{ .Values.tag }}"
+        image: "{{ .Values.image }}"
         imagePullPolicy: {{ .Values.pullPolicy }}
         env:
         - name: EULA
@@ -28,12 +28,12 @@ spec:
         - name: NS_USER
           valueFrom:
             secretKeyRef:
-              name: {{ required "Please provide secret for Citrix ADC credential" .Values.loginFileName }}
+              name: {{ required "Please provide secret for Citrix ADC credential" .Values.adcCredentialSecret }}
               key: username
         - name: NS_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: {{ required "Please provide secret for Citrix ADC credential" .Values.loginFileName }}
+              name: {{ required "Please provide secret for Citrix ADC credential" .Values.adcCredentialSecret }}
               key: password
         - name: NETWORK
           value: {{ required "Please provide network for VTEP overlay" .Values.network | quote }}

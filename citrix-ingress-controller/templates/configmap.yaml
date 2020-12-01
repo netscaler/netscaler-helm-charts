@@ -1,14 +1,18 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: cic-configmap
-  labels:
-    app: citrix-ingress-controller
+  name: {{ .Release.Name }}-configmap 
 data:
   LOGLEVEL: {{ .Values.logLevel | quote | lower }}
   NS_PROTOCOL: {{ .Values.nsProtocol | quote | lower }}
   NS_PORT: {{ .Values.nsPort | quote }}
-  NS_HTTP2_SERVER_SIDE: {{ .Values.http2ServerSide | quote | upper }}
+
+{{- if .Values.cicSettings.required }}
+{{- with .Values.cicSettings.cicConfig }}
+{{ toYaml . | indent 2 }}
+{{- end }}
+{{- end }}
+
 {{- if .Values.coeConfig.required }}
   NS_ANALYTICS_CONFIG: |
     distributed_tracing:

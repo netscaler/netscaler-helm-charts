@@ -7,7 +7,7 @@ In Kubernetes environments, sometimes the services are exposed for external acce
 ```
    helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-   helm install cnc citrix/citrix-node-controller --set license.accept=yes,nsIP=<NSIP>,vtepIP=<Citrix ADC SNIP>,vxlan.id=<VXLAN ID>,vlan.port=<VXLAN PORT>,network=<IP-address-range-for-VTEP-overlay>,loginFileName=<Secret-for-ADC-credentials>
+   helm install cnc citrix/citrix-node-controller --set license.accept=yes,nsIP=<NSIP>,vtepIP=<Citrix ADC SNIP>,vxlan.id=<VXLAN ID>,vlan.port=<VXLAN PORT>,network=<IP-address-range-for-VTEP-overlay>,adcCredentialSecret=<Secret-for-ADC-credentials>
 ```
 
 > **Important:**
@@ -89,7 +89,7 @@ To create the system user account, do the following:
 
 2. To install the chart with the release name, `my-release`, use the following command:
    ```
-     helm install my-release citrix/citrix-node-controller --set license.accept=yes,nsIP=<NSIP>,vtepIP=<Citrix ADC SNIP>,vxlan.id=<VXLAN ID>,vxlan.port=<VXLAN PORT>,network=<IP-address-range-for-VTEP-overlay>,loginFileName=<Secret-for-ADC-credentials>
+     helm install my-release citrix/citrix-node-controller --set license.accept=yes,nsIP=<NSIP>,vtepIP=<Citrix ADC SNIP>,vxlan.id=<VXLAN ID>,vxlan.port=<VXLAN PORT>,network=<IP-address-range-for-VTEP-overlay>,adcCredentialSecret=<Secret-for-ADC-credentials>
    ```
 
 > **Note:**
@@ -111,10 +111,9 @@ The following table lists the mandatory and optional parameters that you can con
 | Parameters | Mandatory or Optional | Default value | Description |
 | --------- | --------------------- | ------------- | ----------- |
 | license.accept | Mandatory | no | Set `yes` to accept the CNC end user license agreement. |
-| image | Mandatory | `quay.io/citrix/citrix-k8s-node-controller` | The CNC image. |
-| tag | Mandatory | `2.1.0` | The CNC image version. |
+| image | Mandatory | `quay.io/citrix/citrix-k8s-node-controller:2.1.0` | The CNC image. |
 | pullPolicy | Mandatory | IfNotPresent | The CNC image pull policy. |
-| loginFileName | Mandatory | N/A | The secret key to log on to the Citrix ADC VPX or MPX. For information on how to create the secret keys, see [Prerequisites](#prerequistes). |
+| adcCredentialSecret | Mandatory | N/A | The secret key to log on to the Citrix ADC VPX or MPX. For information on how to create the secret keys, see [Prerequisites](#prerequistes). |
 | nsIP | Mandatory | N/A | The IP address of the Citrix ADC device. For details, see [Prerequisites](#prerequistes). |
 | vtepIP | Mandatory | N/A | The Citrix ADC SNIP. |
 | network | Mandatory | N/A | The IP address range that CNC uses to configure the VTEP overlay end points on the Kubernetes nodes. |

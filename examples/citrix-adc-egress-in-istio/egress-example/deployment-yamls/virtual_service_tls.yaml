@@ -1,0 +1,35 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: ns-direct-cnn-through-egress-gateway-tls
+spec:
+  hosts:
+  - edition.cnn.com
+  gateways:
+  - mesh
+  - citrix-egressgateway-tls
+  tls:
+  - match:
+    - gateways:
+      - mesh
+      port: 443
+      sniHosts:
+      - edition.cnn.com
+    route:
+    - destination:
+        host: citrix-egressgateway.citrix-system.svc.cluster.local
+        subset: cnn
+        port:
+          number: 443
+  - match:
+    - gateways:
+      - citrix-egressgateway-tls
+      port: 443
+      sniHosts:
+      - edition.cnn.com
+    route:
+    - destination:
+        host: edition.cnn.com
+        port:
+          number: 443
+      weight: 100

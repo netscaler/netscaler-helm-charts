@@ -22,8 +22,8 @@ data:
     template: |-
       containers:
       - name: istio-adaptor
-        image: {{ .Values.istioAdaptor.image }}:{{ .Values.istioAdaptor.tag }}
-        imagePullPolicy: {{ .Values.istioAdaptor.imagePullPolicy }} 
+        image: {{ .Values.xDSAdaptor.image }}
+        imagePullPolicy: {{ .Values.xDSAdaptor.imagePullPolicy }} 
         env:
         - name: POD_NAME
           valueFrom:
@@ -45,46 +45,68 @@ data:
           valueFrom:
             fieldRef:
               fieldPath: metadata.labels['app']
+        - name: SERVICE_ACCOUNT
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: spec.serviceAccountName
+{{- if .Values.certProvider.caAddr }}
+        - name: CA_ADDR
+          value: {{ .Values.certProvider.caAddr }}:{{ .Values.certProvider.caPort}} #istiod.istio-system.svc:15012
+        - name: TRUST_DOMAIN
+          value: {{ .Values.certProvider.trustDomain }} #cluster.local
+        - name: CLUSTER_ID 
+          value: {{ .Values.certProvider.clusterId }} #Kubernetes
+        - name: CERT_TTL_IN_HOURS 
+          value: {{ .Values.certProvider.certTTLinHours }}
+{{- end }}
         - name: NS_USER
           value: nsroot
         - name: NS_PASSWORD
           value: nsroot
         args:
-        - -pilot-location
-{{- if eq .Values.istioAdaptor.secureConnect true }}
-        - {{ .Values.istioPilot.name}}.{{.Values.istioPilot.namespace }}:{{ .Values.istioPilot.secureGrpcPort }} # istio-pilot.istio-system:15011
+        - -ads-server
+{{- if eq .Values.xDSAdaptor.secureConnect true }}
+        - {{ .Values.istioPilot.name}}.{{.Values.istioPilot.namespace }}.svc:{{ .Values.istioPilot.secureGrpcPort }} # istiod.istio-system.svc:15012
 {{- else }}
-        - {{ .Values.istioPilot.name}}.{{.Values.istioPilot.namespace }}:{{ .Values.istioPilot.insecureGrpcPort }} # istio-pilot.istio-system:15010
+        - {{ .Values.istioPilot.name}}.{{.Values.istioPilot.namespace }}.svc:{{ .Values.istioPilot.insecureGrpcPort }} # istiod.istio-system.svc:15010
 {{- end }}
-        - -proxy-type
-        - {{ .Values.istioAdaptor.proxyType | default "sidecar" | quote }}
-        - -pilot-SAN
+        - -ads-secure-connect={{ .Values.xDSAdaptor.secureConnect}}
+        - -ads-server-SAN
         - {{ .Values.istioPilot.SAN }}
-        - -netscaler-url
-        - {{ .Values.istioAdaptor.netscalerUrl | default "http://127.0.0.1" | quote }}
-        - -secure-connect={{ .Values.istioAdaptor.secureConnect}}
-        - -adm-ip
-{{- if .Values.istioAdaptor.ADMIP }}
-        - {{ .Values.istioAdaptor.ADMIP }}
-{{- else }}
-        - ""
+        - -istio-proxy-type
+        - {{ .Values.xDSAdaptor.proxyType | default "sidecar" | quote }}
+        - -citrix-adc
+        - {{ .Values.cpxProxy.netscalerUrl | default "http://127.0.0.1" | quote }}
+        - -citrix-adc-password
+        - "/var/deviceinfo/random_id"
+{{- if .Values.ADMSettings.ADMIP }}
+        - -citrix-adm
+        - {{ .Values.ADMSettings.ADMIP }}
 {{- end }}
-{{- if .Values.istioAdaptor.coeURL }}
-        - -coe-url
-        - {{ .Values.istioAdaptor.coeURL }}
+{{- if .Values.ADMSettings.licenseServerIP }}
+        - -citrix-license-server
+        - {{ .Values.ADMSettings.licenseServerIP }}
+{{- end }}
+{{- if .Values.coe.coeURL }}
+        - -coe
+        - {{ .Values.coe.coeURL }}
 {{- end }}
         volumeMounts:
-        - mountPath: /etc/certs/
-          name: istio-certs
-          readOnly: true
+        - mountPath: /var/deviceinfo
+          name: cpx-pwd
         - mountPath: /etc/nslogin 
           name: nslogin
           readOnly: true
+        - name: certs
+          mountPath: /etc/certs
+        - name: istiod-ca-cert
+          mountPath: /etc/rootcert/
         securityContext:
           readOnlyRootFilesystem: true
-          runAsUser: 32024 # UID of istio-adaptor container's user
+          runAsUser: 32024 # UID of xds-adaptor container's user
       - name: cpx-proxy
-        image: {{ .Values.cpxProxy.image }}:{{ .Values.cpxProxy.tag }}
+        image: {{ .Values.cpxProxy.image }}
         imagePullPolicy: IfNotPresent
         securityContext:
           privileged: true
@@ -101,42 +123,64 @@ data:
           value: ""
         - name: "NS_CPX_LITE"
           value: 1
-{{- if or .Values.istioAdaptor.coeURL .Values.istioAdaptor.ADMIP }}
+{{- if or .Values.coe.coeURL .Values.ADMSettings.ADMIP }}
         - name: "NS_ENABLE_NEWNSLOG"
           value: 1
 {{- end }}
         - name: "LS_IP"
-          value: {{ .Values.istioAdaptor.ADMIP | default "" }}
+          value: {{ .Values.ADMSettings.licenseServerIP | default "" }}
         - name: "LS_PORT"
-          value: {{ .Values.cpxProxy.licenseServerPort}}
-{{- if .Values.istioAdaptor.ADMFingerPrint }}
+          value: {{ .Values.ADMSettings.licenseServerPort}}
+{{- if .Values.ADMSettings.ADMFingerPrint }}
         - name: "NS_MGMT_SERVER"
-          value: {{ .Values.istioAdaptor.ADMIP }}
+          value: {{ .Values.ADMSettings.ADMIP }}
         - name: "NS_MGMT_FINGER_PRINT"
-          value: {{ .Values.istioAdaptor.ADMFingerPrint | quote }}
+          value: {{ .Values.ADMSettings.ADMFingerPrint | quote }}
         - name: "NS_HTTP_PORT"
           value: {{ .Values.cpxProxy.mgmtHttpPort | quote }}
         - name: "NS_HTTPS_PORT"
           value: {{ .Values.cpxProxy.mgmtHttpsPort | quote }}
 {{- end }}
         - name: "LOGSTREAM_COLLECTOR_IP"
-          value: {{ .Values.istioAdaptor.ADMIP | default "" }}
+          value: {{ .Values.ADMSettings.ADMIP | default "" }}
+{{- if and ( .Values.ADMSettings.licenseServerIP ) (eq .Values.ADMSettings.bandWidthLicense true) }}
+        - name: "BANDWIDTH" #bandwidth is required for provision bandwidth based licensing to Citrix ADC CPX from ADM
+          value: {{ required "Mention bandwidth for bandwidth based licensing" .Values.ADMSettings.bandWidth | quote }}
+{{- end }}
+{{- if or (.Values.ADMSettings.ADMIP) (.Values.ADMSettings.licenseServerIP) }}
+        - name: NS_MGMT_USER
+          valueFrom:
+            secretKeyRef:
+              name: admlogin
+              key: username
+        - name: NS_MGMT_PASS
+          valueFrom:
+            secretKeyRef:
+              name: admlogin
+              key: password
+{{- end }}
         volumeMounts:
-        - mountPath: /cpx/conf/
-          name: cpx-conf
+          - mountPath: /cpx/conf/
+            name: cpx-conf
+          - mountPath: /var/deviceinfo
+            name: cpx-pwd
+          - mountPath: /cpx/crash/
+            name: cpx-crash
       volumes:
       - name: cpx-conf
+        emptyDir: {}
+      - name: cpx-pwd
+        emptyDir: {}
+      - name: cpx-crash
         emptyDir: {}
       - name: nslogin
         secret:
           optional: true
           secretName: nslogin
-      - name: istio-certs
-        secret:
-          optional: true
-          {{ "[[ if eq .Spec.ServiceAccountName \"\" -]]" }}
-          secretName: istio.default
-          {{ "[[ else -]]" }}
-          secretName: {{ "[[ printf \"istio.%s\" .Spec.ServiceAccountName ]]"  }}
-          {{ "[[ end -]]" }}
+      - name: certs
+        emptyDir: {} 
+      - name: istiod-ca-cert
+        configMap:
+          defaultMode: 0777
+          name: istio-ca-root-cert
 ---

@@ -1,8 +1,8 @@
-# Default values for citrix-logproxy
+# Default values for Citrix Observability Exporter
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-image: "quay.io/citrix/citrix-observability-exporter:1.1.001"
+image: "quay.io/citrix/citrix-observability-exporter:1.2.001"
 pullPolicy: IfNotPresent
 replicas: 1
 # license is used accept the terms of the Citrix license

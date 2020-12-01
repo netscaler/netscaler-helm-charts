@@ -2,39 +2,83 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-# cpximage contains information needed to fetch CPX image
-image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-58.30
+# Citrix ADC CPX config details
+image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-67.39
 pullPolicy: IfNotPresent
-# cicimage contains information needed to fetch CIC image
-cic:
-  image: quay.io/citrix/citrix-k8s-ingress-controller:1.8.28
-  pullPolicy: IfNotPresent
-  required: true
 
 mgmtHttpPort: 9080
-
 mgmtHttpsPort: 9443
-# openshift is set to true if charts are being deployed in OpenShift environment.
 openshift: false
-# nsNamespace is the prefix for the resources on the Citrix ADC
-nsNamespace:
-# license is used accept the terms of the Citrix license
-license:
-  accept: no
-# ingressClass is the  name of the Ingress Class
-ingressClass:
-# logLevel is to set level of CIC Logs
-logLevel: DEBUG
-# Default SSL certificate
-defaultSSLCert:
-# Elasticsearch or Kafka or Zipkin endpoint for Citrix observability exporter
-logProxy:
-# Set to ON to enables HTTP2 for Citrix ADC service group configurations
-http2ServerSide: "OFF"
+
+routeLabels:
+namespaceLabels:
+
+# Service Type LoadBalancer and ingress support  with CPX through BGP advertisement
+# If you enable this, CPX is run as DaemonSet. Please edit the bgpSettings for configuring
+# BGP neighbors for propgation of external IPs.
+cpxBgpRouter: false
+
+# If cpxBgpRouter is true, then this is the NSIP used by CPX for internal communication
+nsIP: 192.168.1.2
+
+# If cpxBgpRouter is true, then this is the Gateway used by CPX for internal communication
+nsGateway: 192.168.1.1
+
+# Protocol used for communication between Citrix Ingress Controller sidecar and Citrix CPX
+nsProtocol: http
+
+# External IP for ingress resource when bgpRouter is set to True
+ingressIP:
+
+# If IPAM controller is used for auto allocation of the external IP for service of type LoadBalancer, set this option to true
+ipam: False
+
+aws: False
+sslCertManagedByAWS: False
+
 nodeSelector:
   key:
   value:
 
+serviceType:
+  loadBalancer:
+    enabled: False
+    externalTrafficPolicy: "Local"
+  nodePort:
+    enabled: False
+    httpPort:
+    httpsPort:
+
+serviceAnnotations:
+  aws:
+    sslCert:
+    backendProtocol:
+    sslPorts:
+    negotiationPolicy:
+    proxyProtocol: False
+    resourcesTags:
+
+# Citrix Ingress Controller config details
+cic:
+  image: quay.io/citrix/citrix-k8s-ingress-controller:1.10.2
+  pullPolicy: IfNotPresent
+  required: true
+entityPrefix:
+license:
+  accept: no
+ingressClass:
+logLevel: INFO
+defaultSSLCertSecret:
+logProxy:
+kubernetesURL:
+
+cicSettings:
+  required: False
+  cicConfig:
+    NS_HTTP2_SERVER_SIDE: "OFF"
+    NS_COOKIE_VERSION: "0"
+
+# Citrix ADM/License Server config details
 ADMSettings:
   licenseServerIP:
   licenseServerPort: 27000
@@ -46,14 +90,21 @@ ADMSettings:
   vCPULicense: false
   cpxCores:
 
-# exporter conatins information of prometheus-exporter
+# Exporter config details
 exporter:
   required: false
-  image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.5
+  image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.6
   pullPolicy: IfNotPresent
   ports:
     containerPort: 8888
 
+
+# For CRDs supported by Citrix Ingress Controller
+crds:
+  install: false
+  retainOnDelete: false
+
+# Config required to be done by Citrix Ingress Controller for sending metrics to Citrix Observability Exporter
 coeConfig:
   required: false
   distributedTracing:
@@ -74,8 +125,25 @@ coeConfig:
     enable: false
     port: 5557
 
-crds:
-# If false, CustomResourceDefinitions  will not be installed.
-  install: true
-# if set to true, then CustomResourceDefinitions will not be deleted during helm delete. This way, CustomResourceObjects will not be deleted from the database.
-  retainOnDelete: false
+# BGP configurations: local AS, remote AS and remote address is mandatory to provide. Please do the approrpiate changes with respect to your environment
+bgpSettings:
+  # When bgpConfig is configured correctly, set the required to true for the configuration to be applied.
+  required: false
+  bgpConfig:
+  - bgpRouter:
+      # Local AS number for BGP advertisement
+      localAS: 100
+      neighbor:
+        # Address of the nighbor router for BGP advertisement
+      - address:
+        # Remote AS number
+        remoteAS: 100
+        advertisementInterval: 10
+        ASOriginationInterval: 10
+
+# Specifies whether a ServiceAccount should be created
+serviceAccount:
+  create: true
+  # The name of the ServiceAccount to use.
+  # If not set and `create` is true, a name is generated using the fullname template
+  # name:

@@ -4,17 +4,17 @@ kind: DeploymentConfig
 {{- else }}
 apiVersion: apps/v1
 kind: Deployment
-{{- end}}
+{{- end }}
 metadata:
-  name: cic-k8s-ingress-controller
+  name: {{ include "citrix-ingress-controller.fullname" . }}
 spec:
   selector:
 {{- if .Values.openshift }}
-     router: cic-k8s-ingress-controller
+     router: {{ include "citrix-ingress-controller.fullname" . }}
 {{- else }}
     matchLabels:
-      app: cic-k8s-ingress-controller
-{{- end}}
+      app: {{ include "citrix-ingress-controller.fullname" . }}
+{{- end }}
   replicas: 1
 {{- if .Values.openshift }}
   strategy:
@@ -26,32 +26,38 @@ spec:
       timeoutSeconds: 600
       updatePeriodSeconds: 1
     type: Rolling
-{{- end}}
+{{- end }}
   template:
     metadata:
-      name: cic-k8s-ingress-controller
+      name: {{ include "citrix-ingress-controller.name" . }}
       labels:
 {{- if .Values.openshift }}
-        router: cic-k8s-ingress-controller
+        router: {{ include "citrix-ingress-controller.fullname" . }}
 {{- else }}
-        app: cic-k8s-ingress-controller
-{{- end}}
+        app: {{ include "citrix-ingress-controller.fullname" . }}
+{{- end }}
     spec:
-      serviceAccountName: cic-k8s-role
+      serviceAccountName: {{ include "citrix-ingress-controller.serviceAccountName" . }}
       containers:
-      - name: cic-k8s-ingress-controller
+      - name: {{ include "citrix-ingress-controller.name" . }}
         image: "{{ .Values.image }}"
         imagePullPolicy: {{ .Values.pullPolicy }}
         args:
           - --configmap
-            {{ .Release.Namespace }}/cic-configmap
-{{- if .Values.defaultSSLCert }}
+            {{ .Release.Namespace }}/{{ .Release.Name }}-configmap
+{{- if .Values.defaultSSLCertSecret }}
           - --default-ssl-certificate
-            {{ .Release.Namespace }}/{{ .Values.defaultSSLCert }}
+            {{ .Release.Namespace }}/{{ .Values.defaultSSLCertSecret }}
 {{- end }}
 {{- if .Values.ingressClass }}
           - --ingress-class
 {{- range .Values.ingressClass}}
+            {{.}}
+{{- end }}
+{{- end }}
+{{- if .Values.serviceClass }}
+          - --service-classes
+{{- range .Values.serviceClass}}
             {{.}}
 {{- end }}
 {{- end }}
@@ -61,31 +67,43 @@ spec:
           - --ipam
             citrix-ipam-controller
 {{- end }}
+{{- if .Values.updateIngressStatus }}
+          - --update-ingress-status
+            yes
+{{- end }}
         env:
         - name: "NS_IP"
           value: "{{ .Values.nsIP }}"
 {{- if .Values.nsVIP }}
         - name: "NS_VIP"
           value: "{{ .Values.nsVIP }}"
-{{- end}}
+{{- end }}
         - name: "NS_USER"
           valueFrom:
             secretKeyRef:
-              name: {{ .Values.loginFileName }}
+              name: {{ .Values.adcCredentialSecret }}
               key: username
         - name: "NS_PASSWORD"
           valueFrom:
             secretKeyRef:
-              name: {{ .Values.loginFileName }}
+              name: {{ .Values.adcCredentialSecret }}
               key: password
         - name: "EULA"
           value: "{{ .Values.license.accept }}"
+{{- if and .Values.openshift .Values.routeLabels }}
+        - name: "ROUTE_LABELS"
+          value: {{ .Values.routeLabels | quote}}
+{{- end }}
+{{- if and .Values.openshift .Values.namespaceLabels }}
+        - name: "NAMESPACE_LABELS"
+          value: {{ .Values.namespaceLabels | quote }}
+{{- end }}
         - name: "NS_APPS_NAME_PREFIX"
-          value: {{ .Values.nsNamespace | default "k8s"}}
+          value: {{ .Values.entityPrefix | default "k8s"}}
 {{- if .Values.kubernetesURL }}
         - name: "kubernetes_url"
           value: "{{ .Values.kubernetesURL }}"
-{{- end}}
+{{- end }}
 {{- if .Values.logProxy }}
         - name: "NS_LOGPROXY"
           value: "{{ .Values.logProxy }}"
@@ -106,7 +124,7 @@ spec:
       volumes:
       - name: nslogin
         secret:
-          secretName: {{ .Values.loginFileName }}
+          secretName: {{ .Values.adcCredentialSecret }}
 {{- end }}
 {{- if and .Values.nodeSelector.key .Values.nodeSelector.value }}
       nodeSelector:
@@ -133,9 +151,9 @@ spec:
      name: exporter-port
    selector:
 {{- if .Values.openshift }}
-     router: cic-k8s-ingress-controller
+     router: {{ include "citrix-ingress-controller.fullname" . }}
 {{- else }}
-     app: cic-k8s-ingress-controller
+     app: {{ include "citrix-ingress-controller.fullname" . }}
 {{- end }}
 
 ---
