@@ -222,6 +222,19 @@ In a Kubernetes deployment, you can enforce a web application firewall policy to
 
 Example files: [wafhtmlxsssql.yaml](https://github.com/citrix/citrix-helm-charts/tree/master/example-crds/wafhtmlxsssql.yaml)
 
+#### apigateway CRD:
+
+API Gateway CRD is used to configure gitops framework on citrix API gateway. This solution enables citrix ingress controller to generate API gateway configurations out of Open API Specification documents checked in to git repository by API developers and designers.
+
+Example files: [api-gateway-crd-instance.yaml](https://github.com/citrix/citrix-helm-charts/tree/master/example-crds/api-gateway-crd-instance.yaml)
+#### bots CRD:
+
+[BOT CRD](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/crds/bot.md) You can use Bot CRDs to configure the bot management policies with the Citrix ingress controller on the Citrix ADC VPX. The Bot custom resource definition enables communication between the Citrix ingress controller and Citrix ADC for enforcing bot management policies.
+
+In a Kubernetes deployment, you can enforce bot management policy on therequests and responses from and to the server using the Bot CRDs. For more information on security vulnerabilities, see [Bot Detection](https://docs.citrix.com/en-us/citrix-adc/current-release/bot-management/bot-detection.html).
+
+Example files: [botallowlist.yaml](https://github.com/citrix/citrix-helm-charts/tree/master/example-crds/botallowlist.yaml)
+
 ### Configuration
 
 The following table lists the mandatory and optional parameters that you can configure during installation:
@@ -229,7 +242,7 @@ The following table lists the mandatory and optional parameters that you can con
 | Parameters | Mandatory or Optional | Default value | Description |
 | --------- | --------------------- | ------------- | ----------- |
 | license.accept | Mandatory | no | Set `yes` to accept the CIC end user license agreement. |
-| image | Mandatory | `quay.io/citrix/citrix-k8s-ingress-controller:1.10.2` | The CIC image. |
+| image | Mandatory | `quay.io/citrix/citrix-k8s-ingress-controller:1.11.3` | The CIC image. |
 | pullPolicy | Mandatory | IfNotPresent | The CIC image pull policy. |
 | adcCredentialSecret | Mandatory | N/A | The secret key to log on to the Citrix ADC VPX or MPX. For information on how to create the secret keys, see [Prerequisites](#prerequistes). |
 | nsIP | Mandatory | N/A | The IP address of the Citrix ADC device. For details, see [Prerequisites](#prerequistes). |

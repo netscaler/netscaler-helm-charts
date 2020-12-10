@@ -1,8 +1,8 @@
 apiVersion: v1
-appVersion: "1.10.2"
+appVersion: "1.11.3"
 description: A Helm chart for Citrix Multi-Cluster Ingress Controller configuring MPX/VPX.
 name: citrix-multi-cluster-ingress-controller
-version: 1.10.2
+version: 1.11.3
 icon: https://raw.githubusercontent.com/citrix/citrix-helm-charts/gh-pages/icon.png
 home: https://www.citrix.com
 maintainers:

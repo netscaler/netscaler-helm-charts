@@ -1,0 +1,66 @@
+apiVersion: citrix.com/v1beta1
+kind: apigatewaypolicy
+metadata:
+  name: apigatewaypolicyinstance
+spec:
+    api_definition:
+        repository: "https://code.net/repo/gitops.git"
+        branch: "test-branch"
+        #git_secret_ref: "mysecret"
+        user_name: "gitoperator" 
+        password: "ZUa9@GE%Dzz"
+        files:
+            - "test_gitwatcher/petstore.yaml"
+            - "test_gitwatcher/playstore.yaml"
+
+    api_proxy:
+        ipaddress: "1.1.1.1" 
+        port:  443
+        protocol: "https"
+        secret: "listner-secret" 
+
+    policies:
+       - name: "p1" 
+         selector:
+            - api: "/pet.*" 
+              method: ["GET", "POST"]  
+         upstream: 
+            service: "pet-service"
+            port: 80
+         policy_bindings:
+            ratelimit: 
+                name: "ratelimit-gitops"
+            waf:
+                name: "xsssql"
+            rewritepolicy:
+                name: "httptohttps"
+
+       - name: "p2" 
+         selector:
+            - api: "/user.*" 
+              method: ["GET", "POST"]  
+         upstream: 
+            service: "user-service"
+            port: 80
+         policy_bindings:
+            ratelimit: 
+                name: "ratelimit-gitops"
+            waf:
+                name: "xsssql"
+            rewritepolicy:
+                name: "prefixurl"
+
+       - name: "p3" 
+         selector:
+            - api: "/play.*" 
+              method: ["GET", "POST"]  
+         upstream: 
+            service: "play-service"
+            port: 80
+         policy_bindings:
+            ratelimit: 
+                name: "ratelimit-gitops-slow"
+            waf:
+                name: "buffoverflow"
+            rewritepolicy:
+                name: "httptohttps"
