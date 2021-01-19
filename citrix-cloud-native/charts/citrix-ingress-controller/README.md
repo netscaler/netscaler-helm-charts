@@ -250,7 +250,7 @@ The following table lists the mandatory and optional parameters that you can con
 | --------- | --------------------- | ------------- | ----------- |
 | cic.enabled | Mandatory | False | Set to "True" for deploying Citrix Ingress Controller for Citrix ADC VPX/MPX. |
 | cic.license.accept | Mandatory | no | Set `yes` to accept the CIC end user license agreement. |
-| cic.image | Mandatory | `quay.io/citrix/citrix-k8s-ingress-controller:1.11.3` | The CIC image. |
+| cic.image | Mandatory | `quay.io/citrix/citrix-k8s-ingress-controller:1.12.2` | The CIC image. |
 | cic.pullPolicy | Mandatory | IfNotPresent | The CIC image pull policy. |
 | cic.adcCredentialSecret | Mandatory | N/A | The secret key to log on to the Citrix ADC VPX or MPX. For information on how to create the secret keys, see [Prerequisites](#prerequistes). |
 | cic.nsIP | Mandatory | N/A | The IP address of the Citrix ADC device. For details, see [Prerequisites](#prerequistes). |

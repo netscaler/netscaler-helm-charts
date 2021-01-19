@@ -203,6 +203,10 @@ spec:
               {{ .Release.Namespace }}/{{ .Values.defaultSSLCertSecret }}
 {{- end }}
 {{- end }}
+{{- if .Values.updateIngressStatus }}
+            - --cpx-service
+              {{ .Release.Namespace }}/cpx-{{ .Release.Name }}-service
+{{- end }}
           volumeMounts:
             - mountPath: /var/deviceinfo
               name: shared-data

@@ -1,7 +1,7 @@
 cic:
   enabled: False
   
-  image: quay.io/citrix/citrix-k8s-ingress-controller:1.11.3
+  image: quay.io/citrix/citrix-k8s-ingress-controller:1.12.2
   pullPolicy: IfNotPresent
   openshift: false
   adcCredentialSecret:
@@ -67,7 +67,7 @@ cic:
 mcIngress:
   enabled: False
 
-  image: quay.io/citrix/citrix-k8s-ingress-controller:1.11.3
+  image: quay.io/citrix/citrix-k8s-ingress-controller:1.12.2
   pullPolicy: IfNotPresent
   openshift: false
   localRegion:
@@ -94,7 +94,7 @@ cpx:
   image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-67.39
   pullPolicy: IfNotPresent
   cic:
-    image: quay.io/citrix/citrix-k8s-ingress-controller:1.11.3
+    image: quay.io/citrix/citrix-k8s-ingress-controller:1.12.2
     pullPolicy: IfNotPresent
     required: true
 
@@ -118,6 +118,7 @@ cpx:
   ingressClass:
   logLevel: INFO
   defaultSSLCertSecret:
+  updateIngressStatus: False
   logProxy:
   enableHTTP2: "OFF"
   nodeSelector:
