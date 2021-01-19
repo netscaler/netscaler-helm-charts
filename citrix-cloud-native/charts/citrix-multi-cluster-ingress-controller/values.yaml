@@ -3,7 +3,7 @@
 # Declare variables to be passed into your templates.
 
 # image contains information needed to fetch CIC image
-image: quay.io/citrix/citrix-k8s-ingress-controller:1.11.3 
+image: quay.io/citrix/citrix-k8s-ingress-controller:1.12.2 
 pullPolicy: IfNotPresent
 # openshift is set to true if charts are being deployed in OpenShift environment.
 openshift: false

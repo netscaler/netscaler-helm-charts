@@ -1,7 +1,7 @@
 cic:
   enabled: False
   
-  image: quay.io/citrix/citrix-k8s-ingress-controller:1.11.3
+  image: quay.io/citrix/citrix-k8s-ingress-controller:1.12.2
   pullPolicy: IfNotPresent
   openshift: false
   adcCredentialSecret:
@@ -67,7 +67,7 @@ cic:
 mcIngress:
   enabled: False
 
-  image: quay.io/citrix/citrix-k8s-ingress-controller:1.11.3
+  image: quay.io/citrix/citrix-k8s-ingress-controller:1.12.2
   pullPolicy: IfNotPresent
   openshift: false
   localRegion:
@@ -94,7 +94,7 @@ cpx:
   image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-67.39
   pullPolicy: IfNotPresent
   cic:
-    image: quay.io/citrix/citrix-k8s-ingress-controller:1.11.3
+    image: quay.io/citrix/citrix-k8s-ingress-controller:1.12.2
     pullPolicy: IfNotPresent
     required: true
 
@@ -229,6 +229,7 @@ iaIngress:
     trustDomain: cluster.local
     certTTLinHours: 720
     clusterId: Kubernetes 
+    jwtPolicy: first-party-jwt #specify third-party-jwt if Kubernetes cluster supports third-party tokens
 
 
   ingressGateway:
@@ -281,6 +282,7 @@ iaEgress:
     trustDomain: cluster.local
     certTTLinHours: 720
     clusterId: Kubernetes
+    jwtPolicy: first-party-jwt #specify third-party-jwt if Kubernetes cluster supports third-party tokens
 
   xDSAdaptor:
     image: quay.io/citrix/citrix-xds-adaptor:0.9.5
@@ -329,6 +331,14 @@ iaSidecar:
     insecureGrpcPort: 15010
     SAN: #"spiffe://cluster.local/ns/istio-system/sa/istiod-service-account"
 
+  certProvider:
+    caAddr: istiod.istio-system.svc
+    caPort: 15012
+    trustDomain: cluster.local
+    certTTLinHours: 720
+    clusterId: Kubernetes
+    jwtPolicy: first-party-jwt #specify third-party-jwt if Kubernetes cluster supports third-party tokens
+
   cpxProxy:
     netscalerUrl: "http://127.0.0.1"
     image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-64.35
@@ -348,7 +358,7 @@ iaSidecar:
     bandWidth:
 
   sidecarWebHook:
-    webhookImage: gcr.io/istio-release/sidecar_injector:1.0.0
+    webhookImage: docker.io/istio/sidecar_injector:1.3.0
     imagePullPolicy: IfNotPresent
 
   webhook:
