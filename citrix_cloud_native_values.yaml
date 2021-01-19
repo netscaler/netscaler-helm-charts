@@ -25,6 +25,8 @@ cic:
     key:
     value:
 
+  updateIngressStatus: False
+
   routeLabels:
   namespaceLabels:
 
