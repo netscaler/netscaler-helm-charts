@@ -213,7 +213,7 @@ iaIngress:
 
   metricExporter:
     required: true
-    image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.7
+    image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.6
     port: 8888
     secure: "YES"
     logLevel: ERROR
