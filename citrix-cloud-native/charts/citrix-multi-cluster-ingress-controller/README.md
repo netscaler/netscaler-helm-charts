@@ -161,7 +161,7 @@ The following table lists the mandatory and optional parameters that you can con
 | Parameters | Mandatory or Optional | Default value | Description |
 | --------- | --------------------- | ------------- | ----------- |
 | mcIngress.license.accept | Mandatory | no | Set `yes` to accept the CIC end user license agreement. |
-| mcIngress.image | Optional | `quay.io/citrix/citrix-k8s-ingress-controller:1.12.2` | The CIC image. |
+| mcIngress.image | Optional | `quay.io/citrix/citrix-k8s-ingress-controller:1.13.15` | The CIC image. |
 | mcIngress.pullPolicy | Optional | Always | The CIC image pull policy. |
 | mcIngress.nsPort | Optional | 443 | The port used by CIC to communicate with Citrix ADC. You can use port 80 for HTTP. |
 | mcIngress.nsProtocol | Optional | HTTPS | The protocol used by CIC to communicate with Citrix ADC. You can also use HTTP on port 80. |

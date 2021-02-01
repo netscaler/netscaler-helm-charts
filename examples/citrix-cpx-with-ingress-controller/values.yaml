@@ -33,7 +33,7 @@ serviceAnnotations:
 
 # Citrix Ingress Controller config details
 cic:
-  image: quay.io/citrix/citrix-k8s-ingress-controller:1.12.2
+  image: quay.io/citrix/citrix-k8s-ingress-controller:1.13.15
   pullPolicy: IfNotPresent
   required: true
 entityPrefix:
