@@ -22,7 +22,7 @@ rules:
     resources: ["events"]
     verbs: ["create"]
   - apiGroups: ["extensions","networking.k8s.io"]
-    resources: ["ingresses"]
+    resources: ["ingresses", "ingressclasses"]
     verbs: ["get", "list", "watch"]
   - apiGroups: ["extensions","networking.k8s.io"]
     resources: ["ingresses/status"]
@@ -42,6 +42,9 @@ rules:
   - apiGroups: ["citrix.com"]
     resources: ["vips"]
     verbs: ["get", "list", "watch", "create", "delete"]
+  - apiGroups: ["crd.projectcalico.org"]
+    resources: ["ipamblocks"]
+    verbs: ["get", "list", "watch"]
 {{- if .Values.openshift }}
   - apiGroups: ["route.openshift.io"]
     resources: ["routes"]

@@ -3,7 +3,7 @@
 # Declare variables to be passed into your templates.
 
 # Citrix Ingress Controller config details
-image: quay.io/citrix/citrix-k8s-ingress-controller:1.12.2
+image: quay.io/citrix/citrix-k8s-ingress-controller:1.13.15
 pullPolicy: IfNotPresent
 openshift: false
 adcCredentialSecret:
@@ -35,7 +35,7 @@ cicSettings:
 # Exporter config details
 exporter:
   required: false
-  image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.6
+  image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.7
   pullPolicy: IfNotPresent
   ports:
     containerPort: 8888

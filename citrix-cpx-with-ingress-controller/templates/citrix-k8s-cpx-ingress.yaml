@@ -291,8 +291,13 @@ metadata:
     service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags: {{ .Values.serviceAnnotations.aws.resourcesTags | quote }}
 {{- end }}
 {{- end }}
+{{- if .Values.azure }}
+{{- if .Values.serviceAnnotations.azure.internalLoadBalancer }}
+    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+{{- end }}
+{{- end }}
 spec:
-{{- if or ( and .Values.aws .Values.sslCertManagedByAWS) .Values.serviceType.loadBalancer.enabled }}
+{{- if or ( and .Values.aws .Values.sslCertManagedByAWS) .Values.serviceType.loadBalancer.enabled .Values.updateIngressStatus }}
   externalTrafficPolicy: {{ .Values.serviceType.loadBalancer.externalTrafficPolicy }}
   type: LoadBalancer
 {{- else if .Values.serviceType.nodePort.enabled }}

@@ -6,6 +6,15 @@ data:
   LOGLEVEL: {{ .Values.logLevel | quote | lower }}
   NS_PROTOCOL: {{ .Values.nsProtocol | quote | lower }}
   NS_PORT: {{ .Values.nsPort | quote }}
+{{- if .Values.nsSNIPS }}
+  NS_SNIPS: {{ .Values.nsSNIPS | toJson}}
+{{- end }}  
+{{- if .Values.podIPsforServiceGroupMembers }}
+  POD_IPS_FOR_SERVICEGROUP_MEMBERS: {{ .Values.podIPsforServiceGroupMembers | quote }}
+{{- end }}
+{{- if .Values.ignoreNodeExternalIP }}
+  IGNORE_NODE_EXTERNAL_IP: {{ .Values.ignoreNodeExternalIP | quote }} 
+{{- end }}
 
 {{- if .Values.cicSettings.required }}
 {{- with .Values.cicSettings.cicConfig }}

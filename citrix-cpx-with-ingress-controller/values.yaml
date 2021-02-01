@@ -34,6 +34,7 @@ ingressIP:
 ipam: False
 
 aws: False
+azure: False
 sslCertManagedByAWS: False
 
 nodeSelector:
@@ -57,16 +58,19 @@ serviceAnnotations:
     negotiationPolicy:
     proxyProtocol: False
     resourcesTags:
+  azure:
+    internalLoadBalancer: False
 
 # Citrix Ingress Controller config details
 cic:
-  image: quay.io/citrix/citrix-k8s-ingress-controller:1.12.2
+  image: quay.io/citrix/citrix-k8s-ingress-controller:1.13.15
   pullPolicy: IfNotPresent
   required: true
 entityPrefix:
 license:
   accept: no
 ingressClass:
+setAsDefaultIngressClass: False
 logLevel: INFO
 defaultSSLCertSecret:
 updateIngressStatus: False
@@ -94,7 +98,7 @@ ADMSettings:
 # Exporter config details
 exporter:
   required: false
-  image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.6
+  image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.7
   pullPolicy: IfNotPresent
   ports:
     containerPort: 8888
