@@ -111,7 +111,7 @@ The following table lists the mandatory and optional parameters that you can con
 | Parameters | Mandatory or Optional | Default value | Description |
 | --------- | --------------------- | ------------- | ----------- |
 | license.accept | Mandatory | no | Set `yes` to accept the CNC end user license agreement. |
-| image | Mandatory | `quay.io/citrix/citrix-k8s-node-controller:2.1.0` | The CNC image. |
+| image | Mandatory | `quay.io/citrix/citrix-k8s-node-controller:2.2.1` | The CNC image. |
 | pullPolicy | Mandatory | IfNotPresent | The CNC image pull policy. |
 | adcCredentialSecret | Mandatory | N/A | The secret key to log on to the Citrix ADC VPX or MPX. For information on how to create the secret keys, see [Prerequisites](#prerequistes). |
 | nsIP | Mandatory | N/A | The IP address of the Citrix ADC device. For details, see [Prerequisites](#prerequistes). |
@@ -119,6 +119,7 @@ The following table lists the mandatory and optional parameters that you can con
 | network | Mandatory | N/A | The IP address range that CNC uses to configure the VTEP overlay end points on the Kubernetes nodes. |
 | vxlan.id | Mandatory | N/A | A unique VXLAN VNID to create a VXLAN overlay between Kubernetes cluster and the ingress devices. |
 | vxlan.port | Mandatory | N/A | The VXLAN port that you want to use for the overlay. |
+| dsrIPRange | Optional | N/A | This IP address range is used for DSR Iptable configuration on nodes. Both IP and subnet must be specified in format : "xx.xx.xx.xx/xx"  |
 
 Alternatively, you can define a YAML file with the values for the parameters and pass the values while installing the chart.
 

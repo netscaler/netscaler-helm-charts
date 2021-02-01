@@ -40,6 +40,10 @@ spec:
         - name: REMOTE_VTEPIP
           value: {{ required "Please provide ADC VPX/MPX SNIP" .Values.vtepIP | quote }}
         - name: VNID
-          value: {{ .Values.vxlan.id | quote }}
+          value: {{ required "Pleave provide VXLAN ID" .Values.vxlan.id | quote }}
         - name: VXLAN_PORT
           value: {{ required "Provide provide VXLAN port" .Values.vxlan.port | quote }}
+{{- if .Values.dsrIPRange }}
+        - name: "DSR_IP_RANGE"
+          value: {{ .Values.dsrIPRange | quote }}
+{{- end }}
