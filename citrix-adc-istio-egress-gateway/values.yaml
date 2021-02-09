@@ -34,7 +34,8 @@ certProvider:
     caPort: 15012
     trustDomain: cluster.local
     certTTLinHours: 720
-    clusterId: Kubernetes    
+    clusterId: Kubernetes
+    jwtPolicy: first-party-jwt #specify third-party-jwt if Kubernetes cluster supports third-party tokens
 
 
 egressGateway:

@@ -178,7 +178,7 @@ kubectl apply -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-hel
 
 ```
 
-export INGRESS_IP=$(kubectl get pods -l app=citrix-ingressgateway -n citrix-system -o 'jsonpath={.items[0].spec.containers[?(@.name=="istio-adaptor")].args}' | awk '{ for(i=1;i<=NF;++i) { if ($i=="-vserver-ip") print $(i+1) } }')
+export INGRESS_IP=$(kubectl get pods -l app=citrix-ingressgateway -n citrix-system -o 'jsonpath={.items[0].spec.containers[?(@.name=="istio-adaptor")].args}' | awk '{ for(i=1;i<=NF;++i) { if ($i=="-citrix-adc-vip") print $(i+1) } }')
 
 ```
 

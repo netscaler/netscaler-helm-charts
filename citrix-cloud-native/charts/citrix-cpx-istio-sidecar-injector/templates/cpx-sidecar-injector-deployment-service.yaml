@@ -106,4 +106,6 @@ spec:
           items:
           - key: config
             path: config
+          - key: values
+            path: values
 ---

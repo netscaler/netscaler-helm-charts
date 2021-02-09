@@ -210,6 +210,9 @@ iaIngress:
   enabled: False
 
   citrixCPX: false 
+  
+  coe:
+    coeURL:
 
   metricExporter:
     required: true
@@ -238,6 +241,7 @@ iaIngress:
     trustDomain: cluster.local
     certTTLinHours: 720
     clusterId: Kubernetes 
+    jwtPolicy: first-party-jwt #specify third-party-jwt if Kubernetes cluster supports third-party tokens
 
 
   ingressGateway:
@@ -257,6 +261,10 @@ iaIngress:
     vserverIP: nsip
     adcServerName:
     netProfile:
+    multiClusterIngress: false
+    multiClusterListenerPort: 15443
+    multiClusterListenerNodePort: 32443
+    multiClusterSvcDomain: global
 
 
   ADMSettings:
@@ -276,6 +284,14 @@ iaEgress:
 
   coe:
       coeURL: 
+  
+  metricExporter:
+    required: true
+    image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.6
+    port: 8888
+    secure: "FALSE"
+    logLevel: ERROR
+    imagePullPolicy: IfNotPresent
 
   istioPilot:
     name: istiod
@@ -290,6 +306,7 @@ iaEgress:
     trustDomain: cluster.local
     certTTLinHours: 720
     clusterId: Kubernetes
+    jwtPolicy: first-party-jwt #specify third-party-jwt if Kubernetes cluster supports third-party tokens
 
   xDSAdaptor:
     image: quay.io/citrix/citrix-xds-adaptor:0.9.5
@@ -338,6 +355,14 @@ iaSidecar:
     insecureGrpcPort: 15010
     SAN: #"spiffe://cluster.local/ns/istio-system/sa/istiod-service-account"
 
+  certProvider:
+    caAddr: istiod.istio-system.svc
+    caPort: 15012
+    trustDomain: cluster.local
+    certTTLinHours: 720
+    clusterId: Kubernetes
+    jwtPolicy: first-party-jwt #specify third-party-jwt if Kubernetes cluster supports third-party tokens
+
   cpxProxy:
     netscalerUrl: "http://127.0.0.1"
     image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-64.35
@@ -346,6 +371,7 @@ iaSidecar:
     cpxSidecarMode: YES
     mgmtHttpPort: 10080
     mgmtHttpsPort: 10443
+    cpxDisableProbe: "YES"
     #licenseServerIP: this value is taken from ADMSettings.ADMIP
 
   ADMSettings:
@@ -357,7 +383,7 @@ iaSidecar:
     bandWidth:
 
   sidecarWebHook:
-    webhookImage: gcr.io/istio-release/sidecar_injector:1.0.0
+    webhookImage: docker.io/istio/sidecar_injector:1.3.0
     imagePullPolicy: IfNotPresent
 
   webhook:
@@ -375,7 +401,8 @@ cnc:
   vtepIP:
   vxlan:
     id:
-    port: 
+    port:
+  dsrIPRange:
 
   serviceAccount:
     create: true

@@ -34,6 +34,7 @@ certProvider:
     trustDomain: cluster.local
     certTTLinHours: 720
     clusterId: Kubernetes
+    jwtPolicy: first-party-jwt #specify third-party-jwt if Kubernetes cluster supports third-party tokens
 
 ingressGateway:
     netscalerUrl: null 
@@ -52,6 +53,10 @@ ingressGateway:
     vserverIP: nsip
     adcServerName:
     netProfile:
+    multiClusterIngress: false
+    multiClusterListenerPort: 15443
+    multiClusterListenerNodePort: 32443
+    multiClusterSvcDomain: global
 
 ADMSettings:
     ADMIP:

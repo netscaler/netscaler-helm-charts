@@ -46,10 +46,21 @@ spec:
         emptyDir: {}
       - name: certs
         emptyDir: {}
+{{- if eq .Values.certProvider.jwtPolicy "third-party-jwt" }}       
+      - name: istio-token
+        projected:
+          sources:
+          - serviceAccountToken:
+            audience: istio-ca
+            expirationSeconds: 43200
+            path: istio-token
+{{- end }}
       - name: istiod-ca-cert
         configMap:
           defaultMode: 0777
           name: istio-ca-root-cert
+      securityContext:
+        fsGroup: 32024
       containers:
 {{- if eq .Values.metricExporter.required true }}
         - name: exporter
@@ -137,6 +148,16 @@ spec:
             value: {{ .Values.certProvider.clusterId }} #Kubernetes
           - name: CERT_TTL_IN_HOURS 
             value: {{ .Values.certProvider.certTTLinHours | quote }}
+          - name: JWT_POLICY
+            value: {{ .Values.certProvider.jwtPolicy | default "first-party-jwt" | quote }} # third-party-jwt if Kubernetes cluster supports third-party tokens
+{{- end }}
+{{- if eq .Values.ingressGateway.multiClusterIngress true }}
+          - name: MULTICLUSTER_INGRESS
+            value: "TRUE"
+          - name: MULTICLUSTER_LISTENER_PORT
+            value: {{ .Values.ingressGateway.multiClusterListenerPort | quote}}
+          - name: MULTICLUSTER_SVC_DOMAIN
+            value: {{ printf "'*.%s'" .Values.ingressGateway.multiClusterSvcDomain }}
 {{- end }}
           - name: NS_USER
             valueFrom:
@@ -150,10 +171,15 @@ spec:
                 key: password
           securityContext:
             readOnlyRootFilesystem: true
+            runAsGroup: 32024
             runAsUser: 32024 # UID of istio-adaptor container's user
           volumeMounts:
           - mountPath: /var/deviceinfo
             name: cpx-pwd
+{{- if eq .Values.certProvider.jwtPolicy "third-party-jwt" }}
+          - mountPath: /var/run/secrets/tokens
+            name: istio-token
+{{- end }}
           - mountPath: /etc/certs
             name: certs
           - name: istiod-ca-cert
@@ -329,6 +355,16 @@ spec:
           value: {{ .Values.certProvider.clusterId }} #Kubernetes
         - name: CERT_TTL_IN_HOURS 
           value: {{ .Values.certProvider.certTTLinHours | quote }}
+        - name: JWT_POLICY
+          value: {{ .Values.certProvider.jwtPolicy | default "first-party-jwt" | quote }} # third-party-jwt if Kubernetes cluster supports third-party tokens
+{{- end }}
+{{- if eq .Values.ingressGateway.multiClusterIngress true }}
+        - name: MULTICLUSTER_INGRESS
+          value: "TRUE"
+        - name: MULTICLUSTER_LISTENER_PORT
+          value: {{ .Values.ingressGateway.multiClusterListenerPort | quote}}
+        - name: MULTICLUSTER_SVC_DOMAIN
+          value: {{ printf "'*.%s'" .Values.ingressGateway.multiClusterSvcDomain }}
 {{- end }}
         - name: NS_USER
           valueFrom:
@@ -382,12 +418,17 @@ spec:
 {{- end }}
         securityContext:
           readOnlyRootFilesystem: true
+          runAsGroup: 32024
           runAsUser: 32024 # UID of istio-adaptor container's user
         volumeMounts:
         - mountPath: /etc/certs
           name: certs
         - name: istiod-ca-cert
           mountPath: /etc/rootcert/
+{{- if eq .Values.certProvider.jwtPolicy "third-party-jwt" }}
+        - mountPath: /var/run/secrets/tokens
+          name: istio-token
+{{- end }}
         - mountPath: /etc/nslogin
           name: nslogin
           readOnly: true
@@ -407,6 +448,8 @@ spec:
           name: citrix-adc-cert
           readOnly: true
 {{- end }}
+      securityContext:
+        fsGroup: 32024
       volumes:
       - name: nslogin
         secret:
@@ -437,6 +480,15 @@ spec:
         secret:
           optional: true
           secretName: "citrix-adc-cert" # IMPORTANT: This secret MUST BE created before deploying gateway and ingress-gateway
+{{- end }}
+{{- if eq .Values.certProvider.jwtPolicy "third-party-jwt" }}       
+      - name: istio-token
+        projected:
+          sources:
+          - serviceAccountToken:
+            audience: istio-ca
+            expirationSeconds: 43200
+            path: istio-token
 {{- end }}
 ---
 {{- end}}

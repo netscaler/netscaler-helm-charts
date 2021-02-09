@@ -47,6 +47,15 @@ spec:
 {{- end }}
       port: 443
       targetPort: 443
+{{- if eq .Values.ingressGateway.multiClusterIngress true }}
+    -
+      name: multicluster
+{{- if eq .Values.citrixCPX true }}
+      nodePort: {{ .Values.ingressGateway.multiClusterListenerNodePort }}
+{{- end }}
+      port: {{ .Values.ingressGateway.multiClusterListenerPort }}
+      targetPort: {{ .Values.ingressGateway.multiClusterListenerPort }}
+{{- end }}
 {{- $isCPX := .Values.citrixCPX }}
 {{- range .Values.ingressGateway.tcpPort }}
     -  
