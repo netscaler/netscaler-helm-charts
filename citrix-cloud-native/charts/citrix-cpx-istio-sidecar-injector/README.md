@@ -134,11 +134,47 @@ helm install cpx-sidecar-injector citrix/citrix-cpx-istio-sidecar-injector --nam
 Application needs TLS certificate-key pair for establishing secure communication channel with other applications. Earlier these certificates were issued by Istio Citadel and bundled in Kubernetes secret. Certificate was loaded in the application pod by doing volume mount of secret. Now `xDS-Adaptor` can generate its own certificate and get it signed by the Istio Citadel (Istiod). This eliminates the need of secret and associated [risks](https://kubernetes.io/docs/concepts/configuration/secret/#risks). 
 
 xDS-Adaptor needs to be provided with details Certificate Authority (CA) for successful signing of Certificate Signing Request (CSR). By default, CA is `istiod.istio-system.svc` which accepts CSRs on port 15012. 
-To skip this process, don't provide any value (empty string) to `certProvider.caAddr`.
+To skip this process, don't provide any value (empty string) to `iaSidecar.certProvider.caAddr`.
 ```
 	helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
         helm install cpx-sidecar-injector citrix/citrix-cpx-istio-sidecar-injector --namespace citrix-system --set iaSidecar.enabled=true,iaSidecar.cpxProxy.EULA=YES --set iaSidecar.certProvider.caAddr=""
+```
+
+### <a name="using-third-party-service-account-tokens">Configure Third Party Service Account Tokens</a>
+
+In order to generate certificate for application workload, xDS-Adaptor needs to send valid service account token along with Certificate Signing Request (CSR) to the Istio control plane (Citadel CA). Istio control plane authenticates the xDS-Adaptor using this JWT. 
+Kubernetes supports two forms of these tokens:
+
+* Third party tokens, which have a scoped audience and expiration.
+* First party tokens, which have no expiration and are mounted into all pods.
+ 
+ If Kubernetes cluster is installed with third party tokens, then the same information needs to be provided for automatic sidecar injection by passing `--set iaSidecar.certProvider.jwtPolicy="third-party-jwt"`. By default, it is `first-party-jwt`.
+
+```
+        helm repo add citrix https://citrix.github.io/citrix-helm-charts/
+
+        helm install cpx-sidecar-injector citrix/citrix-cpx-istio-sidecar-injector --namespace citrix-system --set iaSidecar.cpxProxy.EULA=YES --set iaSidecar.certProvider.caAddr="istiod.istio-system.svc" --set iaSidecar.certProvider.jwtPolicy="third-party-jwt"
+
+```
+
+To determine if your cluster supports third party tokens, look for the TokenRequest API using below command. If there is no output, then it is `first-party-jwt`. In case of `third-party-jwt`, output will be like below.
+
+```
+# kubectl get --raw /api/v1 | jq '.resources[] | select(.name | index("serviceaccounts/token"))'
+
+{
+    "name": "serviceaccounts/token",
+    "singularName": "",
+    "namespaced": true,
+    "group": "authentication.k8s.io",
+    "version": "v1",
+    "kind": "TokenRequest",
+    "verbs": [
+        "create"
+    ]
+}
+
 ```
 
 ## <a name="limitations">Limitations</a>
@@ -190,12 +226,14 @@ The following table lists the configurable parameters and their default values i
 | `iaSidecar.cpxProxy.imagePullPolicy`           | Image pull policy for Citrix ADC                                                                                  | IfNotPresent                                                               |
 | `iaSidecar.cpxProxy.EULA`              |  End User License Agreement(EULA) terms and conditions. If yes, then user agrees to EULA terms and conditions.                                                     | NO |
 | `iaSidecar.cpxProxy.cpxSidecarMode`            | Environment variable for Citrix ADC CPX. It indicates that Citrix ADC CPX is running as sidecar mode or not.                                                                                               | YES                                                                    |
-| `iaSidecar.sidecarWebHook.webhookImage`   | Mutating webhook associated with the sidecar injector. It invokes a service `cpx-sidecar-injector` to inject sidecar proxies in the application pod.                                                                                      | gcr.io/istio-release/sidecar_injector:1.0.0|
+| `iaSidecar.cpxProxy.cpxDisableProbe`            | Environment variable for Citrix ADC CPX. It indicates that Citrix ADC CPX will disable probing dynamic services. It should be enabled for multicluster setup. Possible values: YES/NO.                    | YES   |
+| `iaSidecar.sidecarWebHook.webhookImage`   | Mutating webhook associated with the sidecar injector. It invokes a service `cpx-sidecar-injector` to inject sidecar proxies in the application pod.                                                                                      |docker.io/istio/sidecar_injector:1.3.0 | 
 | `iaSidecar.sidecarWebHook.imagePullPolicy`   | Image pull policy                                                                          |IfNotPresent|
 | `iaSidecar.webhook.injectionLabelName` |  Label of namespace where automatic Citrix ADC CPX sidecar injection is required. | cpx-injection |
 | `iaSidecar.certProvider.caAddr`   | Certificate Authority (CA) address issuing certificate to application                           | istiod.istio-system.svc                          | Optional |
 | `iaSidecar.certProvider.caPort`   | Certificate Authority (CA) port issuing certificate to application                              | 15012 | Optional |
 | `iaSidecar.certProvider.trustDomain`   | SPIFFE Trust Domain                         | cluster.local | Optional |
 | `iaSidecar.certProvider.certTTLinHours`   | Validity of certificate generated by xds-adaptor and signed by Istiod (Istio Citadel) in hours. Default is 30 days validity              | 720 | Optional |
+| `iaSidecar.certProvider.jwtPolicy`   | Service Account token type. Kubernetes platform supports First party tokens and Third party tokens.  | first-party-jwt | Optional |
 
 **Note:** You can use the `values.yaml` file packaged in the chart. This file contains the default configuration values for the chart.

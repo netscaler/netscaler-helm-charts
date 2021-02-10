@@ -20,6 +20,8 @@ spec:
         prometheus.io/port: "{{ .Values.metricExporter.port }}"
         prometheus.io/scrape: "true"
     spec:
+      securityContext:
+        fsGroup: 32024
       volumes:
       - name: nsloginegress
         secret:
@@ -36,6 +38,15 @@ spec:
         configMap:
           defaultMode: 0777
           name: istio-ca-root-cert
+{{- if eq .Values.certProvider.jwtPolicy "third-party-jwt" }}       
+      - name: istio-token
+        projected:
+          sources:
+          - serviceAccountToken:
+            audience: istio-ca
+            expirationSeconds: 43200
+            path: istio-token
+{{- end }}
       containers:
 {{- if eq .Values.metricExporter.required true }}
         - name: exporter
@@ -53,7 +64,7 @@ spec:
             mountPath: "/mnt/nslogin"
             readOnly: true
 {{- end }}
-        - name: xds-adaptor
+        - name: istio-adaptor
           image: {{.Values.xDSAdaptor.image}}
           imagePullPolicy: {{.Values.xDSAdaptor.imagePullPolicy}}
           args:
@@ -123,6 +134,8 @@ spec:
             value: {{ .Values.certProvider.clusterId }} #Kubernetes
           - name: CERT_TTL_IN_HOURS
             value: {{ .Values.certProvider.certTTLinHours | quote }}
+          - name: JWT_POLICY
+            value: {{ .Values.certProvider.jwtPolicy | default "first-party-jwt" | quote }} # third-party-jwt if Kubernetes cluster supports third-party tokens
 {{- end }}
           - name: NS_USER
             valueFrom:
@@ -136,6 +149,7 @@ spec:
                 key: password
           securityContext:
             readOnlyRootFilesystem: true
+            runAsGroup: 32024
             runAsUser: 32024 # UID of xds-adaptor container's user
           volumeMounts:
           - mountPath: /var/deviceinfo
@@ -160,6 +174,10 @@ spec:
           - mountPath: /etc/istio/egressgateway-ca-certs # Make sure that Gateway definition has this path mentioned in server.tls section for MUTUAL TLS
             name: citrix-egressgateway-ca-certs
             readOnly: true
+{{- if eq .Values.certProvider.jwtPolicy "third-party-jwt" }}
+          - mountPath: /var/run/secrets/tokens
+            name: istio-token
+{{- end }}
           ports:
             - containerPort: 80
             - containerPort: 443
@@ -300,6 +318,8 @@ spec:
           value: {{ .Values.certProvider.clusterId }} #Kubernetes
         - name: CERT_TTL_IN_HOURS
           value: {{ .Values.certProvider.certTTLinHours | quote }}
+        - name: JWT_POLICY
+          value: {{ .Values.certProvider.jwtPolicy | default "first-party-jwt" | quote }} # third-party-jwt if Kubernetes cluster supports third-party tokens
 {{- end }}
         - name: NS_USER
           valueFrom:
@@ -353,12 +373,17 @@ spec:
 {{- end }}
         securityContext:
           readOnlyRootFilesystem: true
+          runAsGroup: 32024
           runAsUser: 32024 # UID of istio-adaptor container's user
         volumeMounts:
         - mountPath: /etc/certs
           name: certs
         - name: istiod-ca-cert
           mountPath: /etc/rootcert/
+{{- if eq .Values.certProvider.jwtPolicy "third-party-jwt" }}
+        - mountPath: /var/run/secrets/tokens
+          name: istio-token
+{{- end }}
         - mountPath: /etc/nslogin
           name: nsloginegress
           readOnly: true
@@ -370,6 +395,8 @@ spec:
           name: citrix-adc-cert
           readOnly: true
 {{- end }}
+      securityContext:
+        fsGroup: 32024
       volumes:
       - name: nsloginegress
         secret:
@@ -390,6 +417,15 @@ spec:
         secret:
           optional: true
           secretName: "citrix-adc-cert" # IMPORTANT: This secret MUST BE created before deploying gateway and egress-gateway
+{{- end }}
+{{- if eq .Values.certProvider.jwtPolicy "third-party-jwt" }}       
+      - name: istio-token
+        projected:
+          sources:
+          - serviceAccountToken:
+            audience: istio-ca
+            expirationSeconds: 43200
+            path: istio-token
 {{- end }}
 ---
 {{- end }}

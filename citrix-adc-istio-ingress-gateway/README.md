@@ -8,15 +8,16 @@ Citrix Application Delivery Controller (ADC) can be deployed as an Istio Ingress
 3. [Deploy Citrix ADC VPX or MPX as an Ingress Gateway](#deploy-citrix-adc-vpx-or-mpx-as-an-ingress-gateway)
 4. [Deploy Citrix ADC CPX as an Ingress Gateway](#deploy-citrix-adc-cpx-as-an-ingress-gateway)
 5. [Using Existing Certificates to deploy Citrix ADC as an Ingress Gateway](#using-existing-certificates-to-deploy-citrix-adc-as-an-ingress-gateway)
-6. [Segregating traffic with multiple Ingress Gateways](#segregating-traffic-with-multiple-ingress-gateways)
-7. [Visualizing statistics of Citrix ADC Ingress Gateway with Metrics Exporter](#visualizing-statistics-of-citrix-adc-ingress-gateway-with-metrics-exporter)
-8. [Exposing services running on non-HTTP ports](#exposing-services-running-on-non-http-ports)
-9. [Generate Certificate for Ingress Gateway](#generate-certificate-for-ingress-gateway)
-10. [Citrix ADC CPX License Provisioning](#citrix-adc-cpx-license-provisioning)
-11. [Citrix ADC as Ingress Gateway: a sample deployment](#citrix-adc-as-ingress-gateway-a-sample-deployment)
-12. [Uninstalling the Helm chart](#uninstalling-the-helm-chart)
-13. [Citrix ADC VPX/MPX Certificate Verification](#citrix-adc-vpx-or-mpx-certificate-verification)
-14. [Configuration Parameters](#configuration-parameters)
+6. [Deploy Citrix ADC as an Ingress Gateway in multi cluster Istio Service mesh](#deploy-citrix-adc-as-a-multicluster-ingress-gateway)
+7. [Segregating traffic with multiple Ingress Gateways](#segregating-traffic-with-multiple-ingress-gateways)
+8. [Visualizing statistics of Citrix ADC Ingress Gateway with Metrics Exporter](#visualizing-statistics-of-citrix-adc-ingress-gateway-with-metrics-exporter)
+9. [Exposing services running on non-HTTP ports](#exposing-services-running-on-non-http-ports)
+10. [Generate Certificate for Ingress Gateway](#generate-certificate-for-ingress-gateway)
+11. [Citrix ADC CPX License Provisioning](#citrix-adc-cpx-license-provisioning)
+12. [Citrix ADC as Ingress Gateway: a sample deployment](#citrix-adc-as-ingress-gateway-a-sample-deployment)
+13. [Uninstalling the Helm chart](#uninstalling-the-helm-chart)
+14. [Citrix ADC VPX/MPX Certificate Verification](#citrix-adc-vpx-or-mpx-certificate-verification)
+15. [Configuration Parameters](#configuration-parameters)
 
 
 ## <a name="tldr">TL; DR;</a>
@@ -88,6 +89,36 @@ Create a secret for ADM username and password
 
         helm install my-release citrix/citrix-adc-istio-ingress-gateway --namespace citrix-system --set ingressGateway.EULA=YES,citrixCPX=true
 
+
+## <a name="deploy-citrix-adc-as-a-multicluster-ingress-gateway">Deploy Citrix ADC as an Ingress Gateway in multi cluster Istio Service mesh</a>
+
+To deploy **Citrix ADC VPX/MPX as an Ingress Gateway** in multi cluster Istio Service mesh, carry out below steps.
+```
+helm repo add citrix https://citrix.github.io/citrix-helm-charts/
+
+helm install citrix-adc-istio-ingress-gateway citrix/citrix-adc-istio-ingress-gateway --namespace citrix-system --set ingressGateway.EULA=YES,ingressGateway.netscalerUrl=https://<nsip>[:port],ingressGateway.vserverIP=<IPv4 Address> --set ingressGateway.multiClusterIngress=true 
+```
+
+To deploy **Citrix ADC CPX as an Ingress Gateway** in multi cluster Istio Service mesh, carry out below steps.
+```
+helm repo add citrix https://citrix.github.io/citrix-helm-charts/
+
+helm install citrix-adc-istio-ingress-gateway citrix/citrix-adc-istio-ingress-gateway --namespace citrix-system --set ingressGateway.EULA=YES,citrixCPX=true --set ingressGateway.multiClusterIngress=true 
+
+```
+
+By default, port 15443 of the Citrix ADC will be used to handle all the inter-cluster traffic coming to services deployed in local cluster. These services are exposed using `*.global` domain.
+To modify the default 15443 port and "global" domain, use _ingressGateway.multiClusterListenerPort_ and _ingressGateway.multiClusterSvcDomain_ options of helm chart.
+
+For example, to use port 25443 and _mydomain_ as the service domain to expose local cluster deployed services to services in remote clusters.
+
+```
+
+helm install citrix-adc-istio-ingress-gateway citrix/citrix-adc-istio-ingress-gateway --namespace citrix-system --set ingressGateway.EULA=YES,ingressGateway.netscalerUrl=https://<nsip>[:port],ingressGateway.vserverIP=<IPv4 Address> --set ingressGateway.multiClusterIngress=true --set ingressGateway.multiClusterListenerPort=25443 --set ingressGateway.multiClusterSvcDomain=mydomain
+
+```
+
+Follow [this](https://github.com/citrix/citrix-helm-charts/tree/master/examples/citrix-adc-ingress-in-multicluster-istio/README.md) as a sample example to deploy Citrix ADC as Ingress gateway in multi-cluster Istio service mesh.
 
 ## <a name="using-existing-certificates-to-deploy-citrix-adc-as-an-ingress-gateway">Using Existing Certificates to deploy Citrix ADC as an Ingress Gateway</a>
 
@@ -182,6 +213,41 @@ To skip this process, don't provide any value (empty string) to `certProvider.ca
 
         helm install citrix-adc-istio-ingress-gateway citrix/citrix-adc-istio-ingress-gateway --namespace citrix-system --set ingressGateway.EULA=YES --set citrixCPX=true --set certProvider.caAddr=""
 ```
+### <a name="using-third-party-service-account-tokens">Configure Third Party Service Account Tokens</a>
+
+In order to generate certificate for application workload, xDS-Adaptor needs to send valid service account token along with Certificate Signing Request (CSR) to the Istio control plane (Citadel CA). Istio control plane authenticates the xDS-Adaptor using this JWT. 
+Kubernetes supports two forms of these tokens:
+
+* Third party tokens, which have a scoped audience and expiration.
+* First party tokens, which have no expiration and are mounted into all pods.
+ 
+ If Kubernetes cluster is installed with third party tokens, then the same information needs to be provided for automatic sidecar injection by passing `--set certProvider.jwtPolicy="third-party-jwt"`. By default, it is `first-party-jwt`.
+
+```
+        helm repo add citrix https://citrix.github.io/citrix-helm-charts/
+
+        helm install cpx-sidecar-injector citrix/citrix-cpx-istio-sidecar-injector --namespace citrix-system --set cpxProxy.EULA=YES --set certProvider.caAddr="istiod.istio-system.svc" --set certProvider.jwtPolicy="third-party-jwt"
+
+```
+
+To determine if your cluster supports third party tokens, look for the TokenRequest API using below command. If there is no output, then it is `first-party-jwt`. In case of `third-party-jwt`, output will be like below.
+
+```
+# kubectl get --raw /api/v1 | jq '.resources[] | select(.name | index("serviceaccounts/token"))'
+
+{
+    "name": "serviceaccounts/token",
+    "singularName": "",
+    "namespaced": true,
+    "group": "authentication.k8s.io",
+    "version": "v1",
+    "kind": "TokenRequest",
+    "verbs": [
+        "create"
+    ]
+}
+
+```
 
 ## <a name="citrix-adc-cpx-license-provisioning">**Citrix ADC CPX License Provisioning**</a>
 By default, CPX runs with 20 Mbps bandwidth called as [CPX Express](https://www.citrix.com/en-in/products/citrix-adc/cpx-express.html) however for better performance and production deployment customer needs licensed CPX instances. [Citrix ADM](https://www.citrix.com/en-in/products/citrix-application-delivery-management/) is used to check out licenses for Citrix ADC CPX.
@@ -253,6 +319,10 @@ The following table lists the configurable parameters in the Helm chart and thei
 | `ingressGateway.secretVolume`      | A map of user defined volumes to be mounted using Kubernetes secrets                                                               | null                                                                  |Optional|
 | `ingressGateway.label` | Custom label for the Ingress Gateway service                                                                                       | citrix-ingressgateway                                                                 |Optional|
 | `ingressGateway.netProfile `          | Network profile name used by [CNC](https://github.com/citrix/citrix-k8s-node-controller) to configure Citrix ADC VPX or MPX which is deployed as Ingress Gateway  | null            | Optional|
+| `ingressGateway.multiClusterIngress `          | Flag indicating if Citrix ADC is acting as Ingress gateway to multi cluster Istio mesh installation. Possible values: true/false | false            | Optional|
+| `ingressGateway.multiClusterListenerPort `          | Port opened on Citrix ADC to enable inter-cluster service to service (E-W) communication | 15443            | Optional|
+| `ingressGateway.multiClusterListenerNodePort `          | Nodeport for multiClusterListenerPort in case of Citrix ADC CPX acting as Ingress gateway  | 32443            | Optional|
+| `ingressGateway.multiClusterSvcDomain `          | Domain suffix of remote service (deployed in other cluster) used in E-W communication | global            | Optional|
 | `ingressGateway.tcpPort` | For exposing multiple TCP ingress                                                                                      | null                                                                 |Optional|
 | `istioPilot.name`                 | Name of the Istio Pilot service                                                                                                        | istiod                                                           |Optional|
 | `istioPilot.namespace`     | Namespace where Istio Pilot is running                                                                                        | istio-system                                                          |Optional|
@@ -269,5 +339,6 @@ The following table lists the configurable parameters in the Helm chart and thei
 | `certProvider.caPort`   | Certificate Authority (CA) port issuing certificate to application                              | 15012 | Optional |
 | `certProvider.trustDomain`   | SPIFFE Trust Domain                         | cluster.local | Optional |
 | `certProvider.certTTLinHours`   | Validity of certificate generated by xds-adaptor and signed by Istiod (Istio Citadel) in hours. Default is 30 days validity              | 720 | Optional |
+| `certProvider.jwtPolicy`   | Service Account token type. Kubernetes platform supports First party tokens and Third party tokens.  | first-party-jwt | Optional |
 
 **Note:** You can use the `values.yaml` file packaged in the chart. This file contains the default configuration values for the chart.
