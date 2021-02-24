@@ -7,7 +7,7 @@ In Kubernetes environments, sometimes the services are exposed for external acce
 ```
    helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-   helm install cnc citrix/citrix-node-controller --set license.accept=yes,nsIP=<NSIP>,vtepIP=<Citrix ADC SNIP>,vxlan.id=<VXLAN ID>,vlan.port=<VXLAN PORT>,network=<IP-address-range-for-VTEP-overlay>,adcCredentialSecret=<Secret-for-ADC-credentials>
+   helm install cnc citrix/citrix-node-controller --set license.accept=yes,nsIP=<NSIP>,vtepIP=<Citrix ADC SNIP>,vxlan.id=<VXLAN ID>,vxlan.port=<VXLAN PORT>,network=<IP-address-range-for-VTEP-overlay>,adcCredentialSecret=<Secret-for-ADC-credentials>
 ```
 
 > **Important:**
