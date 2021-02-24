@@ -7,7 +7,7 @@ In Kubernetes environments, sometimes the services are exposed for external acce
 ```
    helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-   helm install cnc citrix/citrix-cloud-native --set cnc.enabled=true,cnc.license.accept=yes,cnc.nsIP=<NSIP>,cnc.vtepIP=<Citrix ADC SNIP>,cnc.vxlan.id=<VXLAN ID>,cnc.vlan.port=<VXLAN PORT>,cnc.network=<IP-address-range-for-VTEP-overlay>,cnc.adcCredentialSecret=<Secret-for-ADC-credentials>
+   helm install cnc citrix/citrix-cloud-native --set cnc.enabled=true,cnc.license.accept=yes,cnc.nsIP=<NSIP>,cnc.vtepIP=<Citrix ADC SNIP>,cnc.vxlan.id=<VXLAN ID>,cnc.vxlan.port=<VXLAN PORT>,cnc.network=<IP-address-range-for-VTEP-overlay>,cnc.adcCredentialSecret=<Secret-for-ADC-credentials>
 ```
 
 > **Important:**
