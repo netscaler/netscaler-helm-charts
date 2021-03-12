@@ -8,18 +8,19 @@ data:
   NS_PORT: {{ .Values.nsPort | quote }}
 {{- if .Values.nsSNIPS }}
   NS_SNIPS: {{ .Values.nsSNIPS | toJson}}
-{{- end }}  
+{{- end }}
 {{- if .Values.podIPsforServiceGroupMembers }}
   POD_IPS_FOR_SERVICEGROUP_MEMBERS: {{ .Values.podIPsforServiceGroupMembers | quote }}
 {{- end }}
 {{- if .Values.ignoreNodeExternalIP }}
-  IGNORE_NODE_EXTERNAL_IP: {{ .Values.ignoreNodeExternalIP | quote }} 
+  IGNORE_NODE_EXTERNAL_IP: {{ .Values.ignoreNodeExternalIP | quote }}
 {{- end }}
 
-{{- if .Values.cicSettings.required }}
-{{- with .Values.cicSettings.cicConfig }}
-{{ toYaml . | indent 2 }}
+{{- if ne (upper .Values.nsHTTP2ServerSide) "OFF" }}
+  NS_HTTP2_SERVER_SIDE: {{ .Values.nsHTTP2ServerSide | quote }}
 {{- end }}
+{{- if ne (toString .Values.nsCookieVersion) "0" }}
+  NS_COOKIE_VERSION: {{ .Values.nsCookieVersion | quote }}
 {{- end }}
 
 {{- if .Values.coeConfig.required }}

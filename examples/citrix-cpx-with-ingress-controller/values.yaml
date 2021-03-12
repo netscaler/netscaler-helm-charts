@@ -3,13 +3,42 @@
 # Declare variables to be passed into your templates.
 
 # Citrix ADC CPX config details
-image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-67.39
+image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-76.29
 pullPolicy: IfNotPresent
 
 mgmtHttpPort: 9080
 mgmtHttpsPort: 9443
 openshift: false
+nsHTTP2ServerSide: "OFF"
+nsCookieVersion: "0"
+
+routeLabels:
+namespaceLabels:
+
+# Service Type LoadBalancer and ingress support  with CPX through BGP advertisement
+# If you enable this, CPX is run as DaemonSet. Please edit the bgpSettings for configuring
+# BGP neighbors for propgation of external IPs.
+cpxBgpRouter: false
+
+# If cpxBgpRouter is true, then this is the NSIP used by CPX for internal communication
+nsIP: 192.168.1.2
+
+# If cpxBgpRouter is true, then this is the Gateway used by CPX for internal communication
+nsGateway: 192.168.1.1
+
+# Protocol used for communication between Citrix Ingress Controller sidecar and Citrix CPX
+nsProtocol: http
+
+# External IP for ingress resource when bgpRouter is set to True
+ingressIP:
+
+# If IPAM controller is used for auto allocation of the external IP for service of type LoadBalancer, set this option to true
+ipam: False
+
 aws: False
+azure: False
+sslCertManagedByAWS: False
+
 nodeSelector:
   key:
   value:
@@ -17,39 +46,38 @@ nodeSelector:
 serviceType:
   loadBalancer:
     enabled: False
+    externalTrafficPolicy: "Local"
   nodePort:
     enabled: False
     httpPort:
     httpsPort:
 
 serviceAnnotations:
-  awsLB:
+  aws:
     sslCert:
     backendProtocol:
     sslPorts:
     negotiationPolicy:
     proxyProtocol: False
     resourcesTags:
+  azure:
+    internalLoadBalancer: False
 
 # Citrix Ingress Controller config details
 cic:
-  image: quay.io/citrix/citrix-k8s-ingress-controller:1.13.15
+  image: quay.io/citrix/citrix-k8s-ingress-controller:1.13.20
   pullPolicy: IfNotPresent
   required: true
 entityPrefix:
 license:
   accept: no
 ingressClass: ["Citrix"]
+setAsDefaultIngressClass: False
 logLevel: INFO
 defaultSSLCertSecret:
+updateIngressStatus: False
 logProxy:
 kubernetesURL:
-
-cicSettings:
-  required: False
-  cicConfig:
-    NS_HTTP2_SERVER_SIDE: "OFF"
-    NS_COOKIE_VERSION: "0"
 
 # Citrix ADM/License Server config details
 ADMSettings:
@@ -97,3 +125,26 @@ coeConfig:
   transactions:
     enable: false
     port: 5557
+
+# BGP configurations: local AS, remote AS and remote address is mandatory to provide. Please do the approrpiate changes with respect to your environment
+bgpSettings:
+  # When bgpConfig is configured correctly, set the required to true for the configuration to be applied.
+  required: false
+  bgpConfig:
+  - bgpRouter:
+      # Local AS number for BGP advertisement
+      localAS: 100
+      neighbor:
+        # Address of the nighbor router for BGP advertisement
+      - address:
+        # Remote AS number
+        remoteAS: 100
+        advertisementInterval: 10
+        ASOriginationInterval: 10
+
+# Specifies whether a ServiceAccount should be created
+serviceAccount:
+  create: true
+  # The name of the ServiceAccount to use.
+  # If not set and `create` is true, a name is generated using the fullname template
+  # name:

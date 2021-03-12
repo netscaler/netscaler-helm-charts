@@ -10,7 +10,7 @@ To learn more about the release, try:
 
 
 To delete :
- helm delete --purge {{ .Release.Name }}
+ helm delete {{ .Release.Name }}
 
 To Test:
 1. Get the nodeport opened for cpx-service using "kubectl get svc":

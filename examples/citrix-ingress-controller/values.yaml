@@ -3,12 +3,13 @@
 # Declare variables to be passed into your templates.
 
 # Citrix Ingress Controller config details
-image: quay.io/citrix/citrix-k8s-ingress-controller:1.13.15
+image: quay.io/citrix/citrix-k8s-ingress-controller:1.13.20
 pullPolicy: IfNotPresent
 openshift: false
 adcCredentialSecret:
 nsIP: x.x.x.x
 nsVIP:
+nsSNIPS:
 license:
    accept: no
 nsPort: 443
@@ -17,7 +18,11 @@ logLevel: INFO
 entityPrefix:
 kubernetesURL:
 ingressClass: ["Citrix"]
+setAsDefaultIngressClass: False
+serviceClass:
 defaultSSLCertSecret:
+podIPsforServiceGroupMembers: False
+ignoreNodeExternalIP: False
 ipam: False
 logProxy:
 nodeWatch: false
@@ -25,12 +30,11 @@ nodeSelector:
   key:
   value:
 updateIngressStatus: False
+nsHTTP2ServerSide: "OFF"
+nsCookieVersion: "0"
 
-cicSettings:
-  required: False
-  cicConfig:
-    NS_HTTP2_SERVER_SIDE: "OFF"
-    NS_COOKIE_VERSION: "0"
+routeLabels:
+namespaceLabels:
 
 # Exporter config details
 exporter:
@@ -65,3 +69,10 @@ coeConfig:
   transactions:
     enable: false
     port: 30001
+
+# Specifies whether a ServiceAccount should be created
+serviceAccount:
+  create: true
+  # The name of the ServiceAccount to use.
+  # If not set and `create` is true, a name is generated using the fullname template
+  # name:

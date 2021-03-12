@@ -4,17 +4,17 @@ kind: DeploymentConfig
 {{- else }}
 apiVersion: apps/v1
 kind: Deployment
-{{- end}}
+{{- end }}
 metadata:
-  name: cic-k8s-ingress-controller
+  name: {{ include "citrix-ingress-controller.fullname" . }}
 spec:
   selector:
 {{- if .Values.openshift }}
-     router: cic-k8s-ingress-controller
+     router: {{ include "citrix-ingress-controller.fullname" . }}
 {{- else }}
     matchLabels:
-      app: cic-k8s-ingress-controller
-{{- end}}
+      app: {{ include "citrix-ingress-controller.fullname" . }}
+{{- end }}
   replicas: 1
 {{- if .Values.openshift }}
   strategy:
@@ -26,25 +26,25 @@ spec:
       timeoutSeconds: 600
       updatePeriodSeconds: 1
     type: Rolling
-{{- end}}
+{{- end }}
   template:
     metadata:
-      name: cic-k8s-ingress-controller
+      name: cic
       labels:
 {{- if .Values.openshift }}
-        router: cic-k8s-ingress-controller
+        router: {{ include "citrix-ingress-controller.fullname" . }}
 {{- else }}
-        app: cic-k8s-ingress-controller
-{{- end}}
+        app: {{ include "citrix-ingress-controller.fullname" . }}
+{{- end }}
     spec:
-      serviceAccountName: cic-k8s-role
+      serviceAccountName: {{ include "citrix-ingress-controller.serviceAccountName" . }}
       containers:
-      - name: cic-k8s-ingress-controller
+      - name: cic
         image: "{{ .Values.image }}"
         imagePullPolicy: {{ .Values.pullPolicy }}
         args:
           - --configmap
-            {{ .Release.Namespace }}/cic-configmap
+            {{ .Release.Namespace }}/{{ .Release.Name }}-configmap
 {{- if .Values.defaultSSLCertSecret }}
           - --default-ssl-certificate
             {{ .Release.Namespace }}/{{ .Values.defaultSSLCertSecret }}
@@ -52,6 +52,12 @@ spec:
 {{- if .Values.ingressClass }}
           - --ingress-class
 {{- range .Values.ingressClass}}
+            {{.}}
+{{- end }}
+{{- end }}
+{{- if .Values.serviceClass }}
+          - --service-classes
+{{- range .Values.serviceClass}}
             {{.}}
 {{- end }}
 {{- end }}
@@ -71,7 +77,7 @@ spec:
 {{- if .Values.nsVIP }}
         - name: "NS_VIP"
           value: "{{ .Values.nsVIP }}"
-{{- end}}
+{{- end }}
         - name: "NS_USER"
           valueFrom:
             secretKeyRef:
@@ -84,12 +90,20 @@ spec:
               key: password
         - name: "EULA"
           value: "{{ .Values.license.accept }}"
+{{- if and .Values.openshift .Values.routeLabels }}
+        - name: "ROUTE_LABELS"
+          value: {{ .Values.routeLabels | quote}}
+{{- end }}
+{{- if and .Values.openshift .Values.namespaceLabels }}
+        - name: "NAMESPACE_LABELS"
+          value: {{ .Values.namespaceLabels | quote }}
+{{- end }}
         - name: "NS_APPS_NAME_PREFIX"
           value: {{ .Values.entityPrefix | default "k8s"}}
 {{- if .Values.kubernetesURL }}
         - name: "kubernetes_url"
           value: "{{ .Values.kubernetesURL }}"
-{{- end}}
+{{- end }}
 {{- if .Values.logProxy }}
         - name: "NS_LOGPROXY"
           value: "{{ .Values.logProxy }}"
@@ -125,10 +139,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-   name: exporter
+   name: {{ include "exporter.fullname" . }}
    labels:
-     app: exporter
-     service-type: citrix-adc-monitor
+     app: {{ include "exporter.fullname" . }}
+     service-type: {{ include "servicemonitorlabel" . }}
 spec:
    type: ClusterIP
    ports:
@@ -137,9 +151,9 @@ spec:
      name: exporter-port
    selector:
 {{- if .Values.openshift }}
-     router: cic-k8s-ingress-controller
+     router: {{ include "citrix-ingress-controller.fullname" . }}
 {{- else }}
-     app: cic-k8s-ingress-controller
+     app: {{ include "citrix-ingress-controller.fullname" . }}
 {{- end }}
 
 ---
@@ -147,7 +161,7 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
- name: citrix-adc-servicemonitor
+ name: {{ include "servicemonitor.fullname" . }}
  labels:
    servicemonitor: citrix-adc
 spec:
@@ -156,7 +170,7 @@ spec:
    port: exporter-port
  selector:
    matchLabels:
-     service-type: citrix-adc-monitor
+     service-type: {{ include "servicemonitorlabel" . }}
  namespaceSelector:
    matchNames:
    - monitoring

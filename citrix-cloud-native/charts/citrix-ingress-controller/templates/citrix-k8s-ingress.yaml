@@ -29,7 +29,7 @@ spec:
 {{- end }}
   template:
     metadata:
-      name: {{ include "citrix-ingress-controller.name" . }}
+      name: cic
       labels:
 {{- if .Values.openshift }}
         router: {{ include "citrix-ingress-controller.fullname" . }}
@@ -39,7 +39,7 @@ spec:
     spec:
       serviceAccountName: {{ include "citrix-ingress-controller.serviceAccountName" . }}
       containers:
-      - name: {{ include "citrix-ingress-controller.name" . }}
+      - name: cic
         image: "{{ .Values.image }}"
         imagePullPolicy: {{ .Values.pullPolicy }}
         args:
@@ -139,10 +139,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-   name: exporter
+   name: {{ include "exporter.fullname" . }}
    labels:
-     app: exporter
-     service-type: citrix-adc-monitor
+     app: {{ include "exporter.fullname" . }}
+     service-type: {{ include "servicemonitorlabel" . }}
 spec:
    type: ClusterIP
    ports:
@@ -161,7 +161,7 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
- name: citrix-adc-servicemonitor
+ name: {{ include "servicemonitor.fullname" . }}
  labels:
    servicemonitor: citrix-adc
 spec:
@@ -170,7 +170,7 @@ spec:
    port: exporter-port
  selector:
    matchLabels:
-     service-type: citrix-adc-monitor
+     service-type: {{ include "servicemonitorlabel" . }}
  namespaceSelector:
    matchNames:
    - monitoring
