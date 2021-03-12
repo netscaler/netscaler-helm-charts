@@ -1,8 +1,8 @@
 apiVersion: v2
-appVersion: "1.13.15"
+appVersion: "1.13.20"
 description: A Helm chart for Citrix Ingress Controller configuring MPX/VPX.
 name: citrix-ingress-controller
-version: 1.13.15
+version: 1.13.20
 icon: https://raw.githubusercontent.com/citrix/citrix-helm-charts/gh-pages/icon.png
 home: https://www.citrix.com
 sources:

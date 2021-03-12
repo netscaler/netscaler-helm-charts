@@ -25,6 +25,7 @@ spec:
         - name: cpx-ingress
           image: "{{ .Values.image }}"
           imagePullPolicy: {{ .Values.pullPolicy }}
+          tty: true
           securityContext:
              privileged: true
           env:
@@ -97,10 +98,8 @@ spec:
           volumeMounts:
             - mountPath: /var/deviceinfo
               name: shared-data
-            - mountPath: /cpx/conf/
-              name: cpx-volume1
-            - mountPath: /cpx/crash/
-              name: cpx-volume2
+            - mountPath: /cpx/
+              name: cpx-volume
 {{- if .Values.cic.required }}
         # Add cic as a sidecar
         - name: cic
@@ -234,9 +233,7 @@ spec:
       volumes:
         - name: shared-data
           emptyDir: {}
-        - name: cpx-volume1
-          emptyDir: {}
-        - name: cpx-volume2
+        - name: cpx-volume
           emptyDir: {}
 {{- if and .Values.nodeSelector.key .Values.nodeSelector.value }}
       nodeSelector:
@@ -249,10 +246,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-   name: exporter
+   name: {{ include "cpxexporter.fullname" . }}
    labels:
-     app: exporter
-     service-type: citrix-adc-cpx-monitor
+     app: {{ include "cpxexporter.fullname" . }}
+     service-type: {{ include "cpxservicemonitorlabel" . }}
 spec:
    type: ClusterIP
    ports:
@@ -266,10 +263,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: cpx-{{ .Release.Name }}-service
+  name: {{ include "cpxservice.fullname" . }}
   labels:
     app: cpx-service
-    service-type: citrix-adc-cpx-monitor
+    service-type: {{ include "cpxservicemonitorlabel" . }}
   annotations:
 {{- if .Values.aws }}
 {{- if or .Values.sslCertManagedByAWS .Values.serviceAnnotations.aws.sslCert }}
@@ -339,7 +336,7 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
- name: citrix-adc-cpx-servicemonitor
+ name: {{ include "cpxservicemonitor.fullname" . }}
  labels:
    servicemonitor: citrix-adc-cpx
 spec:
@@ -348,7 +345,7 @@ spec:
    port: exporter-port
  selector:
    matchLabels:
-     service-type: citrix-adc-cpx-monitor
+     service-type: {{ include "cpxservicemonitorlabel" . }}
  namespaceSelector:
    matchNames:
    - monitoring

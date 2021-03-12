@@ -1,7 +1,7 @@
 cic:
   enabled: False
   
-  image: quay.io/citrix/citrix-k8s-ingress-controller:1.13.15
+  image: quay.io/citrix/citrix-k8s-ingress-controller:1.13.20
   pullPolicy: IfNotPresent
   openshift: false
   adcCredentialSecret:
@@ -24,12 +24,12 @@ cic:
   ipam: False
   logProxy:
   nodeWatch: false
-  enableHTTP2: "OFF"
   nodeSelector:
     key:
     value:
-
   updateIngressStatus: False
+  nsHTTP2ServerSide: "OFF"
+  nsCookieVersion: "0"
 
   routeLabels:
   namespaceLabels:
@@ -44,9 +44,6 @@ cic:
   crds:
     install: false
     retainOnDelete: false
-
-  serviceAccount:
-    create: true
 
   coeConfig:
     required: false
@@ -68,10 +65,13 @@ cic:
       enable: false
       port: 30001
 
+  serviceAccount:
+    create: true
+
 mcIngress:
   enabled: False
 
-  image: quay.io/citrix/citrix-k8s-ingress-controller:1.13.15
+  image: quay.io/citrix/citrix-k8s-ingress-controller:1.13.20
   pullPolicy: IfNotPresent
   openshift: false
   localRegion:
@@ -95,28 +95,58 @@ mcIngress:
 cpx:
   enabled: False
 
-  image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-67.39
+  image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-76.29
   pullPolicy: IfNotPresent
-  cic:
-    image: quay.io/citrix/citrix-k8s-ingress-controller:1.13.15
-    pullPolicy: IfNotPresent
-    required: true
 
   mgmtHttpPort: 9080
   mgmtHttpsPort: 9443
-  cpxBgpRouter: false
-  nsIP: 192.168.1.2
-  nsGateway: 192.168.1.1
-  nsProtocol: http
-  ingressIP:
-  bgpPort: 179
   openshift: false
+  nsHTTP2ServerSide: "OFF"
+  nsCookieVersion: "0"
 
   routeLabels:
   namespaceLabels:
 
+  cpxBgpRouter: false
+  nsIP: 192.168.1.2
+  nsGateway: 192.168.1.1
+
+  nsProtocol: http
+  ingressIP:
+  ipam: False
+
   aws: False
   azure: False
+  sslCertManagedByAWS: False
+
+  nodeSelector:
+    key:
+    value:
+
+  serviceType:
+    loadBalancer:
+      enabled: False
+      externalTrafficPolicy: "Local"
+    nodePort:
+      enabled: False
+      httpPort:
+      httpsPort:
+
+  serviceAnnotations:
+    aws:
+      sslCert:
+      backendProtocol:
+      sslPorts:
+      negotiationPolicy:
+      proxyProtocol: False
+      resourcesTags:
+    azure:
+      internalLoadBalancer: False
+
+  cic:
+    image: quay.io/citrix/citrix-k8s-ingress-controller:1.13.20
+    pullPolicy: IfNotPresent
+    required: true
   entityPrefix:
   license:
     accept: no
@@ -126,29 +156,7 @@ cpx:
   defaultSSLCertSecret:
   updateIngressStatus: False
   logProxy:
-  enableHTTP2: "OFF"
-  nodeSelector:
-    key:
-    value:
-
-  serviceType:
-    loadBalancer:
-      enabled: False
-    nodePort:
-      enabled: False
-      httpPort:
-      httpsPort:
-
-  serviceAnnotations:
-    awsLB:
-      sslCert:
-      backendProtocol:
-      sslPorts:
-      negotiationPolicy:
-      proxyProtocol: False
-      resourcesTags:
-    azure:
-      internalLoadBalancer: False
+  kubernetesURL:
 
   ADMSettings:
     licenseServerIP:
@@ -161,15 +169,16 @@ cpx:
     vCPULicense: false
     cpxCores:
 
-  serviceAccount:
-    create: true
-
   exporter:
     required: false
     image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.7
     pullPolicy: IfNotPresent
     ports:
       containerPort: 8888
+
+  crds:
+    install: false
+    retainOnDelete: false
 
   coeConfig:
     required: false
@@ -202,9 +211,8 @@ cpx:
           advertisementInterval: 10
           ASOriginationInterval: 10
 
-  crds:
-    install: false
-    retainOnDelete: false
+  serviceAccount:
+    create: true
 
 iaIngress:
   enabled: False
