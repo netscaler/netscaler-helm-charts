@@ -182,7 +182,7 @@ spec:
 {{- end }}
           args:
             - --configmap
-              {{ .Release.Namespace }}/cpx-{{ .Release.Name }}-configmap
+              {{ .Release.Namespace }}/{{ include "cpxconfigmap.fullname" . }}
 {{- if .Values.ipam }}
             - --ipam
               citrix-ipam-controller
@@ -204,7 +204,7 @@ spec:
 {{- end }}
 {{- if .Values.updateIngressStatus }}
             - --cpx-service
-              {{ .Release.Namespace }}/cpx-{{ .Release.Name }}-service
+              {{ .Release.Namespace }}/{{ include "cpxservice.fullname" . }}
 {{- end }}
           volumeMounts:
             - mountPath: /var/deviceinfo

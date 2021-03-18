@@ -45,9 +45,11 @@ If you want to run exporter along with CIC, please install prometheus operator f
 ```helm install my-release citrix-ingress-controller  --set nsIP=<NSIP>,license.accept=yes,nsVIP=<VIP>,adcCredentialSecret=<Secret-for-ADC-credentials>,ingressClass=<ingressClassName>,exporter.required=true```
 
 ### For OpenShift:
-Add the service account named "cic-k8s-role" to the privileged Security Context Constraints of OpenShift:
+Add the name of the service account created when the chart is deployed to the privileged Security Context Constraints of OpenShift:
 
-```oc adm policy add-scc-to-user privileged system:serviceaccount:<namespace>:cic-k8s-role```
+   ```
+   oc adm policy add-scc-to-user privileged system:serviceaccount:<namespace>:<service-account-name>
+   ```
 
 To install the chart with the release name ``` my-release:```
 
