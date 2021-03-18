@@ -42,9 +42,11 @@ To run the exporter as sidecar with CPX, please install prometheus operator firs
 ```helm install cpx citrix-cpx-with-ingress-controller --set license.accept=yes,serviceType.nodePort.enabled=true,ingressClass=<ingressClassName>,exporter.required=true```
 
 ### For OpenShift:
-Add the service account named "cpx-ingress-k8s-role" to the privileged Security Context Constraints of OpenShift:
+Add the name of the service account created when the chart is deployed to the privileged Security Context Constraints of OpenShift:
 
-```oc adm policy add-scc-to-user privileged system:serviceaccount:<namespace>:cpx-ingress-k8s-role```
+   ```
+   oc adm policy add-scc-to-user privileged system:serviceaccount:<namespace>:<service-account-name>
+   ```
 
 To install the chart with the release name ``` my-release```:
 

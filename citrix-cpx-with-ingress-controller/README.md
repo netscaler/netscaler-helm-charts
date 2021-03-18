@@ -72,10 +72,10 @@ Use the following command for this:
    ```
 
 ### For OpenShift:
-Add the service account named "cpx-ingress-k8s-role" to the privileged Security Context Constraints of OpenShift:
+Add the name of the service account created when the chart is deployed to the privileged Security Context Constraints of OpenShift:
 
    ```
-   oc adm policy add-scc-to-user privileged system:serviceaccount:<namespace>:cpx-ingress-k8s-role
+   oc adm policy add-scc-to-user privileged system:serviceaccount:<namespace>:<service-account-name>
    ```
 
 #### 1. Citrix ADC CPX with Citrix Ingress Controller running as side car.
@@ -207,10 +207,10 @@ If you are using ingress resources, you must set the `ingressIP` to a valid IP A
    ```
 
 #### For OpenShift:
-Add the service account named "cpx-ingress-k8s-role" to the privileged Security Context Constraints of OpenShift:
+Add the name of the service account created when the chart is deployed to the privileged Security Context Constraints of OpenShift:
 
    ```
-   oc adm policy add-scc-to-user privileged system:serviceaccount:<namespace>:cpx-ingress-k8s-role
+   oc adm policy add-scc-to-user privileged system:serviceaccount:<namespace>:<service-account-name>
    ```
 
 #### 1. Citrix ADC CPX DaemonSet with Citrix Ingress Controller running as side car for BGP Advertisement.

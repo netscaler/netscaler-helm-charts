@@ -137,11 +137,11 @@ Use the following command for this:
   ```
 
 ### For Openshift:
-Add the service account named "cic-k8s-role" to the privileged Security Context Constraints of OpenShift:
+Add the name of the service account created when the chart is deployed to the privileged Security Context Constraints of OpenShift:
 
-  ```
-  oc adm policy add-scc-to-user privileged system:serviceaccount:<namespace>:cic-k8s-role
-  ```
+   ```
+   oc adm policy add-scc-to-user privileged system:serviceaccount:<namespace>:<service-account-name>
+   ```
 
 #### 1. Citrix Ingress Controller
 To install the chart with the release name, `my-release`, use the following command:

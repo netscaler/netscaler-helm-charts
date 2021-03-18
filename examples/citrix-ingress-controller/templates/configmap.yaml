@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Release.Name }}-configmap 
+  name: {{ include "cicconfigmap.fullname" . }}
 data:
   LOGLEVEL: {{ .Values.logLevel | quote | lower }}
   NS_PROTOCOL: {{ .Values.nsProtocol | quote | lower }}

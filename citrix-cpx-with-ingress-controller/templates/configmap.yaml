@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: cpx-{{ .Release.Name }}-configmap
+  name: {{ include "cpxconfigmap.fullname" . }}
 data:
   LOGLEVEL: {{ .Values.logLevel | quote | lower }}
 {{- if eq (upper .Values.nsProtocol) "HTTPS" }}
