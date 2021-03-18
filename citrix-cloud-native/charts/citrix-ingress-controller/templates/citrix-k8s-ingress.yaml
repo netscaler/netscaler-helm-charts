@@ -44,7 +44,7 @@ spec:
         imagePullPolicy: {{ .Values.pullPolicy }}
         args:
           - --configmap
-            {{ .Release.Namespace }}/{{ .Release.Name }}-configmap
+            {{ .Release.Namespace }}/{{ include "cicconfigmap.fullname" . }}
 {{- if .Values.defaultSSLCertSecret }}
           - --default-ssl-certificate
             {{ .Release.Namespace }}/{{ .Values.defaultSSLCertSecret }}
