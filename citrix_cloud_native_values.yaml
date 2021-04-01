@@ -27,6 +27,7 @@ cic:
   nodeSelector:
     key:
     value:
+  tolerations: []
   updateIngressStatus: False
   nsHTTP2ServerSide: "OFF"
   nsCookieVersion: "0"
@@ -122,6 +123,7 @@ cpx:
   nodeSelector:
     key:
     value:
+  tolerations: []
 
   serviceType:
     loadBalancer:
