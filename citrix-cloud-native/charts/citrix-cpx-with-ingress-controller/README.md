@@ -341,6 +341,22 @@ helm install citrix-cpx-with-ingress-controller citrix/citrix-cloud-native --set
 
 Additionally, `cpx.serviceType.nodePort.httpPort` and `cpx.serviceType.nodePort.httpsPort` arguments can be used to select the nodePort for the CPX service for HTTP and HTTPS ports.
 
+### Tolerations
+
+Taints are applied on cluster nodes whereas tolerations are applied on pods. Tolerations enable pods to be scheduled on node with matching taints. For more information see [Taints and Tolerations in Kubernetes](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/).
+
+Toleration can be applied to pod running Citrix ADC CPX and ingress controller containers using `tolerations` argument while deploying CPX+CIC using helm chart. This argument takes list of tolerations that user need to apply on the CPX+CIC pods.
+
+For example, following command can be used to apply toleration on the CPX+CIC pod:
+
+```
+helm install my-release citrix/citrix-cloud-native --set cpx.enabled=true,cpx.license.accept=yes,cpx.tolerations[0].key=<toleration-key>,cpx.tolerations[0].value=<toleration-value>,cpx.tolerations[0].operator=<toleration-operator>,cpx.tolerations[0].effect=<toleration-effect>
+```
+
+Here tolerations[0].key, tolerations[0].value and tolerations[0].effect are the key, value and effect that was used while tainting the node.
+Effect represents what should happen to the pod if the pod don't have any matching toleration. It can have values `NoSchedule`, `NoExecute` and `PreferNoSchedule`.
+Operator represents the operation to be used for key and value comparison between taint and tolerations. It can have values `Exists` and `Equal`. The default value for operator is `Equal`.
+
 ## Configuration
 The following table lists the configurable parameters of the Citrix ADC CPX with Citrix ingress controller as side car chart and their default values.
 
@@ -376,6 +392,7 @@ The following table lists the configurable parameters of the Citrix ADC CPX with
 | cpx.sslCertManagedByAWS | Optional | False | Set this argument if SSL certs used is managed by AWS while deploying Citrix ADC CPX in AWS. |
 | cpx.nodeSelector.key | Optional | N/A | Node label key to be used for nodeSelector option for CPX-CIC deployment. |
 | cpx.nodeSelector.value | Optional | N/A | Node label value to be used for nodeSelector option in CPX-CIC deployment. |
+| cpx.tolerations | Optional | N/A | Specify the tolerations for the CPX-CIC deployment. |
 | cpx.serviceType.loadBalancer.enabled | Optional | False | Set this argument if you want servicetype of CPX service to be LoadBalancer. |
 | cpx.serviceType.nodePort.enabled | Optional | False | Set this argument if you want servicetype of CPX service to be NodePort. |
 | cpx.serviceType.nodePort.httpPort | Optional | N/A | Specify the HTTP nodeport to be used for NodePort CPX service. |

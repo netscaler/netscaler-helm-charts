@@ -239,6 +239,9 @@ spec:
       nodeSelector:
         {{ .Values.nodeSelector.key }}: {{ .Values.nodeSelector.value }}
 {{- end }}
+{{- if .Values.tolerations }}
+      tolerations: {{ .Values.tolerations | toYaml | nindent 8 }}
+{{- end }}
 
 ---
 {{- if .Values.cpxBgpRouter }}
