@@ -235,6 +235,22 @@ In a Kubernetes deployment, you can enforce bot management policy on therequests
 
 Example files: [botallowlist.yaml](https://github.com/citrix/citrix-helm-charts/tree/master/example-crds/botallowlist.yaml)
 
+### Tolerations
+
+Taints are applied on cluster nodes whereas tolerations are applied on pods. Tolerations enable pods to be scheduled on node with matching taints. For more information see [Taints and Tolerations in Kubernetes](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/).
+
+Toleration can be applied to Citrix ingress controller pod using `tolerations` argument while deploying CIC using helm chart. This argument takes list of tolerations that user need to apply on the CIC pods.
+
+For example, following command can be used to apply toleration on the CIC pod:
+
+```
+helm install my-release citrix/citrix-ingress-controller --set nsIP=<NSIP>,license.accept=yes,adcCredentialSecret=<Secret-for-ADC-credentials>,tolerations[0].key=<toleration-key>,tolerations[0].value=<toleration-value>,tolerations[0].operator=<toleration-operator>,tolerations[0].effect=<toleration-effect>
+```
+
+Here tolerations[0].key, tolerations[0].value and tolerations[0].effect are the key, value and effect that was used while tainting the node.
+Effect represents what should happen to the pod if the pod don't have any matching toleration. It can have values `NoSchedule`, `NoExecute` and `PreferNoSchedule`.
+Operator represents the operation to be used for key and value comparison between taint and tolerations. It can have values `Exists` and `Equal`. The default value for operator is `Equal`.
+
 ### Configuration
 
 The following table lists the mandatory and optional parameters that you can configure during installation:
@@ -274,6 +290,7 @@ The following table lists the mandatory and optional parameters that you can con
 | openshift | Optional | false | Set this argument if OpenShift environment is being used. |
 | nodeSelector.key | Optional | N/A | Node label key to be used for nodeSelector option in CIC deployment. |
 | nodeSelector.value | Optional | N/A | Node label value to be used for nodeSelector option in CIC deployment. |
+| tolerations | Optional | N/A | Specify the tolerations for the CIC deployment. |
 | crds.install | Optional | False | Unset this argument if you don't want to install CustomResourceDefinitions which are consumed by CIC. |
 | crds.retainOnDelete | Optional | false | Set this argument if you want to retain CustomResourceDefinitions even after uninstalling CIC. This will avoid data-loss of Custom Resource Objects created before uninstallation. |
 | coeConfig.required | Mandatory | false | Set this to true if you want to configure Citrix ADC to send metrics and transaction records to COE. |
