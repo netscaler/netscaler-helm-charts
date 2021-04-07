@@ -57,6 +57,20 @@ To run the exporter as sidecar with CPX, please install prometheus operator firs
 ```helm install cpx citrix-cpx-with-ingress-controller --set license.accept=yes,serviceType.nodePort.enabled=true,ingressClass=<ingressClassName>,exporter.required=true,openshift=true```
 
 The command deploys Citrix ADC CPX with Citrix Ingress Controller running in side-car mode on the Kubernetes cluster in the default configuration. The configuration section lists the parameters that can be configured during installation.
+
+## Tolerations
+
+Taints are applied on cluster nodes whereas tolerations are applied on pods. Tolerations enable pods to be scheduled on node with matching taints. For more information see [Taints and Tolerations in Kubernetes](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/).
+
+For example, if the node is tainted using command:
+```
+kubectl taint nodes worker1 key1=value1:NoSchedule
+```
+
+And if user wants to enable CPX with ingress controller pod to be scheduled on node `worker1` then the following command can be used to add matching toleration in CPX with ingress controller while deploying it using Helm:
+```
+helm install my-release citrix-cpx-with-ingress-controller --set license.accept=yes,tolerations[0].key=key1,tolerations[0].value=value1,tolerations[0].operator=Equal,tolerations[0].effect=NoSchedule
+```
  
 ## Uninstalling the Chart
 To uninstall/delete the ```my-release``` deployment:
@@ -101,6 +115,7 @@ bels | Optional | N/A | You can use this parameter to provide the route labels s
 | sslCertManagedByAWS | Optional | False | Set this argument if SSL certs used is managed by AWS while deploying Citrix ADC CPX in AWS. |
 | nodeSelector.key | Optional | N/A | Node label key to be used for nodeSelector option for CPX-CIC deployment. |
 | nodeSelector.value | Optional | N/A | Node label value to be used for nodeSelector option in CPX-CIC deployment. |
+| tolerations | Optional | N/A | Specify the tolerations for the CPX-CIC deployment. |
 | serviceType.loadBalancer.enabled | Optional | False | Set this argument if you want servicetype of CPX service to be LoadBalancer. |
 | serviceType.nodePort.enabled | Optional | False | Set this argument if you want servicetype of CPX service to be NodePort. |
 | serviceType.nodePort.httpPort | Optional | N/A | Specify the HTTP nodeport to be used for NodePort CPX service. |

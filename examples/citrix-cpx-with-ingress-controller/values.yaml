@@ -42,6 +42,7 @@ sslCertManagedByAWS: False
 nodeSelector:
   key:
   value:
+tolerations: []
 
 serviceType:
   loadBalancer:

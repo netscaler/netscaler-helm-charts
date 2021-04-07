@@ -71,6 +71,7 @@ kubectl apply -n egressgateway-test -f https://raw.githubusercontent.com/citrix/
 ```
 kubectl apply -n egressgateway-test -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-egress-in-istio/egress-example/deployment-yamls/virtual_service.yaml
 ```
+*Note*: Aforementioned yaml files refer to _citrix-adc-istio-egress-gateway-citrix-egress-svc.citrix-system.svc.cluster.local_ as the host representating citrix-egressgateway service. The name of service depends on the helm-chart release name. Default name of release name is _citrix-adc-istio-egress-gateway_. In case of different release name, change the name of _host_ field accordingly.
 
     
 ## <a name="verification">D) Verification</a>

@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.egressGateway.label | default "citrix-egressgateway" }}
+  name: {{ template "generate-name" (list . (dict "suffixname" "egress-deployment")) }} #generate-name takes argument named 'suffixname'. See helpers.tpl for details
   namespace: {{.Release.Namespace}}
   labels:
     app: {{default "citrix-egressgateway" .Values.egressGateway.label}}
@@ -23,9 +23,6 @@ spec:
       securityContext:
         fsGroup: 32024
       volumes:
-      - name: nsloginegress
-        secret:
-          secretName: nsloginegress
       - name: citrix-egressgateway-ca-certs
         secret:
           optional: true
@@ -56,13 +53,15 @@ spec:
           - "--target-nsip=127.0.0.1"
           - "--port={{ .Values.metricExporter.port }}"
           - "--log-level={{ .Values.metricExporter.logLevel }}"
-          - "--secure=false"
+          - "--secure=no"
+          env:
+          - name: "NS_DEPLOYMENT_MODE"
+            value: "SIDECAR"
           securityContext:
             readOnlyRootFilesystem: true
           volumeMounts:
-          - name: nsloginegress
-            mountPath: "/mnt/nslogin"
-            readOnly: true
+          - mountPath: /var/deviceinfo
+            name: cpx-pwd
 {{- end }}
         - name: istio-adaptor
           image: {{.Values.xDSAdaptor.image}}
@@ -80,7 +79,7 @@ spec:
           - -ads-server-SAN
           - {{ .Values.istioPilot.SAN | default "" }}
 {{- end }}
-          - -ads-secure-connect={{ .Values.xDSAdaptor.secureConnect | default true}}
+          - -ads-secure-connect={{ .Values.xDSAdaptor.secureConnect }}
           - -citrix-adc
           - "http://localhost:80"
           - -citrix-adc-vip
@@ -137,16 +136,6 @@ spec:
           - name: JWT_POLICY
             value: {{ .Values.certProvider.jwtPolicy | default "first-party-jwt" | quote }} # third-party-jwt if Kubernetes cluster supports third-party tokens
 {{- end }}
-          - name: NS_USER
-            valueFrom:
-              secretKeyRef:
-                name: nsloginegress
-                key: username
-          - name: NS_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: nsloginegress
-                key: password
           securityContext:
             readOnlyRootFilesystem: true
             runAsGroup: 32024
@@ -245,7 +234,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.egressGateway.label | default "citrix-egressgateway" }}
+  name: {{ template "generate-name" (list . (dict "suffixname" "egress-deployment")) }} #generate-name takes argument named 'suffixname'. See helpers.tpl for details
   namespace: {{ .Release.Namespace }}
   labels:
     app: {{ .Values.egressGateway.label | default "citrix-egressgateway" }}
@@ -324,12 +313,12 @@ spec:
         - name: NS_USER
           valueFrom:
             secretKeyRef:
-              name: nsloginegress
+              name: {{ .Values.secretName }}
               key: username
         - name: NS_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: nsloginegress
+              name: {{ .Values.secretName }}
               key: password
         args:
         - -ads-server
@@ -344,7 +333,7 @@ spec:
         - -ads-server-SAN
         - {{ .Values.istioPilot.SAN | default "" }}
 {{- end }}
-        - -ads-secure-connect={{ .Values.xDSAdaptor.secureConnect | default true }}
+        - -ads-secure-connect={{ .Values.xDSAdaptor.secureConnect }}
         - -citrix-adc
         - {{ required "Mention Citrix ADC IP/URL in https://<ip>[:port] format" .Values.egressGateway.netscalerUrl }}
         - -citrix-adc-vip
@@ -401,7 +390,7 @@ spec:
       - name: nsloginegress
         secret:
           optional: true
-          secretName: nsloginegress
+          secretName: {{ .Values.secretName }}
       - name: certs
         emptyDir: {}
       - name: istiod-ca-cert

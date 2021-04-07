@@ -1,66 +1,33 @@
 {{/* vim: set filetype=mustache: */}}
-{{/*
-Expand the name of the chart.
+
+{{/* A common function to generate name of the resource. 
+   * Usage: {{ template "generate-name" (list . (dict "suffixname" "citrix-deployment")) }} 
+   * In above example, arguments are given in the list. 
+   * First one is `.` indicating global chart-level scope. 
+   * Second argument name is `suffixname` and value is `citrix-deployment`.
+   * If release name is `my-release`, then generate-name function would output "my-release-citrix-deployment".
+   * The function truncates name to 63 chars due to Kubernetes name length restrictions
 */}}
-{{- define "egress-gateway.name" -}}
-{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
+{{- define "generate-name" -}}
+{{- $top := index . 0 -}}
+{{- $arg1 := index . 1 "suffixname" -}}
+{{- printf "%s-%s" $top.Release.Name $arg1 | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
-{{/*
-Create a default fully qualified app name.
-We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
-If release name contains chart name it will be used as a full name.
+{{/* Another common function to generate name of the resource. 
+   * Usage: {{ template "generate-name" (list . "citrix-deployment") }} 
+   * In above example, arguments are given in the list. 
+   * First one is `.` indicating global chart-level scope. 
+   * Second argument is unnamed and takes value as `citrix-deployment`.
+   * If release name is `my-release`, then generate-name function would output "my-release-citrix-deployment".
+   * The function truncates name to 63 chars due to Kubernetes name length restrictions
 */}}
-{{- define "egress-gateway.fullname" -}}
-{{- if .Values.fullnameOverride }}
-{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
-{{- else }}
-{{- $name := default .Chart.Name .Values.nameOverride }}
-{{- if contains $name .Release.Name }}
-{{- .Release.Name | trunc 63 | trimSuffix "-" }}
-{{- else }}
-{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
-{{- end }}
-{{- end }}
+{{- define "generate-name2" -}}
+{{- $top := index . 0 -}}
+{{- $arg1 := index . 1 -}}
+{{- printf "%s-%s" $top.Release.Name $arg1 | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
-{{/*
-Create chart name and version as used by the chart label.
-*/}}
-{{- define "egress-gateway.chart" -}}
-{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
-{{- end }}
-
-{{/*
-Common labels
-*/}}
-{{- define "egress-gateway.labels" -}}
-helm.sh/chart: {{ include "egress-gateway.chart" . }}
-{{ include "egress-gateway.selectorLabels" . }}
-{{- if .Chart.AppVersion }}
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
-{{- end }}
-app.kubernetes.io/managed-by: {{ .Release.Service }}
-{{- end }}
-
-{{/*
-Selector labels
-*/}}
-{{- define "egress-gateway.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "egress-gateway.name" . }}
-app.kubernetes.io/instance: {{ .Release.Name }}
-{{- end }}
-
-{{/*
-Create the name of the service account to use
-*/}}
-{{- define "egress-gateway.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create }}
-{{- default (include "egress-gateway.fullname" .) .Values.serviceAccount.name }}
-{{- else }}
-{{- default "default" .Values.serviceAccount.name }}
-{{- end }}
-{{- end }}
 
 {{- define "exporter_nsip" -}}
 {{- $match := .Values.egressGateway.netscalerUrl | toString | regexFind "//.*[:]*" -}}

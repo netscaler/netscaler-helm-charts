@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: citrix-ingressgateway
+  name: {{ template "generate-name" (list . (dict "suffixname" "ingress-deployment")) }}
   namespace: {{ .Release.Namespace }}
   labels:
     app: {{ .Values.ingressGateway.label | default "citrix-ingressgateway" }}
@@ -21,9 +21,6 @@ spec:
         prometheus.io/scrape: "true"
     spec:
       volumes:
-      - name: nslogin
-        secret:
-          secretName: nslogin
       - name: citrix-ingressgateway-certs
         secret:
           optional: true
@@ -70,13 +67,15 @@ spec:
           - "--target-nsip=127.0.0.1"
           - "--port={{ .Values.metricExporter.port }}"
           - "--log-level={{ .Values.metricExporter.logLevel }}"
-          - "--secure=false"
+          - "--secure=no"
+          env:
+          - name: "NS_DEPLOYMENT_MODE"
+            value: "SIDECAR"
           securityContext:
             readOnlyRootFilesystem: true
           volumeMounts:
-          - name: nslogin
-            mountPath: "/mnt/nslogin"
-            readOnly: true
+          - mountPath: /var/deviceinfo
+            name: cpx-pwd
 {{- end }}
         - name: istio-adaptor
           image: {{ .Values.xDSAdaptor.image }}
@@ -94,7 +93,7 @@ spec:
           - -ads-server-SAN
           - {{ .Values.istioPilot.SAN | default "" }}
 {{- end }}
-          - -ads-secure-connect={{ .Values.xDSAdaptor.secureConnect | default true }}
+          - -ads-secure-connect={{ .Values.xDSAdaptor.secureConnect }}
           - -citrix-adc
           - "http://127.0.0.1"
           - -citrix-adc-vip
@@ -159,16 +158,6 @@ spec:
           - name: MULTICLUSTER_SVC_DOMAIN
             value: {{ printf "'*.%s'" .Values.ingressGateway.multiClusterSvcDomain }}
 {{- end }}
-          - name: NS_USER
-            valueFrom:
-              secretKeyRef:
-                name: nslogin
-                key: username
-          - name: NS_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: nslogin
-                key: password
           securityContext:
             readOnlyRootFilesystem: true
             runAsGroup: 32024
@@ -184,9 +173,6 @@ spec:
             name: certs
           - name: istiod-ca-cert
             mountPath: /etc/rootcert/
-          - mountPath: /etc/nslogin 
-            name: nslogin
-            readOnly: true
           - mountPath: /etc/istio/ingressgateway-certs # Make sure that Gateway definition has this path mentioned in server.tls section for SIMPLE TLS
             name: citrix-ingressgateway-certs
             readOnly: true
@@ -282,7 +268,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: citrix-ingressgateway
+  name: {{ template "generate-name" (list . (dict "suffixname" "ingress-deployment")) }}
   namespace: {{ .Release.Namespace }}
   labels:
     app: {{ .Values.ingressGateway.label | default "citrix-ingressgateway" }}
@@ -369,12 +355,12 @@ spec:
         - name: NS_USER
           valueFrom:
             secretKeyRef:
-              name: nslogin
+              name: {{ .Values.secretName }}
               key: username
         - name: NS_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: nslogin
+              name: {{ .Values.secretName }}
               key: password
         args: 
         - -ads-server
@@ -389,7 +375,7 @@ spec:
         - -ads-server-SAN
         - {{ .Values.istioPilot.SAN | default "" }}
 {{- end }}
-        - -ads-secure-connect={{ .Values.xDSAdaptor.secureConnect | default true }}
+        - -ads-secure-connect={{ .Values.xDSAdaptor.secureConnect }}
         - -citrix-adc
         - {{ required "Mention Citrix ADC IP/URL in https://<ip>[:port] format" .Values.ingressGateway.netscalerUrl }}
         - -citrix-adc-vip
@@ -454,7 +440,7 @@ spec:
       - name: nslogin
         secret:
           optional: true
-          secretName: nslogin
+          secretName: {{ .Values.secretName }}
       - name: certs
         emptyDir: {}
       - name: istiod-ca-cert

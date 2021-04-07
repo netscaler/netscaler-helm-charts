@@ -2,7 +2,7 @@
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
-    name: citrix-ingressgateway
+    name: {{ template "generate-name" (list . (dict "suffixname" "citrix-ingress-hpa")) }}
     namespace: {{ .Release.Namespace }}
 spec:
     maxReplicas: 1
@@ -10,7 +10,7 @@ spec:
     scaleTargetRef:
       apiVersion: apps/v1
       kind: Deployment
-      name: citrix-ingressgateway
+      name: {{ template "generate-name" (list . (dict "suffixname" "ingress-deployment")) }}
     metrics:
       - type: Resource
         resource:
@@ -21,7 +21,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: citrix-ingressgateway
+  name: {{ template "generate-name" (list . (dict "suffixname" "citrix-ingress-svc")) }}
   namespace: {{ .Release.Namespace }}
   annotations:
   labels:

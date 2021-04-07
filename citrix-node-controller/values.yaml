@@ -12,8 +12,8 @@ network:
 vtepIP:
 vxlan:
   id:
-  port:
-dsrIPRange: 
+  port: 
+dsrIPRange:
 
 serviceAccount:
   # Specifies whether a ServiceAccount should be created

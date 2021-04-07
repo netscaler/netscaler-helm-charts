@@ -47,4 +47,3 @@ spec:
         - name: "DSR_IP_RANGE"
           value: {{ .Values.dsrIPRange | quote }}
 {{- end }}
-
