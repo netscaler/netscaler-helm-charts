@@ -7,7 +7,7 @@ In Kubernetes environments, sometimes the services are exposed for external acce
 ```
    helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-   helm install cnc citrix/citrix-node-controller --set license.accept=yes,nsIP=<NSIP>,vtepIP=<Citrix ADC SNIP>,vxlan.id=<VXLAN ID>,vlan.port=<VXLAN PORT>,network=<IP-address-range-for-VTEP-overlay>,loginFileName=<Secret-for-ADC-credentials>
+   helm install cnc citrix/citrix-node-controller --set license.accept=yes,nsIP=<NSIP>,vtepIP=<Citrix ADC SNIP>,vxlan.id=<VXLAN ID>,vxlan.port=<VXLAN PORT>,network=<IP-address-range-for-VTEP-overlay>,adcCredentialSecret=<Secret-for-ADC-credentials>
 ```
 
 > **Important:**
@@ -72,7 +72,7 @@ To create the system user account, do the following:
 3.  Create a policy to provide required permissions to the system user account. Use the following command:
 
     ```
-       add cmdpolicy cnc-policy ALLOW  (^\S+\s+arp)|(^\S+\s+arp\s+.*)|(^\S+\s+route)|(^\S+\s+route\s+.*)|(^\S+\s+vxlan)|(^\S+\s+vxlan\s+.*)|(^\S+\s+ns\s+ip)|(^\S+\s+ns\s+ip\s+.*)
+       add cmdpolicy cnc-policy ALLOW  (^\S+\s+arp)|(^\S+\s+arp\s+.*)|(^\S+\s+route)|(^\S+\s+route\s+.*)|(^\S+\s+vxlan)|(^\S+\s+vxlan\s+.*)|(^\S+\s+ns\s+ip)|(^\S+\s+ns\s+ip\s+.*)|(^\S+\s+bridgetable)|(^\S+\s+bridgetable\s+.*)
     ```
 
 4.  Bind the policy to the system user account using the following command:
@@ -89,7 +89,7 @@ To create the system user account, do the following:
 
 2. To install the chart with the release name, `my-release`, use the following command:
    ```
-     helm install my-release citrix/citrix-node-controller --set license.accept=yes,nsIP=<NSIP>,vtepIP=<Citrix ADC SNIP>,vxlan.id=<VXLAN ID>,vxlan.port=<VXLAN PORT>,network=<IP-address-range-for-VTEP-overlay>,loginFileName=<Secret-for-ADC-credentials>
+     helm install my-release citrix/citrix-node-controller --set license.accept=yes,nsIP=<NSIP>,vtepIP=<Citrix ADC SNIP>,vxlan.id=<VXLAN ID>,vxlan.port=<VXLAN PORT>,network=<IP-address-range-for-VTEP-overlay>,adcCredentialSecret=<Secret-for-ADC-credentials>
    ```
 
 > **Note:**
@@ -111,15 +111,15 @@ The following table lists the mandatory and optional parameters that you can con
 | Parameters | Mandatory or Optional | Default value | Description |
 | --------- | --------------------- | ------------- | ----------- |
 | license.accept | Mandatory | no | Set `yes` to accept the CNC end user license agreement. |
-| image | Mandatory | `quay.io/citrix/citrix-k8s-node-controller` | The CNC image. |
-| tag | Mandatory | `2.0.0` | The CNC image version. |
-| pullPolicy | Mandatory | Always | The CNC image pull policy. |
-| loginFileName | Mandatory | N/A | The secret key to log on to the Citrix ADC VPX or MPX. For information on how to create the secret keys, see [Prerequisites](#prerequistes). |
+| image | Mandatory | `quay.io/citrix/citrix-k8s-node-controller:2.2.1` | The CNC image. |
+| pullPolicy | Mandatory | IfNotPresent | The CNC image pull policy. |
+| adcCredentialSecret | Mandatory | N/A | The secret key to log on to the Citrix ADC VPX or MPX. For information on how to create the secret keys, see [Prerequisites](#prerequistes). |
 | nsIP | Mandatory | N/A | The IP address of the Citrix ADC device. For details, see [Prerequisites](#prerequistes). |
 | vtepIP | Mandatory | N/A | The Citrix ADC SNIP. |
 | network | Mandatory | N/A | The IP address range that CNC uses to configure the VTEP overlay end points on the Kubernetes nodes. |
 | vxlan.id | Mandatory | N/A | A unique VXLAN VNID to create a VXLAN overlay between Kubernetes cluster and the ingress devices. |
 | vxlan.port | Mandatory | N/A | The VXLAN port that you want to use for the overlay. |
+| dsrIPRange | Optional | N/A | This IP address range is used for DSR Iptable configuration on nodes. Both IP and subnet must be specified in format : "xx.xx.xx.xx/xx"  |
 
 Alternatively, you can define a YAML file with the values for the parameters and pass the values while installing the chart.
 

@@ -1,0 +1,22 @@
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: cnc-psp
+  annotations:
+    seccomp.security.alpha.kubernetes.io/allowedProfileNames: '*'
+spec:
+  privileged: true
+  volumes:
+  - '*'
+  hostNetwork: true
+  hostPorts:
+  - min: 0
+    max: 65535
+  runAsUser:
+    rule: 'RunAsAny'
+  seLinux:
+    rule: 'RunAsAny'
+  supplementalGroups:
+    rule: 'RunAsAny'
+  fsGroup:
+    rule: 'RunAsAny'

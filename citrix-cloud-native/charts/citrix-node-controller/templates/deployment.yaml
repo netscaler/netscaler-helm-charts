@@ -18,7 +18,7 @@ spec:
       serviceAccountName: {{ include "citrix-k8s-node-controller.serviceAccountName" . }}
       containers:
       - name: {{ include "citrix-k8s-node-controller.name" . }}
-        image: "{{ .Values.image }}:{{ .Values.tag }}"
+        image: "{{ .Values.image }}"
         imagePullPolicy: {{ .Values.pullPolicy }}
         env:
         - name: EULA
@@ -28,18 +28,23 @@ spec:
         - name: NS_USER
           valueFrom:
             secretKeyRef:
-              name: {{ required "Please provide secret for Citrix ADC credential" .Values.loginFileName }}
+              name: {{ required "Please provide secret for Citrix ADC credential" .Values.adcCredentialSecret }}
               key: username
         - name: NS_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: {{ required "Please provide secret for Citrix ADC credential" .Values.loginFileName }}
+              name: {{ required "Please provide secret for Citrix ADC credential" .Values.adcCredentialSecret }}
               key: password
         - name: NETWORK
           value: {{ required "Please provide network for VTEP overlay" .Values.network | quote }}
         - name: REMOTE_VTEPIP
           value: {{ required "Please provide ADC VPX/MPX SNIP" .Values.vtepIP | quote }}
         - name: VNID
-          value: {{ .Values.vxlan.id | quote }}
+          value: {{ required "Pleave provide VXLAN ID" .Values.vxlan.id | quote }}
         - name: VXLAN_PORT
           value: {{ required "Provide provide VXLAN port" .Values.vxlan.port | quote }}
+{{- if .Values.dsrIPRange }}
+        - name: "DSR_IP_RANGE"
+          value: {{ .Values.dsrIPRange | quote }}
+{{- end }}
+

@@ -1,0 +1,90 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: details-srventry
+spec:
+  hosts:
+  # must be of form name.namespace.global
+  - details.bookinfo.global
+  # Treat remote cluster services as part of the service mesh
+  # as all clusters in the service mesh share the same root of trust.
+  location: MESH_INTERNAL
+  ports:
+  - name: httpdetails
+    number: 9080
+    protocol: http
+  resolution: DNS
+  addresses:
+  # the IP address to which details.bookinfo.global will resolve to
+  # must be unique for each remote service, within a given cluster.
+  # This address need not be routable. Traffic for this IP will be captured
+  # by the sidecar and routed appropriately.
+  - 1.1.1.2
+  endpoints:
+  # This is the routable address of the ingress gateway in cluster2 that
+  # sits in front of details.bookinfo service. Traffic from the sidecar will be
+  # routed to this address.
+  - address: <Vserver IP> 
+    ports:
+      httpdetails: 15443 # Do not change this port value
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: reviews-srventry
+spec:
+  hosts:
+  # must be of form name.namespace.global
+  - reviews.bookinfo.global
+  # Treat remote cluster services as part of the service mesh
+  # as all clusters in the service mesh share the same root of trust.
+  location: MESH_INTERNAL
+  ports:
+  - name: httpreviews
+    number: 9080
+    protocol: http
+  resolution: DNS
+  addresses:
+  # the IP address to which reviews.bookinfo.global will resolve to
+  # must be unique for each remote service, within a given cluster.
+  # This address need not be routable. Traffic for this IP will be captured
+  # by the sidecar and routed appropriately.
+  - 1.1.1.3
+  endpoints:
+  # This is the routable address of the ingress gateway in cluster2 that
+  # sits in front of reviews.bookinfo service. Traffic from the sidecar will be
+  # routed to this address.
+  - address: <Vserver IP> 
+    ports:
+      httpreviews: 15443 # Do not change this port value
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: ratings-srventry
+spec:
+  hosts:
+  # must be of form name.namespace.global
+  - ratings.bookinfo.global
+  # Treat remote cluster services as part of the service mesh
+  # as all clusters in the service mesh share the same root of trust.
+  location: MESH_INTERNAL
+  ports:
+  - name: httpratings
+    number: 9080
+    protocol: http
+  resolution: DNS
+  addresses:
+  # the IP address to which ratings.bookinfo.global will resolve to
+  # must be unique for each remote service, within a given cluster.
+  # This address need not be routable. Traffic for this IP will be captured
+  # by the sidecar and routed appropriately.
+  - 1.1.1.4
+  endpoints:
+  # This is the routable address of the ingress gateway in cluster2 that
+  # sits in front of ratings.bookinfo service. Traffic from the sidecar will be
+  # routed to this address.
+  - address: <Vserver IP> 
+    ports:
+      httpratings: 15443 # Do not change this port value
+---

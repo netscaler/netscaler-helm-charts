@@ -8,11 +8,24 @@ cic:
 cpx:
   enabled: False
 
+mcIngress:
+  enabled: False
+
 cnc:
   enabled: False
 
-ia-ingress:
+coe:
   enabled: False
 
-ia-sidecar:
+ipam:
   enabled: False
+
+iaIngress:
+  enabled: False
+
+iaSidecar:
+  enabled: False
+
+iaEgress:
+  enabled: False
+

@@ -1,0 +1,78 @@
+{{- if .Values.openshift }}
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+{{- else }}
+apiVersion: apps/v1
+kind: Deployment
+{{- end}}
+metadata:
+  name: {{ include "citrix-multi-cluster-ingress-controller.fullname" . }}
+spec:
+  selector:
+{{- if .Values.openshift }}
+     router: {{ include "citrix-multi-cluster-ingress-controller.fullname" . }}
+{{- else }}
+    matchLabels:
+      app: {{ include "citrix-multi-cluster-ingress-controller.fullname" . }}
+{{- end }}
+  replicas: 1
+{{- if .Values.openshift }}
+  strategy:
+    resources: {}
+    rollingParams:
+      intervalSeconds: 1
+      maxSurge: 0
+      maxUnavailable: 25%
+      timeoutSeconds: 600
+      updatePeriodSeconds: 1
+    type: Rolling
+{{- end}}
+  template:
+    metadata:
+      name: {{ include "citrix-multi-cluster-ingress-controller.name" . }}
+      labels:
+{{- if .Values.openshift }}
+        router: {{ include "citrix-multi-cluster-ingress-controller.fullname" . }}
+{{- else }}
+        app: {{ include "citrix-multi-cluster-ingress-controller.fullname" . }}
+{{- end }}
+    spec:
+      serviceAccountName: {{ include "citrix-multi-cluster-ingress-controller.serviceAccountName" . }}
+      containers:
+      - name: {{ include "citrix-multi-cluster-ingress-controller.name" . }}
+        image: "{{ .Values.image }}"
+        imagePullPolicy: {{ .Values.pullPolicy }}
+        env:
+        - name: "LOCAL_REGION"
+          value: {{ .Values.localRegion }}
+        - name: "LOCAL_CLUSTER"
+          value: {{ .Values.localCluster }}
+        - name: "SITENAMES"
+          value: {{ include "citrix-multi-cluster-ingress-controller.sites" .}}
+        {{- range .Values.sitedata }}
+        - name: {{ include "citrix-multi-cluster-ingress-controller.siteip" .}}
+          value: {{ .siteIp }}
+        - name: {{ include "citrix-multi-cluster-ingress-controller.siteusername" .}}
+          valueFrom:
+            secretKeyRef:
+              name: {{ .secretName }}
+              key: username
+        - name: {{ include "citrix-multi-cluster-ingress-controller.sitepassword" .}}
+          valueFrom:
+            secretKeyRef:
+              name: {{ .secretName }}
+              key: password
+        - name: {{ include "citrix-multi-cluster-ingress-controller.siteregion" .}}
+          value: {{ .siteRegion }}
+        {{- end }}
+        - name: "EULA"
+          value: "{{ .Values.license.accept }}"
+        - name: "NS_APPS_NAME_PREFIX"
+          value: {{ .Values.entityPrefix | default "k8s"}}
+        args:
+        - --config-interface
+          gslb-endpoints
+{{- if .Values.kubernetesURL }}
+        - name: "kubernetes_url"
+          value: "{{ .Values.kubernetesURL }}"
+{{- end}}

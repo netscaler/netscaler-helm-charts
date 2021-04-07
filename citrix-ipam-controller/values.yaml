@@ -1,0 +1,16 @@
+# Default values for citrix-ipam-controller.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+image: quay.io/citrix/citrix-ipam-controller:0.0.1
+pullPolicy: IfNotPresent
+
+vipRange:
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""

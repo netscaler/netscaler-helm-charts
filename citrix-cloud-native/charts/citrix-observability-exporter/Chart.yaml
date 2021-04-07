@@ -1,0 +1,14 @@
+apiVersion: v2
+appVersion: "1.2.001"
+description: A Helm chart for Citrix Observability Exporter
+name: citrix-observability-exporter
+version: 1.2.001
+icon: https://raw.githubusercontent.com/citrix/citrix-helm-charts/gh-pages/icon.png 
+home: https://www.citrix.com
+sources:
+- https://github.com/citrix/citrix-observability-exporter
+maintainers:
+- name: SathiyaCV
+  email: sathiya.viswanathan@citrix.com
+- name: NagarajHarikar
+  email: nagarajb.harikar@citrix.com

@@ -1,4 +1,4 @@
-# Citrix Ingress Controller  
+# Citrix Ingress Controller
 
 [Citrix](https://www.citrix.com/en-in/) provides an Ingress Controller for Citrix ADC MPX (hardware), Citrix ADC VPX (virtualized), and [Citrix ADC CPX](https://docs.citrix.com/en-us/citrix-adc-cpx/13/about.html) (containerized) for [bare metal](https://github.com/citrix/citrix-k8s-ingress-controller/tree/master/deployment/baremetal) and [cloud](https://github.com/citrix/citrix-k8s-ingress-controller/tree/master/deployment) deployments. It configures one or more Citrix ADC based on the Ingress resource configuration in [Kubernetes](https://kubernetes.io/) or in [OpenShift](https://www.openshift.com) cluster.
 
@@ -8,7 +8,7 @@
    ```
    helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-   helm install cic citrix/citrix-ingress-controller --set nsIP=<NSIP>,license.accept=yes,loginFileName=<Secret-for-ADC-credentials>
+   helm install cic citrix/citrix-ingress-controller --set nsIP=<NSIP>,license.accept=yes,adcCredentialSecret=<Secret-for-ADC-credentials>
    ```
 
 ### For OpenShift
@@ -16,7 +16,7 @@
    ```
    helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-   helm install cic citrix/citrix-ingress-controller --set nsIP=<NSIP>,license.accept=yes,loginFileName=<Secret-for-ADC-credentials>,openshift=true
+   helm install cic citrix/citrix-ingress-controller --set nsIP=<NSIP>,license.accept=yes,adcCredentialSecret=<Secret-for-ADC-credentials>,openshift=true
    ```
 
 > **Important:**
@@ -110,7 +110,7 @@ Add the Citrix Ingress Controller helm chart repository using command:
 #### 1. Citrix Ingress Controller
 To install the chart with the release name, `my-release`, use the following command:
    ```
-   helm install my-release citrix/citrix-ingress-controller --set nsIP=<NSIP>,license.accept=yes,loginFileName=<Secret-for-ADC-credentials>,ingressClass[0]=<ingressClassName>
+   helm install my-release citrix/citrix-ingress-controller --set nsIP=<NSIP>,license.accept=yes,adcCredentialSecret=<Secret-for-ADC-credentials>,ingressClass[0]=<ingressClassName>
    ```
 
 > **Note:**
@@ -127,20 +127,20 @@ The command deploys Citrix ingress controller on Kubernetes cluster with the def
 
 Use the following command for this:
    ```
-   helm install my-release citrix/citrix-ingress-controller --set nsIP=<NSIP>,license.accept=yes,loginFileName=<Secret-for-ADC-credentials>,ingressClass[0]=<ingressClassName>,exporter.required=true
+   helm install my-release citrix/citrix-ingress-controller --set nsIP=<NSIP>,license.accept=yes,adcCredentialSecret=<Secret-for-ADC-credentials>,ingressClass[0]=<ingressClassName>,exporter.required=true
    ```
 
 ### For Openshift:
-Add the service account named "cic-k8s-role" to the privileged Security Context Constraints of OpenShift:
+Add the name of the service account created when the chart is deployed to the privileged Security Context Constraints of OpenShift:
 
    ```
-   oc adm policy add-scc-to-user privileged system:serviceaccount:<namespace>:cic-k8s-role
+   oc adm policy add-scc-to-user privileged system:serviceaccount:<namespace>:<service-account-name>
    ```
 
 #### 1. Citrix Ingress Controller
 To install the chart with the release name, `my-release`, use the following command:
    ```
-   helm install my-release citrix/citrix-ingress-controller --set nsIP=<NSIP>,license.accept=yes,loginFileName=<Secret-for-ADC-credentials>,openshift=true
+   helm install my-release citrix/citrix-ingress-controller --set nsIP=<NSIP>,license.accept=yes,adcCredentialSecret=<Secret-for-ADC-credentials>,openshift=true
    ```
 
 The command deploys Citrix ingress controller on your Openshift cluster in the default configuration. The [configuration](#configuration) section lists the mandatory and optional parameters that you can configure during installation.
@@ -153,7 +153,7 @@ The command deploys Citrix ingress controller on your Openshift cluster in the d
 
 Use the following command for this:
    ```
-   helm install my-release citrix/citrix-ingress-controller --set nsIP=<NSIP>,license.accept=yes,loginFileName=<Secret-for-ADC-credentials>,openshift=true,exporter.required=true
+   helm install my-release citrix/citrix-ingress-controller --set nsIP=<NSIP>,license.accept=yes,adcCredentialSecret=<Secret-for-ADC-credentials>,openshift=true,exporter.required=true
    ```
 
 ### Installed components
@@ -166,7 +166,7 @@ The following components are installed:
 
 ## CRDs configuration
 
-CRDs gets installed/upgraded automatically when we install/upgrade Citrix ingress controller using Helm. If you do not want to install CRDs, then set the option `crds.install` to `false`. By default, CRDs too get deleted if you uninstall through Helm. This means, even the CustomResource objects created by the customer will get deleted. If you want to avoid this data loss set `crds.retainOnDelete` to `true`.
+CRDs can be installed/upgraded when we install/upgrade Citrix ingress controller using `crds.install=true` parameter in Helm. If you do not want to install CRDs, then set the option `crds.install` to `false`. By default, CRDs too get deleted if you uninstall through Helm. This means, even the CustomResource objects created by the customer will get deleted. If you want to avoid this data loss set `crds.retainOnDelete` to `true`.
 
 > **Note:**
 > Installing again may fail due to the presence of CRDs. Make sure that you back up all CustomResource objects and clean up CRDs before re-installing Citrix Ingress Controller.
@@ -176,17 +176,17 @@ There are a few examples of how to use these CRDs, which are placed in the folde
 
 ### Details of the supported CRDs:
 
-#### authpolicies CRD: 
+#### authpolicies CRD:
 
 Authentication policies are used to enforce access restrictions to resources hosted by an application or an API server.
 
 Citrix provides a Kubernetes CustomResourceDefinitions (CRDs) called the [Auth CRD](https://github.com/citrix/citrix-k8s-ingress-controller/tree/master/crd/auth) that you can use with the Citrix ingress controller to define authentication policies on the ingress Citrix ADC.
 
 Example file: [auth_example.yaml](https://github.com/citrix/citrix-helm-charts/tree/master/example-crds/auth_example.yaml)
- 
+
 #### continuousdeployments CRD  for canary:
 
-Canary release is a technique to reduce the risk of introducing a new software version in production by first rolling out the change to a small subset of users. After user validation, the application is rolled out to the larger set of users. Citrix ADC-Integrated [Canary Deployment solution](https://github.com/citrix/citrix-k8s-ingress-controller/tree/master/crd/canary) stitches together all components of continuous delivery (CD) and makes canary deployment easier for the application developers. 
+Canary release is a technique to reduce the risk of introducing a new software version in production by first rolling out the change to a small subset of users. After user validation, the application is rolled out to the larger set of users. Citrix ADC-Integrated [Canary Deployment solution](https://github.com/citrix/citrix-k8s-ingress-controller/tree/master/crd/canary) stitches together all components of continuous delivery (CD) and makes canary deployment easier for the application developers.
 
 #### httproutes and listeners CRDs for contentrouting:
 
@@ -214,6 +214,43 @@ In kubernetes environment, to deploy specific layer 7 policies to handle scenari
 
 Example files: [target-url-rewrite.yaml](https://github.com/citrix/citrix-helm-charts/tree/master/example-crds/target-url-rewrite.yaml)
 
+#### wafs CRD:
+
+[WAF CRD](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/crds/waf.md) can be used to configure the web application firewall policies with the Citrix ingress controller on the Citrix ADC VPX, MPX, SDX, and CPX. The WAF CRD enables communication between the Citrix ingress controller and Citrix ADC for enforcing web application firewall policies.
+
+In a Kubernetes deployment, you can enforce a web application firewall policy to protect the server using the WAF CRD. For more information about web application firewall, see [Web application security](https://docs.citrix.com/en-us/citrix-adc/13/application-firewall/introduction/web-application-security.html).
+
+Example files: [wafhtmlxsssql.yaml](https://github.com/citrix/citrix-helm-charts/tree/master/example-crds/wafhtmlxsssql.yaml)
+
+#### apigateway CRD:
+
+API Gateway CRD is used to configure gitops framework on citrix API gateway. This solution enables citrix ingress controller to generate API gateway configurations out of Open API Specification documents checked in to git repository by API developers and designers.
+
+Example files: [api-gateway-crd-instance.yaml](https://github.com/citrix/citrix-helm-charts/tree/master/example-crds/api-gateway-crd-instance.yaml)
+#### bots CRD:
+
+[BOT CRD](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/crds/bot.md) You can use Bot CRDs to configure the bot management policies with the Citrix ingress controller on the Citrix ADC VPX. The Bot custom resource definition enables communication between the Citrix ingress controller and Citrix ADC for enforcing bot management policies.
+
+In a Kubernetes deployment, you can enforce bot management policy on therequests and responses from and to the server using the Bot CRDs. For more information on security vulnerabilities, see [Bot Detection](https://docs.citrix.com/en-us/citrix-adc/current-release/bot-management/bot-detection.html).
+
+Example files: [botallowlist.yaml](https://github.com/citrix/citrix-helm-charts/tree/master/example-crds/botallowlist.yaml)
+
+### Tolerations
+
+Taints are applied on cluster nodes whereas tolerations are applied on pods. Tolerations enable pods to be scheduled on node with matching taints. For more information see [Taints and Tolerations in Kubernetes](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/).
+
+Toleration can be applied to Citrix ingress controller pod using `tolerations` argument while deploying CIC using helm chart. This argument takes list of tolerations that user need to apply on the CIC pods.
+
+For example, following command can be used to apply toleration on the CIC pod:
+
+```
+helm install my-release citrix/citrix-ingress-controller --set nsIP=<NSIP>,license.accept=yes,adcCredentialSecret=<Secret-for-ADC-credentials>,tolerations[0].key=<toleration-key>,tolerations[0].value=<toleration-value>,tolerations[0].operator=<toleration-operator>,tolerations[0].effect=<toleration-effect>
+```
+
+Here tolerations[0].key, tolerations[0].value and tolerations[0].effect are the key, value and effect that was used while tainting the node.
+Effect represents what should happen to the pod if the pod don't have any matching toleration. It can have values `NoSchedule`, `NoExecute` and `PreferNoSchedule`.
+Operator represents the operation to be used for key and value comparison between taint and tolerations. It can have values `Exists` and `Equal`. The default value for operator is `Equal`.
+
 ### Configuration
 
 The following table lists the mandatory and optional parameters that you can configure during installation:
@@ -221,29 +258,52 @@ The following table lists the mandatory and optional parameters that you can con
 | Parameters | Mandatory or Optional | Default value | Description |
 | --------- | --------------------- | ------------- | ----------- |
 | license.accept | Mandatory | no | Set `yes` to accept the CIC end user license agreement. |
-| image | Mandatory | `quay.io/citrix/citrix-k8s-ingress-controller:1.8.19` | The CIC image. |
-| pullPolicy | Mandatory | Always | The CIC image pull policy. |
-| loginFileName | Mandatory | N/A | The secret key to log on to the Citrix ADC VPX or MPX. For information on how to create the secret keys, see [Prerequisites](#prerequistes). |
+| image | Mandatory | `quay.io/citrix/citrix-k8s-ingress-controller:1.13.20` | The CIC image. |
+| pullPolicy | Mandatory | IfNotPresent | The CIC image pull policy. |
+| adcCredentialSecret | Mandatory | N/A | The secret key to log on to the Citrix ADC VPX or MPX. For information on how to create the secret keys, see [Prerequisites](#prerequistes). |
 | nsIP | Mandatory | N/A | The IP address of the Citrix ADC device. For details, see [Prerequisites](#prerequistes). |
 | nsVIP | Optional | N/A | The Virtual IP address on the Citrix ADC device. |
+| nsSNIPS | Optional | N/A | The list of subnet IPAddresses on the Citrix ADC device, which will be used to create PBR Routes instead of Static Routes [PBR support](https://github.com/citrix/citrix-k8s-ingress-controller/tree/master/docs/how-to/pbr.md) |
 | nsPort | Optional | 443 | The port used by CIC to communicate with Citrix ADC. You can use port 80 for HTTP. |
 | nsProtocol | Optional | HTTPS | The protocol used by CIC to communicate with Citrix ADC. You can also use HTTP on port 80. |
 | logLevel | Optional | DEBUG | The loglevel to control the logs generated by CIC. The supported loglevels are: CRITICAL, ERROR, WARNING, INFO, DEBUG and TRACE. For more information, see [Logging](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/configure/log-levels.md).|
 | kubernetesURL | Optional | N/A | The kube-apiserver url that CIC uses to register the events. If the value is not specified, CIC uses the [internal kube-apiserver IP address](https://kubernetes.io/docs/tasks/access-application-cluster/access-cluster/#accessing-the-api-from-a-pod). |
-| ingressClass | Optional | N/A | If multiple ingress load balancers are used to load balance different ingress resources. You can use this parameter to specify CIC to configure Citrix ADC associated with specific ingress class. For more information on Ingress class, see [Ingress class support](https://developer-docs.citrix.com/projects/citrix-k8s-ingress-controller/en/latest/configure/ingress-classes/). |
+| ingressClass | Optional | N/A | If multiple ingress load balancers are used to load balance different ingress resources. You can use this parameter to specify CIC to configure Citrix ADC associated with specific ingress class. For more information on Ingress class, see [Ingress class support](https://developer-docs.citrix.com/projects/citrix-k8s-ingress-controller/en/latest/configure/ingress-classes/). For Kubernetes version >= 1.19, this will create an IngressClass object with the name specified here |
+| setAsDefaultIngressClass | Optional | False | Set the IngressClass object as default ingress class. New Ingresses without an "ingressClassName" field specified will be assigned the class specified in ingressClass. Applicable only for kubernetes versions >= 1.19 |
+| serviceClass | Optional | N/A | By Default ingress controller configures all TypeLB Service on the ADC. You can use this parameter to finetune this behavior by specifing CIC to only configure TypeLB Service with specific service class. For more information on Service class, see [Service class support](https://developer-docs.citrix.com/projects/citrix-k8s-ingress-controller/en/latest/configure/service-classes/). |
 | nodeWatch | Optional | false | Use the argument if you want to automatically configure network route from the Ingress Citrix ADC VPX or MPX to the pods in the Kubernetes cluster. For more information, see [Automatically configure route on the Citrix ADC instance](https://developer-docs.citrix.com/projects/citrix-k8s-ingress-controller/en/latest/network/staticrouting/#automatically-configure-route-on-the-citrix-adc-instance). |
-| defaultSSLCert | Optional | N/A | Default SSL certificate that needs to be used as a non-SNI certificate in Citrix ADC. |
-| http2ServerSide | Optional | OFF | Enables HTTP2 for Citrix ADC service group configurations. |
+| defaultSSLCertSecret | Optional | N/A | Provide Kubernetes secret name that needs to be used as a default non-SNI certificate in Citrix ADC. |
+| podIPsforServiceGroupMembers | Optional | False |  By default Citrix Ingress Controller will add NodeIP and NodePort as service group members while configuring type LoadBalancer Services and NodePort services. This variable if set to `True` will change the behaviour to add pod IP and Pod port instead of nodeIP and nodePort. Users can set this to `True` if there is a route between ADC and K8s clusters internal pods either using feature-node-watch argument or using Citrix Node Controller. |
+| ignoreNodeExternalIP | Optional | False | While adding NodeIP, as Service group members for type LoadBalancer services or NodePort services, Citrix Ingress Controller has a selection criteria whereas it choose Node ExternalIP if available and Node InternalIP, if Node ExternalIP is not present. But some users may want to use Node InternalIP over Node ExternalIP even if Node ExternalIP is present. If this variable is set to `True`, then it prioritises the Node Internal IP to be used for service group members even if node ExternalIP is present |
+| nsHTTP2ServerSide | Optional | OFF | Set this argument to `ON` for enabling HTTP2 for Citrix ADC service group configurations. |
+| nsCookieVersion | Optional | 0 | Specify the persistence cookie version (0 or 1). |
 | ipam | Optional | False | Set this argument if you want to use the IPAM controller to automatically allocate an IP address to the service of type LoadBalancer. |
 | logProxy | Optional | N/A | Provide Elasticsearch or Kafka or Zipkin endpoint for Citrix observability exporter. |
-| nsNamespace | Optional | k8s | The prefix for the resources on the Citrix ADC VPX/MPX. |
+| entityPrefix | Optional | k8s | The prefix for the resources on the Citrix ADC VPX/MPX. |
+| updateIngressStatus | Optional | False | Set this argurment if `Status.LoadBalancer.Ingress` field of the Ingress resources managed by the Citrix ingress controller needs to be updated with allocated IP addresses. For more information see [this](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/configure/ingress-classes.md#updating-the-ingress-status-for-the-ingress-resources-with-the-specified-ip-address). |
+| routeLabels | Optional | N/A | You can use this parameter to provide the route labels selectors to be used by Citrix Ingress Controller for routeSharding in OpenShift cluster. |
+| namespaceLabels | Optional | N/A | You can use this parameter to provide the namespace labels selectors to be used by Citrix Ingress Controller for routeSharding in OpenShift cluster. |
 | exporter.required | Optional | false | Use the argument, if you want to run the [Exporter for Citrix ADC Stats](https://github.com/citrix/citrix-adc-metrics-exporter) along with CIC to pull metrics for the Citrix ADC VPX or MPX|
-| exporter.image    | Optional | `quay.io/citrix/citrix-adc-metrics-exporter:1.4.3` | The Exporter image. |
-| exporter.pullPolicy | Optional | Always | The Exporter image pull policy. |
+| exporter.image    | Optional | `quay.io/citrix/citrix-adc-metrics-exporter:1.4.7` | The Exporter image. |
+| exporter.pullPolicy | Optional | IfNotPresent | The Exporter image pull policy. |
 | exporter.ports.containerPort | Optional | 8888 | The Exporter container port. |
 | openshift | Optional | false | Set this argument if OpenShift environment is being used. |
-| crds.install | Optional | true | Unset this argument if you don't want to install CustomResourceDefinitions which are consumed by CIC. |
+| nodeSelector.key | Optional | N/A | Node label key to be used for nodeSelector option in CIC deployment. |
+| nodeSelector.value | Optional | N/A | Node label value to be used for nodeSelector option in CIC deployment. |
+| tolerations | Optional | N/A | Specify the tolerations for the CIC deployment. |
+| crds.install | Optional | False | Unset this argument if you don't want to install CustomResourceDefinitions which are consumed by CIC. |
 | crds.retainOnDelete | Optional | false | Set this argument if you want to retain CustomResourceDefinitions even after uninstalling CIC. This will avoid data-loss of Custom Resource Objects created before uninstallation. |
+| coeConfig.required | Mandatory | false | Set this to true if you want to configure Citrix ADC to send metrics and transaction records to COE. |
+| coeConfig.distributedTracing.enable | Optional | false | Set this value to true to enable OpenTracing in Citrix ADC. |
+| coeConfig.distributedTracing.samplingrate | Optional | 100 | Specifies the OpenTracing sampling rate in percentage. |
+| coeConfig.endpoint.server | Optional | N/A | Set this value as the IP address or DNS address of the  analytics server. |
+| coeConfig.timeseries.port | Optional | 30002 | Specify the port used to expose COE service outside cluster for timeseries endpoint. |
+| coeConfig.timeseries.metrics.enable | Optional | False | Set this value to true to enable sending metrics from Citrix ADC. |
+| coeConfig.timeseries.metrics.mode | Optional | avro |  Specifies the mode of metric endpoint. |
+| coeConfig.timeseries.auditlogs.enable | Optional | false | Set this value to true to export audit log data from Citrix ADC. |
+| coeConfig.timeseries.events.enable | Optional | false | Set this value to true to export events from the Citrix ADC. |
+| coeConfig.transactions.enable | Optional | false | Set this value to true to export transactions from Citrix ADC. |
+| coeConfig.transactions.port | Optional | 30001 | Specify the port used to expose COE service outside cluster for transaction endpoint. |
 
 Alternatively, you can define a YAML file with the values for the parameters and pass the values while installing the chart.
 
@@ -252,19 +312,28 @@ For example:
    helm install my-release citrix/citrix-ingress-controller -f values.yaml
    ```
 
-> **Tip:** 
+> **Tip:**
 >
 > The [values.yaml](https://github.com/citrix/citrix-helm-charts/blob/master/citrix-ingress-controller/values.yaml) contains the default values of the parameters.
 
 > **Note:**
-> 
+>
 > Please provide frontend-ip (VIP) in your application ingress yaml file. For more info refer [this](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/configure/annotations.md).
 
 ## Route Addition in MPX/VPX
-For seamless functioning of services deployed in the Kubernetes cluster, it is essential that Ingress NetScaler device should be able to reach the underlying overlay network over which Pods are running. 
+For seamless functioning of services deployed in the Kubernetes cluster, it is essential that Ingress NetScaler device should be able to reach the underlying overlay network over which Pods are running.
 `feature-node-watch` knob of Citrix Ingress Controller can be used for automatic route configuration on NetScaler towards the pod network. Refer [Static Route Configuration](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/network/staticrouting.md) for further details regarding the same.
 By default, `feature-node-watch` is false. It needs to be explicitly set to true if auto route configuration is required.
+
 This can also be achieved by deploying [Citrix Node Controller](https://github.com/citrix/citrix-k8s-node-controller).
+
+If your deployment uses one single Citrix ADC Device to loadbalance between multiple k8s clusters, there is a possibilty of CNI subnets to overlap, causing the above mentioned static routing to fail due to route conflicts. In such deployments [Policy Based Routing(PBR)] (https://docs.citrix.com/en-us/citrix-adc/current-release/networking/ip-routing/configuring-policy-based-routes/configuring-policy-based-routes-pbrs-for-ipv4-traffic.html) can be used instead. This would require you to provide one or more subnet IP Addresses unique for each kubernetes cluster either via Environment variable or Configmap, see [PBR Support](https://github.com/citrix/citrix-k8s-ingress-controller/tree/master/docs/how-to/pbr.md)
+   
+   Use the following command to provide subnet IPAddresses(SNIPs) to configure Policy Based Routes(PBR) on the Citrix ADC
+
+   ```
+   helm install my-release citrix/citrix-ingress-controller --set nsIP=<NSIP>,license.accept=yes,adcCredentialSecret=<Secret-for-ADC-credentials>,nsSNIPS='[<NS_SNIP1>\, <NS_SNIP2>\, ...]'
+   ```
 
 For configuring static routes manually on Citrix ADC VPX or MPX to reach the pods inside the cluster follow:
 ### For Kubernetes:

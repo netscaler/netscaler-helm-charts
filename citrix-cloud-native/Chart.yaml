@@ -14,22 +14,38 @@ maintainers:
   email: subash.dangol@citrix.com
 dependencies:
   - name: citrix-ingress-controller
-    version: "1.8.19"
+    version: "1.13.20"
     condition: cic.enabled
     alias: cic
   - name: citrix-cpx-with-ingress-controller
-    version: "1.8.19"
+    version: "1.13.20"
     condition: cpx.enabled
     alias: cpx
+  - name: citrix-multi-cluster-ingress-controller
+    version: "1.13.20"
+    condition: mcIngress.enabled
+    alias: mcIngress
   - name: citrix-node-controller
-    version: "2.0.0"
+    version: "2.2.1"
     condition: cnc.enabled
     alias: cnc
+  - name: citrix-observability-exporter
+    version: "1.2.001"
+    condition: coe.enabled
+    alias: coe
+  - name: citrix-ipam-controller
+    version: "0.0.1"
+    condition: ipam.enabled
+    alias: ipam
   - name: citrix-adc-istio-ingress-gateway
-    version: "1.2.1"
-    condition: ia-ingress.enabled
-    alias: ia-ingress
+    version: "1.6.4"
+    condition: iaIngress.enabled
+    alias: iaIngress
   - name: citrix-cpx-istio-sidecar-injector
-    version: "1.2.1"
-    condition: ia-sidecar.enabled
-    alias: ia-sidecar
+    version: "1.6.4"
+    condition: iaSidecar.enabled
+    alias: iaSidecar
+  - name: citrix-adc-istio-egress-gateway
+    version: "1.6.4"
+    condition: iaEgress.enabled
+    alias: iaEgress

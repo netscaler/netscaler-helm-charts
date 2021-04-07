@@ -1,18 +1,15 @@
 ---
-apiVersion: "authentication.istio.io/v1alpha1"
-kind: "Policy"
+apiVersion: "security.istio.io/v1beta1"
+kind: "PeerAuthentication"
 metadata:
   name: bookinfo-policy
   namespace: {{ .Release.Namespace }}
 spec:
-  targets:
-  - name: reviews
-  - name: productpage
-  - name: ratings
-  - name: details
+  mtls:
 {{- if eq .Values.mtlsEnabled true }}
-  peers:
-  - mtls: {}
+    mode: STRICT
+{{- else }}
+    mode: DISABLE
 {{- end }}
 ---
 apiVersion: "networking.istio.io/v1alpha3"

@@ -1,0 +1,23 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: citrix-egressgateway
+spec:
+  selector:
+    app: citrix-egressgateway
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - edition.cnn.com
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: citrix-egressgateway-for-cnn
+spec:
+  host: citrix-egressgateway.citrix-system.svc.cluster.local
+  subsets:
+  - name: cnn

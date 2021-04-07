@@ -12,13 +12,13 @@ Bookinfo application is the Helloworld of Istio environment. This application di
 
 ## <a name="citrix-ingress-gateway">A) Deploying Citrix ADC as Ingress Gateway</a>
 
-Follow the link "Deploy Citrix ADC as an Ingress Gateway using Helm charts" in [deployment guide](https://github.com/citrix/citrix-istio-adaptor#deployment-options). Citrix ADC can either be CPX or VPX/MPX. The given bookinfo deployment should work fine in both cases. 
+Follow the link "Deploy Citrix ADC as an Ingress Gateway using Helm charts" in [deployment guide](https://github.com/citrix/citrix-istio-adaptor/tree/master/docs/istio-integration#deployment-options). Citrix ADC can either be CPX or VPX/MPX. The given bookinfo deployment should work fine in both cases. 
 
 - **Important Note:** For deploying Citrix ADC VPX or MPX as ingress gateway, you should establish the connectivity between Citrix ADC VPX or MPX and cluster nodes. This connectivity can be established by configuring routes on Citrix ADC as mentioned [here](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/network/staticrouting.md) or by deploying [Citrix Node Controller](https://github.com/citrix/citrix-k8s-node-controller).
 
 ## <a name="citrix-sidecar-injector">B) Deploying Citrix ADC Sidecar Injector </a>
 
-Follow the link "Deploy Citrix ADC CPX as a sidecar using Helm charts" in [deployment guide](https://github.com/citrix/citrix-istio-adaptor#deployment-options). Citrix ADC CPX will be injected as a sidecar on the labeled namespace. If you do not wish to inject sidecar, this step can be skipped. In that case, Citrix ADC will only act as an Ingress Gateway. 
+Follow the link "Deploy Citrix ADC CPX as a sidecar using Helm charts" in [deployment guide](https://github.com/citrix/citrix-istio-adaptor/tree/master/docs/istio-integration#deployment-options). Citrix ADC CPX will be injected as a sidecar on the labeled namespace. If you do not wish to inject sidecar, this step can be skipped. In that case, Citrix ADC will only act as an Ingress Gateway. 
 
 ## <a name="deploying-bookinfo">C) Deploying Bookinfo</a>
 
@@ -178,7 +178,7 @@ kubectl apply -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-hel
 
 ```
 
-export INGRESS_IP=$(kubectl get pods -l app=citrix-ingressgateway -n citrix-system -o 'jsonpath={.items[0].spec.containers[?(@.name=="istio-adaptor")].args}' | awk '{ for(i=1;i<=NF;++i) { if ($i=="-vserver-ip") print $(i+1) } }')
+export INGRESS_IP=$(kubectl get pods -l app=citrix-ingressgateway -n citrix-system -o 'jsonpath={.items[0].spec.containers[?(@.name=="istio-adaptor")].args}' | awk '{ for(i=1;i<=NF;++i) { if ($i=="-citrix-adc-vip") print $(i+1) } }')
 
 ```
 
