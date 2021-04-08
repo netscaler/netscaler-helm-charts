@@ -39,7 +39,7 @@ For detailed information on different deployment options, see [Deployment Archit
 
 The following prerequisites are required for deploying Citrix ADC as a sidecar to an application pod.
 
-- Ensure that **Istio version 1.6.4** is installed
+- Ensure that **Istio version 1.6.4 onwards** is installed
 - Ensure that Helm with version 3.x is installed. Follow this [step](https://github.com/citrix/citrix-helm-charts/blob/master/Helm_Installation_version_3.md) to install the same.
 - Ensure that your cluster has Kubernetes version 1.14.0 or later and the `admissionregistration.k8s.io/v1beta1` API is enabled
 - Create namespace `citrix-system`
@@ -205,7 +205,7 @@ The following table lists the configurable parameters and their default values i
 | Parameter                      | Description                   | Default                   |
 |--------------------------------|-------------------------------|---------------------------|
 | `iaSidecar.enabled` | Mandatory | False | Set to "True" for deploying Citrix ADC CPX as a sidecar in Istio environment. |
-| `iaSidecar.xDSadaptor.image`                    | Image of the Citrix xDS Adaptor container                    |  quay.io/citrix/citrix-xds-adaptor:0.9.5   |
+| `iaSidecar.xDSadaptor.image`                    | Image of the Citrix xDS Adaptor container                    |  quay.io/citrix/citrix-xds-adaptor:0.9.8   |
 | `iaSidecar.xDSadaptor.imagePullPolicy`   | Image pull policy for xDS-adaptor | IfNotPresent        |
 | `iaSidecar.xDSadaptor.secureConnect`     | If this value is set to true, xDS-adaptor establishes secure gRPC channel with Istio Pilot   | TRUE                       |
 | `iaSidecar.coe.coeURL`          | Name of [Citrix Observability Exporter](https://github.com/citrix/citrix-observability-exporter) Service in the form of _servicename.namespace_  | NIL            | Optional|
@@ -222,7 +222,7 @@ The following table lists the configurable parameters and their default values i
 | `iaSidecar.istioPilot.proxyType`      | Type of Citrix ADC associated with the xDS-adaptor. Possible values are: sidecar and router.                                                                              |   sidecar|
 | `iaSidecar.istioPilot.SAN`                 | Subject alternative name for Istio Pilot which is the Secure Production Identity Framework For Everyone (SPIFFE) ID of Istio Pilot.                                   | null |
 | `iaSidecar.cpxProxy.netscalerUrl`   |    URL or IP address of the Citrix ADC which will be configured by xDS-adaptor.                                                            | http://127.0.0.1 |
-| `iaSidecar.cpxProxy.image`          | Citrix ADC CPX image used as sidecar proxy                                                                                                    | quay.io/citrix/citrix-k8s-cpx-ingress:13.0-64.35 |
+| `iaSidecar.cpxProxy.image`          | Citrix ADC CPX image used as sidecar proxy                                                                                                    | quay.io/citrix/citrix-k8s-cpx-ingress:13.0-76.29 |
 | `iaSidecar.cpxProxy.imagePullPolicy`           | Image pull policy for Citrix ADC                                                                                  | IfNotPresent                                                               |
 | `iaSidecar.cpxProxy.EULA`              |  End User License Agreement(EULA) terms and conditions. If yes, then user agrees to EULA terms and conditions.                                                     | NO |
 | `iaSidecar.cpxProxy.cpxSidecarMode`            | Environment variable for Citrix ADC CPX. It indicates that Citrix ADC CPX is running as sidecar mode or not.                                                                                               | YES                                                                    |

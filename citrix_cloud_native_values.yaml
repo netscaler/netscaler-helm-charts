@@ -27,7 +27,6 @@ cic:
   nodeSelector:
     key:
     value:
-  tolerations: []
   updateIngressStatus: False
   nsHTTP2ServerSide: "OFF"
   nsCookieVersion: "0"
@@ -123,7 +122,6 @@ cpx:
   nodeSelector:
     key:
     value:
-  tolerations: []
 
   serviceType:
     loadBalancer:
@@ -233,7 +231,7 @@ iaIngress:
     imagePullPolicy: IfNotPresent
 
   xDSAdaptor:
-    image: quay.io/citrix/citrix-xds-adaptor:0.9.5
+    image: quay.io/citrix/citrix-xds-adaptor:0.9.8
     imagePullPolicy: IfNotPresent
     proxyType: router
     secureConnect: true
@@ -256,7 +254,7 @@ iaIngress:
 
   ingressGateway:
     netscalerUrl: null
-    image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-64.35
+    image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-76.29
     imagePullPolicy: IfNotPresent
     EULA: NO
     mgmtHttpPort: 10080
@@ -286,6 +284,8 @@ iaIngress:
     bandWidth:
     vCPULicense: false
     cpxCores:
+
+  secretName: nslogin
 
 iaEgress:
   enabled: False
@@ -319,7 +319,7 @@ iaEgress:
     jwtPolicy: first-party-jwt #specify third-party-jwt if Kubernetes cluster supports third-party tokens
 
   xDSAdaptor:
-    image: quay.io/citrix/citrix-xds-adaptor:0.9.5
+    image: quay.io/citrix/citrix-xds-adaptor:0.9.8
     imagePullPolicy: IfNotPresent
     proxyType: router
     secureConnect: true
@@ -327,7 +327,7 @@ iaEgress:
 
   egressGateway:
     netscalerUrl: null
-    image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-64.35
+    image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-76.29
     imagePullPolicy: IfNotPresent
     EULA: false
     mgmtHttpPort: 10080
@@ -338,7 +338,7 @@ iaEgress:
     adcServerName:
     netProfile:
 
- ADMSettings:
+  ADMSettings:
     ADMIP:
     ADMFingerPrint:
     licenseServerIP:
@@ -348,12 +348,14 @@ iaEgress:
     vCPULicense: false
     cpxCores:
 
+  secretName: nsloginegress
+
              
 iaSidecar:
   enabled: False
 
   xDSAdaptor:
-    image: quay.io/citrix/citrix-xds-adaptor:0.9.5
+    image: quay.io/citrix/citrix-xds-adaptor:0.9.8
     imagePullPolicy: IfNotPresent
     proxyType: sidecar
     secureConnect: true
@@ -375,7 +377,7 @@ iaSidecar:
 
   cpxProxy:
     netscalerUrl: "http://127.0.0.1"
-    image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-64.35
+    image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-76.29
     imagePullPolicy: IfNotPresent
     EULA: NO
     cpxSidecarMode: YES

@@ -1,7 +1,7 @@
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
-    name: {{ .Values.egressGateway.label | default "citrix-egressgateway" }} 
+    name: {{ template "generate-name" (list . (dict "suffixname" "citrix-egress-hpa")) }} 
     namespace: {{ .Release.Namespace }}
 spec:
     maxReplicas: 1
@@ -9,7 +9,7 @@ spec:
     scaleTargetRef:
       apiVersion: apps/v1beta1
       kind: Deployment
-      name: {{ .Values.egressGateway.label | default "citrix-egressgateway" }} 
+      name: {{ template "generate-name" (list . (dict "suffixname" "egress-deployment")) }}
     metrics:
       - type: Resource
         resource:
@@ -20,7 +20,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Values.egressGateway.label | default "citrix-egressgateway" }}
+  name: {{ template "generate-name" (list . (dict "suffixname" "citrix-egress-svc")) }}
   namespace: {{ .Release.Namespace }}
   annotations:
   labels:
@@ -39,31 +39,18 @@ spec:
 apiVersion: networking.istio.io/v1alpha3
 kind: ServiceEntry
 metadata:
-  name: egress-gateway
+  name: {{ template "generate-name" (list . (dict "suffixname" "citrix-egress-svcentry")) }}
 spec:
   hosts:
-  - citrix-egressgateway.{{ .Release.Namespace }}.svc.cluster.local
+  - {{ template "generate-name" (list . (dict "suffixname" "citrix-egress-svc")) }}.{{ .Release.Namespace }}.svc.cluster.local
   ports:
   - number: 443
     name: https
     protocol: HTTPS
-  resolution: STATIC
-  location: MESH_EXTERNAL
-  endpoints:
-  - address: {{ .Values.egressGateway.vserverIP }}
----
-apiVersion: networking.istio.io/v1alpha3
-kind: ServiceEntry
-metadata:
-  name: egress-gateway-http
-spec:
-  hosts:
-  - citrix-egressgateway.{{ .Release.Namespace }}.svc.cluster.local
-  ports:
   - number: 80
     name: http
     protocol: HTTP
-  resolution: STATIC 
+  resolution: STATIC
   location: MESH_EXTERNAL
   endpoints:
   - address: {{ .Values.egressGateway.vserverIP }}

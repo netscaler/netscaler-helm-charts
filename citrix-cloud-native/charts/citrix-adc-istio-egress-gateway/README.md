@@ -21,7 +21,7 @@ Citrix Application Delivery Controller (ADC) can be deployed as an Istio egress 
 
        helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-       helm install citrix-adc-istio-egress-gateway citrix/citrix-cloud-native --namespace citrix-system --set iaIngress.enabled=true,iaEgress.egressGateway.EULA=YES,iaEgress.egressGateway.netscalerUrl=https://<nsip>[:port],iaEgress.egressGateway.vserverIP=<IPv4 Address>
+       helm install citrix-adc-istio-egress-gateway citrix/citrix-cloud-native --namespace citrix-system --set iaEgress.enabled=true,iaEgress.egressGateway.EULA=YES,iaEgress.egressGateway.netscalerUrl=https://<nsip>[:port],iaEgress.egressGateway.vserverIP=<IPv4 Address> --set iaEgress.secretName=nsloginegress
 
 ### To deploy Citrix ADC CPX as an Egress Gateway:
 
@@ -37,7 +37,7 @@ Citrix Application Delivery Controller (ADC) can be deployed as an Istio egress 
 
 The following prerequisites are required for deploying Citrix ADC as an Egress Gateway in Istio service mesh:
 
-- Ensure that **Istio version 1.6.0** is installed
+- Ensure that **Istio version 1.6.0 onwards** is installed
 - Ensure that Helm with version 3.x is installed. Follow this [step](https://github.com/citrix/citrix-helm-charts/blob/master/Helm_Installation_version_3.md) to install the same.
 - Ensure that your cluster has Kubernetes version 1.14.0 or later and the `admissionregistration.k8s.io/v1beta1` API is enabled
 - **For deploying Citrix ADC VPX or MPX as an Egress gateway:**
@@ -62,7 +62,7 @@ Create a secret for ADM username and password
         
         helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-        helm install citrix-adc-istio-egress-gateway citrix/citrix-cloud-native --namespace citrix-system --set iaEgress.enabled=true,iaEgress.egressGateway.EULA=YES,iaEgress.egressGateway.netscalerUrl=https://<nsip>[:port],iaEgress.egressGateway.vserverIP=<IPv4 Address>
+        helm install citrix-adc-istio-egress-gateway citrix/citrix-cloud-native --namespace citrix-system --set iaEgress.enabled=true,iaEgress.egressGateway.EULA=YES,iaEgress.secretName=nsloginegress,iaEgress.egressGateway.netscalerUrl=https://<nsip>[:port],iaEgress.egressGateway.vserverIP=<IPv4 Address> 
 
 ## <a name="deploy-citrix-adc-cpx-as-an-egress-gateway">Deploy Citrix ADC CPX as an Egress Gateway</a>
 
@@ -93,7 +93,7 @@ To deploy Citrix ADC as Egress Gateway without Metrics Exporter, set the value o
     
         helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-        helm install citrix-adc-istio-egress-gateway citrix/citrix-cloud-native --namespace citrix-system --set iaEgress.enabled=true,iaEgress.egressGateway.EULA=YES,iaEgress.egressGateway.netscalerUrl=https://<nsip>[:port],iaEgress.egressGateway.vserverIP=<IPv4 Address>,iaEgress.metricExporter.required=false                                                                                                                                                                                                                                   
+        helm install citrix-adc-istio-egress-gateway citrix/citrix-cloud-native --namespace citrix-system --set iaEgress.enabled=true,iaEgress.egressGateway.EULA=YES,iaEgress.secretName=nsloginegress,iaEgress.egressGateway.netscalerUrl=https://<nsip>[:port],iaEgress.egressGateway.vserverIP=<IPv4 Address>,iaEgress.metricExporter.required=false                                                                                                                                                                                                                                   
      
    **Note:** To remotely access telemetry addons such as Prometheus and Grafana, see [Remotely Accessing Telemetry Addons](https://istio.io/docs/tasks/telemetry/gateways/).
 
@@ -176,7 +176,7 @@ The following table lists the configurable parameters in the Helm chart and thei
 | Parameter                      | Description                   | Default                   | Optional/Mandatory                  |
 |--------------------------------|-------------------------------|---------------------------|---------------------------|
 | `iaEgress.citrixCPX`                    | Citrix ADC CPX                    | FALSE                  | Mandatory for Citrix ADC CPX |
-| `iaEgress.xDSAdaptor.image`            | Image of the Citrix xDS adaptor container |quay.io/citrix/citrix-xds-adaptor:0.9.5 | Mandatory|
+| `iaEgress.xDSAdaptor.image`            | Image of the Citrix xDS adaptor container |quay.io/citrix/citrix-xds-adaptor:0.9.8 | Mandatory|
 | `iaEgress.xDSAdaptor.imagePullPolicy`   | Image pull policy for xDS adaptor | IfNotPresent       | Optional|
 | `iaEgress.xDSAdaptor.secureConnect`     | If this value is set to true, xDS-adaptor establishes secure gRPC channel with Istio Pilot   | TRUE                       | Optional|
 | `iaEgress.coe.coeURL`          | Name of [Citrix Observability Exporter](https://github.com/citrix/citrix-observability-exporter) Service in the form of "<servicename>.<namespace>"  | null            | Optional|
@@ -189,7 +189,7 @@ The following table lists the configurable parameters in the Helm chart and thei
 | `iaEgress.egressGateway.netscalerUrl`       | URL or IP address of the Citrix ADC which Istio-adaptor configures (Mandatory if citrixCPX=false)| null   |Mandatory for Citrix ADC MPX or VPX|
 | `iaEgress.egressGateway.vserverIP`       | Virtual server IP address on Citrix ADC (Mandatory if citrixCPX=false) | null | Mandatory for Citrix ADC MPX or VPX|
 | `iaEgress.egressGateway.adcServerName `          | Citrix ADC ServerName used in the Citrix ADC certificate  | NIL            | Optional |
-| `iaEgress.egressGateway.image`             | Image of Citrix ADC CPX designated to run as egress Gateway                                                                       |quay.io/citrix/citrix-k8s-cpx-ingress:13.0-64.35 |   Mandatory for Citrix ADC CPX |
+| `iaEgress.egressGateway.image`             | Image of Citrix ADC CPX designated to run as egress Gateway                                                                       |quay.io/citrix/citrix-k8s-cpx-ingress:13.0-76.29 |   Mandatory for Citrix ADC CPX |
 | `iaEgress.egressGateway.imagePullPolicy`   | Image pull policy                                                                                                                  | IfNotPresent                                                          | Optional|
 | `iaEgress.egressGateway.EULA`             | End User License Agreement(EULA) terms and conditions. If yes, then user agrees to EULA terms and conditions.                                     | false                                                                    | Mandatory for Citrix ADC CPX
 | `iaEgress.egressGateway.mgmtHttpPort`      | Management port of the Citrix ADC CPX                                                                                              | 9080                                                                  | Optional|
@@ -211,3 +211,4 @@ The following table lists the configurable parameters in the Helm chart and thei
 | `iaEgress.certProvider.trustDomain`   | SPIFFE Trust Domain                         | cluster.local | Optional |
 | `iaEgress.certProvider.certTTLinHours`   | Validity of certificate generated by xds-adaptor and signed by Istiod (Istio Citadel) in hours. Default is 30 days validity              | 720 | Optional |
 | `iaEgress.certProvider.jwtPolicy`   | Service Account token type. Kubernetes platform supports First party tokens and Third party tokens.  | first-party-jwt | Optional |
+| `iaEgress.secretName`   | Name of the Kubernetes secret holding Citrix ADC credentials | nsloginegress | Mandatory for Citrix ADC VPX/MPX |

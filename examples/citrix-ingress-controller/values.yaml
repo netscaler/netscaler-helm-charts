@@ -29,6 +29,7 @@ nodeWatch: false
 nodeSelector:
   key:
   value:
+tolerations: []
 updateIngressStatus: False
 nsHTTP2ServerSide: "OFF"
 nsCookieVersion: "0"

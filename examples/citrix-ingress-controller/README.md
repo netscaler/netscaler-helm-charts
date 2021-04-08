@@ -60,7 +60,21 @@ If you want to run exporter along with CIC, please install prometheus operator f
 ```helm install my-release citrix-ingress-controller --set nsIP=<NSIP>,license.accept=yes,nsVIP=<VIP>,adcCredentialSecret=<Secret-for-ADC-credentials>,ingressClass=<ingressClassName>,exporter.required=true,openshift=true```
 
 These command deploys Citrix Ingress Controller on the Kubernetes cluster or in an OpenShift Cluster in the default configuration. The configuration section lists the parameters that can be configured during installation.
+
+## Tolerations
  
+Taints are applied on cluster nodes whereas tolerations are applied on pods. Tolerations enable pods to be scheduled on node with matching taints. For more information see [Taints and Tolerations in Kubernetes](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/).
+
+For example, if the node is tainted using command:
+```
+kubectl taint nodes worker1 key1=value1:NoSchedule
+```
+
+And if user wants to enable CIC pod to be scheduled on node `worker1` then the following command can be used to add matching toleration in CIC while deploying it using Helm:
+```
+helm install my-release citrix-ingress-controller --set nsIP=<NSIP>,license.accept=yes,adcCredentialSecret=<Secret-for-ADC-credentials>,tolerations[0].key=key1,tolerations[0].value=value1,tolerations[0].operator=Equal,tolerations[0].effect=NoSchedule
+```
+
 ## Uninstalling the Chart
 To uninstall/delete the ```my-release``` deployment:
 ```
@@ -106,6 +120,7 @@ The following table lists the mandatory and optional parameters that you can con
 | openshift | Optional | false | Set this argument if OpenShift environment is being used. |
 | nodeSelector.key | Optional | N/A | Node label key to be used for nodeSelector option in CIC deployment. |
 | nodeSelector.value | Optional | N/A | Node label value to be used for nodeSelector option in CIC deployment. |
+| tolerations | Optional | N/A | Specify the tolerations for the CIC deployment. |
 | crds.install | Optional | False | Unset this argument if you don't want to install CustomResourceDefinitions which are consumed by CIC. |
 | crds.retainOnDelete | Optional | false | Set this argument if you want to retain CustomResourceDefinitions even after uninstalling CIC. This will avoid data-loss of Custom Resource Objects created before uninstallation. |
 | coeConfig.required | Mandatory | false | Set this to true if you want to configure Citrix ADC to send metrics and transaction records to COE. |
