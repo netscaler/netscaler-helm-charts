@@ -403,7 +403,7 @@ iaSidecar:
 
 cnc:
   enabled: False
-  image: quay.io/citrix/citrix-k8s-node-controller:2.2.1
+  image: quay.io/citrix/citrix-k8s-node-controller:2.2.2
   pullPolicy: IfNotPresent
   license:
     accept: no
@@ -414,6 +414,7 @@ cnc:
   vxlan:
     id:
     port:
+  cniType:
   dsrIPRange:
 
   serviceAccount:
