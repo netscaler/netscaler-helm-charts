@@ -43,6 +43,8 @@ spec:
           value: {{ required "Pleave provide VXLAN ID" .Values.vxlan.id | quote }}
         - name: VXLAN_PORT
           value: {{ required "Provide provide VXLAN port" .Values.vxlan.port | quote }}
+        - name: CNI_TYPE
+          value: {{ required "Provide CNI Type in cluster" .Values.cniType | quote }}
 {{- if .Values.dsrIPRange }}
         - name: "DSR_IP_RANGE"
           value: {{ .Values.dsrIPRange | quote }}
