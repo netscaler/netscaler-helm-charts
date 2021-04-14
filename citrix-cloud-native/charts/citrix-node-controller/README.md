@@ -120,7 +120,7 @@ The following table lists the mandatory and optional parameters that you can con
 | cnc.network | Mandatory | N/A | The IP address range that CNC uses to configure the VTEP overlay end points on the Kubernetes nodes. |
 | cnc.vxlan.id | Mandatory | N/A | A unique VXLAN VNID to create a VXLAN overlay between Kubernetes cluster and the ingress devices. |
 | cnc.vxlan.port | Mandatory | N/A | The VXLAN port that you want to use for the overlay. |
-| cniType | Mandatory | N/A | The CNI used in k8s cluster. Valid values: flannel,calico,canal,weave,cilium |
+| cnc.cniType | Mandatory | N/A | The CNI used in k8s cluster. Valid values: flannel,calico,canal,weave,cilium |
 | cnc.dsrIPRange | Optional | N/A | This IP address range is used for DSR Iptable configuration on nodes. Both IP and subnet must be specified in format : "xx.xx.xx.xx/xx"  |
 
 Alternatively, you can define a YAML file with the values for the parameters and pass the values while installing the chart.
