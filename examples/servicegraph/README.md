@@ -189,7 +189,7 @@ After you add Kubernetes cluster in Citrix ADM, you must ensure to auto-select v
 
 Run following to deploy Netflix application on your Kubernetes Cluster
 
-    kubectl create -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/servicegraph/manifest/netflix.com
+    kubectl create -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/servicegraph/manifest/netflix.yaml
 
 ## <a name="deploy-citrix-cloud-native-stack"> E) Citrix Cloud Native Dual Tier Topology </a>
 
@@ -259,7 +259,7 @@ Create a Kubernetes secret for the user name and password using the following co
 
     kubectl create secret generic nslogin --from-literal=username='cic' --from-literal=password='mypassword'
 
-Download the consolidated YAML file which will deploy CIC to configure Tier-1 ADC and Tier 2 CPX.
+Download the consolidated Values.yaml file which will deploy CIC to configure Tier-1 ADC and Tier 2 CPX.
 
     wget https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/servicegraph/manifest/values.yaml
 
