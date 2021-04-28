@@ -15,9 +15,9 @@ data:
     # If user does *NOT* want to inject sidecar on some pods based on label,
     # then mention such labels in 'neverInjectSelector' entry.
     # Note: This is valid only when istio's sidecar-injector image is running.
-    # neverInjectSelector:
-    #   - matchExpressions:
-    #     - {key: citrix.com/no.sidecar, operator: Exists}
+    neverInjectSelector:
+      - matchExpressions:
+        - {key: citrix.com/no.sidecar, operator: Exists}
     # Here, if pod has a label citrix.com/no.sidecar, then sidecar won't be injected for that pod.
     template: |-
       containers:

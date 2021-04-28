@@ -15,6 +15,7 @@ spec:
     metadata:
       labels:
         app: {{ .Values.ingressGateway.label | default "citrix-ingressgateway" }}
+        citrix.com/no.sidecar: "true"
       annotations:
         scheduler.alpha.kubernetes.io/critical-pod: ""
         prometheus.io/port: "{{ .Values.metricExporter.port }}"
@@ -48,9 +49,9 @@ spec:
         projected:
           sources:
           - serviceAccountToken:
-            audience: istio-ca
-            expirationSeconds: 43200
-            path: istio-token
+              audience: istio-ca
+              expirationSeconds: 43200
+              path: istio-token
 {{- end }}
       - name: istiod-ca-cert
         configMap:
@@ -281,6 +282,7 @@ spec:
     metadata:
       labels:
         app: {{ .Values.ingressGateway.label | default "citrix-ingressgateway" }}
+        citrix.com/no.sidecar: "true"
       annotations:
         scheduler.alpha.kubernetes.io/critical-pod: ""
         prometheus.io/port: "{{ .Values.metricExporter.port }}"
@@ -472,9 +474,9 @@ spec:
         projected:
           sources:
           - serviceAccountToken:
-            audience: istio-ca
-            expirationSeconds: 43200
-            path: istio-token
+              audience: istio-ca
+              expirationSeconds: 43200
+              path: istio-token
 {{- end }}
 ---
 {{- end}}

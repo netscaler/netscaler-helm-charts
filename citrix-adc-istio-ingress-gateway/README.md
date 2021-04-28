@@ -28,13 +28,24 @@ Citrix Application Delivery Controller (ADC) can be deployed as an Istio Ingress
 
        helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
+**For Istio v1.9/v1.8**
+
        helm install citrix-adc-istio-ingress-gateway citrix/citrix-adc-istio-ingress-gateway --namespace citrix-system --set ingressGateway.EULA=YES --set ingressGateway.netscalerUrl=https://<nsip>[:port] --set ingressGateway.vserverIP=<IPv4 Address> --set secretName=nslogin
+
+**For Istio v1.6.4**
+
+       helm install citrix-adc-istio-ingress-gateway citrix/citrix-adc-istio-ingress-gateway --namespace citrix-system --set ingressGateway.EULA=YES --set ingressGateway.netscalerUrl=https://<nsip>[:port] --set ingressGateway.vserverIP=<IPv4 Address> --set secretName=nslogin --version 1.6.4
 
 ### To deploy Citrix ADC CPX as an Ingress Gateway:
 
        helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
+**For Istio v1.9/v1.8**
+
        helm install citrix-adc-istio-ingress-gateway citrix/citrix-adc-istio-ingress-gateway --namespace citrix-system --set ingressGateway.EULA=YES --set citrixCPX=true
+**For Istio v1.6.4**
+
+       helm install citrix-adc-istio-ingress-gateway citrix/citrix-adc-istio-ingress-gateway --namespace citrix-system --set ingressGateway.EULA=YES --set citrixCPX=true --version 1.6.4
 
 
 ## <a name="introduction">Introduction</a>
