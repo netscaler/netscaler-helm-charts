@@ -15,6 +15,7 @@ spec:
     metadata:
       labels:
         app: {{default "citrix-egressgateway" .Values.egressGateway.label}}
+        citrix.com/no.sidecar: "true"
       annotations:
         scheduler.alpha.kubernetes.io/critical-pod: ""
         prometheus.io/port: "{{ .Values.metricExporter.port }}"
@@ -40,9 +41,9 @@ spec:
         projected:
           sources:
           - serviceAccountToken:
-            audience: istio-ca
-            expirationSeconds: 43200
-            path: istio-token
+              audience: istio-ca
+              expirationSeconds: 43200
+              path: istio-token
 {{- end }}
       containers:
 {{- if eq .Values.metricExporter.required true }}
@@ -247,6 +248,7 @@ spec:
     metadata:
       labels:
         app: {{ .Values.egressGateway.label | default "citrix-egressgateway" }}
+        citrix.com/no.sidecar: "true"
       annotations:
         scheduler.alpha.kubernetes.io/critical-pod: ""
         prometheus.io/port: "{{ .Values.metricExporter.port }}"
@@ -412,9 +414,9 @@ spec:
         projected:
           sources:
           - serviceAccountToken:
-            audience: istio-ca
-            expirationSeconds: 43200
-            path: istio-token
+              audience: istio-ca
+              expirationSeconds: 43200
+              path: istio-token
 {{- end }}
 ---
 {{- end }}

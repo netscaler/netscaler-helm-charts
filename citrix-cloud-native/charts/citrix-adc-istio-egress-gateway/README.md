@@ -21,13 +21,26 @@ Citrix Application Delivery Controller (ADC) can be deployed as an Istio egress 
 
        helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
+**For Istio v1.9/v1.8**
+
        helm install citrix-adc-istio-egress-gateway citrix/citrix-cloud-native --namespace citrix-system --set iaEgress.enabled=true,iaEgress.egressGateway.EULA=YES,iaEgress.egressGateway.netscalerUrl=https://<nsip>[:port],iaEgress.egressGateway.vserverIP=<IPv4 Address> --set iaEgress.secretName=nsloginegress
+
+**For Istio v1.6.4**
+
+       helm install citrix-adc-istio-egress-gateway citrix/citrix-cloud-native --namespace citrix-system --set iaEgress.enabled=true,iaEgress.egressGateway.EULA=YES,iaEgress.egressGateway.netscalerUrl=https://<nsip>[:port],iaEgress.egressGateway.vserverIP=<IPv4 Address> --set iaEgress.secretName=nsloginegress --version 1.6.4
 
 ### To deploy Citrix ADC CPX as an Egress Gateway:
 
        helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
+**For Istio v1.9/v1.8**
+
        helm install citrix-adc-istio-egress-gateway citrix/citrix-cloud-native --namespace citrix-system --set iaEgress.enabled=true --set iaEgress.egressGateway.EULA=true --set iaEgress.citrixCPX=true
+
+**For Istio v1.6.4**
+
+       helm install citrix-adc-istio-egress-gateway citrix/citrix-cloud-native --namespace citrix-system --set iaEgress.enabled=true --set iaEgress.egressGateway.EULA=true --set iaEgress.citrixCPX=true --version 1.6.4
+
 
 ## <a name="introduction">Introduction</a>
 
