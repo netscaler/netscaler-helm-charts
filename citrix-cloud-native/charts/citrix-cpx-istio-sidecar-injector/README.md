@@ -21,7 +21,13 @@ Citrix ADC CPX can be deployed as a sidecar proxy in an application pod in the I
     
     helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
+**For Istio v1.9/v1.8**
+
     helm install cpx-sidecar-injector citrix/citrix-cloud-native --namespace citrix-system --set iaSidecar.enabled=true --set iaSidecar.cpxProxy.EULA=YES
+
+**For Istio v1.6.4**
+
+    helm install cpx-sidecar-injector citrix/citrix-cloud-native --namespace citrix-system --set iaSidecar.enabled=true --set iaSidecar.cpxProxy.EULA=YES --version 1.6.4
 
 ## <a name="introduction">Introduction</a>
 
