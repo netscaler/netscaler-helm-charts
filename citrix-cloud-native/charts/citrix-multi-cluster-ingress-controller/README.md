@@ -11,6 +11,11 @@
    helm install multi-cluster citrix/citrix-cloud-native --set mcIngress.localRegion=<local-cluster-region>,mcIngress.localCluster=<local-cluster-name>,mcIngress.sitedata[0].siteName=<site1-name>,mcIngress.sitedata[0].siteIp=<site1-ip-address>,mcIngress.sitedata[0].secretName=<site1-login-file>,mcIngress.sitedata[1].siteName=<site2-name>,mcIngress.sitedata[1].siteIp=<site2-ip-address>,mcIngress.sitedata[1].secretName=<site2-login-file>,mcIngress.license.accept=yes
    ```
 
+   To install Citrix Provided Custom Resource Definition(CRDs) along with Citrix Ingress Controller
+   ```
+   helm install multi-cluster citrix/citrix-cloud-native --set mcIngress.localRegion=<local-cluster-region>,mcIngress.localCluster=<local-cluster-name>,mcIngress.sitedata[0].siteName=<site1-name>,mcIngress.sitedata[0].siteIp=<site1-ip-address>,mcIngress.sitedata[0].secretName=<site1-login-file>,mcIngress.sitedata[1].siteName=<site2-name>,mcIngress.sitedata[1].siteIp=<site2-ip-address>,mcIngress.sitedata[1].secretName=<site2-login-file>,mcIngress.license.accept=yes,mcIngress.crds.install=true
+   ```
+
 ### For OpenShift
 
    ```
@@ -19,6 +24,10 @@
    helm install multi-cluster citrix/citrix-cloud-native --set mcIngress.localRegion=<local-cluster-region>,mcIngress.localCluster=<local-cluster-name>,mcIngress.sitedata[0].siteName=<site1-name>,mcIngress.sitedata[0].siteIp=<site1-ip-address>,mcIngress.sitedata[0].secretName=<site1-login-file>,mcIngress.sitedata[1].siteName=<site2-name>,mcIngress.sitedata[1].siteIp=<site2-ip-address>,mcIngress.sitedata[1].secretName=<site2-login-file>,mcIngress.license.accept=yes,mcIngress.openshift=true
    ```
 
+  To install Citrix Provided Custom Resource Definition(CRDs) along with Citrix Ingress Controller
+  ```
+   helm install multi-cluster citrix/citrix-cloud-native --set mcIngress.localRegion=<local-cluster-region>,mcIngress.localCluster=<local-cluster-name>,mcIngress.sitedata[0].siteName=<site1-name>,mcIngress.sitedata[0].siteIp=<site1-ip-address>,mcIngress.sitedata[0].secretName=<site1-login-file>,mcIngress.sitedata[1].siteName=<site2-name>,mcIngress.sitedata[1].siteIp=<site2-ip-address>,mcIngress.sitedata[1].secretName=<site2-login-file>,mcIngress.license.accept=yes,mcIngress.openshift=true,mcIngress.crds.install=true
+  ```
 > **Important:**
 >
 > The `license.accept` argument is mandatory. Ensure that you set the value as `yes` to accept the terms and conditions of the Citrix license.
@@ -161,7 +170,7 @@ The following table lists the mandatory and optional parameters that you can con
 | Parameters | Mandatory or Optional | Default value | Description |
 | --------- | --------------------- | ------------- | ----------- |
 | mcIngress.license.accept | Mandatory | no | Set `yes` to accept the CIC end user license agreement. |
-| mcIngress.image | Optional | `quay.io/citrix/citrix-k8s-ingress-controller:1.13.20` | The CIC image. |
+| mcIngress.image | Optional | `quay.io/citrix/citrix-k8s-ingress-controller:1.14.17` | The CIC image. |
 | mcIngress.pullPolicy | Optional | Always | The CIC image pull policy. |
 | mcIngress.nsPort | Optional | 443 | The port used by CIC to communicate with Citrix ADC. You can use port 80 for HTTP. |
 | mcIngress.nsProtocol | Optional | HTTPS | The protocol used by CIC to communicate with Citrix ADC. You can also use HTTP on port 80. |

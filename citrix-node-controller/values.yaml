@@ -2,7 +2,7 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-image: quay.io/citrix/citrix-k8s-node-controller:2.2.2
+image: quay.io/citrix/citrix-k8s-node-controller:2.2.3
 pullPolicy: IfNotPresent
 license:
   accept: no
@@ -15,6 +15,7 @@ vxlan:
   port: 
 cniType:
 dsrIPRange:
+clusterName:
 
 serviceAccount:
   # Specifies whether a ServiceAccount should be created

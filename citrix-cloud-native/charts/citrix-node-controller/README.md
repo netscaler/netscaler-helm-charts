@@ -7,7 +7,7 @@ In Kubernetes environments, sometimes the services are exposed for external acce
 ```
    helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-   helm install cnc citrix/citrix-cloud-native --set cnc.enabled=true,cnc.license.accept=yes,cnc.nsIP=<NSIP>,cnc.vtepIP=<Citrix ADC SNIP>,cnc.vxlan.id=<VXLAN ID>,cnc.vxlan.port=<VXLAN PORT>,cnc.network=<IP-address-range-for-VTEP-overlay>,cnc.adcCredentialSecret=<Secret-for-ADC-credentials>
+   helm install cnc citrix/citrix-cloud-native --set cnc.enabled=true,cnc.license.accept=yes,cnc.nsIP=<NSIP>,cnc.vtepIP=<Citrix ADC SNIP>,cnc.vxlan.id=<VXLAN ID>,cnc.vlan.port=<VXLAN PORT>,cnc.network=<IP-address-range-for-VTEP-overlay>,cnc.adcCredentialSecret=<Secret-for-ADC-credentials>
 ```
 
 > **Important:**
@@ -112,7 +112,7 @@ The following table lists the mandatory and optional parameters that you can con
 | --------- | --------------------- | ------------- | ----------- |
 | cnc.enabled | Mandatory | False | Set to "True" for deploying Citrix Node Controller. |
 | cnc.license.accept | Mandatory | no | Set `yes` to accept the CNC end user license agreement. |
-| cnc.image | Mandatory | `quay.io/citrix/citrix-k8s-node-controller:2.2.2` | The CNC image. |
+| cnc.image | Mandatory | `quay.io/citrix/citrix-k8s-node-controller:2.2.3` | The CNC image. |
 | cnc.pullPolicy | Mandatory | IfNotPresent | The CNC image pull policy. |
 | cnc.adcCredentialSecret | Mandatory | N/A | The secret key to log on to the Citrix ADC VPX or MPX. For information on how to create the secret keys, see [Prerequisites](#prerequistes). |
 | cnc.nsIP | Mandatory | N/A | The IP address of the Citrix ADC device. For details, see [Prerequisites](#prerequistes). |
@@ -120,8 +120,9 @@ The following table lists the mandatory and optional parameters that you can con
 | cnc.network | Mandatory | N/A | The IP address range that CNC uses to configure the VTEP overlay end points on the Kubernetes nodes. |
 | cnc.vxlan.id | Mandatory | N/A | A unique VXLAN VNID to create a VXLAN overlay between Kubernetes cluster and the ingress devices. |
 | cnc.vxlan.port | Mandatory | N/A | The VXLAN port that you want to use for the overlay. |
-| cnc.cniType | Mandatory | N/A | The CNI used in k8s cluster. Valid values: flannel,calico,canal,weave,cilium |
+| cniType | Mandatory | N/A | The CNI used in k8s cluster. Valid values: flannel,calico,canal,weave,cilium |
 | cnc.dsrIPRange | Optional | N/A | This IP address range is used for DSR Iptable configuration on nodes. Both IP and subnet must be specified in format : "xx.xx.xx.xx/xx"  |
+| cnc.clusterName | Optional | N/A | Unique identifier for the kubernetes cluster on which CNC is deployed. If Provided CNC will configure PolicyBasedRoutes instead of static Routes. For details, see [CNC-PBR-SUPPORT](https://github.com/citrix/citrix-k8s-ingress-controller/tree/master/docs/how-to/pbr.md#configure-pbr-using-the-citrix-node-controller) |
 
 Alternatively, you can define a YAML file with the values for the parameters and pass the values while installing the chart.
 

@@ -49,3 +49,7 @@ spec:
         - name: "DSR_IP_RANGE"
           value: {{ .Values.dsrIPRange | quote }}
 {{- end }}
+{{- if .Values.clusterName }}
+        - name: "CLUSTER_NAME"
+          value: {{ .Values.clusterName | quote }}
+{{- end }}
