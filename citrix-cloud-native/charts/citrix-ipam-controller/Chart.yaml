@@ -1,8 +1,8 @@
 apiVersion: v2
 name: citrix-ipam-controller
 description: A Helm chart for Citrix IPAM Controller which automatically allocate an IP address to the service of type LoadBalancer.
-version: 0.0.1
-appVersion: "0.0.1"
+version: 1.0.3
+appVersion: "1.0.3"
 type: application
 icon: https://raw.githubusercontent.com/citrix/citrix-helm-charts/gh-pages/icon.png
 home: https://www.citrix.com

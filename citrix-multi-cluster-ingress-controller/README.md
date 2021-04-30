@@ -11,6 +11,11 @@
    helm install multi-cluster citrix/citrix-multi-cluster-ingress-controller --set localRegion=<local-cluster-region>,localCluster=<local-cluster-name>,sitedata[0].siteName=<site1-name>,sitedata[0].siteIp=<site1-ip-address>,sitedata[0].secretName=<site1-login-file>,sitedata[1].siteName=<site2-name>,sitedata[1].siteIp=<site2-ip-address>,sitedata[1].secretName=<site2-login-file>,license.accept=yes
    ```
 
+   To install Citrix Provided Custom Resource Definition(CRDs) along with Citrix Ingress Controller
+   ```
+   helm install multi-cluster citrix/citrix-multi-cluster-ingress-controller --set localRegion=<local-cluster-region>,localCluster=<local-cluster-name>,sitedata[0].siteName=<site1-name>,sitedata[0].siteIp=<site1-ip-address>,sitedata[0].secretName=<site1-login-file>,sitedata[1].siteName=<site2-name>,sitedata[1].siteIp=<site2-ip-address>,sitedata[1].secretName=<site2-login-file>,license.accept=yes,crds.install=true
+   ```
+
 ### For OpenShift
 
    ```
@@ -19,6 +24,10 @@
    helm install multi-cluster citrix/citrix-multi-cluster-ingress-controller --set localRegion=<local-cluster-region>,localCluster=<local-cluster-name>,sitedata[0].siteName=<site1-name>,sitedata[0].siteIp=<site1-ip-address>,sitedata[0].secretName=<site1-login-file>,sitedata[1].siteName=<site2-name>,sitedata[1].siteIp=<site2-ip-address>,sitedata[1].secretName=<site2-login-file>,license.accept=yes,openshift=true
    ```
 
+To install Citrix Provided Custom Resource Definition(CRDs) along with Citrix Ingress Controller
+   ```
+   helm install multi-cluster citrix/citrix-multi-cluster-ingress-controller --set localRegion=<local-cluster-region>,localCluster=<local-cluster-name>,sitedata[0].siteName=<site1-name>,sitedata[0].siteIp=<site1-ip-address>,sitedata[0].secretName=<site1-login-file>,sitedata[1].siteName=<site2-name>,sitedata[1].siteIp=<site2-ip-address>,sitedata[1].secretName=<site2-login-file>,license.accept=yes,openshift=true,crds.install=true
+   ```
 > **Important:**
 >
 > The `license.accept` argument is mandatory. Ensure that you set the value as `yes` to accept the terms and conditions of the Citrix license.
@@ -161,7 +170,7 @@ The following table lists the mandatory and optional parameters that you can con
 | Parameters | Mandatory or Optional | Default value | Description |
 | --------- | --------------------- | ------------- | ----------- |
 | license.accept | Mandatory | no | Set `yes` to accept the CIC end user license agreement. |
-| image | Optional | `quay.io/citrix/citrix-k8s-ingress-controller:1.13.20` | The CIC image. |
+| image | Optional | `quay.io/citrix/citrix-k8s-ingress-controller:1.14.17` | The CIC image. |
 | pullPolicy | Optional | Always | The CIC image pull policy. |
 | nsPort | Optional | 443 | The port used by CIC to communicate with Citrix ADC. You can use port 80 for HTTP. |
 | nsProtocol | Optional | HTTPS | The protocol used by CIC to communicate with Citrix ADC. You can also use HTTP on port 80. |

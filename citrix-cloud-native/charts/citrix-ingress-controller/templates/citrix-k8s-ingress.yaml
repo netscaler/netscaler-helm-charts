@@ -63,6 +63,8 @@ spec:
 {{- end }}
           - --feature-node-watch
             {{ .Values.nodeWatch }}
+          - --enable-cnc-pbr
+            {{ .Values.cncPbr }}
 {{- if .Values.ipam }}
           - --ipam
             citrix-ipam-controller
@@ -103,6 +105,10 @@ spec:
 {{- if .Values.kubernetesURL }}
         - name: "kubernetes_url"
           value: "{{ .Values.kubernetesURL }}"
+{{- end }}
+{{- if .Values.clusterName }}
+        - name: "CLUSTER_NAME"
+          value: "{{ .Values.clusterName }}"
 {{- end }}
 {{- if .Values.logProxy }}
         - name: "NS_LOGPROXY"

@@ -3,7 +3,7 @@
 # Declare variables to be passed into your templates.
 
 # Citrix Ingress Controller config details
-image: quay.io/citrix/citrix-k8s-ingress-controller:1.13.20
+image: quay.io/citrix/citrix-k8s-ingress-controller:1.14.17
 pullPolicy: IfNotPresent
 openshift: false
 adcCredentialSecret:
@@ -17,6 +17,7 @@ nsProtocol: HTTPS
 logLevel: INFO
 entityPrefix:
 kubernetesURL:
+clusterName:
 ingressClass:
 setAsDefaultIngressClass: False
 serviceClass:
@@ -26,6 +27,7 @@ ignoreNodeExternalIP: False
 ipam: False
 logProxy:
 nodeWatch: false
+cncPbr: False
 nodeSelector:
   key:
   value:

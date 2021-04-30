@@ -1,7 +1,7 @@
 cic:
   enabled: False
   
-  image: quay.io/citrix/citrix-k8s-ingress-controller:1.13.20
+  image: quay.io/citrix/citrix-k8s-ingress-controller:1.14.17
   pullPolicy: IfNotPresent
   openshift: false
   adcCredentialSecret:
@@ -15,6 +15,7 @@ cic:
   logLevel: INFO
   entityPrefix:
   kubernetesURL:
+  clusterName:
   ingressClass:
   setAsDefaultIngressClass: False
   serviceClass:
@@ -24,6 +25,7 @@ cic:
   ipam: False
   logProxy:
   nodeWatch: false
+  cncPbr: False
   nodeSelector:
     key:
     value:
@@ -71,7 +73,7 @@ cic:
 mcIngress:
   enabled: False
 
-  image: quay.io/citrix/citrix-k8s-ingress-controller:1.13.20
+  image: quay.io/citrix/citrix-k8s-ingress-controller:1.14.17
   pullPolicy: IfNotPresent
   openshift: false
   localRegion:
@@ -144,7 +146,7 @@ cpx:
       internalLoadBalancer: False
 
   cic:
-    image: quay.io/citrix/citrix-k8s-ingress-controller:1.13.20
+    image: quay.io/citrix/citrix-k8s-ingress-controller:1.14.17
     pullPolicy: IfNotPresent
     required: true
   entityPrefix:
@@ -403,7 +405,7 @@ iaSidecar:
 
 cnc:
   enabled: False
-  image: quay.io/citrix/citrix-k8s-node-controller:2.2.2
+  image: quay.io/citrix/citrix-k8s-node-controller:2.2.3
   pullPolicy: IfNotPresent
   license:
     accept: no
@@ -416,6 +418,7 @@ cnc:
     port:
   cniType:
   dsrIPRange:
+  clusterName:
 
   serviceAccount:
     create: true
@@ -445,7 +448,7 @@ coe:
 
 ipam:
   enabled: False
-  image: quay.io/citrix/citrix-ipam-controller:0.0.1
+  image: quay.io/citrix/citrix-ipam-controller:1.0.3
   pullPolicy: IfNotPresent
 
   vipRange:
