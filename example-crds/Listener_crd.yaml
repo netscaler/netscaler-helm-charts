@@ -1,17 +1,64 @@
-apiVersion: citrix.com/v1alpha1
+apiVersion: citrix.com/v1
 kind: Listener
 metadata:
-  name: test
+  name: my-listener 
   namespace: default
 spec:
   certificates:
   - secret:
       name: my-secret
+    # Secret named 'my-secret' in current namespace bound as default certificate
+    default: true
   - secret:
-      name: secret2
+      # Secret 'other-secret' in demo namespace bound as SNI certificate
+      name: other-secret
       namespace: demo
-  - default: true
-    preconfigured: second-secret
+  - preconfigured: second-secret
+    # preconfigured certkey name in ADC
+  vip: '192.168.0.1' # Virtual IP address to be used, not required when CPX is used as ingress device
+  port: 443 
+  protocol: https
+  redirectPort: 80
+  secondaryVips:
+  - "10.0.0.1"
+  - "1.1.1.1"
+  policies:
+    httpprofile:
+    # https://developer-docs.citrix.com/projects/citrix-adc-nitro-api-reference/en/latest/configuration/ns/nshttpprofile/
+      config:
+        websocket: "ENABLED"
+    tcpprofile:
+    # https://developer-docs.citrix.com/projects/citrix-adc-nitro-api-reference/en/latest/configuration/ns/nstcpprofile/ 
+      config:
+        sack: "ENABLED"
+    sslprofile:
+    # https://developer-docs.citrix.com/projects/citrix-adc-nitro-api-reference/en/latest/configuration/ssl/sslprofile/
+      config:
+        ssl3: "ENABLED"
+    sslciphers:
+    - HIGH
+    # List of SSL ciphers or cipher groups in the priority order
+    # refer: https://docs.citrix.com/en-us/citrix-adc/current-release/ssl/ciphers-available-on-the-citrix-adc-appliances.html
+    # for list of ciphers available in the ADC
+    analyticsprofile:
+     # https://developer-docs.citrix.com/projects/citrix-adc-nitro-api-reference/en/latest/configuration/analytics/analyticsprofile/
+      config:
+      - type: webinsight
+        parameters:
+           allhttpheaders: "ENABLED"
+    csvserverConfig:
+      #  https://developer-docs.citrix.com/projects/citrix-adc-nitro-api-reference/en/latest/configuration/cs/csvserver/ 
+      rhistate: 'ACTIVE'
+  routes:
+    # Attach the policies from the below Routes
+  - name: domain1-route 
+    namespace: default
+  - name: domain2-route
+    namespace: default
+  - labelSelector:
+      # Attach all HTTPRoutes with label route=my-route
+      route: my-route
+  # Default action when traffic matches none of the policies in the HTTPRoute
   defaultAction:
     backend:
       kube:
@@ -20,17 +67,9 @@ spec:
         service: default-service
         backendConfig:
           lbConfig:
+            # Use round robin LB method for default service
             lbmethod: ROUNDROBIN
           servicegroupConfig:
+            # Client timeout of 20 seconds
             clttimeout: "20"
-  vip: 1.1.1.1
-  port: 443
-  protocol: https
-  routes:
-  - labelSelector:
-      xyz: abc
-  - name: domain-1
-    namespace: default
-  - name: domain-2
-    namespace: default
 
