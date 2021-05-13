@@ -53,3 +53,7 @@ spec:
         - name: "CLUSTER_NAME"
           value: {{ .Values.clusterName | quote }}
 {{- end }}
+{{- if .Values.cncRouterImage }}
+        - name: "CNC_ROUTER_IMAGE"
+          value: {{ .Values.cncRouterImage | quote }}
+{{- end }}
