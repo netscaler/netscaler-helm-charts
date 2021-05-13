@@ -1,5 +1,5 @@
 apiVersion: v2
-appVersion: "2.2.3"
+appVersion: "2.2.4"
 description: A Helm chart for Citrix k8s node controller
 home: https://www.citrix.com
 icon: https://raw.githubusercontent.com/citrix/citrix-helm-charts/gh-pages/icon.png 
@@ -9,4 +9,4 @@ maintainers:
 name: citrix-node-controller
 sources:
 - https://github.com/citrix/citrix-k8s-node-controller
-version: 2.2.3
+version: 2.2.4

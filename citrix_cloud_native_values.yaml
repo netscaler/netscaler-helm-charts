@@ -405,7 +405,7 @@ iaSidecar:
 
 cnc:
   enabled: False
-  image: quay.io/citrix/citrix-k8s-node-controller:2.2.3
+  image: quay.io/citrix/citrix-k8s-node-controller:2.2.4
   pullPolicy: IfNotPresent
   license:
     accept: no
@@ -419,6 +419,7 @@ cnc:
   cniType:
   dsrIPRange:
   clusterName:
+  cncRouterImage:
 
   serviceAccount:
     create: true
