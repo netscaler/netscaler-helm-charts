@@ -24,17 +24,21 @@ data:
                   "SLA": "none",
                   "MONGO": "none"
               },
+              "TimeSeries": {
+                  "EVENTS": "no",
+                  "AUDITLOGS": "no"
+              },
               "ProcessAlways": "yes",
               "FileSizeMax": "40",
               "ProcessYieldTimeOut": "500",
               "FileStorageLimit": "1000",
               "SkipAvro": "no",
               "AvroCompress": "yes"
-          }{{- if .Values.ns_tracing.enabled }},{{- end}}
+          }
 {{- else if .Values.elasticsearch.enabled }}
           "ES": {
               "ServerUrl": {{ .Values.elasticsearch.server | default "elasticsearch:9200" | quote }},
-              "IndexPrefix":"adc_coe",
+              "IndexPrefix": {{ .Values.elasticsearch.indexprefix | default "adc_coe" | quote }},
               "IndexInterval": "daily",
               "RecordType": {
                   "HTTP": "all",
@@ -50,21 +54,57 @@ data:
                   "SLA": "none",
                   "MONGO": "none"
               },
+              "TimeSeries": {
+                  "EVENTS": "no",
+                  "AUDITLOGS": "no"
+              },
               "ProcessAlways": "no",
               "ProcessYieldTimeOut": "500",
               "MaxConnections": "512",
               "ElkMaxSendBuffersPerSec": "64",
               "JsonFileDump": "no"
-            }{{- if .Values.ns_tracing.enabled }},{{- end}}
-
+            }
+{{- else if .Values.splunk.enabled }}
+          "SPLUNK": {
+              "ServerUrl": {{ .Values.splunk.server | default "" | quote }},
+              "AuthToken": {{ .Values.splunk.authtoken | default "" | quote }},
+              "IndexPrefix": {{ .Values.splunk.indexprefix | default "adc_coe" | quote }},
+              "RecordType": {
+                  "HTTP": "all",
+                  "TCP": "all",
+                  "SWG": "all",
+                  "VPN": "all",
+                  "NGS": "all",
+                  "ICA": "all",
+                  "APPFW": "none",
+                  "BOT": "none",
+                  "VIDEOOPT": "none",
+                  "BURST_CQA": "none",
+                  "SLA": "none",
+                  "MONGO": "none"
+              },
+              "TimeSeries": {
+                  "EVENTS": "no",
+                  "AUDITLOGS": "no"
+              },
+              "ProcessAlways": "no",
+              "ProcessYieldTimeOut": "500",
+              "MaxConnections": "512",
+              "JsonFileDump": "no"
+            }
 {{- end}}
 {{- if .Values.ns_tracing.enabled }}
+           ,
           "ZIPKIN": {
             "ServerUrl": {{ .Values.ns_tracing.server  | default "zipkin:9411/api/v1/spans" | quote }},
             "RecordType": {
                 "HTTP": "all",
                 "TCP": "all",
                 "SWG": "all"
+            },
+            "TimeSeries": {
+                "EVENTS": "no",
+                "AUDITLOGS": "no"
             },
             "ProcessAlways": "yes",
             "ProcessorMode": "avro",
