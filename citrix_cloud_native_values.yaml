@@ -362,6 +362,9 @@ iaSidecar:
     proxyType: sidecar
     secureConnect: true
 
+  coe:
+    coeURL:
+
   istioPilot:
     name: istiod
     namespace: istio-system
@@ -426,19 +429,27 @@ cnc:
 
 coe:
   enabled: False
-  image: quay.io/citrix/citrix-observability-exporter:1.1.001
+  image: quay.io/citrix/citrix-observability-exporter:1.3.001
   pullPolicy: IfNotPresent
   replicas: 1
   license:
     accept: no 
+  nodePortRequired: false
+  headless: false
   transaction:
     nodePort: 30001
   ns_tracing:
     enabled: false
     server: "zipkin:9411/api/v1/spans" 
+  splunk:
+    enabled: false
+    server:
+    authtoken: 
+    indexprefix:
   elasticsearch:
     enabled: false
     server:
+    indexprefix:
   kafka:
     enabled: false
     broker:
