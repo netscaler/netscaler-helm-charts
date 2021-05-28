@@ -6,6 +6,25 @@ data:
   lstreamd_default.conf: |
     {
         "Endpoints": {
+{{- if .Values.ns_tracing.enabled }}
+          "ZIPKIN": {
+              "ServerUrl": {{ .Values.ns_tracing.server  | default "zipkin:9411/api/v1/spans" | quote }},
+              "RecordType": {
+                "HTTP": "all",
+                "TCP": "all",
+                "SWG": "all"
+              },
+              "ProcessAlways": "yes",
+              "ProcessorMode": "avro",
+              "SkipAvro": "yes",
+              "FileSizeMax": "40",
+              "ProcessYieldTimeOut": "500"
+{{- if or .Values.kafka.enabled .Values.elasticsearch.enabled .Values.splunk.enabled}}
+          },
+{{- else}}
+          }
+{{- end}}
+{{- end}}
 {{- if .Values.kafka.enabled }}
           "KAFKA": {
               "ServerUrl": {{ .Values.kafka.broker | quote }},
@@ -23,10 +42,6 @@ data:
                   "BURST_CQA": "none",
                   "SLA": "none",
                   "MONGO": "none"
-              },
-              "TimeSeries": {
-                  "EVENTS": "no",
-                  "AUDITLOGS": "no"
               },
               "ProcessAlways": "yes",
               "FileSizeMax": "40",
@@ -54,21 +69,17 @@ data:
                   "SLA": "none",
                   "MONGO": "none"
               },
-              "TimeSeries": {
-                  "EVENTS": "no",
-                  "AUDITLOGS": "no"
-              },
               "ProcessAlways": "no",
               "ProcessYieldTimeOut": "500",
               "MaxConnections": "512",
               "ElkMaxSendBuffersPerSec": "64",
               "JsonFileDump": "no"
-            }
+          }
 {{- else if .Values.splunk.enabled }}
           "SPLUNK": {
               "ServerUrl": {{ .Values.splunk.server | default "" | quote }},
               "AuthToken": {{ .Values.splunk.authtoken | default "" | quote }},
-              "IndexPrefix": {{ .Values.splunk.indexprefix | default "adc_coe" | quote }},
+              "Index": {{ .Values.splunk.indexprefix | default "adc_coe" | quote }},
               "RecordType": {
                   "HTTP": "all",
                   "TCP": "all",
@@ -92,26 +103,6 @@ data:
               "MaxConnections": "512",
               "JsonFileDump": "no"
             }
-{{- end}}
-{{- if .Values.ns_tracing.enabled }}
-           ,
-          "ZIPKIN": {
-            "ServerUrl": {{ .Values.ns_tracing.server  | default "zipkin:9411/api/v1/spans" | quote }},
-            "RecordType": {
-                "HTTP": "all",
-                "TCP": "all",
-                "SWG": "all"
-            },
-            "TimeSeries": {
-                "EVENTS": "no",
-                "AUDITLOGS": "no"
-            },
-            "ProcessAlways": "yes",
-            "ProcessorMode": "avro",
-            "SkipAvro": "yes",
-            "FileSizeMax": "40",
-            "ProcessYieldTimeOut": "500"
-          }
-{{- end}}
+{{- end }}            
         }
     }
