@@ -12,7 +12,7 @@ Bookinfo application is the Helloworld of Istio environment. This application di
 
 ## <a name="citrix-ingress-gateway">A) Deploying Citrix ADC as Ingress Gateway</a>
 
-Follow [this](https://github.com/citrix/citrix-helm-charts/tree/master/citrix-adc-istio-ingress-gateway) link to deploy Citrix ADC as ingress gateway using helm charts. Citrix ADC can either be CPX or VPX/MPX. The given bookinfo deployment should work fine in both cases. 
+Follow [this](https://github.com/citrix/citrix-helm-charts/tree/master/citrix-adc-istio-ingress-gateway) link to deploy Citrix ADC as an Ingress Gateway using Helm charts. Citrix ADC can either be CPX or VPX/MPX. The given bookinfo deployment should work fine in both cases. 
 
 - **Important Note:** For deploying Citrix ADC VPX or MPX as ingress gateway, you should establish the connectivity between Citrix ADC VPX or MPX and cluster nodes. This connectivity can be established by configuring routes on Citrix ADC as mentioned [here](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/network/staticrouting.md) or by deploying [Citrix Node Controller](https://github.com/citrix/citrix-k8s-node-controller).
 

@@ -1,7 +1,7 @@
 cic:
   enabled: False
   
-  image: quay.io/citrix/citrix-k8s-ingress-controller:1.14.17
+  image: quay.io/citrix/citrix-k8s-ingress-controller:1.15.12
   pullPolicy: IfNotPresent
   openshift: false
   adcCredentialSecret:
@@ -73,7 +73,7 @@ cic:
 mcIngress:
   enabled: False
 
-  image: quay.io/citrix/citrix-k8s-ingress-controller:1.14.17
+  image: quay.io/citrix/citrix-k8s-ingress-controller:1.15.12
   pullPolicy: IfNotPresent
   openshift: false
   localRegion:
@@ -146,7 +146,7 @@ cpx:
       internalLoadBalancer: False
 
   cic:
-    image: quay.io/citrix/citrix-k8s-ingress-controller:1.14.17
+    image: quay.io/citrix/citrix-k8s-ingress-controller:1.15.12
     pullPolicy: IfNotPresent
     required: true
   entityPrefix:
@@ -164,7 +164,6 @@ cpx:
     licenseServerIP:
     licenseServerPort: 27000
     ADMIP:
-    ADMFingerPrint:
     loginSecret:
     bandWidthLicense: false
     bandWidth:

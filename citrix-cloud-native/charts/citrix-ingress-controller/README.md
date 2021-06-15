@@ -180,6 +180,20 @@ The following components are installed:
 -  [Citrix ingress controller](https://github.com/citrix/citrix-k8s-ingress-controller)
 -  [Exporter](https://github.com/citrix/citrix-adc-metrics-exporter) (if enabled)
 
+## Configuration for ServiceGraph:
+   If Citrix ADC VPX/MPX need to send data to the Citrix ADM to bring up the servicegraph, then the below steps can be followed to install Citrix ingress controller for Citrix ADC VPX/MPX. Citrix ingress controller configures Citrix ADC VPX/MPX with the configuration required for servicegraph.
+
+   1. Create secret using Citrix ADC VPX credentials, which will be used by Citrix ingress controller for configuring Citrix ADC VPX/MPX:
+
+	kubectl create secret generic nslogin --from-literal=username='cic' --from-literal=password='mypassword'
+
+   2. Deploy Citrix ingress controller using helm command:
+
+	helm install my-release citrix/citrix-cloud-native --set cic.enabled=true,cic.nsIP=<NSIP>,cic.nsVIP=<NSVIP>,cic.license.accept=yes,cic.adcCredentialSecret=<Secret-of-Citrix-ADC-credentials>,cic.coeConfig.required=true,cic.coeConfig.timeseries.metrics.enable=true,cic.coeConfig.timeseries.port=5563,cic.coeConfig.distributedTracing.enable=true,cic.coeConfig.transactions.enable=true,cic.coeConfig.transactions.port=5557,cic.coeConfig.endpoint.server=<ADM-Agent-IP>
+
+> **Note:**
+> If container agent is being used here for Citrix ADM, please provide `podIP` of container agent in the `cic.coeConfig.endpoint.server` parameter.
+
 ## CRDs configuration
 
 CRDs can be installed/upgraded when we install/upgrade Citrix ingress controller using `crds.install=true` parameter in Helm. If you do not want to install CRDs, then set the option `crds.install` to `false`. By default, CRDs too get deleted if you uninstall through Helm. This means, even the CustomResource objects created by the customer will get deleted. If you want to avoid this data loss set `crds.retainOnDelete` to `true`.
@@ -276,7 +290,7 @@ The following table lists the mandatory and optional parameters that you can con
 | --------- | --------------------- | ------------- | ----------- |
 | cic.enabled | Mandatory | False | Set to "True" for deploying Citrix Ingress Controller for Citrix ADC VPX/MPX. |
 | cic.license.accept | Mandatory | no | Set `yes` to accept the CIC end user license agreement. |
-| cic.image | Mandatory | `quay.io/citrix/citrix-k8s-ingress-controller:1.14.17` | The CIC image. |
+| cic.image | Mandatory | `quay.io/citrix/citrix-k8s-ingress-controller:1.15.12` | The CIC image. |
 | cic.pullPolicy | Mandatory | IfNotPresent | The CIC image pull policy. |
 | cic.adcCredentialSecret | Mandatory | N/A | The secret key to log on to the Citrix ADC VPX or MPX. For information on how to create the secret keys, see [Prerequisites](#prerequistes). |
 | cic.nsIP | Mandatory | N/A | The IP address of the Citrix ADC device. For details, see [Prerequisites](#prerequistes). |

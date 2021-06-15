@@ -62,8 +62,6 @@ spec:
 {{- if .Values.ADMSettings.ADMIP }}
           - name: "NS_MGMT_SERVER"
             value: {{ .Values.ADMSettings.ADMIP | quote }}
-          - name: "NS_MGMT_FINGER_PRINT"
-            value: {{ .Values.ADMSettings.ADMFingerPrint | quote }}
           - name: "NS_HTTP_PORT"
             value: {{ .Values.mgmtHttpPort | quote }}
           - name: "NS_HTTPS_PORT"
@@ -203,8 +201,13 @@ spec:
 {{- end }}
 {{- end }}
 {{- if .Values.updateIngressStatus }}
+{{- if .Values.cpxBgpRouter }}
+            - --update-ingress-status
+              yes
+{{- else }}
             - --cpx-service
               {{ .Release.Namespace }}/{{ include "cpxservice.fullname" . }}
+{{- end }}
 {{- end }}
           volumeMounts:
             - mountPath: /var/deviceinfo
@@ -297,7 +300,7 @@ metadata:
 {{- end }}
 {{- end }}
 spec:
-{{- if or ( and .Values.aws .Values.sslCertManagedByAWS) .Values.serviceType.loadBalancer.enabled .Values.updateIngressStatus }}
+{{- if or ( and .Values.aws .Values.sslCertManagedByAWS) .Values.serviceType.loadBalancer.enabled ( and (.Values.updateIngressStatus) (not .Values.cpxBgpRouter)) }}
   externalTrafficPolicy: {{ .Values.serviceType.loadBalancer.externalTrafficPolicy }}
   type: LoadBalancer
 {{- else if .Values.serviceType.nodePort.enabled }}

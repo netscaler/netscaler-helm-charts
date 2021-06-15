@@ -109,6 +109,27 @@ Use the following command for this:
   ```
   helm install my-release citrix/citrix-cloud-native --set cpx.enabled=true,cpx.license.accept=yes,cpx.openshift=true,cpx.exporter.required=true
   ```
+### Installed components
+
+The following components are installed:
+
+-  [Citrix ADC CPX](https://docs.citrix.com/en-us/citrix-adc-cpx/netscaler-cpx.html)
+-  [Citrix ingress controller](https://github.com/citrix/citrix-k8s-ingress-controller) (if enabled)
+-  [Exporter](https://github.com/citrix/citrix-adc-metrics-exporter) (if enabled)
+
+## Configuration for ServiceGraph:
+   If Citrix ADC CPX need to send data to the Citrix ADM to bring up the servicegraph, then the below steps can be followed to install Citrix ADC CPX with ingress controller. Citrix ingress controller configures Citrix ADC CPX with the configuration required for servicegraph.
+
+   1. Create secret using Citrix ADC Agent credentials, which will be used by Citrix ADC CPX to communicate with Citrix ADM Agent:
+
+	kubectl create secret generic admlogin --from-literal=username=<adm-agent-username> --from-literal=password=<adm-agent-password>
+
+   2. Deploy Citrix ADC CPX with Citrix ingress controller using helm command:
+
+	helm install my-release citrix/citrix-cloud-native --set cpx.enabled=true,cpx.license.accept=yes,cpx.coeConfig.required=true,cpx.coeConfig.timeseries.metrics.enable=true,cpx.coeConfig.distributedTracing.enable=true,cpx.coeConfig.endpoint.server=<ADM-Agent-IP>,cpx.ADMSettings.ADMIP=<ADM-Agent-IP>,cpx.ADMSettings.loginSecret=<Secret-for-ADM-Agent-credentials>
+
+> **Note:**
+> If container agent is being used here for Citrix ADM, please provide `svcIP` of container agent in the `cpx.coeConfig.endpoint.server` parameter.
 
 ## Citrix ADC CPX DaemonSet with Citrix Ingress Controller as sidecar for BGP Advertisement
 The previous section of deploying CPX as a Deployment  requires a Tier-1 Loadbalancer such as Citrix VPX or cloud loadbalancers to route the traffic to CPX instances running in Kubernetes cluster, but you can also leverage  BGP network fabric in your on-prem environemnt to route the traffic to CPX instances in a Kubernetes or Openshift cluster. you need to deploy CPX with Citrix Ingress Controller as Daemonset to advertise the ExternalIPs of the K8s services of type LoadBalancer to your BGP Fabric. Citrix ADC CPX establishes a BGP peering session with your network routers, and uses that peering session to advertise the IP addresses of external cluster services. If your routers have ECMP capability, the traffic is load-balanced to multiple CPX instances by the upstream router, which in turn load-balances to actual application pods. When you deploy the Citrix ADC CPX with this mode, Citrix ADC CPX adds iptables rules for each service of type LoadBalancer on Kubernetes nodes. The traffic destined to the external IP address is routed to Citrix ADC CPX pods. You can also set the 'ingressIP' variable to an IP Address to advertise the External IP address for Ingress resources. Refer [documentation](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/network/cpx-bgp-router.md) for complete details about BGP advertisement with CPX.
@@ -260,23 +281,6 @@ If you are running Citrix IPAM controller for auto allocation of IPs for Service
    helm install my-release ./citrix-cpx-with-ingress-controller --set license.accept=yes,cpxBgpRouter=true,ingressIP=<Ingress External IP Address>,openshift=true,exporter.required=true
    ```
 
-### Installed components
-
-The following components are installed:
-
--  [Citrix ADC CPX](https://docs.citrix.com/en-us/citrix-adc-cpx/netscaler-cpx.html)
--  [Citrix ingress controller](https://github.com/citrix/citrix-k8s-ingress-controller) (if enabled)
--  [Exporter](https://github.com/citrix/citrix-adc-metrics-exporter) (if enabled)
-
-### Installed components
-
-The following components are installed:
-
--  [Citrix ADC CPX](https://docs.citrix.com/en-us/citrix-adc-cpx/netscaler-cpx.html)
--  [Citrix ingress controller](https://github.com/citrix/citrix-k8s-ingress-controller) (if enabled)
--  [Exporter](https://github.com/citrix/citrix-adc-metrics-exporter) (if enabled)
-
-
 ## CRDs configuration
 
 CRDs can be installed/upgraded when we install/upgrade Citrix ADC CPX with Citrix ingress controller using `crds.install=true` parameter in Helm. If you do not want to install CRDs, then set the option `crds.install` to `false`. By default, CRDs too get deleted if you uninstall through Helm. This means, even the CustomResource objects created by the customer will get deleted. If you want to avoid this data loss set `crds.retainOnDelete` to `true`.
@@ -376,7 +380,7 @@ The following table lists the configurable parameters of the Citrix ADC CPX with
 | cpx.license.accept | Mandatory | no | Set `yes` to accept the Citrix ingress controller end user license agreement. |
 | cpx.image | Mandatory | `quay.io/citrix/citrix-k8s-cpx-ingress:13.0-76.29` | The Citrix ADC CPX image. |
 | cpx.pullPolicy | Mandatory | IfNotPresent | The Citrix ADC CPX image pull policy. |
-| cpx.cic.image | Mandatory | `quay.io/citrix/citrix-k8s-ingress-controller:1.14.17` | The Citrix ingress controller image. |
+| cpx.cic.image | Mandatory | `quay.io/citrix/citrix-k8s-ingress-controller:1.15.12` | The Citrix ingress controller image. |
 | cpx.cic.pullPolicy | Mandatory | IfNotPresent | The Citrix ingress controller image pull policy. |
 | cpx.cic.required | Mandatory | true | CIC to be run as sidecar with Citrix ADC CPX |
 | cpx.logLevel | Optional | DEBUG | The loglevel to control the logs generated by CIC. The supported loglevels are: CRITICAL, ERROR, WARNING, INFO, DEBUG and TRACE. For more information, see [Logging](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/configure/log-levels.md).|
@@ -417,7 +421,6 @@ The following table lists the configurable parameters of the Citrix ADC CPX with
 | cpx.ADMSettings.licenseServerIP | Optional | N/A | Provide the Citrix Application Delivery Management (ADM) IP address to license Citrix ADC CPX. For more information, see [Licensing](https://developer-docs.citrix.com/projects/citrix-k8s-ingress-controller/en/latest/licensing/)|
 | cpx.ADMSettings.licenseServerPort | Optional | 27000 | Citrix ADM port if non-default port is used. |
 | cpx.ADMSettings.ADMIP | Optional | |  Citrix Application Delivery Management (ADM) IP address. |
-| cpx.ADMSettings.ADMFingerPrint | Optional | N/A | Citrix Application Delivery Management (ADM) Finger Print. For more information, see [this](https://docs.citrix.com/en-us/citrix-application-delivery-management-service/application-analytics-and-management/service-graph.html). |
 | cpx.ADMSettings.loginSecret | Optional | N/A | The secret key to login to the ADM. For information on how to create the secret keys, see [Prerequisites](#prerequistes). |
 | cpx.ADMSettings.bandWidthLicense | Optional | False | Set to true if you want to use bandwidth based licensing for Citrix ADC CPX. |
 | cpx.ADMSettings.bandWidth | Optional | N/A | Desired bandwidth capacity to be set for Citrix ADC CPX in Mbps. |
