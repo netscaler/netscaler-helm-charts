@@ -259,7 +259,7 @@ Create a Kubernetes secret for the user name and password using the following co
 
     kubectl create secret generic nslogin --from-literal=username='cic' --from-literal=password='mypassword'
 
-Download the consolidated Values.yaml file which will deploy CIC to configure Tier-1 ADC and Tier 2 CPX.
+Download the consolidated YAML file which will deploy CIC to configure Tier-1 ADC and Tier 2 CPX.
 
     wget https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/servicegraph/manifest/values.yaml
 

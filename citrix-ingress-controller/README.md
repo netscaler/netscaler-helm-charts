@@ -173,6 +173,19 @@ The following components are installed:
 -  [Citrix ingress controller](https://github.com/citrix/citrix-k8s-ingress-controller)
 -  [Exporter](https://github.com/citrix/citrix-adc-metrics-exporter) (if enabled)
 
+## Configuration for ServiceGraph:
+   If Citrix ADC VPX/MPX need to send data to the Citrix ADM to bring up the servicegraph, then the below steps can be followed to install Citrix ingress controller for Citrix ADC VPX/MPX. Citrix ingress controller configures Citrix ADC VPX/MPX with the configuration required for servicegraph.
+
+   1. Create secret using Citrix ADC VPX credentials, which will be used by Citrix ingress controller for configuring Citrix ADC VPX/MPX:
+
+	kubectl create secret generic nslogin --from-literal=username='cic' --from-literal=password='mypassword'
+
+   2. Deploy Citrix ingress controller using helm command:
+
+	helm install my-release citrix/citrix-ingress-controller --set nsIP=<NSIP>,nsVIP=<NSVIP>,license.accept=yes,adcCredentialSecret=<Secret-of-Citrix-ADC-credentials>,coeConfig.required=true,coeConfig.timeseries.metrics.enable=true,coeConfig.timeseries.port=5563,coeConfig.distributedTracing.enable=true,coeConfig.transactions.enable=true,coeConfig.transactions.port=5557,coeConfig.endpoint.server=<ADM-Agent-IP>
+
+> **Note:**
+> If container agent is being used here for Citrix ADM, please provide `podIP` of container agent in the `coeConfig.endpoint.server` parameter.
 
 ## CRDs configuration
 
@@ -261,6 +274,8 @@ Here tolerations[0].key, tolerations[0].value and tolerations[0].effect are the 
 Effect represents what should happen to the pod if the pod don't have any matching toleration. It can have values `NoSchedule`, `NoExecute` and `PreferNoSchedule`.
 Operator represents the operation to be used for key and value comparison between taint and tolerations. It can have values `Exists` and `Equal`. The default value for operator is `Equal`.
 
+
+
 ### Configuration
 
 The following table lists the mandatory and optional parameters that you can configure during installation:
@@ -268,7 +283,7 @@ The following table lists the mandatory and optional parameters that you can con
 | Parameters | Mandatory or Optional | Default value | Description |
 | --------- | --------------------- | ------------- | ----------- |
 | license.accept | Mandatory | no | Set `yes` to accept the CIC end user license agreement. |
-| image | Mandatory | `quay.io/citrix/citrix-k8s-ingress-controller:1.14.17` | The CIC image. |
+| image | Mandatory | `quay.io/citrix/citrix-k8s-ingress-controller:1.15.12` | The CIC image. |
 | pullPolicy | Mandatory | IfNotPresent | The CIC image pull policy. |
 | adcCredentialSecret | Mandatory | N/A | The secret key to log on to the Citrix ADC VPX or MPX. For information on how to create the secret keys, see [Prerequisites](#prerequistes). |
 | nsIP | Mandatory | N/A | The IP address of the Citrix ADC device. For details, see [Prerequisites](#prerequistes). |

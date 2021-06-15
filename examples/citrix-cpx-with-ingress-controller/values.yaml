@@ -66,7 +66,7 @@ serviceAnnotations:
 
 # Citrix Ingress Controller config details
 cic:
-  image: quay.io/citrix/citrix-k8s-ingress-controller:1.14.17
+  image: quay.io/citrix/citrix-k8s-ingress-controller:1.15.12
   pullPolicy: IfNotPresent
   required: true
 entityPrefix:
@@ -85,7 +85,6 @@ ADMSettings:
   licenseServerIP:
   licenseServerPort: 27000
   ADMIP:
-  ADMFingerPrint:
   loginSecret:
   bandWidthLicense: false
   bandWidth:
