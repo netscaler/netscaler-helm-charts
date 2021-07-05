@@ -66,6 +66,16 @@ data:
           value: nsroot
         - name: NS_PASSWORD
           value: nsroot
+{{- if eq .Values.coe.coeTracing true }}
+        - name: COE_TRACING
+          value: "TRUE"
+{{- end }}
+        - name: LOGLEVEL
+          value: {{ .Values.xDSAdaptor.logLevel | default "DEBUG" | quote }}
+{{- if eq .Values.xDSAdaptor.jsonLog true }}
+        - name: JSONLOG
+          value: "TRUE"
+{{- end }}
         args:
         - -ads-server
 {{- if eq .Values.xDSAdaptor.secureConnect true }}
@@ -141,11 +151,9 @@ data:
           value: {{ .Values.ADMSettings.licenseServerIP | default "" }}
         - name: "LS_PORT"
           value: {{ .Values.ADMSettings.licenseServerPort}}
-{{- if .Values.ADMSettings.ADMFingerPrint }}
+{{- if .Values.ADMSettings.ADMIP }}
         - name: "NS_MGMT_SERVER"
           value: {{ .Values.ADMSettings.ADMIP }}
-        - name: "NS_MGMT_FINGER_PRINT"
-          value: {{ .Values.ADMSettings.ADMFingerPrint | quote }}
         - name: "NS_HTTP_PORT"
           value: {{ .Values.cpxProxy.mgmtHttpPort | quote }}
         - name: "NS_HTTPS_PORT"

@@ -6,10 +6,11 @@ citrixCPX: false
 
 coe:
     coeURL:
+    coeTracing: false
 
 metricExporter:
     required: true
-    image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.6
+    image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.7
     port: 8888
     secure: "YES"
     logLevel: ERROR
@@ -20,6 +21,8 @@ xDSAdaptor:
     imagePullPolicy: IfNotPresent
     proxyType: router
     secureConnect: true
+    logLevel: DEBUG
+    jsonLog: false
  
 istioPilot:
     name: istiod
@@ -38,7 +41,7 @@ certProvider:
 
 ingressGateway:
     netscalerUrl: null 
-    image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-76.29
+    image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-79.64
     imagePullPolicy: IfNotPresent
     EULA: NO
     mgmtHttpPort: 10080
@@ -60,7 +63,6 @@ ingressGateway:
 
 ADMSettings:
     ADMIP:
-    ADMFingerPrint:
     licenseServerIP:
     licenseServerPort: 27000
     bandWidthLicense: false

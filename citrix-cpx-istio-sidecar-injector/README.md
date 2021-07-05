@@ -107,6 +107,15 @@ helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 helm install cpx-sidecar-injector citrix/citrix-cpx-istio-sidecar-injector --namespace citrix-system --set cpxProxy.EULA=YES,coe.coeURL=<coe-service-name>.<namespace>
 ```
 
+By default, COE is primarily used for Prometheus integration. Servicegraph and tracing is handled by Citrix ADM appliance. To enable Zipkin tracing, set argument `coe.coeTracing=true` in helm command. Default value of coeTracing is set to false.
+
+```
+helm repo add citrix https://citrix.github.io/citrix-helm-charts/
+
+helm install cpx-sidecar-injector citrix/citrix-cpx-istio-sidecar-injector --namespace citrix-system --set cpxProxy.EULA=YES,coe.coeURL=<coe-service-name>.<namespace>,coe.coeTracing=true
+
+```
+
 For example, if COE is deployed as `coe` in `citrix-system` namespace, then below helm command will deploy sidecar injector webhook which will be deploying Citrix ADC CPX sidecar proxies in application pods, and these sidecar proxies will be configured to establish communication channels with COE.
 
 ```
@@ -212,9 +221,11 @@ The following table lists the configurable parameters and their default values i
 | `xDSAdaptor.image`                    | Image of the Citrix xDS Adaptor container                    |  quay.io/citrix/citrix-xds-adaptor:0.9.8   |
 | `xDSAdaptor.imagePullPolicy`   | Image pull policy for xDS-adaptor | IfNotPresent        |
 | `xDSAdaptor.secureConnect`     | If this value is set to true, xDS-adaptor establishes secure gRPC channel with Istio Pilot   | TRUE                       |
+| `xDSAdaptor.logLevel`   | Log level to be set for xDS-adaptor log messages. Possible values: TRACE (most verbose), DEBUG, INFO, WARN, ERROR (least verbose) | DEBUG       | Optional|
+| `xDSAdaptor.jsonLog`   | Set this argument to true if log messages are required in JSON format | false       | Optional|
 | `coe.coeURL`          | Name of [Citrix Observability Exporter](https://github.com/citrix/citrix-observability-exporter) Service in the form of _servicename.namespace_  | NIL            | Optional|
+| `coe.coeTracing`          | Use COE to send appflow transactions to Zipkin endpoint. If it is set to true, ADM servicegraph (if configured) can be impacted.  | false           | Optional|
 | `ADMSettings.ADMIP`     | Provide the Citrix Application Delivery Management (ADM) IP address | NIL                       |
-| `ADMSettings.ADMFingerPrint`          | Citrix Applicatin Delivery Management (ADM) FingerPrint. For more information, see [this](https://docs.citrix.com/en-us/citrix-application-delivery-management-service/application-analytics-and-management/service-graph.html)  | NIL     | Optional| 
 | `ADMSettings.licenseServerIP `          | Citrix License Server IP address  | NIL            | Optional |
 | `ADMSettings.licenseServerPort`   | Citrix ADM port if a non-default port is used                                                                                      | 27000                                                          |
 | `ADMSettings.bandWidth`          | Desired bandwidth capacity to be set for Citrix ADC CPX in Mbps  | NIL            | Optional |
@@ -226,7 +237,7 @@ The following table lists the configurable parameters and their default values i
 | `istioPilot.proxyType`      | Type of Citrix ADC associated with the xDS-adaptor. Possible values are: sidecar and router.                                                                              |   sidecar|
 | `istioPilot.SAN`                 | Subject alternative name for Istio Pilot which is the Secure Production Identity Framework For Everyone (SPIFFE) ID of Istio Pilot.                                   | NIL |
 | `cpxProxy.netscalerUrl`   |    URL or IP address of the Citrix ADC which will be configured by Istio-adaptor.                                                            | http://127.0.0.1 |
-| `cpxProxy.image`          | Citrix ADC CPX image used as sidecar proxy                                                                                                    | quay.io/citrix/citrix-k8s-cpx-ingress:13.0-76.29 |
+| `cpxProxy.image`          | Citrix ADC CPX image used as sidecar proxy                                                                                                    | quay.io/citrix/citrix-k8s-cpx-ingress:13.0-79.64 |
 | `cpxProxy.imagePullPolicy`           | Image pull policy for Citrix ADC                                                                                  | IfNotPresent                                                               |
 | `cpxProxy.EULA`              |  End User License Agreement(EULA) terms and conditions. If yes, then user agrees to EULA terms and conditions.                                                     | NO |
 | `cpxProxy.cpxSidecarMode`            | Environment variable for Citrix ADC CPX. It indicates that Citrix ADC CPX is running as sidecar mode or not.                                                                                               | YES                                                                    |

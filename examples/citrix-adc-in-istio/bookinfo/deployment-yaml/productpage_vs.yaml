@@ -5,7 +5,7 @@ metadata:
   name: productpage
 spec:
   hosts:
-  - "*"
+  - "www.bookinfo.com"
   gateways:
   - bookinfo-http-gateway
   - bookinfo-https-gateway

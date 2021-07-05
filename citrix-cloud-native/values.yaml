@@ -29,3 +29,5 @@ iaSidecar:
 iaEgress:
   enabled: False
 
+ao:
+  enabled: False
