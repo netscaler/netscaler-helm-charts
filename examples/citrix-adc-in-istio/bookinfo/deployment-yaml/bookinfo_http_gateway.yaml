@@ -12,6 +12,6 @@ spec:
       name: http
       protocol: HTTP
     hosts:
-    - "*"
+    - "www.bookinfo.com"
 
 ---

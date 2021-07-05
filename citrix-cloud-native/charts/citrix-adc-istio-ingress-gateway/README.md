@@ -227,7 +227,7 @@ To skip this process, don't provide any value (empty string) to `iaIngress.certP
 ```
         helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-        helm install citrix-adc-istio-ingress-gateway citrix/citrix-cloud-native --namespace citrix-system --set iaIngress.enabled=true,iaIngress.ingres    sGateway.EULA=YES,iaIngress.citrixCPX=true --set iaIngress.certProvider.caAddr=""
+        helm install citrix-adc-istio-ingress-gateway citrix/citrix-cloud-native --namespace citrix-system --set iaIngress.enabled=true,iaIngress.ingres    ao.teway.EULA=YES,iaIngress.citrixCPX=true --set iaIngress.certProvider.caAddr=""
 ```
 
 ### <a name="using-third-party-service-account-tokens">Configure Third Party Service Account Tokens</a>
@@ -319,9 +319,11 @@ The following table lists the configurable parameters in the Helm chart and thei
 | `iaIngress.xDSAdaptor.image`            | Image of the Citrix xDS-adaptor container |quay.io/citrix/citrix-xds-adaptor:0.9.8 | Mandatory|
 | `iaIngress.xDSAdaptor.imagePullPolicy`   | Image pull policy for xDS-adaptor | IfNotPresent       | Optional|
 | `iaIngress.xDSAdaptor.secureConnect`     | If this value is set to true, Istio-adaptor establishes secure gRPC channel with Istio Pilot   | TRUE                       | Optional|
+| `iaIngress.xDSAdaptor.logLevel`   | Log level to be set for xDS-adaptor log messages. Possible values: TRACE (most verbose), DEBUG, INFO, WARN, ERROR (least verbose) | DEBUG       | Optional|
+| `iaIngress.xDSAdaptor.jsonLog`   | Set this argument to true if log messages are required in JSON format | false       | Optional|
 | `iaIngress.coe.coeURL`          | Name of [Citrix Observability Exporter](https://github.com/citrix/citrix-observability-exporter) Service in the form of "<servicename>.<namespace>"  | null            | Optional|
+| `iaIngress.coe.coeTracing`          | Use COE to send appflow transactions to Zipkin endpoint. If it is set to true, ADM servicegraph (if configured) can be impacted.  | false           | Optional|
 | `iaIngress.ADMSettings.ADMIP `          | Citrix Application Delivery Management (ADM) IP address  | NIL            | Mandatory for Citrix ADC CPX |
-| `iaIngress.ADMSettings.ADMFingerPrint `          | Citrix Application Delivery Management (ADM) Finger Print. For more information, see [this](https://docs.citrix.com/en-us/citrix-application-delivery-management-service/application-analytics-and-management/service-graph.html)  | NIL            | Optional|
 | `iaIngress.ADMSettings.licenseServerIP `          | Citrix License Server IP address  | NIL            | Optional |
 | `iaIngress.ADMSettings.licenseServerPort` | Citrix ADM port if a non-default port is used                                                                                        | 27000                                                                 | Optional|
 | `iaIngress.ADMSettings.bandWidth`          | Desired bandwidth capacity to be set for Citrix ADC CPX in Mbps  | NIL            | Optional |
@@ -329,7 +331,7 @@ The following table lists the configurable parameters in the Helm chart and thei
 | `iaIngress.ingressGateway.netscalerUrl`       | URL or IP address of the Citrix ADC which Istio-adaptor configures (Mandatory if citrixCPX=false)| null   |Mandatory for Citrix ADC MPX or VPX|
 | `iaIngress.ingressGateway.vserverIP`       | Virtual server IP address on Citrix ADC (Mandatory if citrixCPX=false) | null | Mandatory for Citrix ADC MPX or VPX|
 | `iaIngress.ingressGateway.adcServerName `          | Citrix ADC ServerName used in the Citrix ADC certificate  | NIL            | Optional |
-| `iaIngress.ingressGateway.image`             | Image of Citrix ADC CPX designated to run as Ingress Gateway                                                                       |quay.io/citrix/citrix-k8s-cpx-ingress:13.0-76.29 |   Mandatory for Citrix ADC CPX                                                              |
+| `iaIngress.ingressGateway.image`             | Image of Citrix ADC CPX designated to run as Ingress Gateway                                                                       |quay.io/citrix/citrix-k8s-cpx-ingress:13.0-79.64 |   Mandatory for Citrix ADC CPX                                                              |
 | `iaIngress.ingressGateway.imagePullPolicy`   | Image pull policy                                                                                                                  | IfNotPresent                                                          | Optional|
 | `iaIngress.ingressGateway.EULA`             | End User License Agreement(EULA) terms and conditions. If yes, then user agrees to EULA terms and conditions.                                     | NO                                                                    | Mandatory for Citrix ADC CPX 
 | `iaIngress.ingressGateway.mgmtHttpPort`      | Management port of the Citrix ADC CPX                                                                                              | 9080                                                                  | Optional|
@@ -350,7 +352,7 @@ The following table lists the configurable parameters in the Helm chart and thei
 | `iaIngress.istioPilot.insecureGrpcPort`      | Insecure GRPC port where Istio Pilot is listening                                                                                  | 15010                                                                 |Optional|
 | `iaIngress.istioPilot.SAN`                 | Subject alternative name for Istio Pilot which is the secure production identity framework for everyone (SPIFFE) ID of Istio Pilot                                                        | null |Optional|
 | `iaIngress.metricExporter.required`          | Metrics exporter for Citrix ADC                                                                                                    | TRUE                                                                  |Optional|
-| `iaIngress.metricExporter.image`             | Image of the Citrix ADC Metrics Exporter                                                                                   | quay.io/citrix/citrix-adc-metrics-exporter:1.4.6                             |Optional|
+| `iaIngress.metricExporter.image`             | Image of the Citrix ADC Metrics Exporter                                                                                   | quay.io/citrix/citrix-adc-metrics-exporter:1.4.7                             |Optional|
 | `iaIngress.metricExporter.port`              | Port over which Citrix ADC Metrics Exporter collects metrics of Citrix ADC.                                                      | 8888                                                                  |Optional|
 | `iaIngress.metricExporter.secure`            | Enables collecting metrics over TLS                                                                                                | YES                                                                    |Optional|
 | `iaIngress.metricExporter.logLevel`          | Level of logging in Citrix ADC Metrics Exporter. Possible values are: DEBUG, INFO, WARNING, ERROR, CRITICAL                                       | ERROR                                                                 |Optional|

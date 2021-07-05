@@ -222,10 +222,11 @@ iaIngress:
   
   coe:
     coeURL:
+    coeTracing: false
 
   metricExporter:
     required: true
-    image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.6
+    image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.7
     port: 8888
     secure: "YES"
     logLevel: ERROR
@@ -236,6 +237,8 @@ iaIngress:
     imagePullPolicy: IfNotPresent
     proxyType: router
     secureConnect: true
+    logLevel: DEBUG
+    jsonLog: false
 
   istioPilot:
     name: istiod
@@ -255,7 +258,7 @@ iaIngress:
 
   ingressGateway:
     netscalerUrl: null
-    image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-76.29
+    image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-79.64
     imagePullPolicy: IfNotPresent
     EULA: NO
     mgmtHttpPort: 10080
@@ -278,7 +281,6 @@ iaIngress:
 
   ADMSettings:
     ADMIP:
-    ADMFingerPrint:
     licenseServerIP:
     licenseServerPort: 27000
     bandWidthLicense: false
@@ -295,10 +297,11 @@ iaEgress:
 
   coe:
       coeURL: 
+      coeTracing: false
   
   metricExporter:
     required: true
-    image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.6
+    image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.7
     port: 8888
     secure: "FALSE"
     logLevel: ERROR
@@ -324,11 +327,13 @@ iaEgress:
     imagePullPolicy: IfNotPresent
     proxyType: router
     secureConnect: true
+    logLevel: DEBUG
+    jsonLog: false
 
 
   egressGateway:
     netscalerUrl: null
-    image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-76.29
+    image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-79.64
     imagePullPolicy: IfNotPresent
     EULA: false
     mgmtHttpPort: 10080
@@ -341,7 +346,6 @@ iaEgress:
 
   ADMSettings:
     ADMIP:
-    ADMFingerPrint:
     licenseServerIP:
     licenseServerPort: 27000
     bandWidthLicense: false
@@ -360,9 +364,12 @@ iaSidecar:
     imagePullPolicy: IfNotPresent
     proxyType: sidecar
     secureConnect: true
+    logLevel: DEBUG
+    jsonLog: false
 
   coe:
     coeURL:
+    coeTracing: false
 
   istioPilot:
     name: istiod
@@ -381,7 +388,7 @@ iaSidecar:
 
   cpxProxy:
     netscalerUrl: "http://127.0.0.1"
-    image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-76.29
+    image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-79.64
     imagePullPolicy: IfNotPresent
     EULA: NO
     cpxSidecarMode: YES
@@ -392,7 +399,6 @@ iaSidecar:
 
   ADMSettings:
     ADMIP:
-    ADMFingerPrint:
     licenseServerIP:
     licenseServerPort: 27000
     bandWidthLicense: false
@@ -463,3 +469,19 @@ ipam:
   pullPolicy: IfNotPresent
 
   vipRange:
+
+ao:
+  image: quay.io/citrix/adm-agent-onboarding:1.0.0
+  pullPolicy: IfNotPresent
+  secretName: "admadaptor"
+
+  admAgent:
+    image: quay.io/citrix/adm-agent:latest
+    helperImage: quay.io/citrix/adm-agent-helper:1.0.0
+    loginSecret:
+
+  adc:
+    IP:
+    mgmtHTTPPort: 80
+    mgmtHTTPSPort: 443
+    loginSecret: nslogin

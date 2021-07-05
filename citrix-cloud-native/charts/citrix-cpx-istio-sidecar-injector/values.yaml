@@ -7,9 +7,12 @@ xDSAdaptor:
     imagePullPolicy: IfNotPresent
     proxyType: sidecar
     secureConnect: true
+    logLevel: DEBUG
+    jsonLog: false
 
 coe:
     coeURL:
+    coeTracing: false
  
 istioPilot:
     name: istiod
@@ -28,7 +31,7 @@ certProvider:
 
 cpxProxy:
     netscalerUrl: "http://127.0.0.1"
-    image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-76.29
+    image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-79.64
     imagePullPolicy: IfNotPresent
     EULA: NO
     cpxSidecarMode: YES
@@ -43,7 +46,6 @@ sidecarWebHook:
 
 ADMSettings:
     ADMIP:
-    ADMFingerPrint:
     licenseServerIP:
     licenseServerPort: 27000
     bandWidthLicense: false

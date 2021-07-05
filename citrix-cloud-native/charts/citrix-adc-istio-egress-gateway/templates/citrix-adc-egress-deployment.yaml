@@ -137,6 +137,16 @@ spec:
           - name: JWT_POLICY
             value: {{ .Values.certProvider.jwtPolicy | default "first-party-jwt" | quote }} # third-party-jwt if Kubernetes cluster supports third-party tokens
 {{- end }}
+{{- if eq .Values.coe.coeTracing true }}
+          - name: COE_TRACING
+            value: "TRUE"
+{{- end }}
+          - name: LOGLEVEL
+            value: {{ .Values.xDSAdaptor.logLevel | default "DEBUG" | quote }}
+{{- if eq .Values.xDSAdaptor.jsonLog true }}
+          - name: JSONLOG
+            value: "TRUE"
+{{- end }}
           securityContext:
             readOnlyRootFilesystem: true
             runAsGroup: 32024
@@ -180,6 +190,8 @@ spec:
           env:
           - name: "EULA"
             value: "{{ .Values.egressGateway.EULA }}"
+          - name: "METRICS_EXPORTER_PORT"
+            value: "{{ .Values.metricExporter.port }}"
           - name: "MGMT_HTTP_PORT"
             value: "{{ .Values.egressGateway.mgmtHttpPort }}"
           - name: "MGMT_HTTPS_PORT"
@@ -194,11 +206,9 @@ spec:
             value: ""
           - name: "LS_IP"
             value: {{ .Values.ADMSettings.licenseServerIP | default "" }}
-{{- if .Values.ADMSettings.ADMFingerPrint }}
+{{- if .Values.ADMSettings.ADMIP }}
           - name: "NS_MGMT_SERVER"
             value: {{ .Values.ADMSettings.ADMIP }}
-          - name: "NS_MGMT_FINGER_PRINT"
-            value: {{ .Values.ADMSettings.ADMFingerPrint | quote }}
           - name: "NS_HTTP_PORT"
             value: {{ .Values.egressGateway.mgmtHttpPort | quote }}
           - name: "NS_HTTPS_PORT"
@@ -311,6 +321,16 @@ spec:
           value: {{ .Values.certProvider.certTTLinHours | quote }}
         - name: JWT_POLICY
           value: {{ .Values.certProvider.jwtPolicy | default "first-party-jwt" | quote }} # third-party-jwt if Kubernetes cluster supports third-party tokens
+{{- end }}
+{{- if eq .Values.coe.coeTracing true }}
+        - name: COE_TRACING
+          value: "TRUE"
+{{- end }}
+        - name: LOGLEVEL
+          value: {{ .Values.xDSAdaptor.logLevel | default "DEBUG" | quote }}
+{{- if eq .Values.xDSAdaptor.jsonLog true }}
+        - name: JSONLOG
+          value: "TRUE"
 {{- end }}
         - name: NS_USER
           valueFrom:
