@@ -1,7 +1,7 @@
 cic:
   enabled: False
   
-  image: quay.io/citrix/citrix-k8s-ingress-controller:1.15.12
+  image: quay.io/citrix/citrix-k8s-ingress-controller:1.16.9
   pullPolicy: IfNotPresent
   openshift: false
   adcCredentialSecret:
@@ -73,7 +73,7 @@ cic:
 mcIngress:
   enabled: False
 
-  image: quay.io/citrix/citrix-k8s-ingress-controller:1.15.12
+  image: quay.io/citrix/citrix-k8s-ingress-controller:1.16.9
   pullPolicy: IfNotPresent
   openshift: false
   localRegion:
@@ -97,7 +97,7 @@ mcIngress:
 cpx:
   enabled: False
 
-  image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-76.29
+  image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-79.64
   pullPolicy: IfNotPresent
 
   mgmtHttpPort: 9080
@@ -146,7 +146,7 @@ cpx:
       internalLoadBalancer: False
 
   cic:
-    image: quay.io/citrix/citrix-k8s-ingress-controller:1.15.12
+    image: quay.io/citrix/citrix-k8s-ingress-controller:1.16.9
     pullPolicy: IfNotPresent
     required: true
   entityPrefix:
@@ -265,6 +265,7 @@ iaIngress:
     mgmtHttpsPort: 10443
     httpNodePort: 30180
     httpsNodePort: 31443
+    nodePortRequired: false
     lightWeightCPX: 1
     secretVolumes:
     #licenseServerIP: this value will be taken from ADMSettings.ADMIP

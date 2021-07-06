@@ -28,7 +28,11 @@ metadata:
     app: {{ .Values.ingressGateway.label | default "citrix-ingressgateway" }}
 spec:
 {{- if eq .Values.citrixCPX true }}
+{{- if eq .Values.ingressGateway.nodePortRequired true }}
+  type: NodePort
+{{- else }}
   type: LoadBalancer
+{{- end }}
 {{- end }}
   selector:
     app: {{ .Values.ingressGateway.label | default "citrix-ingressgateway" }}

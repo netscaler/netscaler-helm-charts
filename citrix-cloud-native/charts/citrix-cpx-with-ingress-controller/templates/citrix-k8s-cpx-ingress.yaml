@@ -93,6 +93,10 @@ spec:
                 name: {{ required "Provide Secret for ADM/LicenseServer credentials" .Values.ADMSettings.loginSecret }}
                 key: password
 {{- end }}
+{{- if .Values.exporter.required }}
+          - name: "METRICS_EXPORTER_PORT"
+            value: {{ .Values.exporter.ports.containerPort | quote }}
+{{- end }}
           volumeMounts:
             - mountPath: /var/deviceinfo
               name: shared-data

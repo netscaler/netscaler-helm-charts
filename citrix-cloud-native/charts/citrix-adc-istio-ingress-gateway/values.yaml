@@ -48,6 +48,7 @@ ingressGateway:
     mgmtHttpsPort: 10443
     httpNodePort: 30180
     httpsNodePort: 31443
+    nodePortRequired: false
     lightWeightCPX: 1 
     secretVolumes:
     #licenseServerIP: this value will be taken from ADMSettings.ADMIP
