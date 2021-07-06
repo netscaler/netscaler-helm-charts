@@ -190,8 +190,10 @@ spec:
           env:
           - name: "EULA"
             value: "{{ .Values.egressGateway.EULA }}"
+{{- if .Values.metricExporter.required }}
           - name: "METRICS_EXPORTER_PORT"
             value: "{{ .Values.metricExporter.port }}"
+{{- end }}
           - name: "MGMT_HTTP_PORT"
             value: "{{ .Values.egressGateway.mgmtHttpPort }}"
           - name: "MGMT_HTTPS_PORT"

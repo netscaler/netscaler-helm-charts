@@ -222,8 +222,10 @@ spec:
           env:
           - name: "EULA"
             value: "{{ .Values.ingressGateway.EULA }}"
+{{- if .Values.metricExporter.required }}
           - name: "METRICS_EXPORTER_PORT"
             value: "{{ .Values.metricExporter.port }}"
+{{- end }}
           - name: "MGMT_HTTP_PORT"
             value: "{{ .Values.ingressGateway.mgmtHttpPort }}"
           - name: "MGMT_HTTPS_PORT"

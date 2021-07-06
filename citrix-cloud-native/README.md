@@ -12,7 +12,6 @@ This helm chart can be used to:
 7. [Deploy Citrix ADC CPX as a sidecar in Istio environment](https://github.com/citrix/citrix-helm-charts/tree/master/citrix-cloud-native/charts/citrix-cpx-istio-sidecar-injector/README.md)
 8. [Deploy Citrix Multi-Cluster Ingress Controller for Citrix VPX/MPX](https://github.com/citrix/citrix-helm-charts/blob/master/citrix-cloud-native/charts/citrix-multi-cluster-ingress-controller/README.md)
 9. [Deploy Citrix ADC as an Egress Gateway in Istio environment](https://github.com/citrix/citrix-helm-charts/tree/master/citrix-cloud-native/charts/citrix-adc-istio-egress-gateway/README.md)
-10. [Deploy ADM agent onboarding as Kubernetes Job](https://github.com/citrix/citrix-helm-charts/tree/master/citrix-cloud-native/charts/adm-agent-onboarding/README.md)
 
 Depending on the architecture, it is sometimes needed to deploy multiple products in Citrix portfolio together. This can be achieved by setting required parameters for all products together while installing those products using this helm chart.
 For example, both Citrix Ingress Controller and Citrix ADC CPX with Citrix Ingress Controller as side car can be deployed using single helm install command as:
