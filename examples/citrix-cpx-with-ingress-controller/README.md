@@ -136,7 +136,7 @@ bels | Optional | N/A | You can use this parameter to provide the route labels s
 | ADMSettings.vCPULicense | Optional | N/A | Set to true if you want to use vCPU based licensing for Citrix ADC CPX. |
 | ADMSettings.cpxCores | Optional | 1 | Desired number of vCPU to be set for Citrix ADC CPX. |
 | exporter.required | Optional | false | Use the argument if you want to run the [Exporter for Citrix ADC Stats](https://github.com/citrix/citrix-adc-metrics-exporter) along with Citrix ingress controller to pull metrics for the Citrix ADC CPX|
-| exporter.image | Optional | `quay.io/citrix/citrix-adc-metrics-exporter:1.4.7` | The Exporter for Citrix ADC Stats image. |
+| exporter.image | Optional | `quay.io/citrix/citrix-adc-metrics-exporter:1.4.8` | The Exporter for Citrix ADC Stats image. |
 | exporter.pullPolicy | Optional | IfNotPresent | The Exporter for Citrix ADC Stats image pull policy. |
 | exporter.ports.containerPort | Optional | 8888 | The Exporter for Citrix ADC Stats container port. |
 | coeConfig.required | Mandatory | false | Set this to true if you want to configure Citrix ADC to send metrics and transaction records to COE. |

@@ -42,7 +42,7 @@ namespaceLabels:
 # Exporter config details
 exporter:
   required: false
-  image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.7
+  image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.8
   pullPolicy: IfNotPresent
   ports:
     containerPort: 8888
