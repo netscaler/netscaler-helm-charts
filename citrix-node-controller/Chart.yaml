@@ -9,4 +9,4 @@ maintainers:
 name: citrix-node-controller
 sources:
 - https://github.com/citrix/citrix-k8s-node-controller
-version: 2.2.4
+version: 2.2.5
