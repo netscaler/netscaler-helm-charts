@@ -474,9 +474,10 @@ ipam:
 ao:
   image: quay.io/citrix/adm-agent-onboarding:1.0.0
   pullPolicy: IfNotPresent
-  secretName: "admadaptor"
+  token:
 
   admAgent:
+    name: admagent
     image: quay.io/citrix/adm-agent:latest
     helperImage: quay.io/citrix/adm-agent-helper:1.0.0
     loginSecret:

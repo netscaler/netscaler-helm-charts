@@ -1,0 +1,41 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: httpbin-secure-gateway
+spec:
+  selector:
+    app: citrix-ingressgateway #ingress-gateway-114
+  servers:
+  - port:
+      number: 443
+      name: https
+      protocol: HTTPS
+    tls:
+      mode: SIMPLE
+      serverCertificate: /etc/istio/httpbin-ingressgateway-certs/tls.crt
+      privateKey: /etc/istio/httpbin-ingressgateway-certs/tls.key
+    hosts:
+    - "www.httpbin.com"
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "www.httpbin.com"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: httpbin
+spec:
+  hosts:
+  - "www.httpbin.com"
+  gateways:
+  - httpbin-gateway
+  - httpbin-secure-gateway 
+  http:
+  - route:
+    - destination:
+        host: httpbin
+        port:
+          number: 8000

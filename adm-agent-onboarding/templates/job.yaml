@@ -1,0 +1,59 @@
+apiVersion: batch/v1
+kind: Job 
+metadata:
+ name: {{ .Chart.Name }}
+spec:
+ backoffLimit: 3
+ template:
+   metadata:
+     name: {{ .Chart.Name }}
+   spec:
+     serviceAccountName: {{ .Chart.Name }} 
+     containers:
+     - name: {{ .Chart.Name }}
+       image: "{{ .Values.image}}"
+       imagePullPolicy: {{ .Values.pullPolicy | quote }}
+       env:
+       - name: SERVICE_ACCOUNT
+         valueFrom:
+           fieldRef:
+             apiVersion: v1
+             fieldPath: spec.serviceAccountName
+       - name: "ADM_TOKEN"
+         value: {{ required "Provide Authentication Token " .Values.token | quote }}
+       - name: "AGENT_NAME"
+         value: {{ .Values.admAgent.name | quote }}
+{{- if .Values.admAgent.loginSecret }}
+       - name: "ADM_AGENT_PASSWORD"
+         valueFrom:
+           secretKeyRef:
+             name: {{ .Values.admAgent.loginSecret }}
+             key: password
+{{- end }}
+       - name: "ADM_AGENT_IMAGE"
+         value: {{ .Values.admAgent.image | quote }}  
+       - name: "ADM_AGENT_HELPER_IMAGE"
+         value: {{ .Values.admAgent.helperImage | quote }}
+{{- if .Values.adc.IP }}
+       - name: "ADC_IP"
+         value: {{ .Values.adc.IP | quote }}
+       - name: "ADC_USERNAME"
+         valueFrom:
+           secretKeyRef:
+             name: {{ .Values.adc.loginSecret }}
+             key: username
+       - name: "ADC_PASSWORD"
+         valueFrom:
+           secretKeyRef:
+             name: {{ .Values.adc.loginSecret }}
+             key: password 
+       - name: "ADC_MGMT_HTTP_PORT"
+         value: {{ .Values.adc.mgmtHTTPPort | quote}}
+       - name: "ADC_MGMT_HTTPS_PORT"
+         value: {{ .Values.adc.mgmtHTTPSPort | quote }}
+{{- end }}
+       - name: "SERVICE_ACCOUNT"
+         value: {{ .Chart.Name }}
+       - name: "CLOUD_URL"
+         value: "https://adm.cloud.com"
+     restartPolicy: OnFailure

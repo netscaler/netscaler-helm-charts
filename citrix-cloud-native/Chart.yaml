@@ -49,3 +49,7 @@ dependencies:
     version: "1.9.2"
     condition: iaEgress.enabled
     alias: iaEgress
+  - name: adm-agent-onboarding
+    version: "1.0.0"
+    condition: ao.enabled
+    alias: ao

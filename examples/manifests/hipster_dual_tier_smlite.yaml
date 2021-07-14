@@ -1,0 +1,987 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: emailservice
+spec:
+  selector:
+    matchLabels:
+      app: emailservice
+  template:
+    metadata:
+      labels:
+        app: emailservice
+    spec:
+      terminationGracePeriodSeconds: 5
+      containers:
+      - name: server
+        image: gcr.io/google-samples/microservices-demo/emailservice:v0.1.2
+        ports:
+        - containerPort: 8080
+        env:
+        - name: ENABLE_PROFILER
+          value: '0'
+        readinessProbe:
+          periodSeconds: 5
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:8080
+        livenessProbe:
+          periodSeconds: 5
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:8080
+        resources:
+          requests:
+            cpu: 100m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: emailservice-headless
+spec:
+  selector:
+    app: emailservice
+  ports:
+  - name: grpc
+    port: 5000
+    targetPort: 8080
+  clusterIP: None
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: emailservice
+spec:
+  selector:
+    app: cpx-ingress
+  ports:
+  - port: 5000
+    name: grpc
+    targetPort: 5000
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: emailservice-ingress
+  annotations:
+    ingress.citrix.com/insecure-service-type: "tcp"
+    kubernetes.io/ingress.class: "tier-2-cpx"
+    ingress.citrix.com/insecure-port: "5000"
+spec:
+  backend:
+    servicePort: 5000
+    serviceName: emailservice-headless
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: checkoutservice
+spec:
+  selector:
+    matchLabels:
+      app: checkoutservice
+  template:
+    metadata:
+      labels:
+        app: checkoutservice
+    spec:
+      containers:
+      - name: server
+        image: gcr.io/google-samples/microservices-demo/checkoutservice:v0.1.2
+        ports:
+        - containerPort: 5050
+        readinessProbe:
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:5050
+        livenessProbe:
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:5050
+        env:
+        - name: PORT
+          value: '5050'
+        - name: PRODUCT_CATALOG_SERVICE_ADDR
+          value: productcatalogservice:3550
+        - name: SHIPPING_SERVICE_ADDR
+          value: shippingservice:50052
+        - name: PAYMENT_SERVICE_ADDR
+          value: paymentservice:50051
+        - name: EMAIL_SERVICE_ADDR
+          value: emailservice:5000
+        - name: CURRENCY_SERVICE_ADDR
+          value: currencyservice:7000
+        - name: CART_SERVICE_ADDR
+          value: cartservice:7070
+        resources:
+          requests:
+            cpu: 100m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: checkoutservice-headless
+spec:
+  selector:
+    app: checkoutservice
+  ports:
+  - name: grpc
+    port: 5050
+    targetPort: 5050
+  clusterIP: None
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: checkoutservice
+spec:
+  selector:
+    app: cpx-ingress
+  ports:
+  - port: 5050
+    name: grpc
+    targetPort: 5050
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: checkoutservice-ingress
+  annotations:
+    ingress.citrix.com/insecure-service-type: "tcp"
+    kubernetes.io/ingress.class: "tier-2-cpx"
+    ingress.citrix.com/insecure-port: "5050"
+spec:
+  backend:
+    servicePort: 5050
+    serviceName: checkoutservice-headless
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: recommendationservice
+spec:
+  selector:
+    matchLabels:
+      app: recommendationservice
+  template:
+    metadata:
+      labels:
+        app: recommendationservice
+    spec:
+      terminationGracePeriodSeconds: 5
+      containers:
+      - name: server
+        image: gcr.io/google-samples/microservices-demo/recommendationservice:v0.1.2
+        ports:
+        - containerPort: 8080
+        readinessProbe:
+          periodSeconds: 5
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:8080
+        livenessProbe:
+          periodSeconds: 5
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:8080
+        env:
+        - name: PORT
+          value: '8080'
+        - name: PRODUCT_CATALOG_SERVICE_ADDR
+          value: productcatalogservice:3550
+        - name: ENABLE_PROFILER
+          value: '0'
+        resources:
+          requests:
+            cpu: 100m
+            memory: 220Mi
+          limits:
+            cpu: 200m
+            memory: 450Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: recommendationservice-headless
+spec:
+  selector:
+    app: recommendationservice
+  ports:
+  - name: grpc
+    port: 8081
+    targetPort: 8080
+  clusterIP: None
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: recommendationservice
+spec:
+  selector:
+    app: cpx-ingress
+  ports:
+  - port: 8081
+    name: grpc
+    targetPort: 8081
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: recommendationservice-ingress
+  annotations:
+    ingress.citrix.com/insecure-service-type: "tcp"
+    kubernetes.io/ingress.class: "tier-2-cpx"
+    ingress.citrix.com/insecure-port: "8081"
+spec:
+  backend:
+    servicePort: 8081
+    serviceName: recommendationservice-headless
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: server
+        image: gcr.io/google-samples/microservices-demo/frontend:v0.1.2
+        ports:
+        - containerPort: 8080
+        readinessProbe:
+          initialDelaySeconds: 10
+          httpGet:
+            path: /_healthz
+            port: 8080
+            httpHeaders:
+            - name: Cookie
+              value: shop_session-id=x-readiness-probe
+        livenessProbe:
+          initialDelaySeconds: 10
+          httpGet:
+            path: /_healthz
+            port: 8080
+            httpHeaders:
+            - name: Cookie
+              value: shop_session-id=x-liveness-probe
+        env:
+        - name: PORT
+          value: '8080'
+        - name: PRODUCT_CATALOG_SERVICE_ADDR
+          value: productcatalogservice:3550
+        - name: CURRENCY_SERVICE_ADDR
+          value: currencyservice:7000
+        - name: CART_SERVICE_ADDR
+          value: cartservice:7070
+        - name: RECOMMENDATION_SERVICE_ADDR
+          value: recommendationservice:8081
+        - name: SHIPPING_SERVICE_ADDR
+          value: shippingservice:50052
+        - name: CHECKOUT_SERVICE_ADDR
+          value: checkoutservice:5050
+        - name: AD_SERVICE_ADDR
+          value: adservice:9555
+        resources:
+          requests:
+            cpu: 100m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-headless
+spec:
+  selector:
+    app: frontend
+  ports:
+  - name: http
+    port: 80
+    targetPort: 8080
+  clusterIP: None
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+spec:
+  selector:
+    app: cpx-ingress
+  ports:
+  - port: 80
+    name: http
+    targetPort: 80
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: frontend-ingress
+  annotations:
+    ingress.citrix.com/insecure-service-type: "http"
+    kubernetes.io/ingress.class: "tier-2-cpx"
+    ingress.citrix.com/insecure-port: "80"
+spec:
+  rules:
+  - http:
+      paths:
+      - backend:
+          servicePort: 80
+          serviceName: frontend-headless
+    host: frontend
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: paymentservice
+spec:
+  selector:
+    matchLabels:
+      app: paymentservice
+  template:
+    metadata:
+      labels:
+        app: paymentservice
+    spec:
+      terminationGracePeriodSeconds: 5
+      containers:
+      - name: server
+        image: gcr.io/google-samples/microservices-demo/paymentservice:v0.1.2
+        ports:
+        - containerPort: 50051
+        env:
+        - name: PORT
+          value: '50051'
+        readinessProbe:
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:50051
+        livenessProbe:
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:50051
+        resources:
+          requests:
+            cpu: 100m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: paymentservice-headless
+spec:
+  selector:
+    app: paymentservice
+  ports:
+  - name: grpc
+    port: 50051
+    targetPort: 50051
+  clusterIP: None
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: paymentservice
+spec:
+  selector:
+    app: cpx-ingress
+  ports:
+  - port: 50051
+    name: grpc
+    targetPort: 50051
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: paymentservice-ingress
+  annotations:
+    ingress.citrix.com/insecure-service-type: "tcp"
+    kubernetes.io/ingress.class: "tier-2-cpx"
+    ingress.citrix.com/insecure-port: "50051"
+spec:
+  backend:
+    servicePort: 50051
+    serviceName: paymentservice-headless
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: productcatalogservice
+spec:
+  selector:
+    matchLabels:
+      app: productcatalogservice
+  template:
+    metadata:
+      labels:
+        app: productcatalogservice
+    spec:
+      terminationGracePeriodSeconds: 5
+      containers:
+      - name: server
+        image: gcr.io/google-samples/microservices-demo/productcatalogservice:v0.1.2
+        ports:
+        - containerPort: 3550
+        env:
+        - name: PORT
+          value: '3550'
+        readinessProbe:
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:3550
+        livenessProbe:
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:3550
+        resources:
+          requests:
+            cpu: 100m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: productcatalogservice-headless
+spec:
+  selector:
+    app: productcatalogservice
+  ports:
+  - name: grpc
+    port: 3550
+    targetPort: 3550
+  clusterIP: None
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: productcatalogservice
+spec:
+  selector:
+    app: cpx-ingress
+  ports:
+  - port: 3550
+    name: grpc
+    targetPort: 3550
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: productcatalogservice-ingress
+  annotations:
+    ingress.citrix.com/insecure-service-type: "tcp"
+    kubernetes.io/ingress.class: "tier-2-cpx"
+    ingress.citrix.com/insecure-port: "3550"
+spec:
+  backend:
+    servicePort: 3550
+    serviceName: productcatalogservice-headless
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cartservice
+spec:
+  selector:
+    matchLabels:
+      app: cartservice
+  template:
+    metadata:
+      labels:
+        app: cartservice
+    spec:
+      terminationGracePeriodSeconds: 5
+      containers:
+      - name: server
+        image: gcr.io/google-samples/microservices-demo/cartservice:v0.1.2
+        ports:
+        - containerPort: 7070
+        env:
+        - name: REDIS_ADDR
+          value: redis-cart:6379
+        - name: PORT
+          value: '7070'
+        - name: LISTEN_ADDR
+          value: 0.0.0.0
+        resources:
+          requests:
+            cpu: 200m
+            memory: 64Mi
+          limits:
+            cpu: 300m
+            memory: 128Mi
+        readinessProbe:
+          initialDelaySeconds: 15
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:7070
+            - -rpc-timeout=5s
+        livenessProbe:
+          initialDelaySeconds: 15
+          periodSeconds: 10
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:7070
+            - -rpc-timeout=5s
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cartservice-headless
+spec:
+  selector:
+    app: cartservice
+  ports:
+  - name: grpc
+    port: 7070
+    targetPort: 7070
+  clusterIP: None
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cartservice
+spec:
+  selector:
+    app: cpx-ingress
+  ports:
+  - port: 7070
+    name: grpc
+    targetPort: 7070
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: cartservice-ingress
+  annotations:
+    ingress.citrix.com/insecure-service-type: "tcp"
+    kubernetes.io/ingress.class: "tier-2-cpx"
+    ingress.citrix.com/insecure-port: "7070"
+spec:
+  backend:
+    servicePort: 7070
+    serviceName: cartservice-headless
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loadgenerator
+spec:
+  selector:
+    matchLabels:
+      app: loadgenerator
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: loadgenerator
+    spec:
+      terminationGracePeriodSeconds: 5
+      restartPolicy: Always
+      initContainers:
+      - name: wait-frontend
+        image: alpine:3.6
+        command:
+        - sh
+        - -c
+        - set -x;  apk add --no-cache curl && until timeout -t 2 curl -f "http://${FRONTEND_ADDR}";
+          do echo "waiting for http://${FRONTEND_ADDR}"; sleep 2; done;
+        env:
+        - name: FRONTEND_ADDR
+          value: frontend:80
+      containers:
+      - name: main
+        image: gcr.io/google-samples/microservices-demo/loadgenerator:v0.1.2
+        env:
+        - name: FRONTEND_ADDR
+          value: frontend:80
+        - name: USERS
+          value: '10'
+        resources:
+          requests:
+            cpu: 300m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: currencyservice
+spec:
+  selector:
+    matchLabels:
+      app: currencyservice
+  template:
+    metadata:
+      labels:
+        app: currencyservice
+    spec:
+      terminationGracePeriodSeconds: 5
+      containers:
+      - name: server
+        image: gcr.io/google-samples/microservices-demo/currencyservice:v0.1.2
+        ports:
+        - name: grpc
+          containerPort: 7000
+        env:
+        - name: PORT
+          value: '7000'
+        readinessProbe:
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:7000
+        livenessProbe:
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:7000
+        resources:
+          requests:
+            cpu: 100m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: currencyservice-headless
+spec:
+  selector:
+    app: currencyservice
+  ports:
+  - name: grpc
+    port: 7000
+    targetPort: 7000
+  clusterIP: None
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: currencyservice
+spec:
+  selector:
+    app: cpx-ingress
+  ports:
+  - port: 7000
+    name: grpc
+    targetPort: 7000
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: currencyservice-ingress
+  annotations:
+    ingress.citrix.com/insecure-service-type: "tcp"
+    kubernetes.io/ingress.class: "tier-2-cpx"
+    ingress.citrix.com/insecure-port: "7000"
+spec:
+  backend:
+    servicePort: 7000
+    serviceName: currencyservice-headless
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shippingservice
+spec:
+  selector:
+    matchLabels:
+      app: shippingservice
+  template:
+    metadata:
+      labels:
+        app: shippingservice
+    spec:
+      containers:
+      - name: server
+        image: gcr.io/google-samples/microservices-demo/shippingservice:v0.1.2
+        ports:
+        - containerPort: 50051
+        env:
+        - name: PORT
+          value: '50051'
+        readinessProbe:
+          periodSeconds: 5
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:50051
+        livenessProbe:
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:50051
+        resources:
+          requests:
+            cpu: 100m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: shippingservice-headless
+spec:
+  selector:
+    app: shippingservice
+  ports:
+  - name: grpc
+    port: 50052
+    targetPort: 50051
+  clusterIP: None
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: shippingservice
+spec:
+  selector:
+    app: cpx-ingress
+  ports:
+  - port: 50052
+    name: grpc
+    targetPort: 50052
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: shippingservice-ingress
+  annotations:
+    ingress.citrix.com/insecure-service-type: "tcp"
+    kubernetes.io/ingress.class: "tier-2-cpx"
+    ingress.citrix.com/insecure-port: "50052"
+spec:
+  backend:
+    servicePort: 50052
+    serviceName: shippingservice-headless
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-cart
+spec:
+  selector:
+    matchLabels:
+      app: redis-cart
+  template:
+    metadata:
+      labels:
+        app: redis-cart
+    spec:
+      containers:
+      - name: redis
+        image: redis:alpine
+        ports:
+        - containerPort: 6379
+        readinessProbe:
+          periodSeconds: 5
+          tcpSocket:
+            port: 6379
+        livenessProbe:
+          periodSeconds: 5
+          tcpSocket:
+            port: 6379
+        volumeMounts:
+        - mountPath: /data
+          name: redis-data
+        resources:
+          limits:
+            memory: 256Mi
+            cpu: 125m
+          requests:
+            cpu: 70m
+            memory: 200Mi
+      volumes:
+      - name: redis-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-cart-headless
+spec:
+  selector:
+    app: redis-cart
+  ports:
+  - name: redis
+    port: 6379
+    targetPort: 6379
+  clusterIP: None
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-cart
+spec:
+  selector:
+    app: cpx-ingress
+  ports:
+  - port: 6379
+    name: redis
+    targetPort: 6379
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: redis-cart-ingress
+  annotations:
+    ingress.citrix.com/insecure-service-type: "tcp"
+    kubernetes.io/ingress.class: "tier-2-cpx"
+    ingress.citrix.com/insecure-port: "6379"
+spec:
+  backend:
+    servicePort: 6379
+    serviceName: redis-cart-headless
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: adservice
+spec:
+  selector:
+    matchLabels:
+      app: adservice
+  template:
+    metadata:
+      labels:
+        app: adservice
+    spec:
+      terminationGracePeriodSeconds: 5
+      containers:
+      - name: server
+        image: gcr.io/google-samples/microservices-demo/adservice:v0.1.2
+        ports:
+        - containerPort: 9555
+        env:
+        - name: PORT
+          value: '9555'
+        resources:
+          requests:
+            cpu: 200m
+            memory: 180Mi
+          limits:
+            cpu: 300m
+            memory: 300Mi
+        readinessProbe:
+          initialDelaySeconds: 20
+          periodSeconds: 15
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:9555
+        livenessProbe:
+          initialDelaySeconds: 20
+          periodSeconds: 15
+          exec:
+            command:
+            - /bin/grpc_health_probe
+            - -addr=:9555
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: adservice-headless
+spec:
+  selector:
+    app: adservice
+  ports:
+  - name: grpc
+    port: 9555
+    targetPort: 9555
+  clusterIP: None
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: adservice
+spec:
+  selector:
+    app: cpx-ingress
+  ports:
+  - port: 9555
+    name: grpc
+    targetPort: 9555
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: adservice-ingress
+  annotations:
+    ingress.citrix.com/insecure-service-type: "tcp"
+    kubernetes.io/ingress.class: "tier-2-cpx"
+    ingress.citrix.com/insecure-port: "9555"
+spec:
+  backend:
+    servicePort: 9555
+    serviceName: adservice-headless
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: tier-2-cpx-ingress
+  annotations:
+     kubernetes.io/ingress.class: "tier-2-cpx"
+spec:
+  rules:
+  - host: hipster.citrix.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: frontend-headless
+          servicePort: 80
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: tier-1-vpx-ingress
+  annotations:
+     kubernetes.io/ingress.class: "tier-1-vpx"
+spec:
+  rules:
+  - host: hipster.citrix.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: cpx-service
+          servicePort: 80
