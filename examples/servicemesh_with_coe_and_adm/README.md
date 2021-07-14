@@ -76,7 +76,9 @@ Perform the following steps to get access ID and secret for accessing Citrix ADM
 
  Now, you can generate `authorization bearer token` using access ID and access secret using below script: 
 
-	python https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/generate_token.py --accessID=<accessID> --accessSecret=<accessSecret>
+	wget  https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/generate_token.py
+      
+	python generate_token.py --accessID=<accessID> --accessSecret=<accessSecret>
 
 **NOTE**: The bearer token expires in an hour (3600 seconds).
 	  
