@@ -60,12 +60,6 @@ The following prerequisites are required for deploying Citrix ADC as an Ingress 
 - Ensure that **Istio version 1.6.4 onwards** is installed
 - Ensure that Helm with version 3.x is installed. Follow this [step](https://github.com/citrix/citrix-helm-charts/blob/master/Helm_Installation_version_3.md) to install the same.
 - Ensure that your cluster has Kubernetes version 1.14.0 or later and the `admissionregistration.k8s.io/v1beta1` API is enabled
-- **For deploying Citrix ADC VPX or MPX as an Ingress gateway:**
-
-  Create a Kubernetes secret for the Citrix ADC user name and password using the following command:
-  
-        kubectl create secret generic nslogin --from-literal=username=<citrix-adc-user> --from-literal=password=<citrix-adc-password> -n citrix-system
-
 You can verify the API by using the following command:
 
         kubectl api-versions | grep admissionregistration.k8s.io/v1beta1
@@ -73,6 +67,78 @@ You can verify the API by using the following command:
 The following output indicates that the API is enabled:
 
         admissionregistration.k8s.io/v1beta1
+
+- **For deploying Citrix ADC VPX or MPX as an Ingress gateway:**
+
+  Create a Kubernetes secret for the Citrix ADC user name and password using the following command:
+  
+        kubectl create secret generic nslogin --from-literal=username=<citrix-adc-user> --from-literal=password=<citrix-adc-password> -n citrix-system
+- **Create system user account for xDS-adaptor in Citrix ADC:**
+
+  The Citrix ADC appliance needs to have system user account (non-default) with certain privileges so that `xDS-adaptor` can configure the Citrix ADC VPX or MPX appliance. Follow the instructions to create the system user account on Citrix ADC.
+
+    Create a Kubernetes secret for the user name and password using the following command:
+
+    ```
+       kubectl create secret generic nslogin --from-literal=username='cxa' --from-literal=password='mypassword'
+    ```
+
+  The `xDS-adaptor` configures the Citrix ADC using a system user account of the Citrix ADC. The system user account should have certain privileges so that the xDS-adaptor has permissions configure the following on the Citrix ADC:
+
+  -  Add, Delete, or View Content Switching (CS) virtual server
+  -  Configure CS policies and actions
+  -  Configure Load Balancing (LB) virtual server
+  -  Configure Service groups
+  -  Cofigure SSl certkeys
+  -  Configure routes
+  -  Configure user monitors
+  -  Add system file (for uploading SSL certkeys from Kubernetes)
+  -  Configure Virtual IP address (VIP)
+  -  Check the status of the Citrix ADC appliance
+  -  Add, Delete or view authentication virtual server, policy, authaction
+  -  Add, Delete or view Policy
+  -  Add, Delete or view Responder policy, action, param
+  -  Add, Delete or view Rewrite policy, action, param
+  -  Add, Delete or view analytics profile
+  -  Add, Delete or view DNS name server
+  -  Add, Delete or view network netprofile
+  -  Add, Delete or view Traffic Management Commands(sessionaction, session policy, sessionparameter)
+
+
+> **Note:**
+>
+> The system user account would have privileges based on the command policy that you define.
+
+ To create the system user account, do the following:
+
+ 1.  Log on to the Citrix ADC appliance. Perform the following:
+     1.  Use an SSH client, such as PuTTy, to open an SSH connection to the Citrix ADC appliance.
+
+     2.  Log on to the appliance by using the administrator credentials.
+
+ 2.  Create the system user account using the following command:
+
+     ```
+        add system user <username> <password>
+     ```
+
+     For example:
+
+     ```
+        add system user cxa mypassword
+     ```
+
+ 3.  Create a policy to provide required permissions to the system user account. Use the following command:
+
+     ```
+        add cmdpolicy cxa-policy ALLOW "((^\S+\s+cs\s+\S+)|(^\S+\s+lb\s+\S+)|(^\S+\s+service\s+\S+)|(^\S+\s+servicegroup\s+\S+)|(^stat\s+system)|(^show\s+ha)|(^\S+\s+ssl\s+certKey)|(^\S+\s+ssl)|(^\S+\s+route)|(^\S+\s+monitor)|(^show\s+ns\s+ip)|(^\S+\s+system\s+file)|)|(^\S+\s+aaa\s+\S+)|(^\S+\s+aaa\s+\S+\s+.*)|(^\S+\s+authentication\s+\S+)|(^\S+\s+authentication\s+\S+\s+.*)|(^\S+\s+policy\s+\S+)|(^\S+\s+policy\s+\S+\s+.*)|(^\S+\s+rewrite\s+\S+)|(^\S+\s+rewrite\s+\S+\s+.*)|(^\S+\s+analytics\s+\S+)|(^\S+\s+analytics\s+\S+\s+.*)|(^\S+\s+dns\s+\S+)|(^\S+\s+dns\s+\S+\s+.*)|(^\S+\s+netProfile)|(^\S+\s+netProfile\s+.*)|(^\S+\s+tm\s+\S+)|(^\S+\s+tm\s+\S+\s+.*)"
+     ```
+
+ 4.  Bind the policy to the system user account using the following command:
+
+     ```
+        bind system user cxa cxa-policy 0
+     ```
 
 - **Registration of Citrix ADC CPX in ADM**
 

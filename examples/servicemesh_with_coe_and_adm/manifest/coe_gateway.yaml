@@ -1,0 +1,37 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: coe-gateway
+spec:
+  selector:
+    app: citrix-ingressgateway
+  servers:
+  - port:
+      number: 5563
+      name: prom
+      protocol: HTTP
+    hosts:
+    - "coe.citrix-system"
+  - port:
+      number: 5557
+      name: ulf
+      protocol: HTTP
+    hosts:
+    - "coe.citrix-system"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: coe
+spec:
+  hosts:
+  - "coe.citrix-system"
+  gateways:
+  - coe-gateway
+  http:
+  - route:
+    - destination:
+        host: coe.citrix-system.svc.cluster.local
+        port:
+          number: 5563
+---
