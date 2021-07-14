@@ -1,0 +1,21 @@
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: adm-disable-tls
+spec:
+  host: admagent.citrix-system.svc.cluster.local   #change `citrix-system` to namespace name where adm-agent is deployed.
+  trafficPolicy:
+    tls:
+      mode: DISABLE
+
+
+---
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: coe-disable-tls
+spec:
+  host: coe.citrix-system.svc.cluster.local   #change `citrix-system` to namespace name where Citrix Observability Exporter is deployed.
+  trafficPolicy:
+    tls:
+      mode: DISABLE

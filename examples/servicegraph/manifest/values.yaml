@@ -3,9 +3,8 @@ cic:
   nsPort: 443
   nsProtocol: HTTPS
   nsIP: X.X.X.X
-  adcCredentialSecret: nslogin
+  adcCredentialSecret: nscred
   entityPrefix: netflix
-  image: 'quay.io/citrix/citrix-k8s-ingress-controller:1.13.20'
   license:
     accept: 'Yes'
   ingressClass:
@@ -26,20 +25,17 @@ cic:
       port: 5557
     endpoint:
       server: X.X.X.X
-  nodeWatch: true
+  nodeWatch: false
 cpx:
   enabled: true
-  image: 'quay.io/citrix/citrix-k8s-cpx-ingress:13.0-76.29'
   cic:
     required: true
-    image: 'quay.io/citrix/citrix-k8s-ingress-controller:1.13.20'
   license:
     accept: 'Yes'
   entityPrefix: cetflix
   logLevel: INFO
   ADMSettings:
     ADMIP: X.X.X.X
-    ADMFingerPrint: XX.XX.XX.XX.XX.XX.XX.XX.XX.XX.XX.XX 
     loginSecret: admlogin
   coeConfig:
     required: true
