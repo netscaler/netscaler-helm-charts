@@ -1,8 +1,9 @@
 cic:
   enabled: False
   
-  image: quay.io/citrix/citrix-k8s-ingress-controller:1.16.9
+  image: quay.io/citrix/citrix-k8s-ingress-controller:1.17.13
   pullPolicy: IfNotPresent
+  imagePullSecrets: []
   openshift: false
   adcCredentialSecret:
   nsIP: x.x.x.x
@@ -73,7 +74,7 @@ cic:
 mcIngress:
   enabled: False
 
-  image: quay.io/citrix/citrix-k8s-ingress-controller:1.16.9
+  image: quay.io/citrix/citrix-k8s-ingress-controller:1.17.13
   pullPolicy: IfNotPresent
   openshift: false
   localRegion:
@@ -99,6 +100,7 @@ cpx:
 
   image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-79.64
   pullPolicy: IfNotPresent
+  imagePullSecrets: []
 
   mgmtHttpPort: 9080
   mgmtHttpsPort: 9443
@@ -117,8 +119,6 @@ cpx:
   ingressIP:
   ipam: False
 
-  aws: False
-  azure: False
   sslCertManagedByAWS: False
 
   nodeSelector:
@@ -134,19 +134,15 @@ cpx:
       httpPort:
       httpsPort:
 
-  serviceAnnotations:
-    aws:
-      sslCert:
-      backendProtocol:
-      sslPorts:
-      negotiationPolicy:
-      proxyProtocol: False
-      resourcesTags:
-    azure:
-      internalLoadBalancer: False
+  serviceAnnotations: {}
+
+  serviceSpec:
+    loadBalancerSourceRanges:
+
+  servicePorts: []
 
   cic:
-    image: quay.io/citrix/citrix-k8s-ingress-controller:1.16.9
+    image: quay.io/citrix/citrix-k8s-ingress-controller:1.17.13
     pullPolicy: IfNotPresent
     required: true
   entityPrefix:
@@ -407,6 +403,10 @@ iaSidecar:
 
   sidecarWebHook:
     webhookImage: docker.io/istio/sidecar_injector:1.3.0
+    imagePullPolicy: IfNotPresent
+
+sidecarCertsGenerator:
+    image: quay.io/citrix/cpx-sidecar-injector-certgen:1.1.0
     imagePullPolicy: IfNotPresent
 
   webhook:

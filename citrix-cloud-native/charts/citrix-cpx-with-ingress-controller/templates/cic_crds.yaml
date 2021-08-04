@@ -11,9 +11,9 @@ spec:
   group: citrix.com
   version: v1
   names:
-    kind: rewritepolicy 
+    kind: rewritepolicy
     plural: rewritepolicies
-    singular: rewritepolicy 
+    singular: rewritepolicy
   scope: Namespaced
   subresources:
     status: {}
@@ -31,6 +31,9 @@ spec:
       properties:
         spec:
           properties:
+            ingressclass:
+              type: string
+              description: "Ingress class, if not specified then all citrix ingress controllers in the cluster will process the resource otherwise only the controller with that ingress class will process this resource"
             rewrite-policies:
               type: array
               items:
@@ -70,7 +73,7 @@ spec:
                         type: string
                         maxLength: 1299
                       default-action:
-                        description: 'Action to perform if the result of policy evaluation is undefined (UNDEF). 
+                        description: 'Action to perform if the result of policy evaluation is undefined (UNDEF).
                                       An UNDEF event indicates an internal error condition.'
                         type: string
                         maxLength: 77
@@ -90,7 +93,7 @@ spec:
                         type: string
                         maxLength: 1229
                       modify-expression:
-                        description: 'Default syntax expression that specifies the content to insert into the request 
+                        description: 'Default syntax expression that specifies the content to insert into the request
                                       or response at the specified location, or that replaces the specified string.'
                         type: string
                         maxLength: 7991
@@ -111,7 +114,7 @@ spec:
                         type: string
                         enum: ["REQUEST","RESPONSE"]
                       comment:
-                        description: 'Any comments to preserve information about this rewrite policy.' 
+                        description: 'Any comments to preserve information about this rewrite policy.'
                         type: string
                         maxLength: 255
                     required: [rewrite-criteria, operation, target, direction]
@@ -122,7 +125,7 @@ spec:
               items:
                 properties:
                   servicenames:
-                    description: 'Name of the services that needs to be binded to responder policy.' 
+                    description: 'Name of the services that needs to be binded to responder policy.'
                     type: array
                     items:
                       type: string
@@ -178,7 +181,7 @@ spec:
                             maxLength: 7991
                         required: [http-payload-string]
                       noop:
-                        description: 'Use this option when you want to send the request to the protected server instead of 
+                        description: 'Use this option when you want to send the request to the protected server instead of
                                       responding to it when request matches to policy.'
                         properties:
                           target:
@@ -307,6 +310,9 @@ spec:
       properties:
         spec:
           properties:
+            ingressclass:
+              type: string
+              description: "Ingress class, if not specified then all citrix ingress controllers in the cluster will process the resource otherwise only the controller with that ingress class will process this resource"
             servicenames:
               description: 'Name of the services to which the ratelimit policies are applied.'
               type: array
@@ -355,7 +361,7 @@ spec:
           required: [servicenames, req_threshold]
 ---
 #Sample CRD instance
-  
+
 #apiVersion: citrix.com/v1
 #description: VIP for apache service
 #kind: vip
@@ -424,7 +430,7 @@ spec:
   names:
     kind: authpolicy
     plural: authpolicies
-    singular: authpolicy 
+    singular: authpolicy
   scope: Namespaced
   subresources:
     status: {}
@@ -439,11 +445,14 @@ spec:
       JSONPath: .status.status_message
   validation:
     openAPIV3Schema:
-      type: object 
+      type: object
       properties:
         spec:
-          type: object 
+          type: object
           properties:
+            ingressclass:
+              type: string
+              description: "Ingress class, if not specified then all citrix ingress controllers in the cluster will process the resource otherwise only the controller with that ingress class will process this resource"
             servicenames:
               description: |+
                            'Name of the services for which the policies applied'
@@ -452,7 +461,7 @@ spec:
                 type: string
                 maxLength: 63
             authentication_mechanism:
-              type: object 
+              type: object
               description: |+
                           'Authentication mechanism. Options: using forms or using request header.
                            Default is Authentication using request header, when no option is specified'
@@ -495,7 +504,7 @@ spec:
                           oneOf:
                           - properties:
                             required: [tls_secret]
-                          - properties:             
+                          - properties:
                             required: [preconfigured]
                         ingress_name:
                           description: |+
@@ -511,20 +520,20 @@ spec:
                           maxLength: 63
                         listener_name:
                           description: |+
-                                       'Listener CRD name for which the authentication using forms is applicable.'   
+                                       'Listener CRD name for which the authentication using forms is applicable.'
                           type: string
                           maxLength: 63
                         vip:
                           description: |+
-                                       'Frontend IP of ingress for which the authentication 
-                                        using forms is applicable. This refers to frontend-ip provided 
+                                       'Frontend IP of ingress for which the authentication
+                                        using forms is applicable. This refers to frontend-ip provided
                                         with Ingress. It is suggested to use vip, if more than one Ingress
                                         resource use the same frontend-ip'
                           type: string
                       required: [authentication_host, authentication_host_cert]
                       oneOf:
                       - properties:
-                        required: [ingress_name]                      
+                        required: [ingress_name]
                       - properties:
                         required: [lb_service_name]
                       - properties:
@@ -538,7 +547,7 @@ spec:
                   required: [using_request_header]
                 - properties:
                   required: [using_forms]
-                  
+
             authentication_providers:
               description: |+
                            'Authentication Configuration for required authentication providers/schemes.
@@ -546,7 +555,7 @@ spec:
               type: array
               items:
                   description: 'Create config for a single authentication provider of a particular type'
-                  type: object 
+                  type: object
                   properties:
                     name:
                       description: 'Name for this provider, has to be unique, referenced by authentication policies'
@@ -554,8 +563,8 @@ spec:
                       maxLength: 127
 
                     oauth:
-                      description: 'Authentication provided by external oAuth provider' 
-                      type: object 
+                      description: 'Authentication provided by external oAuth provider'
+                      type: object
                       properties:
                           issuer:
                               description: 'Identity of the server whose tokens are to be accepted'
@@ -569,7 +578,7 @@ spec:
                                 maxLength: 127
                           jwks_uri:
                               description: |+
-                                          'URL of the endpoint that contains JWKs (Json Web Key) for 
+                                          'URL of the endpoint that contains JWKs (Json Web Key) for
                                            JWT (Json Web Token) verification'
                               type: string
                               maxLength: 127
@@ -579,7 +588,7 @@ spec:
                               maxLength: 127
                           client_credentials:
                               description: |+
-                                           'secrets object that contains Client Id and secret as known 
+                                           'secrets object that contains Client Id and secret as known
                                             to Introspection server'
                               type: string
                               maxLength: 253
@@ -617,7 +626,7 @@ spec:
                               maxLength: 255
                           user_field:
                               description: |+
-                                           'Attribute in the token from which username should be extracted. 
+                                           'Attribute in the token from which username should be extracted.
                                             by default, ADC looks at email attribute for user id'
                               type: string
                               maxLength: 127
@@ -639,7 +648,7 @@ spec:
                               enum: ['ENABLED', 'DISABLED']
                           token_ep_auth_method:
                               description: |+
-                                           'authentication method to be used with token end point, 
+                                           'authentication method to be used with token end point,
                                             defaults to client_secret_post'
                               type: string
                               enum: ['client_secret_post', 'client_secret_jwt']
@@ -700,7 +709,7 @@ spec:
                                            'Hostname for the LDAP server. If validate_server_cert is ON,
                                             this must be the host name on the certificate from the LDAP
                                             A hostname mismatch will cause a connection failure'
-                              type: string 
+                              type: string
                               maxLength: 127
                           sub_attribute_name:
                               description: 'LDAP group sub-attribute name. Used for group extraction from the LDAP server.'
@@ -715,7 +724,7 @@ spec:
                                            'String to be combined with the default LDAP user search string to form the
                                             search value. For example, if the search filter "vpnallowed=true" is combined
                                             with the LDAP login name "samaccount" and the user-supplied username is "bob",
-                                            the result is the LDAP search string ""(&(vpnallowed=true)(samaccount=bob)"" 
+                                            the result is the LDAP search string ""(&(vpnallowed=true)(samaccount=bob)""
                                             (Be sure to enclose the search string in two sets of double quotation marks)'
                               type: string
                               maxLength: 255
@@ -741,7 +750,7 @@ spec:
                           required: [server_ip]
                         - properties:
                           required: [server_name]
-                          
+
                     saml:
                       description: |+
                                    'SAML authentication provider.
@@ -772,7 +781,7 @@ spec:
                                     maxLength: 63
                                     description: |+
                                                  'Preconfigured SSL certkey name on ADC with the
-                                                  certificate and key already added on ADC'                                    
+                                                  certificate and key already added on ADC'
                               oneOf:
                               - properties:
                                 required: [tls_secret]
@@ -781,7 +790,7 @@ spec:
                           audience:
                               description: 'Audience for which assertion sent by IdP is applicable'
                               type: string
-                              maxLength: 127                          
+                              maxLength: 127
                           issuer_name:
                               description: 'The name to be used in requests sent from SP to IDP to identify citrix ADC'
                               type: string
@@ -803,17 +812,17 @@ spec:
                                            'Reject unsigned SAML assertions. ON, rejects assertion without signature.
                                             STRICT ensure that both Response and Assertion are signed. Default is ON'
                               type: string
-                              enum: ['ON', 'OFF', 'STRICT']                      
+                              enum: ['ON', 'OFF', 'STRICT']
                           user_field:
                               description: 'SAML user ID, as given in the SAML assertion'
                               type: string
                               maxLength: 63
                           default_authentication_group:
                               description: |+
-                                           'This is the default group that is chosen when the authentication 
+                                           'This is the default group that is chosen when the authentication
                                             succeeds in addition to extracted groups'
                               type: string
-                              maxLength: 63                                                  
+                              maxLength: 63
                           skew_time:
                               description: |+
                                            'Allowed clock skew in number of minutes on an incoming assertion.
@@ -825,7 +834,7 @@ spec:
                                            'List of attribute names separated by comma which needs to be extracted
                                             and stored as key-value pair for the session on ADC'
                               type: string
-                              maxLength: 2047                   
+                              maxLength: 2047
                       required:
                         - metadata_url
 
@@ -839,11 +848,11 @@ spec:
               description: 'Authentication policies'
               type: array
               items:
-                type: object 
+                type: object
                 description: 'Authentication policy'
                 properties:
                   resource:
-                      type: object 
+                      type: object
                       description: 'endpoint/resource selection criteria'
                       properties:
                         path:
@@ -874,11 +883,11 @@ spec:
               description: 'Authorization policies'
               type: array
               items:
-                type: object 
+                type: object
                 description: 'Authorization policy'
                 properties:
                   resource:
-                      type: object 
+                      type: object
                       description: 'endpoint/resource selection criteria'
                       properties:
                         path:
@@ -917,7 +926,7 @@ spec:
                         - claims
 
           required:
-            - servicenames      
+            - servicenames
 
 ---
 apiVersion: apiextensions.k8s.io/v1beta1
@@ -931,7 +940,7 @@ metadata:
 status:
 spec:
   group: citrix.com
-  version: null 
+  version: null
   versions:
   - name: v1
     served: true
@@ -964,6 +973,9 @@ spec:
           type: object
           required: [protocol]
           properties:
+            ingressclass:
+              type: string
+              description: "Ingress class, if not specified then all citrix ingress controllers in the cluster will process the resource otherwise only the controller with that ingress class will process this resource"
             protocol:
               type: string
               enum: ["https", "http"]
@@ -972,13 +984,13 @@ spec:
               type: string
               description: "VIP address, Optional for CPX, required for Tier-1 deployments"
             secondaryVips:
-              type: array 
+              type: array
               description: "An array of Secondary VIPs. All the VIPs will be part of an ipset"
               minItems: 1
               items:
-                type: string 
+                type: string
             redirectPort:
-              type: integer 
+              type: integer
               minimum: 1
               maximum: 65535
               description: "Port from which http traffic should be redirected to https"
@@ -1092,7 +1104,7 @@ spec:
                       description: "An array of analytics to be enabled"
                       minItems: 1
                       items:
-                        type: object 
+                        type: object
                         description: "Anlytics to be enabled"
                         required: ['type']
                         properties:
@@ -1235,13 +1247,16 @@ spec:
       JSONPath: .status.status_message
   validation:
     openAPIV3Schema:
-      required: [spec] 
+      required: [spec]
       type: object
       properties:
         spec:
           type: object
           required: [rules]
           properties:
+            ingressclass:
+              type: string
+              description: "Ingress class, if not specified then all citrix ingress controllers in the cluster will process the resource otherwise only the controller with that ingress class will process this resource"
             hostname:
               type: array
               description: "List of domain names that share the same route, default is '*'"
@@ -1423,8 +1438,8 @@ spec:
                                 type: string
                                 pattern: '^[a-z0-9]([-a-z0-9]*[a-z0-9])?$'
                               port:
-                                description: "Service port" 
-                                type: integer 
+                                description: "Service port"
+                                type: integer
                                 minimum: 1
                                 maximum: 65535
                               backendConfig:
@@ -1535,7 +1550,7 @@ spec:
   version: v1
   names:
     kind: waf
-    plural: wafs 
+    plural: wafs
     singular: waf
   scope: Namespaced
   subresources:
@@ -1556,6 +1571,9 @@ spec:
         spec:
           type: object
           properties:
+            ingressclass:
+              type: string
+              description: "Ingress class, if not specified then all citrix ingress controllers in the cluster will process the resource otherwise only the controller with that ingress class will process this resource"
             servicenames:
               description: 'Name of the services to which the waf policies are applied.'
               type: array
@@ -1660,7 +1678,7 @@ spec:
                 json:
                   type: object
                 xml:
-                  type: object                                 
+                  type: object
 ---
 apiVersion: apiextensions.k8s.io/v1beta1
 kind: CustomResourceDefinition
@@ -1696,6 +1714,9 @@ spec:
         spec:
           type: object
           properties:
+            ingressclass:
+              type: string
+              description: "Ingress class, if not specified then all citrix ingress controllers in the cluster will process the resource otherwise only the controller with that ingress class will process this resource"
             servicenames:
               description: 'Name of the services to which the bot policies are applied.'
               type: array
@@ -1861,5 +1882,74 @@ spec:
       description: "Status Message"
       JSONPath: .status.status_message
 
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: corspolicies.citrix.com
+{{- if .Values.crds.retainOnDelete }}
+  annotations:
+    "helm.sh/resource-policy": keep
+{{- end }}
+spec:
+  group: citrix.com
+  version: v1beta1
+  names:
+    kind: corspolicy
+    plural: corspolicies
+    singular: corspolicy
+    shortNames:
+    - cp
+  scope: Namespaced
+  subresources:
+    status: {}
+  additionalPrinterColumns:
+    - name: Status
+      type: string
+      description: 'Current Status of the CRD'
+      JSONPath: .status.state
+    - name: Message
+      type: string
+      description: 'Status Message'
+      JSONPath: .status.status_message
+  validation:
+    openAPIV3Schema:
+      properties:
+        spec:
+          properties:
+            ingressclass:
+              type: string
+              description: "Ingress class, if not specified then all citrix ingress controllers in the cluster will process the resource otherwise only the controller with that ingress class will process this resource"
+            servicenames:
+              description: 'The list of Kubernetes services to which you want to apply the cors policies.'
+              type: array
+              items:
+                type: string
+                maxLength: 63
+            allow_origin:
+              description: 'Represents list of allowed origins, it is used to screen the “origin” in the cors pre flight request'
+              type: array
+              items:
+                type: string
+                maxLength: 2083
+            allow_methods:
+              description: 'Indicates which methods are supported by the response’s URL for the purposes of the CORS protocol. This variable will be used to set Access-Control-Allow-Methods in the pre-flight cors response.'
+              type: array
+              items:
+                type: string
+                maxLength: 127
+            allow_headers:
+              description: 'Indicates which headers are supported by the response’s URL for the purposes of the CORS protocol. This variable will be used to set Access-Control-Allow-Headers in the pre-flight cors response.'
+              type: array
+              items:
+                type: string
+                maxLength: 127
+            max_age:
+              description: 'Indicates the number of seconds (5 by default) the information provided by the `Access-Control-Allow-Methods` and `Access-Control-Allow-Headers` headers can be cached. This variable will be used to set Access-Control-Max-Age in the pre-flight cors response.'
+              type: integer
+            allow_credentials:
+              description: 'Indicates whether the response can be shared when the request’s credentials mode is "include". This variable will be set to Access-Control-Allow-Credentials in the rewrite action.'
+              type: boolean
+          required: [servicenames, allow_origin, allow_methods, allow_headers]
 ---
 {{- end }}

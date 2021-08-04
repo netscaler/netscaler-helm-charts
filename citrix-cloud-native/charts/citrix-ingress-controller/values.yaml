@@ -3,8 +3,9 @@
 # Declare variables to be passed into your templates.
 
 # Citrix Ingress Controller config details
-image: quay.io/citrix/citrix-k8s-ingress-controller:1.16.9
+image: quay.io/citrix/citrix-k8s-ingress-controller:1.17.13
 pullPolicy: IfNotPresent
+imagePullSecrets: []
 openshift: false
 adcCredentialSecret:
 nsIP: x.x.x.x

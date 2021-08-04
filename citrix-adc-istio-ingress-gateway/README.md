@@ -29,24 +29,13 @@ Citrix Application Delivery Controller (ADC) can be deployed as an Istio Ingress
 
        helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-**For Istio v1.9/v1.8**
-
        helm install citrix-adc-istio-ingress-gateway citrix/citrix-adc-istio-ingress-gateway --namespace citrix-system --set ingressGateway.EULA=YES --set ingressGateway.netscalerUrl=https://<nsip>[:port] --set ingressGateway.vserverIP=<IPv4 Address> --set secretName=nslogin
-
-**For Istio v1.6.4**
-
-       helm install citrix-adc-istio-ingress-gateway citrix/citrix-adc-istio-ingress-gateway --namespace citrix-system --set ingressGateway.EULA=YES --set ingressGateway.netscalerUrl=https://<nsip>[:port] --set ingressGateway.vserverIP=<IPv4 Address> --set secretName=nslogin --version 1.6.4
 
 ### To deploy Citrix ADC CPX as an Ingress Gateway:
 
        helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-**For Istio v1.9/v1.8**
-
        helm install citrix-adc-istio-ingress-gateway citrix/citrix-adc-istio-ingress-gateway --namespace citrix-system --set ingressGateway.EULA=YES --set citrixCPX=true
-**For Istio v1.6.4**
-
-       helm install citrix-adc-istio-ingress-gateway citrix/citrix-adc-istio-ingress-gateway --namespace citrix-system --set ingressGateway.EULA=YES --set citrixCPX=true --version 1.6.4
 
 
 ## <a name="introduction">Introduction</a>
@@ -57,16 +46,17 @@ This chart deploys Citrix ADC VPX, MPX, or CPX as an Ingress Gateway in the Isti
 
 The following prerequisites are required for deploying Citrix ADC as an Ingress Gateway in Istio service mesh:
 
-- Ensure that **Istio version 1.6.4 onwards** is installed
+- Ensure that **Istio version 1.8 onwards** is installed
 - Ensure that Helm with version 3.x is installed. Follow this [step](https://github.com/citrix/citrix-helm-charts/blob/master/Helm_Installation_version_3.md) to install the same.
-- Ensure that your cluster has Kubernetes version 1.14.0 or later and the `admissionregistration.k8s.io/v1beta1` API is enabled
+- Ensure that your cluster Kubernetes version should be in range 1.16 to 1.21 and the `admissionregistration.k8s.io/v1`, `admissionregistration.k8s.io/v1beta1` API is enabled
 
   You can verify the API by using the following command:
 
-        kubectl api-versions | grep admissionregistration.k8s.io/v1beta1
+        kubectl api-versions | grep admissionregistration.k8s.io/v1
 
   The following output indicates that the API is enabled:
 
+        admissionregistration.k8s.io/v1
         admissionregistration.k8s.io/v1beta1
 
 - **For deploying Citrix ADC VPX or MPX as an Ingress gateway:**

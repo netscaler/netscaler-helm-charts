@@ -77,5 +77,11 @@ kind: ServiceAccount
 metadata:
   name: {{ include "citrix-ingress-controller.serviceAccountName" . }}
   namespace: {{ .Release.Namespace }}
+{{- if .Values.imagePullSecrets }}
+imagePullSecrets:
+{{- range .Values.imagePullSecrets }}
+- name: {{.}}
+{{- end }}
+{{- end }}
 
 ---

@@ -44,6 +44,10 @@ sidecarWebHook:
     webhookImage: docker.io/istio/sidecar_injector:1.3.0
     imagePullPolicy: IfNotPresent
 
+sidecarCertsGenerator:
+    image: quay.io/citrix/cpx-sidecar-injector-certgen:1.1.0
+    imagePullPolicy: IfNotPresent
+
 ADMSettings:
     ADMIP:
     licenseServerIP:

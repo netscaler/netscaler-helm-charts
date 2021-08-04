@@ -29,7 +29,7 @@ To generate the authentication and authorization bearer token using Access ID an
 	helm repo add citrix https://citrix.github.io/citrix-helm-charts
 	helm install citrix/citrix-cloud-native --namespace <namespace>	--set ao.enabled=true --set ao.token=<Token>
 
-**Note:** You can label the namespace with `citrix-cpx=enabled` in which Citrix ADC CPX will be deployed. For more information, see [Create Secret automatically](#automatic-secret).
+**Note:** If you are deploying Citrix ADC CPX and Citrix ADM agent in different namespaces, please label namespace with `citrix-cpx=enabled` in which Citrix ADC CPX has been deployed. For more information, see [Create Secret automatically](#automatic-secret).
 
 **A.2) To create Citrix ADM agent login Secret manually, use the following command:**
 
@@ -47,7 +47,7 @@ To generate the authentication and authorization bearer token using Access ID an
 	helm repo add citrix https://citrix.github.io/citrix-helm-charts
 	helm install citrix/citrix-cloud-native --namespace <namespace>	--set ao.enabled=true --set ao.adc.IP=<ADC ManagementIP>,ao.adc.loginSecret=nslogin --set ao.token=<Token>
 
-**Note:** You can label the namespace with `citrix-cpx=enabled` in which Citrix ADC CPX will be deployed. For more information, see [Create Secret automatically](#automatic-secret). `nslogin` is Kubernetes secret for credential of Citrix ADC VPX/MPX. Use the Management IP for `ao.adc.IP` argument.
+**Note:** If you are deploying Citrix ADC CPX and Citrix ADM agent in different namespaces, please label namespace with `citrix-cpx=enabled` in which Citrix ADC CPX has been deployed. For more information, see [Create Secret automatically](#automatic-secret). `nslogin` is Kubernetes secret for credential of Citrix ADC VPX/MPX. Use the Management IP for `ao.adc.IP` argument.
 
 **A.2) To create ADM Agent login Secret automatically and register Citrix ADC VPX/MPX in ADM, use the following command:**
 
@@ -104,7 +104,7 @@ Perform the following steps to get access ID and secret for accessing Citrix ADM
 
 	wget  https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/generate_token.py
 	
-	python generate_token.py --accessID=<accessID> --accessSecret=<accessSecret>
+	python3 generate_token.py --accessID=<accessID> --accessSecret=<accessSecret>
 
 **NOTE**: The bearer token expires in an hour (3600 seconds).
 

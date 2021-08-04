@@ -38,7 +38,7 @@ This Helm chart deploys Citrix ingress controller in the [Kubernetes](https://ku
 
 ### Prerequisites
 
--  The [Kubernetes](https://kubernetes.io/) version 1.6 or later if using Kubernetes environment.
+-  The [Kubernetes](https://kubernetes.io/) version should be in range 1.16 to 1.21 if using Kubernetes environment.
 -  The [Openshift](https://www.openshift.com) version 3.11.x or later if using OpenShift platform.
 -  The [Helm](https://helm.sh/) version 3.x or later. You can follow instruction given [here](https://github.com/citrix/citrix-helm-charts/blob/master/Helm_Installation_version_3.md) to install the same.
 -  You determine the NS_IP IP address needed by the controller to communicate with Citrix ADC. The IP address might be anyone of the following depending on the type of Citrix ADC deployment:
@@ -283,8 +283,9 @@ The following table lists the mandatory and optional parameters that you can con
 | Parameters | Mandatory or Optional | Default value | Description |
 | --------- | --------------------- | ------------- | ----------- |
 | license.accept | Mandatory | no | Set `yes` to accept the CIC end user license agreement. |
-| image | Mandatory | `quay.io/citrix/citrix-k8s-ingress-controller:1.16.9` | The CIC image. |
+| image | Mandatory | `quay.io/citrix/citrix-k8s-ingress-controller:1.17.13` | The CIC image. |
 | pullPolicy | Mandatory | IfNotPresent | The CIC image pull policy. |
+| imagePullSecrets | Optional | N/A | Provide list of Kubernetes secrets to be used for pulling the images from a private Docker registry or repository. For more information on how to create this secret please see [Pull an Image from a Private Registry](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/). |
 | adcCredentialSecret | Mandatory | N/A | The secret key to log on to the Citrix ADC VPX or MPX. For information on how to create the secret keys, see [Prerequisites](#prerequistes). |
 | nsIP | Mandatory | N/A | The IP address of the Citrix ADC device. For details, see [Prerequisites](#prerequistes). |
 | nsVIP | Optional | N/A | The Virtual IP address on the Citrix ADC device. |
