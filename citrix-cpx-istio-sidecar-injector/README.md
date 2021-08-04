@@ -22,13 +22,8 @@ Citrix ADC CPX can be deployed as a sidecar proxy in an application pod in the I
     
     helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-**For Istio v1.9/v1.8**
-
     helm install cpx-sidecar-injector citrix/citrix-cpx-istio-sidecar-injector --namespace citrix-system --set cpxProxy.EULA=YES
 
-**For Istio v1.6.4**
-
-    helm install cpx-sidecar-injector citrix/citrix-cpx-istio-sidecar-injector --namespace citrix-system --set cpxProxy.EULA=YES --version 1.6.4
 
 ## <a name="introduction">Introduction</a>
 
@@ -46,22 +41,23 @@ For detailed information on different deployment options, see [Deployment Archit
 
 The following prerequisites are required for deploying Citrix ADC as a sidecar to an application pod.
 
-- Ensure that **Istio version 1.6.4 onwards** is installed
+- Ensure that **Istio version 1.8 onwards** is installed
 - Ensure that Helm with version 3.x is installed. Follow this [step](https://github.com/citrix/citrix-helm-charts/blob/master/Helm_Installation_version_3.md) to install the same.
-- Ensure that your cluster has Kubernetes version 1.14.0 or later and the `admissionregistration.k8s.io/v1beta1` API is enabled
+- Ensure that your cluster Kubernetes version should be in range 1.16 to 1.21 and the `admissionregistration.k8s.io/v1`, `admissionregistration.k8s.io/v1beta1` API is enabled
+
+You can verify the API by using the following command:
+
+        kubectl api-versions | grep admissionregistration.k8s.io/v1
+
+The following output indicates that the API is enabled:
+
+        admissionregistration.k8s.io/v1
+        admissionregistration.k8s.io/v1beta1
+
 - Create namespace `citrix-system`
         
         kubectl create namespace citrix-system
         
-You can verify the API by using the following command:
-
-        kubectl api-versions | grep admissionregistration.k8s.io/v1beta1
-
-The following output indicates that the API is enabled:
-
-        admissionregistration.k8s.io/v1beta1
-
-
 - **Registration of Citrix ADC CPX in ADM**
 
 Create a secret containing ADM username and password in each application namespace.
@@ -260,6 +256,8 @@ The following table lists the configurable parameters and their default values i
 | `cpxProxy.cpxDisableProbe`            | Environment variable for Citrix ADC CPX. It indicates that Citrix ADC CPX will disable probing dynamic services. It should be enabled for multicluster setup.                                                                                               | YES                                                                    |
 | `sidecarWebHook.webhookImage`   | Mutating webhook associated with the sidecar injector. It invokes a service `cpx-sidecar-injector` to inject sidecar proxies in the application pod.                                                                                      | docker.io/istio/sidecar_injector:1.3.0 |
 | `sidecarWebHook.imagePullPolicy`   | Image pull policy                                                                          |IfNotPresent|
+| `sidecarCertsGenerator.image`   | Certificate genrator image associated with sidecar injector. This image generates certificate and key needed for CPX sidecar injection.                                                                                      | quay.io/citrix/cpx-sidecar-injector-certgen:1.1.0 |
+| `sidecarCertsGenerator.imagePullPolicy`   | Image pull policy                                                                          |IfNotPresent|
 | `webhook.injectionLabelName` |  Label of namespace where automatic Citrix ADC CPX sidecar injection is required. | cpx-injection |
 | `certProvider.caAddr`   | Certificate Authority (CA) address issuing certificate to application                           | istiod.istio-system.svc                          | Optional |
 | `certProvider.caPort`   | Certificate Authority (CA) port issuing certificate to application                              | 15012 | Optional |

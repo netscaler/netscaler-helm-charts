@@ -89,7 +89,7 @@ Perform the following steps to get access ID and secret for accessing Citrix ADM
 
 	wget  https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/generate_token.py
     
-	python generate_token.py --accessID=<accessID> --accessSecret=<accessSecret>
+	python3 generate_token.py --accessID=<accessID> --accessSecret=<accessSecret>
 
 **NOTE**: The bearer token expires in an hour (3600 seconds).
 	  
@@ -106,7 +106,7 @@ To register Tier-1 ADC in Citrix ADM with the agent getting deployed, you need t
 
 	helm install citrix-adm citrix/adm-agent-onboarding --set token=<Token> --set adc.IP=<ADC ManagementIP>,adc.loginSecret=nslogin
 
-**Note:** You can label the namespace with `citrix-cpx=enabled` in which Citrix ADC CPX is deployed.
+**Note:** If you are deploying Citrix ADC CPX and Citrix ADM agent in different namespaces, please label namespace with `citrix-cpx=enabled` in which Citrix ADC CPX has been deployed.
 
 You can check the logs of pod deployed as part of Kubernetes Job adm-agent-onboarding.
 
@@ -126,7 +126,7 @@ The Citrix ADC appliance needs to have system user account (non-default) with ce
 
 Create a Kubernetes secret for the user name and password using the following command:
 
-    kubectl create secret generic nscred --from-literal=username=`cic` --from-literal=password='<password>'
+    kubectl create secret generic nscred --from-literal=username='cic' --from-literal=password='<password>'
 
 Download the consolidated YAML file which can deploy Citrix ingress controller to configure Tier-1 ADC and Tier 2 CPX.
 

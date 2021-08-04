@@ -23,25 +23,14 @@ Citrix Application Delivery Controller (ADC) can be deployed as an Istio Egress 
 
        helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-**For Istio v1.9/v1.8**
-
        helm install citrix-adc-istio-egress-gateway citrix/citrix-adc-istio-egress-gateway --namespace citrix-system --set egressGateway.EULA=YES --set egressGateway.netscalerUrl=https://<nsip>[:port] --set egressGateway.vserverIP=<IPv4 Address> --set secretName=nsloginegress
 
-**For Istio v1.6.4**
-
-       helm install citrix-adc-istio-egress-gateway citrix/citrix-adc-istio-egress-gateway --namespace citrix-system --set egressGateway.EULA=YES --set egressGateway.netscalerUrl=https://<nsip>[:port] --set egressGateway.vserverIP=<IPv4 Address> --set secretName=nsloginegress --version 1.6.4
 
 ### To deploy Citrix ADC CPX as an Egress Gateway:
 
        helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-**For Istio v1.9/v1.8**
-
        helm install citrix-adc-istio-egress-gateway citrix/citrix-adc-istio-egress-gateway --namespace citrix-system --set egressGateway.EULA=true --set citrixCPX=true
-
-**For Istio v1.6.4**
-
-       helm install citrix-adc-istio-egress-gateway citrix/citrix-adc-istio-egress-gateway --namespace citrix-system --set egressGateway.EULA=true --set citrixCPX=true --version 1.6.4
 
 
 ## <a name="introduction">Introduction</a>
@@ -52,8 +41,19 @@ Citrix Application Delivery Controller (ADC) can be deployed as an Istio Egress 
 
 The following prerequisites are required for deploying Citrix ADC as an Egress Gateway in Istio service mesh:
 
-- Ensure that **Istio version 1.6.0 onwards**  is installed
+- Ensure that **Istio version 1.8 onwards**  is installed
 - Ensure that Helm with version 3.x is installed. Follow this [step](https://github.com/citrix/citrix-helm-charts/blob/master/Helm_Installation_version_3.md) to install the same.
+- Ensure that your cluster Kubernetes version should be in range 1.16 to 1.21 and the `admissionregistration.k8s.io/v1`, `admissionregistration.k8s.io/v1beta1` API is enabled
+
+  You can verify the API by using the following command:
+
+        kubectl api-versions | grep admissionregistration.k8s.io/v1
+
+  The following output indicates that the API is enabled:
+
+        admissionregistration.k8s.io/v1
+        admissionregistration.k8s.io/v1beta1
+
 - **For deploying Citrix ADC VPX or MPX as an Egress gateway:**
 
   Create a Kubernetes secret for the Citrix ADC user name and password using the following command:

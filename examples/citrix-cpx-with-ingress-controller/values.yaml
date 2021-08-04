@@ -5,6 +5,7 @@
 # Citrix ADC CPX config details
 image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-79.64
 pullPolicy: IfNotPresent
+imagePullSecrets: []
 
 mgmtHttpPort: 9080
 mgmtHttpsPort: 9443
@@ -35,8 +36,6 @@ ingressIP:
 # If IPAM controller is used for auto allocation of the external IP for service of type LoadBalancer, set this option to true
 ipam: False
 
-aws: False
-azure: False
 sslCertManagedByAWS: False
 
 nodeSelector:
@@ -53,26 +52,22 @@ serviceType:
     httpPort:
     httpsPort:
 
-serviceAnnotations:
-  aws:
-    sslCert:
-    backendProtocol:
-    sslPorts:
-    negotiationPolicy:
-    proxyProtocol: False
-    resourcesTags:
-  azure:
-    internalLoadBalancer: False
+serviceAnnotations: {}
+
+serviceSpec:
+  loadBalancerSourceRanges: []
+
+servicePorts: []
 
 # Citrix Ingress Controller config details
 cic:
-  image: quay.io/citrix/citrix-k8s-ingress-controller:1.16.9
+  image: quay.io/citrix/citrix-k8s-ingress-controller:1.17.13
   pullPolicy: IfNotPresent
   required: true
 entityPrefix:
 license:
   accept: no
-ingressClass: ["Citrix"]
+ingressClass: ["citrix"]
 setAsDefaultIngressClass: False
 logLevel: INFO
 defaultSSLCertSecret:

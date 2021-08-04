@@ -277,45 +277,30 @@ metadata:
   labels:
     app: cpx-service
     service-type: {{ include "cpxservicemonitorlabel" . }}
+{{- if .Values.serviceAnnotations }}
   annotations:
-{{- if .Values.aws }}
-{{- if or .Values.sslCertManagedByAWS .Values.serviceAnnotations.aws.sslCert }}
-    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: {{ required "Please provide details of SSL Cert" .Values.serviceAnnotations.aws.sslCert | quote }}
-{{- end }}
-{{- if or .Values.sslCertManagedByAWS .Values.serviceAnnotations.aws.backendProtocol }}
-    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: {{ .Values.serviceAnnotations.aws.backendProtocol | default "http" | quote }}
-{{- end }}
-{{- if or .Values.sslCertManagedByAWS .Values.serviceAnnotations.aws.sslPorts }}
-    service.beta.kubernetes.io/aws-load-balancer-ssl-ports: {{ .Values.serviceAnnotations.aws.sslPorts | default "https" | quote }}
-{{- end }}
-{{- if .Values.serviceAnnotations.aws.negotiationPolicy }}
-    service.beta.kubernetes.io/aws-load-balancer-ssl-negotiation-policy: {{ .Values.serviceAnnotations.aws.negotiationPolicy | quote }}
-{{- end }}
-{{- if or .Values.sslCertManagedByAWS .Values.serviceAnnotations.aws.proxyProtocol }}
-    service.beta.kubernetes.io/aws-load-balancer-proxy-protocol: '*'
-{{- end }}
-{{- if .Values.serviceAnnotations.aws.resourcesTags }}
-    service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags: {{ .Values.serviceAnnotations.aws.resourcesTags | quote }}
-{{- end }}
-{{- end }}
-{{- if .Values.azure }}
-{{- if .Values.serviceAnnotations.azure.internalLoadBalancer }}
-    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+{{- with .Values.serviceAnnotations }}
+{{ toYaml . | indent 4 }}
 {{- end }}
 {{- end }}
 spec:
-{{- if or ( and .Values.aws .Values.sslCertManagedByAWS) .Values.serviceType.loadBalancer.enabled ( and (.Values.updateIngressStatus) (not .Values.cpxBgpRouter)) }}
+{{- if or .Values.serviceType.loadBalancer.enabled ( and (.Values.updateIngressStatus) (not .Values.cpxBgpRouter)) }}
   externalTrafficPolicy: {{ .Values.serviceType.loadBalancer.externalTrafficPolicy }}
   type: LoadBalancer
 {{- else if .Values.serviceType.nodePort.enabled }}
   type: NodePort
 {{- end }}
+{{- if .Values.serviceSpec.loadBalancerSourceRanges }}
+  loadBalancerSourceRanges:
+{{- range .Values.serviceSpec.loadBalancerSourceRanges}}
+    - {{.}}
+{{- end }}
+{{- end }}
   ports:
-{{- if and .Values.aws .Values.sslCertManagedByAWS }}
-  - port: 443
-    protocol: TCP
-    name: https
-    targetPort: 80
+{{- if .Values.servicePorts }}
+{{- with .Values.servicePorts }}
+{{ toYaml . | indent 2 }}
+{{- end }}
 {{- else }}
   - port: 80
     protocol: TCP
