@@ -390,6 +390,12 @@ In a Kubernetes deployment, you can enforce a web application firewall policy to
 
 Example files: [wafhtmlxsssql.yaml](https://github.com/citrix/citrix-helm-charts/tree/master/example-crds/wafhtmlxsssql.yaml)
 
+#### CORS CRD:
+
+[CORS CRD](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/crds/cors.md) Cross-origin resource sharing (CORS) is a mechanism allows a web application running under one domain to securely access resources in another domain. You can configure CORS policies on Citrix ADC using Citrix ingress controller to allow one domain (the origin domain) to call APIs in another domain. For more information, see the [cross-origin resource sharing CRD](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/crds/cors.md) documentation.
+
+Example files: [cors-crd.yaml](https://github.com/citrix/citrix-helm-charts/tree/master/example-crds/corspolicy-example.yaml)
+
 ## Citrix ADC CPX servicetype LoadBalancer
 Citrix ADC CPX can be installed with service having servicetype LoadBalancer. Following arguments can be used in the `helm install` command for the same:
 
