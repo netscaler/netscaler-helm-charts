@@ -114,6 +114,10 @@ spec:
         - name: "NS_LOGPROXY"
           value: "{{ .Values.logProxy }}"
 {{- end }}
+{{- if .Values.extraVolumes }}
+        VolumeMounts:
+        {{- toYaml .Values.extraVolumeMounts | nindent 8 }}
+{{- end }}
 {{- if .Values.exporter.required }}
       - name: exporter
         image: "{{ .Values.exporter.image }}"
@@ -131,6 +135,12 @@ spec:
       - name: nslogin
         secret:
           secretName: {{ .Values.adcCredentialSecret }}
+{{- end }}
+{{- if .Values.extraVolumes }}
+{{- if not .Values.exporter.required }}
+      volumes:
+{{- end }}
+      {{- toYaml .Values.extraVolumes | nindent 6 }}
 {{- end }}
 {{- if and .Values.nodeSelector.key .Values.nodeSelector.value }}
       nodeSelector:
