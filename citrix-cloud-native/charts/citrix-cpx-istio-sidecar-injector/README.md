@@ -21,10 +21,8 @@ Citrix ADC CPX can be deployed as a sidecar proxy in an application pod in the I
     kubectl create namespace citrix-system
     
     helm repo add citrix https://citrix.github.io/citrix-helm-charts/
-
+    
     helm install cpx-sidecar-injector citrix/citrix-cloud-native --namespace citrix-system --set iaSidecar.enabled=true --set iaSidecar.cpxProxy.EULA=YES
-
-
 ## <a name="introduction">Introduction</a>
 
 Citrix ADC CPX can act as a sidecar proxy to an application container in Istio. You can inject the Citrix ADC CPX manually or automatically using the [Istio sidecar injector](https://istio.io/docs/setup/kubernetes/additional-setup/sidecar-injection/). Automatic sidecar injection requires resources including a Kubernetes [mutating webhook admission](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/) controller, and a service. Using this Helm chart, you can create resources required for automatically deploying Citrix ADC CPX as a sidecar proxy.
@@ -37,13 +35,23 @@ __Note: If a namespace is labelled with both `istio-injection` and `cpx-injectio
 
 For detailed information on different deployment options, see [Deployment Architecture](https://github.com/citrix/citrix-istio-adaptor/blob/master/docs/istio-integration/architecture.md).
 
+### Compatibility Matrix between Citrix xDS-adaptor and Istio version
+
+Below table provides info about recommended Citrix xDS-Adaptor version to be used for various Istio versions.
+
+| Citrix xDS-Adaptor version | Istio version |
+|----------------------------|---------------|
+| quay.io/citrix/citrix-xds-adaptor:0.9.9 | Istio v1.10+ |
+| quay.io/citrix/citrix-xds-adaptor:0.9.8 | Istio v1.8 to Istio v1.9 |
+| quay.io/citrix/citrix-xds-adaptor:0.9.5 | Istio v1.6 |
+
 ### Prerequisites
 
 The following prerequisites are required for deploying Citrix ADC as a sidecar to an application pod.
 
 - Ensure that **Istio version 1.8 onwards** is installed
 - Ensure that Helm with version 3.x is installed. Follow this [step](https://github.com/citrix/citrix-helm-charts/blob/master/Helm_Installation_version_3.md) to install the same.
-- Ensure that your cluster Kubernetes version should be in range 1.16 to 1.21 and the `admissionregistration.k8s.io/v1`, `admissionregistration.k8s.io/v1beta1` API is enabled
+- Ensure that your cluster Kubernetes version should be 1.16 onwards and the `admissionregistration.k8s.io/v1`, `admissionregistration.k8s.io/v1beta1` API is enabled
 
 You can verify the API by using the following command:
 
@@ -232,7 +240,7 @@ The following table lists the configurable parameters and their default values i
 | Parameter                      | Description                   | Default                   |
 |--------------------------------|-------------------------------|---------------------------|
 | `iaSidecar.enabled` | Mandatory | False | Set to "True" for deploying Citrix ADC CPX as a sidecar in Istio environment. |
-| `iaSidecar.xDSadaptor.image`                    | Image of the Citrix xDS Adaptor container                    |  quay.io/citrix/citrix-xds-adaptor:0.9.8   |
+| `iaSidecar.xDSadaptor.image`                    | Image of the Citrix xDS Adaptor container                    |  quay.io/citrix/citrix-xds-adaptor:0.9.9   |
 | `iaSidecar.xDSadaptor.imagePullPolicy`   | Image pull policy for xDS-adaptor | IfNotPresent        |
 | `iaSidecar.xDSadaptor.secureConnect`     | If this value is set to true, xDS-adaptor establishes secure gRPC channel with Istio Pilot   | TRUE                       |
 | `iaSidecar.xDSAdaptor.logLevel`   | Log level to be set for xDS-adaptor log messages. Possible values: TRACE (most verbose), DEBUG, INFO, WARN, ERROR (least verbose) | DEBUG       | Optional|
@@ -256,7 +264,7 @@ The following table lists the configurable parameters and their default values i
 | `iaSidecar.cpxProxy.EULA`              |  End User License Agreement(EULA) terms and conditions. If yes, then user agrees to EULA terms and conditions.                                                     | NO |
 | `iaSidecar.cpxProxy.cpxSidecarMode`            | Environment variable for Citrix ADC CPX. It indicates that Citrix ADC CPX is running as sidecar mode or not.                                                                                               | YES                                                                    |
 | `iaSidecar.cpxProxy.cpxDisableProbe`            | Environment variable for Citrix ADC CPX. It indicates that Citrix ADC CPX will disable probing dynamic services. It should be enabled for multicluster setup. Possible values: YES/NO.                    | YES   |
-| `iaSidecar.sidecarWebHook.webhookImage`   | Mutating webhook associated with the sidecar injector. It invokes a service `cpx-sidecar-injector` to inject sidecar proxies in the application pod.                                                                                      |docker.io/istio/sidecar_injector:1.3.0 | 
+| `iaSidecar.sidecarWebHook.webhookImage`   | Mutating webhook associated with the sidecar injector. It invokes a service `cpx-sidecar-injector` to inject sidecar proxies in the application pod.                                                                                      | quay.io/citrix/cpx-istio-sidecar-injector:1.0.0 | 
 | `iaSidecar.sidecarWebHook.imagePullPolicy`   | Image pull policy                                                                          |IfNotPresent|
 | `iaSidecar.sidecarCertsGenerator.image`   | Certificate genrator image associated with sidecar injector. This image generates certificate and key needed for CPX sidecar injection.                                                                                      | quay.io/citrix/cpx-sidecar-injector-certgen:1.1.0 | 
 | `iaSidecar.sidecarCertsGenerator.imagePullPolicy`   | Image pull policy                                                                          |IfNotPresent|
@@ -265,6 +273,9 @@ The following table lists the configurable parameters and their default values i
 | `iaSidecar.certProvider.caPort`   | Certificate Authority (CA) port issuing certificate to application                              | 15012 | Optional |
 | `iaSidecar.certProvider.trustDomain`   | SPIFFE Trust Domain                         | cluster.local | Optional |
 | `iaSidecar.certProvider.certTTLinHours`   | Validity of certificate generated by xds-adaptor and signed by Istiod (Istio Citadel) in hours. Default is 30 days validity              | 720 | Optional |
+| `iaSidecar.certProvider.certTTLinHours`   | Validity of certificate generated by xds-adaptor and signed by Istiod (Istio Citadel) in hours. Default is 30 days validity              | 720 | Optional |
+| `iaSidecar.certProvider.clusterId`   | clusterId is the ID of the cluster where Istiod CA instance resides (default Kubernetes). It can be different value on some cloud platforms or in multicluster environments. For example, in Anthos servicemesh, it might be of the format of `cn<project-name>-<region>-<cluster_name>`. In multiCluster environments, it is the value of global.multiCluster.clusterName provided during servicemesh control plane installation           | Kubernetes  | Optional |
 | `iaSidecar.certProvider.jwtPolicy`   | Service Account token type. Kubernetes platform supports First party tokens and Third party tokens.  | first-party-jwt | Optional |
+| `iaSidecar.certProvider.jwtPolicy`   | Service Account token type. Kubernetes platform supports First party tokens and Third party tokens. Usually public cloud based Kubernetes has third-party-jwt | null | Optional |
 
 **Note:** You can use the `values.yaml` file packaged in the chart. This file contains the default configuration values for the chart.

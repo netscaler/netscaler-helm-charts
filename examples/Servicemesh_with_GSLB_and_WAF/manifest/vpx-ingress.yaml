@@ -1,0 +1,47 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-vpx-443
+  annotations:
+   kubernetes.io/ingress.class: "citrix-vpx"
+   ingress.citrix.com/frontend-ip: "A.B.C.D" #Provide the Virtual IP 
+   ingress.citrix.com/secure_backend: '{"citrix-adc-istio-ingress-gateway-citrix-ingress-svc": "True"}'
+   ingress.citrix.com/backend-sslprofile: '{"citrix-adc-istio-ingress-gateway-citrix-ingress-svc":{"snienable": "enabled"}}'
+spec:
+  tls:
+  - secretName: wildcard-cert
+    hosts: 
+      - "*.appcluster.example.com"
+  rules:
+  - host:  "*.appcluster.example.com"
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service: 
+            name: citrix-adc-istio-ingress-gateway-citrix-ingress-svc
+            port: 
+              number: 443
+
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-vpx-80
+  annotations:
+   kubernetes.io/ingress.class: "citrix-vpx"
+   ingress.citrix.com/frontend-ip: "A.B.C.D" #Provide the Virtual IP
+spec:
+  rules:
+  - host:  "*.appcluster.example.com"
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service: 
+            name: citrix-adc-istio-ingress-gateway-citrix-ingress-svc
+            port: 
+              number: 80

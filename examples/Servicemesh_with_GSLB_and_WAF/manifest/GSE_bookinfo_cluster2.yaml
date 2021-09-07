@@ -1,0 +1,8 @@
+apiVersion: citrix.com/v1beta1
+kind: globalserviceentry
+metadata:
+  name: bookinfo.bookinfo.<region-2>.cluster2 #For eg: replace <region-2> with apnortheast
+spec:
+  endpoint:
+    ipv4address: A.B.C.D #Public IP address of VIP for VPX in region-2
+    monitorPort: 443

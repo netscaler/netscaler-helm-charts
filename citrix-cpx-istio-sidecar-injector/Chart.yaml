@@ -1,9 +1,9 @@
 apiVersion: v2
-appVersion: "1.9.2"
-kubeVersion: ">=v1.16 < v1.22"
+appVersion: "1.11.0"
+kubeVersion: ">=v1.16.0-0"
 description: A Helm chart to deploy resources which install Citrix ADC CPX in Istio Service Mesh as sidecar in application pod
 name: citrix-cpx-istio-sidecar-injector
-version: 1.9.2
+version: 1.11.0
 icon: https://raw.githubusercontent.com/citrix/citrix-helm-charts/gh-pages/icon.png 
 home: https://www.citrix.com
 sources:

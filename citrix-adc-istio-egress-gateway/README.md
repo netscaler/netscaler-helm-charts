@@ -15,6 +15,7 @@ Citrix Application Delivery Controller (ADC) can be deployed as an Istio Egress 
 9. [Citrix ADC as Egress Gateway: a sample deployment](#citrix-adc-as-egress-gateway-a-sample-deployment)
 10. [Uninstalling the Helm chart](#uninstalling-the-helm-chart)
 11. [Configuration Parameters](#configuration-parameters)
+
 ## <a name="tldr">TL; DR;</a>
   
 ### To deploy Citrix ADC VPX or MPX as an Egress Gateway:
@@ -23,8 +24,7 @@ Citrix Application Delivery Controller (ADC) can be deployed as an Istio Egress 
 
        helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-       helm install citrix-adc-istio-egress-gateway citrix/citrix-adc-istio-egress-gateway --namespace citrix-system --set egressGateway.EULA=YES --set egressGateway.netscalerUrl=https://<nsip>[:port] --set egressGateway.vserverIP=<IPv4 Address> --set secretName=nsloginegress
-
+        helm install citrix-adc-istio-egress-gateway citrix/citrix-adc-istio-egress-gateway --namespace citrix-system --set egressGateway.EULA=YES --set egressGateway.netscalerUrl=https://<nsip>[:port] --set egressGateway.vserverIP=<IPv4 Address> --set secretName=nsloginegress
 
 ### To deploy Citrix ADC CPX as an Egress Gateway:
 
@@ -33,9 +33,20 @@ Citrix Application Delivery Controller (ADC) can be deployed as an Istio Egress 
        helm install citrix-adc-istio-egress-gateway citrix/citrix-adc-istio-egress-gateway --namespace citrix-system --set egressGateway.EULA=true --set citrixCPX=true
 
 
+
 ## <a name="introduction">Introduction</a>
 
     This chart deploys Citrix CPX as an Egress Gateway. An egress gateway defines the exit point from the mesh. It provides features like load balancing at the edge of the mesh, monitoring, and routing rules to exiting the mesh. 
+
+### Compatibility Matrix between Citrix xDS-adaptor and Istio version
+
+Below table provides info about recommended Citrix xDS-Adaptor version to be used for various Istio versions.
+
+| Citrix xDS-Adaptor version | Istio version |
+|----------------------------|---------------|
+| quay.io/citrix/citrix-xds-adaptor:0.9.9 | Istio v1.10+ |
+| quay.io/citrix/citrix-xds-adaptor:0.9.8 | Istio v1.8 to Istio v1.9 |
+| quay.io/citrix/citrix-xds-adaptor:0.9.5 | Istio v1.6 |
 
 ### Prerequisites
 
@@ -43,7 +54,7 @@ The following prerequisites are required for deploying Citrix ADC as an Egress G
 
 - Ensure that **Istio version 1.8 onwards**  is installed
 - Ensure that Helm with version 3.x is installed. Follow this [step](https://github.com/citrix/citrix-helm-charts/blob/master/Helm_Installation_version_3.md) to install the same.
-- Ensure that your cluster Kubernetes version should be in range 1.16 to 1.21 and the `admissionregistration.k8s.io/v1`, `admissionregistration.k8s.io/v1beta1` API is enabled
+- Ensure that your cluster Kubernetes version should be 1.16 onwards and the `admissionregistration.k8s.io/v1`, `admissionregistration.k8s.io/v1beta1` API is enabled
 
   You can verify the API by using the following command:
 
@@ -59,7 +70,7 @@ The following prerequisites are required for deploying Citrix ADC as an Egress G
   Create a Kubernetes secret for the Citrix ADC user name and password using the following command:
   
         kubectl create secret generic nsloginegress --from-literal=username=<citrix-adc-user> --from-literal=password=<citrix-adc-password> -n citrix-system
-- Ensure that your cluster has Kubernetes version 1.14.0 or later and the `admissionregistration.k8s.io/v1beta1` API is enabled
+- Ensure that your cluster has Kubernetes version 1.16.0 or later and the `admissionregistration.k8s.io/v1beta1` API is enabled
 
 - **Create system user account for xDS-adaptor in Citrix ADC:**
 
@@ -301,7 +312,7 @@ The following table lists the configurable parameters in the Helm chart and thei
 | Parameter                      | Description                   | Default                   | Optional/Mandatory                  |
 |--------------------------------|-------------------------------|---------------------------|---------------------------|
 | `citrixCPX`                    | Citrix ADC CPX                    | FALSE                  | Mandatory for Citrix ADC CPX |
-| `xDSAdaptor.image`            | Image of the Citrix xDS adaptor container |quay.io/citrix/citrix-xds-adaptor:0.9.8 | Mandatory|
+| `xDSAdaptor.image`            | Image of the Citrix xDS adaptor container |quay.io/citrix/citrix-xds-adaptor:0.9.9 | Mandatory|
 | `xDSAdaptor.imagePullPolicy`   | Image pull policy for xDS adaptor | IfNotPresent       | Optional|
 | `xDSAdaptor.secureConnect`     | If this value is set to true, xDS-adaptor establishes secure gRPC channel with Istio Pilot   | TRUE                       | Optional|
 | `xDSAdaptor.logLevel`   | Log level to be set for xDS-adaptor log messages. Possible values: TRACE (most verbose), DEBUG, INFO, WARN, ERROR (least verbose) | DEBUG       | Optional|
@@ -337,6 +348,7 @@ The following table lists the configurable parameters in the Helm chart and thei
 | `certProvider.caPort`   | Certificate Authority (CA) port issuing certificate to application                              | 15012 | Optional |
 | `certProvider.trustDomain`   | SPIFFE Trust Domain                         | cluster.local | Optional |
 | `certProvider.certTTLinHours`   | Validity of certificate generated by xds-adaptor and signed by Istiod (Istio Citadel) in hours. Default is 30 days validity              | 720 | Optional |
-| `certProvider.jwtPolicy`   | Service Account token type. Kubernetes platform supports First party tokens and Third party tokens.  | first-party-jwt | Optional |
+| `certProvider.clusterId`   | clusterId is the ID of the cluster where Istiod CA instance resides (default Kubernetes). It can be different value on some cloud platforms or in multicluster environments. For example, in Anthos servicemesh, it might be of the format of `cn<project-name>-<region>-<cluster_name>`. In multiCluster environments, it is the value of global.multiCluster.clusterName provided during servicemesh control plane installation        | Kubernetes | Optional |
+| `certProvider.jwtPolicy`   | Service Account token type. Kubernetes platform supports First party tokens and Third party tokens. Usually public cloud based Kubernetes has third-party-jwt | null | Optional |
 | `secretName`   | Name of the Kubernetes secret holding Citrix ADC credentials | nsloginegress | Mandatory for Citrix ADC VPX/MPX |
 

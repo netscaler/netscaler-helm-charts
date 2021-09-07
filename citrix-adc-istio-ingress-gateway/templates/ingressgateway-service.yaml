@@ -26,6 +26,9 @@ metadata:
   annotations:
   labels:
     app: {{ .Values.ingressGateway.label | default "citrix-ingressgateway" }}
+{{- if eq .Values.citrixCPX true }}
+    deployment: "cpx-ingressgateway" # This label is useful in ServiceGraph
+{{- end }}
 spec:
 {{- if eq .Values.citrixCPX true }}
 {{- if eq .Values.ingressGateway.nodePortRequired true }}

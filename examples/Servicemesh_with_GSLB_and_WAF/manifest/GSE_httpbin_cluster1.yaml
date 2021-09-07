@@ -1,0 +1,8 @@
+apiVersion: citrix.com/v1beta1
+kind: globalserviceentry
+metadata:
+  name: httpbin.httpbin.<region-1>.cluster1 #For eg: replace <region-1> with eucentral
+spec:
+  endpoint:
+    ipv4address:  A.B.C.D #Public IP address of VIP for VPX in region-1
+    monitorPort: 443

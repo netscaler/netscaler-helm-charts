@@ -1,0 +1,16 @@
+#This yaml applies check for preventing SQL Injection attack for bookinfo application
+apiVersion: citrix.com/v1
+kind: waf
+metadata:
+    name: bookinfohtmlxsssql
+spec:
+    target:
+        header:
+            - bookinfo
+    servicenames:
+        - citrix-adc-istio-ingress-gateway-citrix-ingress-svc
+    html_error_object: "local:error.html" # copy this file to /var/tmp folder in netscaler
+    security_checks:
+        html:
+          cross_site_scripting: "on" 
+          sql_injection: "on"

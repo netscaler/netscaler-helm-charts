@@ -31,3 +31,20 @@
 {{- printf "%s-%s" $top.Release.Name $arg1 | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
+{{/* Below function is used to identify default value of jwtPolicy if not provided.
+   * For on-prem Kubernetes v1.21+, it is third-party-jwt. Else first-party-jwt.
+   * Note: Don't just do "helm template" to generate yaml file. Else https://github.com/helm/helm/issues/7991 
+   * is possible. Use "helm template --validate" or "helm install --dry-run --debug".
+*/}}
+
+{{- define "jwtValue" -}}
+{{- if .Values.certProvider.jwtPolicy -}}
+{{- printf .Values.certProvider.jwtPolicy -}}
+{{- else -}}
+{{- if semverCompare "<1.21.x" .Capabilities.KubeVersion.Version -}}
+{{- printf "first-party-jwt" -}}
+{{- else -}}
+{{- printf "third-party-jwt" -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}

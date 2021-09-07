@@ -13,12 +13,13 @@ Citrix Application Delivery Controller (ADC) can be deployed as an Istio Ingress
 8. [Visualizing statistics of Citrix ADC Ingress Gateway with Metrics Exporter](#visualizing-statistics-of-citrix-adc-ingress-gateway-with-metrics-exporter)
 9. [Exposing services running on non-HTTP ports](#exposing-services-running-on-non-http-ports)
 10. [Generate Certificate for Ingress Gateway](#generate-certificate-for-ingress-gateway)
-11. [Citrix ADC CPX License Provisioning](#citrix-adc-cpx-license-provisioning)
-12. [Service Graph Configuration](#configuration-for-servicegraph)
-13. [Citrix ADC as Ingress Gateway: a sample deployment](#citrix-adc-as-ingress-gateway-a-sample-deployment)
-14. [Uninstalling the Helm chart](#uninstalling-the-helm-chart)
-15. [Citrix ADC VPX/MPX Certificate Verification](#citrix-adc-vpx-or-mpx-certificate-verification)
-16. [Configuration Parameters](#configuration-parameters)
+11. [Configure Third Party Service Account Tokens](#using-third-party-service-account-tokens)
+12. [Citrix ADC CPX License Provisioning](#citrix-adc-cpx-license-provisioning)
+13. [Service Graph configuration](#configuration-for-servicegraph)
+14. [Citrix ADC as Ingress Gateway: a sample deployment](#citrix-adc-as-ingress-gateway-a-sample-deployment)
+15. [Uninstalling the Helm chart](#uninstalling-the-helm-chart)
+16. [Citrix ADC VPX/MPX Certificate Verification](#citrix-adc-vpx-or-mpx-certificate-verification)
+17. [Configuration Parameters](#configuration-parameters)
 
 
 ## <a name="tldr">TL; DR;</a>
@@ -32,6 +33,7 @@ Citrix Application Delivery Controller (ADC) can be deployed as an Istio Ingress
        helm install citrix-adc-istio-ingress-gateway citrix/citrix-cloud-native --namespace citrix-system --set iaIngress.enabled=true,iaIngress.ingressGateway.EULA=YES,iaIngress.ingressGateway.netscalerUrl=https://<nsip>[:port],iaIngress.ingressGateway.vserverIP=<IPv4 Address>,iaIngress.ingressGateway.adcServerName=<ADC Cert Server Name> --set iaIngress.secretName=nslogin
 
 
+
 ### To deploy Citrix ADC CPX as an Ingress Gateway:
 
        helm repo add citrix https://citrix.github.io/citrix-helm-charts/
@@ -43,19 +45,29 @@ Citrix Application Delivery Controller (ADC) can be deployed as an Istio Ingress
 
 This chart deploys Citrix ADC VPX, MPX, or CPX as an Ingress Gateway in the Istio service mesh using the Helm package manager. For detailed information on different deployment options, see [Deployment Architecture](https://github.com/citrix/citrix-istio-adaptor/blob/master/docs/istio-integration/architecture.md).
 
+### Compatibility Matrix between Citrix xDS-adaptor and Istio version
+
+Below table provides info about recommended Citrix xDS-Adaptor version to be used for various Istio versions.
+
+| Citrix xDS-Adaptor version | Istio version |
+|----------------------------|---------------|
+| quay.io/citrix/citrix-xds-adaptor:0.9.9 | Istio v1.10+ |
+| quay.io/citrix/citrix-xds-adaptor:0.9.8 | Istio v1.8 to Istio v1.9 |
+| quay.io/citrix/citrix-xds-adaptor:0.9.5 | Istio v1.6 |
+
 ### Prerequisites
 
 The following prerequisites are required for deploying Citrix ADC as an Ingress Gateway in Istio service mesh:
 
 - Ensure that **Istio version 1.8 onwards** is installed
 - Ensure that Helm with version 3.x is installed. Follow this [step](https://github.com/citrix/citrix-helm-charts/blob/master/Helm_Installation_version_3.md) to install the same.
-- Ensure that your cluster Kubernetes version should be in range 1.16 to 1.21 and the `admissionregistration.k8s.io/v1`, `admissionregistration.k8s.io/v1beta1` API is enabled
+- Ensure that your cluster Kubernetes version should be above 1.16 and the `admissionregistration.k8s.io/v1`, `admissionregistration.k8s.io/v1beta1` API is enabled
 
-You can verify the API by using the following command:
+  You can verify the API by using the following command:
 
         kubectl api-versions | grep admissionregistration.k8s.io/v1
 
-The following output indicates that the API is enabled:
+  The following output indicates that the API is enabled:
 
         admissionregistration.k8s.io/v1
         admissionregistration.k8s.io/v1beta1
@@ -65,6 +77,8 @@ The following output indicates that the API is enabled:
   Create a Kubernetes secret for the Citrix ADC user name and password using the following command:
   
         kubectl create secret generic nslogin --from-literal=username=<citrix-adc-user> --from-literal=password=<citrix-adc-password> -n citrix-system
+
+
 - **Create system user account for xDS-adaptor in Citrix ADC:**
 
   The Citrix ADC appliance needs to have system user account (non-default) with certain privileges so that `xDS-adaptor` can configure the Citrix ADC VPX or MPX appliance. Follow the instructions to create the system user account on Citrix ADC.
@@ -302,7 +316,7 @@ Kubernetes supports two forms of these tokens:
 ```
         helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-        helm install cpx-sidecar-injector citrix/citrix-cpx-istio-sidecar-injector --namespace citrix-system --set iaIngress.cpxProxy.EULA=YES --set iaIngress.certProvider.caAddr="istiod.istio-system.svc" --set iaIngress.certProvider.jwtPolicy="third-party-jwt"
+        helm install citrix-adc-istio-ingress-gateway citrix/citrix-cloud-native --namespace citrix-system --set iaIngress.cpxProxy.EULA=YES --set iaIngress.certProvider.caAddr="istiod.istio-system.svc" --set iaIngress.certProvider.jwtPolicy="third-party-jwt"
 
 ```
 
@@ -421,7 +435,7 @@ The following table lists the configurable parameters in the Helm chart and thei
 |--------------------------------|-------------------------------|---------------------------|---------------------------|
 | `iaIngress.enabled` | Mandatory | False | Set to "True" for deploying Citrix ADC as an Ingress Gateway in Istio environment. |
 | `iaIngress.citrixCPX`                    | Citrix ADC CPX                    | FALSE                  | Mandatory for Citrix ADC CPX |
-| `iaIngress.xDSAdaptor.image`            | Image of the Citrix xDS-adaptor container |quay.io/citrix/citrix-xds-adaptor:0.9.8 | Mandatory|
+| `iaIngress.xDSAdaptor.image`            | Image of the Citrix xDS-adaptor container (Refer compatibility matrix) |quay.io/citrix/citrix-xds-adaptor:0.9.9 | Mandatory|
 | `iaIngress.xDSAdaptor.imagePullPolicy`   | Image pull policy for xDS-adaptor | IfNotPresent       | Optional|
 | `iaIngress.xDSAdaptor.secureConnect`     | If this value is set to true, Istio-adaptor establishes secure gRPC channel with Istio Pilot   | TRUE                       | Optional|
 | `iaIngress.xDSAdaptor.logLevel`   | Log level to be set for xDS-adaptor log messages. Possible values: TRACE (most verbose), DEBUG, INFO, WARN, ERROR (least verbose) | DEBUG       | Optional|
@@ -467,5 +481,7 @@ The following table lists the configurable parameters in the Helm chart and thei
 | `iaIngress.certProvider.caPort`   | Certificate Authority (CA) port issuing certificate to application                              | 15012 | Optional |
 | `iaIngress.certProvider.trustDomain`   | SPIFFE Trust Domain                         | cluster.local | Optional |
 | `iaIngress.certProvider.certTTLinHours`   | Validity of certificate generated by xds-adaptor and signed by Istiod (Istio Citadel) in hours. Default is 30 days validity              | 720 | Optional |
+| `iaIngress.certProvider.clusterId`   | clusterId is the ID of the cluster where Istiod CA instance resides (default Kubernetes). It can be different value on some cloud platforms or in multicluster environments. For example, in Anthos servicemesh, it might be of the format of `cn<project-name>-<region>-<cluster_name>`. In multiCluster environments, it is the value of global.multiCluster.clusterName provided during servicemesh control plane installation            | Kubernetes | Optional |
 | `iaIngress.certProvider.jwtPolicy`   | Service Account token type. Kubernetes platform supports First party tokens and Third party tokens.  | first-party-jwt | Optional |
+| `iaIngress.certProvider.jwtPolicy`   | Service Account token type. Kubernetes platform supports First party tokens and Third party tokens. Usually public cloud based Kubernetes has third-party-jwt | null | Optional |
 | `iaIngress.secretName`   | Name of the Kubernetes secret holding Citrix ADC credentials | nslogin | Mandatory for Citrix ADC VPX/MPX |

@@ -6,6 +6,7 @@ metadata:
   namespace: {{.Release.Namespace}}
   labels:
     app: {{default "citrix-egressgateway" .Values.egressGateway.label}}
+    deployment: "cpx-egressgateway" # This label is useful in ServiceGraph
 spec:
   replicas: 1
   selector:
@@ -36,7 +37,8 @@ spec:
         configMap:
           defaultMode: 0777
           name: istio-ca-root-cert
-{{- if eq .Values.certProvider.jwtPolicy "third-party-jwt" }}       
+{{- $jwtpolicy := include "jwtValue" . }}
+{{- if eq $jwtpolicy "third-party-jwt" }}
       - name: istio-token
         projected:
           sources:
@@ -135,7 +137,7 @@ spec:
           - name: CERT_TTL_IN_HOURS
             value: {{ .Values.certProvider.certTTLinHours | quote }}
           - name: JWT_POLICY
-            value: {{ .Values.certProvider.jwtPolicy | default "first-party-jwt" | quote }} # third-party-jwt if Kubernetes cluster supports third-party tokens
+            value: {{ include "jwtValue" . | quote  }} # If value not provided then third-party-jwt for v>=1.21 otherwise first-party-jwt
 {{- end }}
 {{- if eq .Values.coe.coeTracing true }}
           - name: COE_TRACING
@@ -174,7 +176,8 @@ spec:
           - mountPath: /etc/istio/egressgateway-ca-certs # Make sure that Gateway definition has this path mentioned in server.tls section for MUTUAL TLS
             name: citrix-egressgateway-ca-certs
             readOnly: true
-{{- if eq .Values.certProvider.jwtPolicy "third-party-jwt" }}
+{{- $jwtpolicy := include "jwtValue" . }}
+{{- if eq $jwtpolicy "third-party-jwt" }}       
           - mountPath: /var/run/secrets/tokens
             name: istio-token
 {{- end }}
@@ -322,7 +325,7 @@ spec:
         - name: CERT_TTL_IN_HOURS
           value: {{ .Values.certProvider.certTTLinHours | quote }}
         - name: JWT_POLICY
-          value: {{ .Values.certProvider.jwtPolicy | default "first-party-jwt" | quote }} # third-party-jwt if Kubernetes cluster supports third-party tokens
+          value: {{ include "jwtValue" . | quote }} # third-party-jwt if Kubernetes cluster supports third-party tokens
 {{- end }}
 {{- if eq .Values.coe.coeTracing true }}
         - name: COE_TRACING
@@ -393,7 +396,8 @@ spec:
           name: certs
         - name: istiod-ca-cert
           mountPath: /etc/rootcert/
-{{- if eq .Values.certProvider.jwtPolicy "third-party-jwt" }}
+{{- $jwtpolicy := include "jwtValue" . }}
+{{- if eq $jwtpolicy "third-party-jwt" }}       
         - mountPath: /var/run/secrets/tokens
           name: istio-token
 {{- end }}
@@ -431,7 +435,8 @@ spec:
           optional: true
           secretName: "citrix-adc-cert" # IMPORTANT: This secret MUST BE created before deploying gateway and egress-gateway
 {{- end }}
-{{- if eq .Values.certProvider.jwtPolicy "third-party-jwt" }}       
+{{- $jwtpolicy := include "jwtValue" . }}
+{{- if eq $jwtpolicy "third-party-jwt" }}         
       - name: istio-token
         projected:
           sources:

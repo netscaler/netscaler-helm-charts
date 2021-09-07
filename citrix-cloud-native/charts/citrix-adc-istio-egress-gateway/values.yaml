@@ -24,7 +24,7 @@ istioPilot:
 
 
 xDSAdaptor:
-    image: quay.io/citrix/citrix-xds-adaptor:0.9.8
+    image: quay.io/citrix/citrix-xds-adaptor:0.9.9
     imagePullPolicy: IfNotPresent
     proxyType: router
     secureConnect: true
@@ -38,7 +38,7 @@ certProvider:
     trustDomain: cluster.local
     certTTLinHours: 720
     clusterId: Kubernetes
-    jwtPolicy: first-party-jwt #specify third-party-jwt if Kubernetes cluster supports third-party tokens
+    jwtPolicy: #specify third-party-jwt if Kubernetes cluster supports third-party tokens
 
 
 egressGateway:
