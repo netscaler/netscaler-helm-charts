@@ -5,6 +5,9 @@ metadata:
   annotations:
   labels:
     app: {{ .Values.ingressGateway.label | default "citrix-ingressgateway" }}
+{{- if eq .Values.citrixCPX true }}
+    deployment: "cpx-ingressgateway" # This label is useful in ServiceGraph
+{{- end }}
   name: citrix-multicluster-ingressgateway
   namespace: {{ .Release.Namespace }}
 spec:

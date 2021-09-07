@@ -3,7 +3,7 @@
 # Declare variables to be passed into your templates.
 
 xDSAdaptor:
-    image: quay.io/citrix/citrix-xds-adaptor:0.9.8
+    image: quay.io/citrix/citrix-xds-adaptor:0.9.9
     imagePullPolicy: IfNotPresent
     proxyType: sidecar
     secureConnect: true
@@ -27,7 +27,7 @@ certProvider:
     trustDomain: cluster.local
     certTTLinHours: 720
     clusterId: Kubernetes
-    jwtPolicy: first-party-jwt #specify third-party-jwt if Kubernetes cluster supports third-party tokens
+    jwtPolicy: #specify third-party-jwt if Kubernetes cluster supports third-party tokens
 
 cpxProxy:
     netscalerUrl: "http://127.0.0.1"
@@ -41,7 +41,7 @@ cpxProxy:
     #licenseServerIP: this value is taken from ADMSettings.ADMIP
 
 sidecarWebHook:
-    webhookImage: docker.io/istio/sidecar_injector:1.3.0
+    webhookImage: quay.io/citrix/cpx-istio-sidecar-injector:1.0.0
     imagePullPolicy: IfNotPresent
 
 sidecarCertsGenerator:

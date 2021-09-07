@@ -25,6 +25,9 @@ metadata:
   annotations:
   labels:
     app: {{ .Values.egressGateway.label | default "citrix-egressgateway" }}
+{{- if eq .Values.citrixCPX true }}
+    deployment: "cpx-egressgateway" # This label is useful in ServiceGraph
+{{- end }}
 spec:
   ports:
   - port: 80

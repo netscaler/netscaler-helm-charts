@@ -6,6 +6,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     app: {{ .Values.ingressGateway.label | default "citrix-ingressgateway" }}
+    deployment: "cpx-ingressgateway" # This label is useful in ServiceGraph
 spec:
   replicas: 1
   selector:
@@ -44,7 +45,8 @@ spec:
         emptyDir: {}
       - name: certs
         emptyDir: {}
-{{- if eq .Values.certProvider.jwtPolicy "third-party-jwt" }}       
+{{- $jwtpolicy := include "jwtValue" . }}
+{{- if eq $jwtpolicy "third-party-jwt" }}       
       - name: istio-token
         projected:
           sources:
@@ -149,7 +151,7 @@ spec:
           - name: CERT_TTL_IN_HOURS 
             value: {{ .Values.certProvider.certTTLinHours | quote }}
           - name: JWT_POLICY
-            value: {{ .Values.certProvider.jwtPolicy | default "first-party-jwt" | quote }} # third-party-jwt if Kubernetes cluster supports third-party tokens
+            value: {{ include "jwtValue" . | quote  }} # If value not provided then third-party-jwt for v>=1.21 otherwise first-party-jwt
 {{- end }}
 {{- if eq .Values.ingressGateway.multiClusterIngress true }}
           - name: MULTICLUSTER_INGRESS
@@ -176,7 +178,8 @@ spec:
           volumeMounts:
           - mountPath: /var/deviceinfo
             name: cpx-pwd
-{{- if eq .Values.certProvider.jwtPolicy "third-party-jwt" }}
+{{- $jwtpolicy := include "jwtValue" . }}
+{{- if eq $jwtpolicy "third-party-jwt" }}       
           - mountPath: /var/run/secrets/tokens
             name: istio-token
 {{- end }}
@@ -356,7 +359,7 @@ spec:
         - name: CERT_TTL_IN_HOURS 
           value: {{ .Values.certProvider.certTTLinHours | quote }}
         - name: JWT_POLICY
-          value: {{ .Values.certProvider.jwtPolicy | default "first-party-jwt" | quote }} # third-party-jwt if Kubernetes cluster supports third-party tokens
+          value: {{ include "jwtValue" . | quote }} # third-party-jwt if Kubernetes cluster supports third-party tokens
 {{- end }}
 {{- if eq .Values.ingressGateway.multiClusterIngress true }}
         - name: MULTICLUSTER_INGRESS
@@ -435,7 +438,8 @@ spec:
           name: certs
         - name: istiod-ca-cert
           mountPath: /etc/rootcert/
-{{- if eq .Values.certProvider.jwtPolicy "third-party-jwt" }}
+{{- $jwtpolicy := include "jwtValue" . }}
+{{- if eq $jwtpolicy "third-party-jwt" }}       
         - mountPath: /var/run/secrets/tokens
           name: istio-token
 {{- end }}
@@ -491,7 +495,8 @@ spec:
           optional: true
           secretName: "citrix-adc-cert" # IMPORTANT: This secret MUST BE created before deploying gateway and ingress-gateway
 {{- end }}
-{{- if eq .Values.certProvider.jwtPolicy "third-party-jwt" }}       
+{{- $jwtpolicy := include "jwtValue" . }}
+{{- if eq $jwtpolicy "third-party-jwt" }}       
       - name: istio-token
         projected:
           sources:

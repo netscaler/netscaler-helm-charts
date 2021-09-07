@@ -1,0 +1,23 @@
+enabled: true
+nsPort: 443
+nsProtocol: HTTPS
+entityPrefix: gslb
+image: 'quay.io/citrix/citrix-k8s-ingress-controller:1.17.13'
+pullPolicy: IfNotPresent
+license:
+  accept: 'Yes'
+logLevel: DEBUG
+localRegion: "region-2" # for example replace regison-2 as apnortheast
+localCluster: cluster2
+sitedata:
+  - siteName: "region-1-name" # for example replace regison-1-name as EUCentral
+    secretName: gslb-secret-cluster1
+    siteIp: "PUBLICSNIP1" #Public SNIP IP for VPX in region 1
+    siteRegion: "region-1" # for example replace regison-1 as eucentral
+  - siteName: "region-2-name" #for example replace regison-2-name as APNorthEast
+    secretName: gslb-secret-cluster2
+    siteIp: "PUBLICSNIP1" #Public SNIP IP for VPX in region 2
+    siteRegion: "region-2" #for example replace regison-2 as apnortheast
+crds:
+  install: true
+  retainOnDelete: true

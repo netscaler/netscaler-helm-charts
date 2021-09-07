@@ -1,0 +1,19 @@
+apiVersion: "citrix.com/v1beta1"
+kind: globaltrafficpolicy
+metadata:
+  name: httpbin
+spec:
+  serviceType: 'SSL'
+  hosts:
+  - host: 'httpbin.appcluster.example.com'
+    policy:
+      trafficPolicy: 'ROUNDROBIN'
+      targets:
+      - destination: 'httpbin.httpbin.region-1.cluster1' #For eg: replace region-1 with eucentral
+        weight: 50
+      - destination: 'httpbin.httpbin.region-2.cluster2' #For eg: replace region-2 with apnortheast
+        weight: 50
+      monitor:
+      - monType: http
+        uri: ''
+        respCode: 200

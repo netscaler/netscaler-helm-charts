@@ -60,7 +60,7 @@ data:
         - name: CERT_TTL_IN_HOURS 
           value: {{ .Values.certProvider.certTTLinHours }}
         - name: JWT_POLICY
-          value: {{ .Values.certProvider.jwtPolicy | default "first-party-jwt" | quote }} # third-party-jwt for Cloud env
+          value: {{ include "jwtValue" . | quote }} # third-party-jwt if Kubernetes cluster supports third-party tokens
 {{- end }}
         - name: NS_USER
           value: nsroot
@@ -107,7 +107,8 @@ data:
         volumeMounts:
         - mountPath: /var/deviceinfo
           name: cpx-pwd
-{{- if eq .Values.certProvider.jwtPolicy "third-party-jwt" }}
+{{- $jwtpolicy := include "jwtValue" . }}
+{{- if eq $jwtpolicy "third-party-jwt" }}
         - mountPath: /var/run/secrets/tokens
           name: istio-token
 {{- end }}
@@ -197,7 +198,8 @@ data:
           secretName: nslogin
       - name: certs
         emptyDir: {}
-{{- if eq .Values.certProvider.jwtPolicy "third-party-jwt" }}       
+{{- $jwtpolicy := include "jwtValue" . }}
+{{- if eq $jwtpolicy "third-party-jwt" }}  
       - name: istio-token
         projected:
           sources:

@@ -58,8 +58,7 @@ spec:
             - --tlsKeyFile=/etc/istio/certs/key.pem
             - --injectConfig=/etc/istio/inject/config
             - --meshConfig=/etc/istio/config/mesh
-            - --healthCheckInterval=2s
-            - --healthCheckFile=/health
+            - --healthCheckInterval=10s
             - --webhookConfigName=cpx-sidecar-injector
           volumeMounts:
           - name: config-volume
@@ -74,21 +73,20 @@ spec:
           livenessProbe:
             exec:
               command:
-                - /usr/local/bin/sidecar-injector
-                - probe
-                - --probe-path=/health
-                - --interval=4s
+                - cat
+                - /health
+            failureThreshold: 5
             initialDelaySeconds: 4
-            periodSeconds: 4
+            periodSeconds: 10
           readinessProbe:
             exec:
               command:
-                - /usr/local/bin/sidecar-injector
-                - probe
-                - --probe-path=/health
-                - --interval=4s
+                - cat
+                - /health
+            failureThreshold: 5
             initialDelaySeconds: 4
-            periodSeconds: 4
+            periodSeconds: 10
+            initialDelaySeconds: 4
           resources:
             requests:
               cpu: 10m
