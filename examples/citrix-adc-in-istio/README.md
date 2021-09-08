@@ -3,67 +3,90 @@
 Bookinfo application is the Helloworld of Istio environment. This application displays information about a book such as brief description, book details and couple of reviews. Details of the bookinfo app can be found on [Istio examples](https://istio.io/docs/examples/bookinfo/).
 
 # Table of Contents
-1. [Deploying Citrix ADC as Ingress Gateway](#citrix-ingress-gateway)
-2. [Deploying Citrix ADC Sidecar Injector](#citrix-sidecar-injector)
-3. [Deploying Bookinfo](#deploying-bookinfo)
-4. [Verification](#verification)
-5. [Clean Up](#cleanup)
+1. [Generating Certificate and Key for the Bookinfo application](#generating-certificate) 
+2. [Deploying Citrix ADC as Ingress Gateway](#citrix-ingress-gateway)
+3. [Deploying Citrix ADC Sidecar Injector](#citrix-sidecar-injector)
+4. [Deploying Bookinfo](#deploying-bookinfo)
+5. [Verification](#verification)
+6. [Clean Up](#cleanup)
 
+[Topology](#topology)
 
-## <a name="citrix-ingress-gateway">A) Deploying Citrix ADC as Ingress Gateway</a>
+Citrix ADC CPX as an Ingress Gateway
 
-Follow [this](https://github.com/citrix/citrix-helm-charts/tree/master/citrix-adc-istio-ingress-gateway) link to deploy Citrix ADC as an Ingress Gateway using Helm charts. Citrix ADC can either be CPX or VPX/MPX. The given bookinfo deployment should work fine in both cases. 
+![](images/cpx-ingress-gateway.png)
 
-- **Important Note:** For deploying Citrix ADC VPX or MPX as ingress gateway, you should establish the connectivity between Citrix ADC VPX or MPX and cluster nodes. This connectivity can be established by configuring routes on Citrix ADC as mentioned [here](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/network/staticrouting.md) or by deploying [Citrix Node Controller](https://github.com/citrix/citrix-k8s-node-controller).
+Citrix ADC VPX as Ingress Gateway
 
-## <a name="citrix-sidecar-injector">B) Deploying Citrix ADC Sidecar Injector </a>
+![](images/vpx-ingress-gateway.png)
 
-Follow [this](https://github.com/citrix/citrix-helm-charts/tree/master/citrix-cpx-istio-sidecar-injector) link to deploy Citrix ADC CPX as a sidecar using Helm charts. Citrix ADC CPX will be injected as a sidecar on the labeled namespace. If you do not wish to inject sidecar, this step can be skipped. In that case, Citrix ADC will only act as an Ingress Gateway. 
+# <a name="generating-certificate">A) Generating Certificate and Key for the `Bookinfo` application </a>
 
-## <a name="deploying-bookinfo">C) Deploying Bookinfo</a>
+There are multiple tools available to generate certificates and keys. You can use your desired tool to generate the same in PEM format. Make sure that the names of key and certificate are *bookinfo_key.pem* and *bookinfo_cert.pem*. These are used to generate a Kubernetes secret *citrix-ingressgateway-certs* which is used by the Citrix ADC that acts as Ingress Gateway.
 
-In this example, bookinfo application is deployed and exposed to the cluster-external world using Istio Gateway resource. This deployment can be done either manually by using yaml files or it can be deployed using Helm. Step-by-step guide to deploy all necessary resources related to bookinfo application is given below.
+Perform the following steps to generate certificate and key using `openssl` utility:
 
-### C.1) Generate certificate and key for application
+### Generate private key for the `Bookinfo` application
 
-There are multiple tools available to generate certificates and keys. User is encouraged to use her favourite tool to generate the same in PEM format. 
-Make sure names of key and certificate are *bookinfo_key.pem* and *bookinfo_cert.pem*. These will be used to generate a Kubernetes secret *citrix-ingressgateway-certs* which is used by the Citrix ADC acting as Ingress Gateway.
+      openssl genrsa -out bookinfo_key.pem 2048
 
-Steps to generate certificate and key using openssl utility are given below.
+### Generate Certificate Signing Request for the `Bookinfo` application
+Common Name(CN/Server FQDN) for the `Bookinfo` application is fixed as `www.bookinfo.com`.
 
-#### Generate Private Key 
+      openssl req -new -key bookinfo_key.pem -out bookinfo_csr.pem -subj "/CN=www.bookinfo.com"
 
-```
-openssl genrsa -out bookinfo_key.pem 2048
-```
+### Generate Self-Signed Certificate for the `Bookinfo` application
 
-#### Generate Certificate Signing Request 
+      openssl x509 -req -in bookinfo_csr.pem -sha256 -days 365 -extensions v3_ca -signkey bookinfo_key.pem -CAcreateserial -out bookinfo_cert.pem
 
-Make sure to **provide Common Name(CN/Server FQDN) as "www.bookinfo.com"** on CSR information prompt.
+### Create a Kubernetes secret for certificate of `Bookinfo` application
 
-```
-openssl req -new -key bookinfo_key.pem -out bookinfo_csr.pem
-```
+Create a secret `citrix-ingressgateway-certs` using the certificate and key generated in the earlier step. Make sure that this secret is created in the same namespace where the Ingress Gateway is deployed.
 
-#### Generate Self-Signed Certificate
+      kubectl create -n citrix-system secret tls citrix-ingressgateway-certs --key bookinfo_key.pem --cert bookinfo_cert.pem
 
-```
-openssl x509 -req -in bookinfo_csr.pem -sha256 -days 365 -extensions v3_ca -signkey bookinfo_key.pem -CAcreateserial -out bookinfo_cert.pem
-```
+## <a name="citrix-ingress-gateway">B) Deploying Citrix ADC as Ingress Gateway</a>
 
-### C.2) Create a Kubernetes secret
+Either Citrix ADC CPX or VPX/MPX can be deployed as an Ingress Gateway.
 
-Create a secret `citrix-ingressgateway-certs` using certificate and key generated in earlier step. Make sure that this secret is created in the same namespace where Ingress Gateway is deployed.
+### To deploy Citrix ADC CPX as an Ingress Gateway:
 
-```
-kubectl create -n citrix-system secret tls citrix-ingressgateway-certs --key bookinfo_key.pem --cert bookinfo_cert.pem
-```
+       helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-### C.3) Deploy Bookinfo application 
+       helm install citrix-adc-istio-ingress-gateway citrix/citrix-adc-istio-ingress-gateway --namespace citrix-system --set ingressGateway.EULA=YES --set citrixCPX=true
+
+### To deploy Citrix ADC VPX or MPX as an Ingress Gateway:
+
+       kubectl create secret generic nslogin --from-literal=username=<citrix-adc-user> --from-literal=password=<citrix-adc-password> -n citrix-system
+
+       helm repo add citrix https://citrix.github.io/citrix-helm-charts/
+
+       helm install citrix-adc-istio-ingress-gateway citrix/citrix-adc-istio-ingress-gateway --namespace citrix-system --set ingressGateway.EULA=YES ingressGateway.netscalerUrl=https://<Management IP> --set ingressGateway.vserverIP=<Virtual Service IP> --set secretName=nslogin
+
+**Note:** Replace `management IP` address with Citrix ADC VPX/MPX management IP address, `Virtual Service IP` address as IP address to which `Bookinfo` application is exposed.
+
+- **Important Note:** For deploying Citrix ADC VPX or MPX as ingress gateway, you should establish the connectivity between Citrix ADC VPX or MPX and cluster nodes. This connectivity can be established by configuring static routes on Citrix ADC as mentioned [here](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/network/staticrouting.md) or by deploying [Citrix Node Controller](https://github.com/citrix/citrix-k8s-node-controller).
+
+To know more about deploying Citrix Ingress Gateway using Helm Charts refer [this](https://github.com/citrix/citrix-helm-charts/tree/master/citrix-adc-istio-ingress-gateway). 
+
+## <a name="citrix-sidecar-injector">C) Deploying Citrix ADC Sidecar Injector </a>
+Deploy a Citrix ADC CPX sidecar injector to inject Citrix ADC CPX as a sidecar proxy in an application pod in the Istio service mesh by using the following command:
+
+    helm repo add citrix https://citrix.github.io/citrix-helm-charts/
+
+    helm install cpx-sidecar-injector citrix/citrix-cpx-istio-sidecar-injector --namespace citrix-system --set cpxProxy.EULA=YES
+
+To know more about deploying Citrix ADC Sidecar Injector refer [this](https://github.com/citrix/citrix-helm-charts/tree/master/citrix-cpx-istio-sidecar-injector).
+
+## <a name="deploying-bookinfo">D) Deploying Bookinfo</a>
+
+In this example, bookinfo application is deployed and exposed to the cluster-external world using Istio Gateway resource. Step-by-step guide to deploy all necessary resources related to bookinfo application is given below.
+
+## D.1) Deploy Bookinfo application 
 
 Bookinfo application can either be deployed using helm chart or deployment yaml files. If you want to deploy bookinfo along with Citrix ADC CPX as sidecar proxies, then make sure that [Citrix ADC Sidecar Injector](../../citrix-cpx-istio-sidecar-injector/README.md) is deployed, and the namespace is labeled with `cpx-injection=enabled`.
 
-#### Enable Namespace for Sidecar Injection
+## Enable Namespace for Sidecar Injection
 
 ```
 kubectl create namespace bookinfo
@@ -71,69 +94,31 @@ kubectl create namespace bookinfo
 kubectl label namespace bookinfo cpx-injection=enabled
 
 ```
-
-_**NOTE:** If you do not wish to launch bookinfo application without any sidecar proxy, then skip above commands._
-
-
-Follow *any one of these two methods* to deploy the application. 
-
-### Deploy using Helm Chart
-
-*Helm Chart Name:* bookinfo-citrix-ingress
-
-Ensure that the namespace of Citrix ADC Ingress gateway is provided correctly.
+## Deploy the `Bookinfo` Application
 
 ```
-git clone https://github.com/citrix/citrix-helm-charts.git
-
-cd citrix-helm-charts/examples/citrix-adc-in-istio/bookinfo/charts/stable
-
-helm install bookinfo-citrix-ingress --name bookinfo-citrix-ingress --namespace bookinfo --set citrixIngressGateway.namespace=citrix-system
-```
-
-By default, this bookinfo application is deployed with TLS mode disabled. 
-
-To deploy it with the mTLS, use `mtlsEnabled=true` option in helm chart.
-
-```
-git clone https://github.com/citrix/citrix-helm-charts.git
-
-cd citrix-helm-charts/examples/citrix-adc-in-istio/bookinfo/charts/stable
-
-helm install bookinfo-citrix-ingress --name bookinfo-citrix-ingress --namespace bookinfo --set citrixIngressGateway.namespace=citrix-system --set mtlsEnabled=true
-```
-
-### Deploy Bookinfo using Yaml
-
-```
-
 kubectl apply -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/bookinfo.yaml  
 
 ```
 
-
-
-Once bookinfo application is deployed using Helm, proceed to Verification section.
-
-
-#### Configuring Ingress Gateway for Bookinfo 
+## Configuring Ingress Gateway for Bookinfo 
 
 Ingress Gateway can be configured using Istio Gateway resource for secure (https) as well as plain http traffic. 
 
-##### Configure HTTPS Gateway
+### Configure HTTPS Gateway
 
 ```
 kubectl apply -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/bookinfo_https_gateway.yaml
 
 ```
 
-##### Configure HTTP Gateway
+### Configure HTTP Gateway
 
 ```
 kubectl apply -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/bookinfo_http_gateway.yaml
 ```
 
-#### Traffic Management using VirtualService and DestinationRule
+## Traffic Management using VirtualService 
 
 Create [VirtualService](https://istio.io/docs/reference/config/istio.networking.v1alpha3/#VirtualService) for productpage service which is a frontend microservice of bookinfo app.
 
@@ -142,102 +127,43 @@ kubectl apply -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-hel
 
 ```
 
-Create [DestinationRule](https://istio.io/docs/reference/config/istio.networking.v1alpha3/#DestinationRule) for productpage.
-
-```
-kubectl apply -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/productpage_dr.yaml
-
-```
-
-#### Authentication Policy for Bookinfo
-
-##### Without mTLS 
-
-If mTLS is enabled, non-istio services in which sidecar is not running won't be able to communicate with istio services. To enable such inter-service communication, TLS policy should be disabled. This is usually needed when some services are yet to be migrated to Service Mesh and we need to keep the communication between services active during transition to fully enabled service mesh application deployment.
-
-```
-kubectl apply -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/bookinfo_policy_tls_disabled.yaml
-
-```
-
-##### Enabling the mTLS
-
-Once all services are migrated to servicemesh, i.e. sidecar is deployed in all services, mTLS can be enabled by reconfiguring the policy.
-
-```
-kubectl apply -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/bookinfo_policy_istio_mutual.yaml
-
-```
-
-
-## <a name="verification">D) Verification</a>
+## <a name="verification">E) Verification</a>
 
 ### I) If Citrix ADC VPX/MPX is running as an Ingress Gateway Device
 
-1. Determine the Virtual Server's IP.
+Access bookinfo's frontend application using curl. 200 OK response should be returned by the productpage.
 
 ```
+curl -kvi --resolve www.bookinfo.com:443:$VIP https://www.bookinfo.com/productpage
 
-export INGRESS_IP=$(kubectl get pods -l app=citrix-ingressgateway -n citrix-system -o 'jsonpath={.items[0].spec.containers[?(@.name=="istio-adaptor")].args}' | awk '{ for(i=1;i<=NF;++i) { if ($i=="-citrix-adc-vip") print $(i+1) } }')
-
+curl -kv http://$VIP/productpage -H "Host: www.bookinfo.com"
 ```
 
-2. Access bookinfo's frontend application using curl. 200 OK response should be returned by the productpage.
+**NOTE** Replace $VIP with the Virtual IP address configured on Citrix ADC VPX/MPX.
 
-```
-curl -kv https://$INGRESS_IP/productpage
-
-curl -v http://$INGRESS_IP/productpage
-```
-
-3. Visit https://www.bookinfo.com/productpage from browser. Make sure that **DNS entry for www.bookinfo.com is created with $INGRESS_IP on client device** (Usually an entry in /etc/hosts on Unix flavoured machines). 
-
-One can also visit https://$INGRESS_IP/productpage from browser. Make sure that $INGRESS_IP is replaced by the actual Vserver IP obtained in Step C.I.1.
-
+Visit https://www.bookinfo.com/productpage from browser. Make sure that **DNS entry for www.bookinfo.com is created with $VIP on client device** (Usually an entry in /etc/hosts on Unix flavoured machines). 
 
 ### II) If Citrix ADC CPX is running as Ingress Gateway Device
 
-1. Determine the Ingress IP and port
+1. Determine the Ingress IP
 
 ```
 export INGRESS_HOST=$(kubectl get pods -l app=citrix-ingressgateway -n citrix-system -o 'jsonpath={.items[0].status.hostIP}')
-
-export INGRESS_PORT=$(kubectl -n citrix-system get service citrix-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="http2")].nodePort}')
-
-export SECURE_INGRESS_PORT=$(kubectl -n citrix-system get service citrix-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="https")].nodePort}')
 ```
 
 2. Access bookinfo's frontend application using curl. 200 OK response should be returned by the productpage.
 
 ```
-curl -kv https://$INGRESS_HOST:$SECURE_INGRESS_PORT/productpage
+  curl -kvi --resolve www.bookinfo.com:31443:$INGRESS_HOST https://www.bookinfo.com:31443/productpage
 
-curl -v http://$INGRESS_HOST:$INGRESS_PORT/productpage
+  curl -kv http://$INGRESS_HOST:30180/productpage -H "Host: www.bookinfo.com"
 ```
 
-3. Visit https://$INGRESS_HOST:$SECURE_INGRESS_PORT/productpage from browser. Bookinfo page should be loaded. Make sure that $INGRESS_HOST and $SECURE_INGRESS_PORT are replaced by IP and port value.
+3. Visit https://www.bookinfo.com:31443/productpage from browser. Make sure that **DNS entry for www.bookinfo.com is created with $INGRESS_HOST on client device** (Usually an entry in /etc/hosts on Unix flavoured machines)
 
-### III) Verification of mTLS using istioctl tool
+## <a name="cleanup">F) Clean Up </a>
 
-```
-istioctl authn tls-check -n bookinfo <pod-name> | grep bookinfo
-```
-
-## <a name="cleanup">E) Clean Up </a>
-
-### Cleanup using Helm
-
-```
-helm delete --purge bookinfo-citrix-ingress
-
-kubectl delete secret citrix-ingressgateway-certs -n citrix-system
-
-```
-
-
-### Cleanup using yaml files
-
-Delete the Gateway configuration, VirtualService, DestinationRule and the secret, and shutdown the bookinfo application.
+Delete the Gateway configuration, VirtualService and the secret, and shutdown the bookinfo application.
 
 ```
 kubectl delete -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/bookinfo_http_gateway.yaml
@@ -245,10 +171,6 @@ kubectl delete -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-he
 kubectl delete -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/bookinfo_https_gateway.yaml
 
 kubectl delete -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/productpage_vs.yaml
-
-kubectl delete -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/productpage_dr.yaml
-
-kubectl delete -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/bookinfo_policy_istio_mutual.yaml
 
 kubectl delete secret -n citrix-system citrix-ingressgateway-certs
 
