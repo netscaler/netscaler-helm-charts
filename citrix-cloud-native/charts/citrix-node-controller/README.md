@@ -112,7 +112,7 @@ The following table lists the mandatory and optional parameters that you can con
 | --------- | --------------------- | ------------- | ----------- |
 | cnc.enabled | Mandatory | False | Set to "True" for deploying Citrix Node Controller. |
 | cnc.license.accept | Mandatory | no | Set `yes` to accept the CNC end user license agreement. |
-| cnc.image | Mandatory | `quay.io/citrix/citrix-k8s-node-controller:2.2.5` | The CNC image. |
+| cnc.image | Mandatory | `quay.io/citrix/citrix-k8s-node-controller:2.2.6` | The CNC image. |
 | cnc.pullPolicy | Mandatory | IfNotPresent | The CNC image pull policy. |
 | cnc.adcCredentialSecret | Mandatory | N/A | The secret key to log on to the Citrix ADC VPX or MPX. For information on how to create the secret keys, see [Prerequisites](#prerequistes). |
 | cnc.nsIP | Mandatory | N/A | The IPaddress or Hostname of the Citrix ADC device. For details, see [Prerequisites](#prerequistes). |
