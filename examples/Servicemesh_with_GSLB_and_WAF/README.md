@@ -289,13 +289,13 @@ Citrix ADC CPX deployed as Ingress Gateway, accepts the packet with SNI. Since, 
 The lb monitors needs to be updated with the manually added SSL Profile. 
 Get lb monitor name for bookinfo application and set the ssl profile using following command:
 
-    sh lb monitor | grep -i bookinfo 
+    sh run | grep -i "Host: bookinfo"
 
     set lb monitor <monitor name> HTTP -respCode 200 -httpRequest "HEAD /" -customHeaders "Host: bookinfo.appcluster.example.com\r\n" -secure YES -sslProfile gslbsslbookinfo
     
 Get lb monitor name for httpbin application and set the ssl profile using following command:
 
-    sh lb monitor | grep -i httpbin
+    sh run | grep -i "Host: httpbin"
 
     set lb monitor <monitor-name> HTTP -respCode 200 -httpRequest "HEAD /" -customHeaders "Host: httpbin.appcluster.example.com\r\n" -secure YES -sslProfile gslbsslhttpbin
 
