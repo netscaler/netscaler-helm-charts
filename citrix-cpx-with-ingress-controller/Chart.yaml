@@ -1,6 +1,6 @@
 apiVersion: v2
 appVersion: "1.17.13"
-kubeVersion: ">=v1.16 < v1.22"
+kubeVersion: ">=v1.16.0-0 < v1.22.0-0"
 description: A Helm chart for Citrix ADC CPX with Citrix ingress Controller running as sidecar.
 name: citrix-cpx-with-ingress-controller
 version: 1.17.13
