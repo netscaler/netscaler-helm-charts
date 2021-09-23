@@ -213,7 +213,7 @@ Download the `multicluster1.yaml` file.
 
 Update the `<region-1> and <region-2>` with the proper region names. Also, update the site-1-IP and site-2-IP with the Public SNIP IPs of Citrix ADC VPX instances in region-1 and region-2, respectively. Use the following command:
 
-    helm install cluster1 citrix/citrix-multi-cluster-ingress-controlle --namespace citrix-system -f multicluster1.yaml
+    helm install cluster1 citrix/citrix-multi-cluster-ingress-controller --namespace citrix-system -f multicluster1.yaml
 
 **Deploy GTP (Global Traffic Policy) and GSE (Global Service Entry) for bookinfo application for cluster-1**
 
@@ -256,7 +256,7 @@ Download the `multicluster2.yaml` file.
 
 Update the `<region-1> and <region-2>` with the proper region names. Also, update the site-1-IP and site-2-IP with the Public SNIP IPs of Citrix ADC VPX instances in region-1 and region-2, respectively. Use the following command:
 
-    helm install cluster2 citrix/citrix-multi-cluster-ingress-controlle --namespace citrix-system -f multicluster2.yaml
+    helm install cluster2 citrix/citrix-multi-cluster-ingress-controller --namespace citrix-system -f multicluster2.yaml
 
 **Deploy GTP (Global Traffic Policy) and GSE (Global Service Entry) for bookinfo application for cluster-2**
 
