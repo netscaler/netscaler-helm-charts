@@ -150,6 +150,10 @@ Download the `vpx-ingress.yaml` file and update the annotation `ingress.citrix.c
 
     wget https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/Servicemesh_with_GSLB_and_WAF/manifest/vpx-ingress.yaml
 
+To deploy the Ingress, run the following command:
+
+   kubectl apply -f vpx-ingress.yaml -n citrix-system
+
 ### G.4) Enabling WAF features on Citrix ADC VPX
 In this subsection, two prominent use-cases of WAF are mentioned. The following features are used to secure application from the external traffic.
 
