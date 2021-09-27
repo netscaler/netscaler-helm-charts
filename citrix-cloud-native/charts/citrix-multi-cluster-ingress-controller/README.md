@@ -37,7 +37,7 @@ This Helm chart deploys Citrix ingress controller in the [Kubernetes](https://ku
 
 ### Prerequisites
 
--  The [Kubernetes](https://kubernetes.io/) version 1.6 or later if using Kubernetes environment.
+-  The [Kubernetes](https://kubernetes.io/) version 1.16 or later if using Kubernetes environment.
 -  The [Openshift](https://www.openshift.com) version 3.11.x or later if using OpenShift platform.
 -  The [Helm](https://helm.sh/) version 3.x or later. You can follow instruction given [here](https://github.com/citrix/citrix-helm-charts/blob/master/Helm_Installation_version_3.md) to install the same.
 
@@ -170,7 +170,7 @@ The following table lists the mandatory and optional parameters that you can con
 | Parameters | Mandatory or Optional | Default value | Description |
 | --------- | --------------------- | ------------- | ----------- |
 | mcIngress.license.accept | Mandatory | no | Set `yes` to accept the CIC end user license agreement. |
-| mcIngress.image | Optional | `quay.io/citrix/citrix-k8s-ingress-controller:1.17.13` | The CIC image. |
+| mcIngress.image | Optional | `quay.io/citrix/citrix-k8s-ingress-controller:1.18.5` | The CIC image. |
 | mcIngress.pullPolicy | Optional | Always | The CIC image pull policy. |
 | mcIngress.nsPort | Optional | 443 | The port used by CIC to communicate with Citrix ADC. You can use port 80 for HTTP. |
 | mcIngress.nsProtocol | Optional | HTTPS | The protocol used by CIC to communicate with Citrix ADC. You can also use HTTP on port 80. |
