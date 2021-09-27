@@ -146,12 +146,10 @@ Replace `<NSIP>` with Citrix ADC VPX private NSIP.
 
 ### G.3) Create Ingress Resource for CPX Gateway Service
 
-Download the `vpx-ingress.yaml` file and update the annotation `ingress.citrix.com/frontend-ip` with the private VIP IP.
+To expose the CPX gateway service using Ingress resource, download the `vpx-ingress.yaml` file and update the annotation `ingress.citrix.com/frontend-ip` with the private VIP IP. After that, execute the kubectl apply command.
 
     wget https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/Servicemesh_with_GSLB_and_WAF/manifest/vpx-ingress.yaml
 
-To deploy the Ingress, run the following command:
-   
     kubectl apply -f vpx-ingress.yaml -n citrix-system
 
 ### G.4) Enabling WAF features on Citrix ADC VPX
@@ -256,7 +254,7 @@ Download the `multicluster2.yaml` file.
 
 Update the `<region-1> and <region-2>` with the proper region names. Also, update the site-1-IP and site-2-IP with the Public SNIP IPs of Citrix ADC VPX instances in region-1 and region-2, respectively. Use the following command:
 
-    helm install cluster2 citrix/citrix-multi-cluster-ingress-controller --namespace citrix-system -f multicluster2.yaml
+    helm install cluster2 citrix/citrix-multi-cluster-ingress-controlle --namespace citrix-system -f multicluster2.yaml
 
 **Deploy GTP (Global Traffic Policy) and GSE (Global Service Entry) for bookinfo application for cluster-2**
 
@@ -293,7 +291,7 @@ Citrix ADC CPX deployed as Ingress Gateway, accepts the packet with SNI. Since, 
 The lb monitors needs to be updated with the manually added SSL Profile. 
 Get lb monitor name for bookinfo application and set the ssl profile using following command:
 
-    sh run | grep -i "Host: bookinfo"
+    sh run | grep -i "Host: bookinfo" 
 
     set lb monitor <monitor name> HTTP -respCode 200 -httpRequest "HEAD /" -customHeaders "Host: bookinfo.appcluster.example.com\r\n" -secure YES -sslProfile gslbsslbookinfo
     

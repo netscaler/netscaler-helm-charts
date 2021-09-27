@@ -30,7 +30,7 @@ The aim of this example is to help visualising the request flow between differen
 
     To manage Citrix ADM with an Express account, see [Getting Started](https://docs.citrix.com/en-us/citrix-application-delivery-management-service/getting-started.html#install-an-agent-as-a-microservice).
 
- - Ensure that you have installed Kubernetes version 1.19 or later. For information about Kubernetes, see  [Kubernetes](https://kubernetes.io/).
+ - Ensure that you have installed Kubernetes version 1.16 or later. For information about Kubernetes, see  [Kubernetes](https://kubernetes.io/).
  - Ensure that you have Citrix ADC VPX version 13.0-76.31 or later.
  - For deploying Citrix ADC VPX or MPX as an Tier-1 ingress, you should establish the connectivity between Citrix ADC VPX or MPX and cluster nodes. This connectivity can be established by configuring routes on Citrix ADC as described in the [Static routing](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/network/staticrouting.md) document or by deploying [Citrix Node Controller](https://github.com/citrix/citrix-k8s-node-controller).
  - Ensure that hhe Helm with version 3.x is installed. For information, see [Helm installation](https://github.com/citrix/citrix-helm-charts/blob/master/Helm_Installation_version_3.md).

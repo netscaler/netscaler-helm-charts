@@ -1,75 +1,92 @@
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: netflix
   annotations:
-   ingress.citrix.com/insecure-termination: "allow"
-   kubernetes.io/ingress.class: "netflix-cpx"
-   #ingress.citrix.com/analyticsprofile: '{"webinsight": {"httpurl":"ENABLED", "httpuseragent":"ENABLED", "httphost":"ENABLED", "httpmethod":"ENABLED", "httpcontenttype":"ENABLED"}, "tcpinsight": {"tcpBurstReporting":"DISABLED"}}'
+    ingress.citrix.com/insecure-termination: allow
+    kubernetes.io/ingress.class: netflix-cpx
+  name: netflix
 spec:
-      tls:
-      - hosts:
-      rules:
-       - host: netflix-frontend-service
-         http:
-          paths:
-          - path:
-            backend:
-              serviceName: netflix-frontend
-              servicePort: 5000
-       - host: tv-shows-service
-         http:
-          paths:
-          - path:
-            backend:
-              serviceName: tv-shows
-              servicePort: 5000
-       - host: movies-service
-         http:
-          paths:
-          - path:
-            backend:
-              serviceName: movies
-              servicePort: 5000
-       - host: metadata-store-service
-         http:
-          paths:
-          - path:
-            backend:
-              serviceName: metadata-store
-              servicePort: 5000
-       - host: recommendation-engine-service
-         http:
-          paths:
-          - path: 
-            backend:
-              serviceName: recommendation-engine
-              servicePort: 5000
-       - host: similarity-calculator-service
-         http:
-          paths:
-          - path: 
-            backend:
-              serviceName: similarity-calculator
-              servicePort: 5000
-       - host: mutual-friends-interests-service
-         http:
-          paths:
-          - path: 
-            backend:
-              serviceName: mutual-friends-interests
-              servicePort: 5000
-       - host: trending-service
-         http:
-          paths:
-          - path: 
-            backend:
-              serviceName: trending
-              servicePort: 5000
-       - host: telemetry-store-service
-         http:
-          paths:
-          - path: 
-            backend:
-              serviceName: telemetry-store
-              servicePort: 5000
+  rules:
+  - host: netflix-frontend-service
+    http:
+      paths:
+      - backend:
+          service:
+            name: netflix-frontend
+            port:
+              number: 5000
+        pathType: ImplementationSpecific
+  - host: tv-shows-service
+    http:
+      paths:
+      - backend:
+          service:
+            name: tv-shows
+            port:
+              number: 5000
+        pathType: ImplementationSpecific
+  - host: movies-service
+    http:
+      paths:
+      - backend:
+          service:
+            name: movies
+            port:
+              number: 5000
+        pathType: ImplementationSpecific
+  - host: metadata-store-service
+    http:
+      paths:
+      - backend:
+          service:
+            name: metadata-store
+            port:
+              number: 5000
+        pathType: ImplementationSpecific
+  - host: recommendation-engine-service
+    http:
+      paths:
+      - backend:
+          service:
+            name: recommendation-engine
+            port:
+              number: 5000
+        pathType: ImplementationSpecific
+  - host: similarity-calculator-service
+    http:
+      paths:
+      - backend:
+          service:
+            name: similarity-calculator
+            port:
+              number: 5000
+        pathType: ImplementationSpecific
+  - host: mutual-friends-interests-service
+    http:
+      paths:
+      - backend:
+          service:
+            name: mutual-friends-interests
+            port:
+              number: 5000
+        pathType: ImplementationSpecific
+  - host: trending-service
+    http:
+      paths:
+      - backend:
+          service:
+            name: trending
+            port:
+              number: 5000
+        pathType: ImplementationSpecific
+  - host: telemetry-store-service
+    http:
+      paths:
+      - backend:
+          service:
+            name: telemetry-store
+            port:
+              number: 5000
+        pathType: ImplementationSpecific
+  tls:
+  - {}

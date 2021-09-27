@@ -69,7 +69,7 @@ For example to generate Service Graph with SMLite, see [Service graph example](.
 
  - Ensure that you have a Citrix ADM account. To use Citrix ADM, you must create a [Citrix Cloud account](https://docs.citrix.com/en-us/citrix-cloud/overview/signing-up-for-citrix-cloud/signing-up-for-citrix-cloud). To manage Citrix ADM with an Express account, see [Getting Started](https://docs.citrix.com/en-us/citrix-application-delivery-management-service/getting-started.html#install-an-agent-as-a-microservice).
 
-- Ensure that you  installed Kubernetes version 1.19 or later. For more information about Kubernetes installation, see [Kubernetes](https://kubernetes.io/).
+- Ensure that you  installed Kubernetes version 1.16 or later. For more information about Kubernetes installation, see [Kubernetes](https://kubernetes.io/).
 
 - Ensure that you have installed Helm version 3.x. For information about Helm chart installation, see [Helm](https://github.com/citrix/citrix-helm-charts/blob/master/Helm_Installation_version_3.md).
 

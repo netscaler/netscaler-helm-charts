@@ -1,18 +1,22 @@
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: vpx-netflix
   annotations:
-   ingress.citrix.com/insecure-termination: "allow"
-   kubernetes.io/ingress.class: "netflix-vpx"
-   ingress.citrix.com/frontend-ip: "A.B.C.D"
-   ingress.citrix.com/analyticsprofile: '{"webinsight": {"httpurl":"ENABLED", "httpuseragent":"ENABLED", "httphost":"ENABLED", "httpmethod":"ENABLED", "httpcontenttype":"ENABLED"}, "tcpinsight": {"tcpBurstReporting":"DISABLED"}}'
+    ingress.citrix.com/analyticsprofile: '{"webinsight": {"httpurl":"ENABLED", "httpuseragent":"ENABLED",
+      "httphost":"ENABLED", "httpmethod":"ENABLED", "httpcontenttype":"ENABLED"},
+      "tcpinsight": {"tcpBurstReporting":"DISABLED"}}'
+    ingress.citrix.com/frontend-ip: A.B.C.D
+    ingress.citrix.com/insecure-termination: allow
+    kubernetes.io/ingress.class: netflix-vpx
+  name: vpx-netflix
 spec:
-      rules:
-       - host: netflix-frontend-service
-         http:
-          paths:
-          - path:
-            backend:
-              serviceName: adc-netflix-cpx-service 
-              servicePort: 80
+  rules:
+  - host: netflix-frontend-service
+    http:
+      paths:
+      - backend:
+          service:
+            name: adc-netflix-cpx-service
+            port:
+              number: 80
+        pathType: ImplementationSpecific
