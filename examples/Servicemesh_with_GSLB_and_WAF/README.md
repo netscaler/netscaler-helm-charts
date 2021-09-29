@@ -55,6 +55,7 @@ Follow steps 7 - 10 from [this guide](https://docs.citrix.com/en-us/citrix-adc/c
 
 **NOTE**
 
+    •Citrix ADC VPX version 13.0-82.45 or later. 
     •Citrix ADC VPX needs to be created in public subnet with 3 Elastic IPs (one for NSIP, SNIP and VIP each)
     •Allow communication between Citrix ADC VPX and EKS clusters using security groups.
     •Allow ports 80/443 from internet to access the application deployed.

@@ -189,11 +189,11 @@ Create a secret `httpbin-ingressgateway-certs` using the certificate and key gen
 
 # <a name="citrix-ingress-gateway">D) Deploying Citrix ADC as Ingress Gateway</a>
 
-Before deploying Citrix ADC as Ingress Gateway and sidecar injector, get the pod IP address of the Citrix ADM Agent using the following command:
+Before deploying Citrix ADC VPX as Ingress Gateway, get the pod IP address of the Citrix ADM Agent using the following command:
 
       kubectl get endpoints admagent
 
-This ADM Agent pod IP address is required while creating the Ingress Gateway and sidecar injector.
+This ADM Agent pod IP address is required for some manual config on the VPX Ingress Gateway.
 
 ### Deploy VPX/MPX as Ingress Gateway
 
@@ -247,7 +247,7 @@ Deploy a Citrix ADC CPX sidecar injector to inject Citrix ADC CPX as a sidecar p
 
       helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-      helm install cpx-sidecar-injector citrix/citrix-cpx-istio-sidecar-injector --namespace citrix-system --set cpxProxy.EULA=YES --set coe.coeURL=coe.citrix-system  --set ADMSettings.ADMFingerPrint=abcd,ADMSettings.ADMIP=<ADM-AGENT-POD-IP>  
+      helm install cpx-sidecar-injector citrix/citrix-cpx-istio-sidecar-injector --namespace citrix-system --set cpxProxy.EULA=YES --set coe.coeURL=coe.citrix-system  --set ADMSettings.ADMIP=<ADM-AGENT-SERVICE-IP>  
 
 # <a name="deploying-bookinfo-httpbin">F) Deploying `Bookinfo` and `Httpbin`</a> 
 

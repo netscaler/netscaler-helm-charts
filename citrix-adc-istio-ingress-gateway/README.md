@@ -359,7 +359,7 @@ For example, to set 2Gbps as bandwidth capacity, below command can be used.
 
 
 > **Note:**
-> If container agent is being used here for Citrix ADM, specify `PodIP` of container agent in the `ADMSettings.ADMIP` parameter.
+> If container agent is being used here for Citrix ADM, specify `serviceIP` of container agent in the `ADMSettings.ADMIP` parameter.
 
 **Deploy Citrix ADC VPX/MPX as ingress gateway**
 
@@ -387,7 +387,7 @@ For example, to set 2Gbps as bandwidth capacity, below command can be used.
 
 	
 > **Note:**
-> If container agent is being used here for Citrix ADM, specify `PodIP` of container agent.
+> If container agent is being used here for Citrix ADM, specify `PodIP` of container agent in above manual config.
 
 
 ## <a name="citrix-adc-as-ingress-gateway-a-sample-deployment">Citrix ADC as Ingress Gateway: a sample deployment</a>

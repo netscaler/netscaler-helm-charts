@@ -262,7 +262,7 @@ For example, to set 2Gbps as bandwidth capacity, below command can be used.
 	helm install citrix-adc-istio-egress-gateway citrix/citrix-adc-istio-egress-gateway --namespace citrix-system --set egressGateway.EULA=true --set citrixCPX=true --set ADMSettings.ADMIP=<ADM-Agent-IP>
 
 > **Note:**
-> If container agent is being used here for Citrix ADM, specify `PodIP` of container agent in the `ADMSettings.ADMIP` parameter.
+> If container agent is being used here for Citrix ADM, specify `serviceIP` of container agent in the `ADMSettings.ADMIP` parameter.
 
 **Deploy Citrix ADC VPX/MPX as egress gateway**
 
@@ -290,7 +290,7 @@ For example, to set 2Gbps as bandwidth capacity, below command can be used.
 
 
 > **Note:**
-> If container agent is being used here for Citrix ADM, please provide `PodIP` of container agent.
+> If container agent is being used here for Citrix ADM, please provide `PodIP` of container agent in above manual config.
 
 
 ## <a name="citrix-adc-as-egress-gateway-a-sample-deployment">Citrix ADC as Egress Gateway: a sample deployment</a>

@@ -161,7 +161,7 @@ helm install cpx-sidecar-injector citrix/citrix-cpx-istio-sidecar-injector --nam
 	helm install cpx-sidecar-injector citrix/citrix-cloud-native --namespace citrix-system --set iaSidecar.enabled=true --set iaSidecar.cpxProxy.EULA=YES --set iaSidecar.ADMSettings.ADMIP=<ADM-Agent-IP>
 
 > **Note:**
-> If container agent is being used here for Citrix ADM, specify `PodIP` of container agent in the `iaSidecar.ADMSettings.ADMIP` parameter.
+> If container agent is being used here for Citrix ADM, specify `serviceIP` of container agent in the `iaSidecar.ADMSettings.ADMIP` parameter.
 
 
 ## <a name="generate-certificate-for-application">Generate Certificate for Application </a>
