@@ -10,7 +10,7 @@ coe:
 
 metricExporter:
     required: true
-    image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.8
+    image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.9
     port: 8888
     secure: "YES"
     logLevel: ERROR
