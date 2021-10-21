@@ -436,7 +436,7 @@ The following table lists the configurable parameters of the Citrix ADC CPX with
 | license.accept | Mandatory | no | Set `yes` to accept the Citrix ingress controller end user license agreement. |
 | image | Mandatory | `quay.io/citrix/citrix-k8s-cpx-ingress:13.0-79.64` | The Citrix ADC CPX image. |
 | pullPolicy | Mandatory | IfNotPresent | The Citrix ADC CPX image pull policy. |
-| cic.image | Mandatory | `quay.io/citrix/citrix-k8s-ingress-controller:1.18.5` | The Citrix ingress controller image. |
+| cic.image | Mandatory | `quay.io/citrix/citrix-k8s-ingress-controller:1.19.6` | The Citrix ingress controller image. |
 | cic.pullPolicy | Mandatory | IfNotPresent | The Citrix ingress controller image pull policy. |
 | cic.required | Mandatory | true | CIC to be run as sidecar with Citrix ADC CPX |
 | imagePullSecrets | Optional | N/A | Provide list of Kubernetes secrets to be used for pulling the images from a private Docker registry or repository. For more information on how to create this secret please see [Pull an Image from a Private Registry](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/). |
