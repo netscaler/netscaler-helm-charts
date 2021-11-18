@@ -3,7 +3,7 @@
 # Declare variables to be passed into your templates.
 
 # Citrix ADC CPX config details
-image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-79.64
+image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-83.27
 pullPolicy: IfNotPresent
 imagePullSecrets: []
 
