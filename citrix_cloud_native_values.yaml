@@ -98,7 +98,7 @@ mcIngress:
 cpx:
   enabled: False
 
-  image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-79.64
+  image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-83.27
   pullPolicy: IfNotPresent
   imagePullSecrets: []
 
@@ -254,7 +254,7 @@ iaIngress:
 
   ingressGateway:
     netscalerUrl: null
-    image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-79.64
+    image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-83.27
     imagePullPolicy: IfNotPresent
     EULA: NO
     mgmtHttpPort: 10080
@@ -330,7 +330,7 @@ iaEgress:
 
   egressGateway:
     netscalerUrl: null
-    image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-79.64
+    image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-83.27
     imagePullPolicy: IfNotPresent
     EULA: false
     mgmtHttpPort: 10080
@@ -385,7 +385,7 @@ iaSidecar:
 
   cpxProxy:
     netscalerUrl: "http://127.0.0.1"
-    image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-79.64
+    image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-83.27
     imagePullPolicy: IfNotPresent
     EULA: NO
     cpxSidecarMode: YES
@@ -402,7 +402,7 @@ iaSidecar:
     bandWidth:
 
   sidecarWebHook:
-    webhookImage: quay.io/citrix/cpx-istio-sidecar-injector:1.0.0
+    webhookImage: quay.io/citrix/cpx-istio-sidecar-injector:1.1.0
     imagePullPolicy: IfNotPresent
 
 sidecarCertsGenerator:
