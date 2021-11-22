@@ -20,7 +20,7 @@ This Helm chart deploys Citrix node controller in the [Kubernetes](https://kuber
 ### Prerequisites
 
 -  The [Kubernetes](https://kubernetes.io/) version 1.6 or later if using Kubernetes environment.
--  The [Openshift](https://www.openshift.com) version 3.11.x or later if using OpenShift platform.
+-  The [Openshift](https://www.openshift.com) version 4.8 or later if using OpenShift platform.
 -  The [Helm](https://helm.sh/) version 2.x or later. You can follow instruction given [here](https://github.com/citrix/citrix-helm-charts/blob/master/Helm_Installation_version_3.md) to install the same.
 -  You determine the ingress Citrix ADC IP address needed by the controller to communicate with Citrix ADC. The IP address might be anyone of the following depending on the type of Citrix ADC deployment:
 

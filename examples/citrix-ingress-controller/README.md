@@ -28,7 +28,7 @@ This Chart deploys Citrix Ingress Controller in the [Kubernetes](https://kuberne
 ### Prerequisites
 
 - The [Kubernetes](https://kubernetes.io/) version is 1.16 or later if using Kubernetes environment.
-- The [Openshift](https://www.openshift.com) version 3.11.x or later if using OpenShift platform.
+- The [Openshift](https://www.openshift.com) version 4.8 or later if using OpenShift platform.
 - The [Helm](https://helm.sh/) version 3.x or later. You can follow instruction given [here](https://github.com/citrix/citrix-helm-charts/blob/master/Helm_Installation_version_3.md) to install the same.
 - You have installed [Prometheus Operator](https://github.com/coreos/prometheus-operator), if you want to view the metrics of the Citrix ADC CPX collected by the [metrics exporter](https://github.com/citrix/citrix-k8s-ingress-controller/tree/master/metrics-visualizer#visualization-of-metrics).
 

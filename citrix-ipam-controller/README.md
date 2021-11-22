@@ -16,7 +16,7 @@ This Helm chart deploys a Citrix IPAM controller in the [Kubernetes](https://kub
 ### Prerequisites
 
 -  The [Kubernetes](https://kubernetes.io/) version is 1.6 or later if using Kubernetes environment.
--  The [Openshift](https://www.openshift.com) version 3.11.x or later if using OpenShift platform.
+-  The [Openshift](https://www.openshift.com) version 4.8 or later if using OpenShift platform.
 -  The [Helm](https://helm.sh/) version 3.x or later. You can follow instruction given [here](https://github.com/citrix/citrix-helm-charts/blob/master/Helm_Installation_version_3.md) to install the same.
 
 ## Installing the Chart
