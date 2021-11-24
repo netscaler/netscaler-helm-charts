@@ -14,15 +14,15 @@ maintainers:
   email: subash.dangol@citrix.com
 dependencies:
   - name: citrix-ingress-controller
-    version: "1.19.6"
+    version: "1.20.5"
     condition: cic.enabled
     alias: cic
   - name: citrix-cpx-with-ingress-controller
-    version: "1.19.6"
+    version: "1.20.5"
     condition: cpx.enabled
     alias: cpx
   - name: citrix-multi-cluster-ingress-controller
-    version: "1.19.6"
+    version: "1.20.5"
     condition: mcIngress.enabled
     alias: mcIngress
   - name: citrix-node-controller

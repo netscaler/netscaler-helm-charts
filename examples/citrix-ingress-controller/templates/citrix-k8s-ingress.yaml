@@ -69,6 +69,10 @@ spec:
           - --ipam
             citrix-ipam-controller
 {{- end }}
+{{- if .Values.disableAPIServerCertVerify }}
+          - --disable-apiserver-cert-verify
+            {{ .Values.disableAPIServerCertVerify }}
+{{- end }}
 {{- if .Values.updateIngressStatus }}
           - --update-ingress-status
             yes

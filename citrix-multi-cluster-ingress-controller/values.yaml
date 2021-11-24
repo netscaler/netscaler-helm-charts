@@ -3,7 +3,7 @@
 # Declare variables to be passed into your templates.
 
 # image contains information needed to fetch CIC image
-image: quay.io/citrix/citrix-k8s-ingress-controller:1.19.6
+image: quay.io/citrix/citrix-k8s-ingress-controller:1.20.5
 pullPolicy: IfNotPresent
 # openshift is set to true if charts are being deployed in OpenShift environment.
 openshift: false
@@ -17,6 +17,8 @@ nsProtocol: HTTPS
 logLevel: INFO
 # entityPrefix is the prefix for the resources on the Citrix ADC
 entityPrefix:
+# API server Cert verification can be disabled, while communicating with API Server, if disableAPIServerCertVerify set to True
+disableAPIServerCertVerify: False
 # kubernetesURL is for registering events to kubeapi server
 kubernetesURL:
 # localRegion is the region where K8s cluster is deployed 
