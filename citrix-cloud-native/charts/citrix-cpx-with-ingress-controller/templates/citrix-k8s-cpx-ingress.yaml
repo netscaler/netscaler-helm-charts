@@ -189,6 +189,10 @@ spec:
             - --ipam
               citrix-ipam-controller
 {{- end }}
+{{- if .Values.disableAPIServerCertVerify }}
+            - --disable-apiserver-cert-verify
+              {{ .Values.disableAPIServerCertVerify }}
+{{- end }}
 {{- if .Values.cpxBgpRouter }}
             - --deployment-type
               kube-bgp-router
