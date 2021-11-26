@@ -40,7 +40,7 @@ This Helm chart deploys a Citrix ADC CPX with Citrix ingress controller as a sid
 ### Prerequisites
 
 -  The [Kubernetes](https://kubernetes.io/) version should be 1.16 and above if using Kubernetes environment.
--  The [Openshift](https://www.openshift.com) version 3.11.x or later if using OpenShift platform.
+-  The [Openshift](https://www.openshift.com) version 4.8 or later if using OpenShift platform.
 -  The [Helm](https://helm.sh/) version 3.x or later. You can follow instruction given [here](https://github.com/citrix/citrix-helm-charts/blob/master/Helm_Installation_version_3.md) to install the same.
 -  You have installed [Prometheus Operator](https://github.com/coreos/prometheus-operator), if you want to view the metrics of the Citrix ADC CPX collected by the [metrics exporter](https://github.com/citrix/citrix-k8s-ingress-controller/tree/master/metrics-visualizer#visualization-of-metrics).
 - Registration of Citrix ADC CPX in ADM: You may want to register your CPX in ADM for licensing or to obtain [servicegraph](https://docs.citrix.com/en-us/citrix-application-delivery-management-service/application-analytics-and-management/service-graph.html). For this you will have to create a Kubernetes secret using ADM credentials and provide it while install the chart. Create a Kubernetes secret for the user name and password using the following command:
