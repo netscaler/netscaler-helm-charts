@@ -38,7 +38,7 @@ This Helm chart deploys Citrix ingress controller in the [Kubernetes](https://ku
 ### Prerequisites
 
 -  The [Kubernetes](https://kubernetes.io/) version 1.16 or later if using Kubernetes environment.
--  The [Openshift](https://www.openshift.com) version 3.11.x or later if using OpenShift platform.
+-  The [Openshift](https://www.openshift.com) version 4.8 or later if using OpenShift platform.
 -  The [Helm](https://helm.sh/) version 3.x or later. You can follow instruction given [here](https://github.com/citrix/citrix-helm-charts/blob/master/Helm_Installation_version_3.md) to install the same.
 
 -  The user name and password of the Citrix ADC VPX or MPX appliance. The Citrix ADC appliance needs to have system user account (non-default) with certain privileges so that Citrix ingress controller can configure the Citrix ADC VPX or MPX appliance. For instructions to create the system user account on Citrix ADC, see [Create System User Account for CIC in Citrix ADC](#create-system-user-account-for-cic-in-citrix-adc).
