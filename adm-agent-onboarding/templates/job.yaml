@@ -14,11 +14,6 @@ spec:
        image: "{{ .Values.image}}"
        imagePullPolicy: {{ .Values.pullPolicy | quote }}
        env:
-       - name: SERVICE_ACCOUNT
-         valueFrom:
-           fieldRef:
-             apiVersion: v1
-             fieldPath: spec.serviceAccountName
        - name: "ADM_TOKEN"
          value: {{ required "Provide Authentication Token " .Values.token | quote }}
        - name: "AGENT_NAME"
