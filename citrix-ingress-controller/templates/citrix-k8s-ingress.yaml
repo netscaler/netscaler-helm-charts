@@ -18,7 +18,9 @@ spec:
   replicas: 1
 {{- if .Values.openshift }}
   strategy:
-    resources: {}
+    {{- if .Values.resources }}
+    resources: {{- toYaml .Values.resources | nindent 6 }}
+    {{- end }}
     rollingParams:
       intervalSeconds: 1
       maxSurge: 0
@@ -40,6 +42,9 @@ spec:
       serviceAccountName: {{ include "citrix-ingress-controller.serviceAccountName" . }}
       containers:
       - name: cic
+        {{- if .Values.resources }}
+        resources: {{- toYaml .Values.resources | nindent 10 }}
+        {{- end }}
         image: "{{ .Values.image }}"
         imagePullPolicy: {{ .Values.pullPolicy }}
         args:
@@ -120,6 +125,9 @@ spec:
 {{- end }}
 {{- if .Values.exporter.required }}
       - name: exporter
+        {{- if .Values.exporter.resources }}
+        resources: {{- toYaml .Values.exporter.resources | nindent 10 }}
+        {{- end }}
         image: "{{ .Values.exporter.image }}"
         imagePullPolicy: {{ .Values.exporter.pullPolicy }}
         args:
