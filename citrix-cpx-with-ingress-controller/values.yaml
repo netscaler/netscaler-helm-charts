@@ -64,7 +64,7 @@ servicePorts: []
 
 # Citrix Ingress Controller config details
 cic:
-  image: quay.io/citrix/citrix-k8s-ingress-controller:1.20.5
+  image: quay.io/citrix/citrix-k8s-ingress-controller:1.21.9
   pullPolicy: IfNotPresent
   required: true
 entityPrefix:
