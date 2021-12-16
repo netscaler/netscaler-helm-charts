@@ -88,7 +88,7 @@ The following table lists the mandatory and optional parameters that you can con
 | Parameters | Mandatory or Optional | Default value | Description |
 | --------- | --------------------- | ------------- | ----------- |
 | license.accept | Mandatory | no | Set `yes` to accept the CIC end user license agreement. |
-| image | Mandatory | `quay.io/citrix/citrix-k8s-ingress-controller:1.20.5` | The CIC image. |
+| image | Mandatory | `quay.io/citrix/citrix-k8s-ingress-controller:1.21.9` | The CIC image. |
 | pullPolicy | Mandatory | IfNotPresent | The CIC image pull policy. |
 | imagePullSecrets | Optional | N/A | Provide list of Kubernetes secrets to be used for pulling the images from a private Docker registry or repository. For more information on how to create this secret please see [Pull an Image from a Private Registry](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/). |
 | adcCredentialSecret | Mandatory | N/A | The secret key to log on to the Citrix ADC VPX or MPX. For information on how to create the secret keys, see [Prerequisites](#prerequistes). |
@@ -199,6 +199,6 @@ By default the chart will install the recommended [RBAC](https://kubernetes.io/d
 [Exporter](https://github.com/citrix/citrix-adc-metrics-exporter) is running along with the CIC and pulling metrics from the VPX/MPX. It exposes the metrics using Kubernetes NodePort.
 
 ## Ingress Class
-To know more about Ingress Class refer [this](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/ingress-class.md). 
+To know more about Ingress Class refer [this](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/configure/ingress-classes.md).
 
 ## For More Info: https://github.com/citrix/citrix-k8s-ingress-controller

@@ -2,7 +2,7 @@ enabled: true
 nsPort: 443
 nsProtocol: HTTPS
 entityPrefix: gslb
-image: 'quay.io/citrix/citrix-k8s-ingress-controller:1.20.5'
+image: 'quay.io/citrix/citrix-k8s-ingress-controller:1.21.9'
 pullPolicy: IfNotPresent
 license:
   accept: 'Yes'
