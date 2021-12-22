@@ -7,6 +7,7 @@ kind: Deployment
 {{- end }}
 metadata:
   name: {{ include "citrix-ingress-controller.fullname" . }}
+  namespace: {{ .Release.Namespace }}
 spec:
   selector:
 {{- if .Values.openshift }}
