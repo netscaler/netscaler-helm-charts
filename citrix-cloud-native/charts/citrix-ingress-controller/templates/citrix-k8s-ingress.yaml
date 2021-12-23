@@ -7,6 +7,7 @@ kind: Deployment
 {{- end }}
 metadata:
   name: {{ include "citrix-ingress-controller.fullname" . }}
+  namespace: {{ .Release.Namespace }}
 spec:
   selector:
 {{- if .Values.openshift }}
@@ -174,20 +175,21 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
- name: {{ include "servicemonitor.fullname" . }}
- labels:
-   servicemonitor: citrix-adc
+  name: {{ include "servicemonitor.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    servicemonitor: citrix-adc
 spec:
- endpoints:
- - interval: 30s
-   port: exporter-port
- selector:
-   matchLabels:
-     service-type: {{ include "servicemonitorlabel" . }}
- namespaceSelector:
-   matchNames:
-   - monitoring
-   - default
-   - {{ .Release.Namespace }}
+  endpoints:
+  - interval: 30s
+    port: exporter-port
+  selector:
+    matchLabels:
+      service-type: {{ include "servicemonitorlabel" . }}
+  namespaceSelector:
+    matchNames:
+    - monitoring
+    - default
+    - {{ .Release.Namespace }}
 
 {{- end }}
