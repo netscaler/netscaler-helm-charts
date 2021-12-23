@@ -3,6 +3,7 @@ kind: Service
 apiVersion: v1
 metadata:
    name: {{ template "generate-name" (list . (dict "suffixname" "citrix-exporter-svc")) }}
+   namespace: {{ .Release.Namespace }}
    annotations:
    labels:
      service-type: citrix-adc-monitor

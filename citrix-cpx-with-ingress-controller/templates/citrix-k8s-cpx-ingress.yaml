@@ -6,6 +6,7 @@ kind: Deployment
 {{- end }}
 metadata:
   name: {{ include "citrix-cpx-ingress-controller.fullname" . }}
+  namespace: {{ .Release.Namespace }}
 spec:
   selector:
     matchLabels:
@@ -335,20 +336,21 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
- name: {{ include "cpxservicemonitor.fullname" . }}
- labels:
-   servicemonitor: citrix-adc-cpx
+  name: {{ include "cpxservicemonitor.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    servicemonitor: citrix-adc-cpx
 spec:
- endpoints:
- - interval: 30s
-   port: exporter-port
- selector:
-   matchLabels:
-     service-type: {{ include "cpxservicemonitorlabel" . }}
- namespaceSelector:
-   matchNames:
-   - monitoring
-   - default
-   - {{ .Release.Namespace }}
+  endpoints:
+  - interval: 30s
+    port: exporter-port
+  selector:
+    matchLabels:
+      service-type: {{ include "cpxservicemonitorlabel" . }}
+  namespaceSelector:
+    matchNames:
+    - monitoring
+    - default
+    - {{ .Release.Namespace }}
 
 {{- end }}
