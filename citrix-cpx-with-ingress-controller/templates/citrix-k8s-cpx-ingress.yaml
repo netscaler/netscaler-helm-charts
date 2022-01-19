@@ -22,6 +22,9 @@ spec:
       annotations:
     spec:
       serviceAccountName: {{ include "citrix-cpx-ingress-controller.serviceAccountName" . }}
+{{- if .Values.cpxBgpRouter }}
+      hostNetwork: true
+{{- end }}
       containers:
         - name: cpx-ingress
           image: "{{ .Values.image }}"
