@@ -417,7 +417,7 @@ sidecarCertsGenerator:
 
 cnc:
   enabled: False
-  image: quay.io/citrix/citrix-k8s-node-controller:2.2.8
+  image: quay.io/citrix/citrix-k8s-node-controller:2.2.9
   pullPolicy: IfNotPresent
   license:
     accept: no
