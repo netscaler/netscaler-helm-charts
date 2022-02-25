@@ -41,7 +41,8 @@ Below table provides info about recommended Citrix xDS-Adaptor version to be use
 
 | Citrix xDS-Adaptor version | Istio version |
 |----------------------------|---------------|
-| quay.io/citrix/citrix-xds-adaptor:0.9.9 | Istio v1.10+ |
+| quay.io/citrix/citrix-xds-adaptor:0.10.1 | Istio v1.12+ |
+| quay.io/citrix/citrix-xds-adaptor:0.9.9 | Istio v1.10 to Istio v1.11 |
 | quay.io/citrix/citrix-xds-adaptor:0.9.8 | Istio v1.8 to Istio v1.9 |
 | quay.io/citrix/citrix-xds-adaptor:0.9.5 | Istio v1.6 |
 
@@ -240,7 +241,7 @@ The following table lists the configurable parameters and their default values i
 | Parameter                      | Description                   | Default                   |
 |--------------------------------|-------------------------------|---------------------------|
 | `iaSidecar.enabled` | Mandatory | False | Set to "True" for deploying Citrix ADC CPX as a sidecar in Istio environment. |
-| `iaSidecar.xDSadaptor.image`                    | Image of the Citrix xDS Adaptor container                    |  quay.io/citrix/citrix-xds-adaptor:0.9.9   |
+| `iaSidecar.xDSadaptor.image`                    | Image of the Citrix xDS Adaptor container                    |  quay.io/citrix/citrix-xds-adaptor:0.10.1   |
 | `iaSidecar.xDSadaptor.imagePullPolicy`   | Image pull policy for xDS-adaptor | IfNotPresent        |
 | `iaSidecar.xDSadaptor.secureConnect`     | If this value is set to true, xDS-adaptor establishes secure gRPC channel with Istio Pilot   | TRUE                       |
 | `iaSidecar.xDSAdaptor.logLevel`   | Log level to be set for xDS-adaptor log messages. Possible values: TRACE (most verbose), DEBUG, INFO, WARN, ERROR (least verbose) | DEBUG       | Optional|
@@ -264,9 +265,9 @@ The following table lists the configurable parameters and their default values i
 | `iaSidecar.cpxProxy.EULA`              |  End User License Agreement(EULA) terms and conditions. If yes, then user agrees to EULA terms and conditions.                                                     | NO |
 | `iaSidecar.cpxProxy.cpxSidecarMode`            | Environment variable for Citrix ADC CPX. It indicates that Citrix ADC CPX is running as sidecar mode or not.                                                                                               | YES                                                                    |
 | `iaSidecar.cpxProxy.cpxDisableProbe`            | Environment variable for Citrix ADC CPX. It indicates that Citrix ADC CPX will disable probing dynamic services. It should be enabled for multicluster setup. Possible values: YES/NO.                    | YES   |
-| `iaSidecar.sidecarWebHook.webhookImage`   | Mutating webhook associated with the sidecar injector. It invokes a service `cpx-sidecar-injector` to inject sidecar proxies in the application pod.                                                                                      | quay.io/citrix/cpx-istio-sidecar-injector:1.1.0 | 
+| `iaSidecar.sidecarWebHook.webhookImage`   | Mutating webhook associated with the sidecar injector. It invokes a service `cpx-sidecar-injector` to inject sidecar proxies in the application pod.                                                                                      | quay.io/citrix/cpx-istio-sidecar-injector:1.2.0 | 
 | `iaSidecar.sidecarWebHook.imagePullPolicy`   | Image pull policy                                                                          |IfNotPresent|
-| `iaSidecar.sidecarCertsGenerator.image`   | Certificate genrator image associated with sidecar injector. This image generates certificate and key needed for CPX sidecar injection.                                                                                      | quay.io/citrix/cpx-sidecar-injector-certgen:1.1.0 | 
+| `iaSidecar.sidecarCertsGenerator.image`   | Certificate genrator image associated with sidecar injector. This image generates certificate and key needed for CPX sidecar injection.                                                                                      | quay.io/citrix/cpx-sidecar-injector-certgen:1.2.0 | 
 | `iaSidecar.sidecarCertsGenerator.imagePullPolicy`   | Image pull policy                                                                          |IfNotPresent|
 | `iaSidecar.webhook.injectionLabelName` |  Label of namespace where automatic Citrix ADC CPX sidecar injection is required. | cpx-injection |
 | `iaSidecar.certProvider.caAddr`   | Certificate Authority (CA) address issuing certificate to application                           | istiod.istio-system.svc                          | Optional |

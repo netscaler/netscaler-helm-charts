@@ -24,7 +24,7 @@ istioPilot:
 
 
 xDSAdaptor:
-    image: quay.io/citrix/citrix-xds-adaptor:0.9.9
+    image: quay.io/citrix/citrix-xds-adaptor:0.10.1
     imagePullPolicy: IfNotPresent
     proxyType: router
     secureConnect: true
