@@ -220,6 +220,7 @@ spec:
           - name: "NS_CPX_LITE"
             value: "1"
 {{- end }}
+{{- if or .Values.coe.coeURL .Values.ADMSettings.ADMIP }}
           - name: "NS_ENABLE_NEWNSLOG"
             value: "1"
 {{- end }}

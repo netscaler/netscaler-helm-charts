@@ -10,5 +10,5 @@ sources:
 - https://github.com/citrix/citrix-xds-adaptor
 version: 1.12.0
 maintainers:
-- name: ajeetas
-  email: ajeeta.shakeet@citrix.com
+- name: subashd
+  email: subash.dangol@citrix.com
