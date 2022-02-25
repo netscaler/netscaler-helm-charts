@@ -17,6 +17,8 @@ spec:
       labels:
         app: {{default "citrix-egressgateway" .Values.egressGateway.label}}
         citrix.com/no.sidecar: "true"
+        adc: "citrix"
+        deployment: "cpx-egressgateway" # This label is useful in ServiceGraph
       annotations:
         scheduler.alpha.kubernetes.io/critical-pod: ""
         prometheus.io/port: "{{ .Values.metricExporter.port }}"
@@ -33,6 +35,15 @@ spec:
         emptyDir: {}
       - name: certs
         emptyDir: {}
+      - name: podinfo
+        downwardAPI:
+          items:
+          - path: "labels"
+            fieldRef:
+              fieldPath: metadata.labels
+          - path: "annotations"
+            fieldRef:
+              fieldPath: metadata.annotations
       - name: istiod-ca-cert
         configMap:
           defaultMode: 0777
@@ -149,6 +160,8 @@ spec:
           - name: JSONLOG
             value: "TRUE"
 {{- end }}
+          - name: ENABLE_LABELS_FEATURE
+            value: "FALSE"
           securityContext:
             readOnlyRootFilesystem: true
             runAsGroup: 32024
@@ -163,6 +176,8 @@ spec:
           - mountPath: /etc/istio/egressgateway-ca-certs # Make sure that Gateway definition has this path mentioned in server.tls     section for MUTUAL TLS
             name: citrix-egressgateway-ca-certs
             readOnly: true
+          - mountPath: /etc/podinfo
+            name: podinfo
         - name: citrix-egressgateway
           image: {{ .Values.egressGateway.image }}
           imagePullPolicy: {{ .Values.egressGateway.imagePullPolicy }}
@@ -201,8 +216,10 @@ spec:
             value: "{{ .Values.egressGateway.mgmtHttpPort }}"
           - name: "MGMT_HTTPS_PORT"
             value: "{{ .Values.egressGateway.mgmtHttpsPort }}"
+{{- if .Values.egressGateway.lightWeightCPX }}
           - name: "NS_CPX_LITE"
-            value: "{{ .Values.egressGateway.lightWeightCPX }}"
+            value: "1"
+{{- end }}
 {{- if or .Values.coe.coeURL .Values.ADMSettings.ADMIP }}
           - name: "NS_ENABLE_NEWNSLOG"
             value: "1"
@@ -264,6 +281,7 @@ spec:
       labels:
         app: {{ .Values.egressGateway.label | default "citrix-egressgateway" }}
         citrix.com/no.sidecar: "true"
+        adc: "citrix"
       annotations:
         scheduler.alpha.kubernetes.io/critical-pod: ""
         prometheus.io/port: "{{ .Values.metricExporter.port }}"
@@ -337,6 +355,8 @@ spec:
         - name: JSONLOG
           value: "TRUE"
 {{- end }}
+        - name: ENABLE_LABELS_FEATURE
+          value: "FALSE"
         - name: NS_USER
           valueFrom:
             secretKeyRef:
@@ -404,6 +424,8 @@ spec:
         - mountPath: /etc/nslogin
           name: nsloginegress
           readOnly: true
+        - mountPath: /etc/podinfo
+          name: podinfo
         - mountPath: /etc/istio/egressgateway-ca-certs # Make sure that Gateway definition has this path mentioned in server.tls section for MUTUAL TLS
           name: citrix-egressgateway-ca-certs
           readOnly: true
@@ -429,6 +451,15 @@ spec:
         secret:
           optional: true
           secretName: "citrix-egressgateway-ca-certs" # IMPORTANT: This secret MUST BE created before deploying gateway and egress-gateway
+      - name: podinfo
+        downwardAPI:
+          items:
+          - path: "labels"
+            fieldRef:
+              fieldPath: metadata.labels
+          - path: "annotations"
+            fieldRef:
+              fieldPath: metadata.annotations
 {{- if .Values.egressGateway.adcServerName }}
       - name: citrix-adc-cert
         secret:

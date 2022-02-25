@@ -70,6 +70,8 @@ data:
         - name: COE_TRACING
           value: "TRUE"
 {{- end }}
+        - name: ENABLE_LABELS_FEATURE
+          value: "FALSE"
         - name: LOGLEVEL
           value: {{ .Values.xDSAdaptor.logLevel | default "DEBUG" | quote }}
 {{- if eq .Values.xDSAdaptor.jsonLog true }}
@@ -119,6 +121,8 @@ data:
           mountPath: /etc/certs
         - name: istiod-ca-cert
           mountPath: /etc/rootcert/
+        - name: podinfo
+          mountPath: /etc/podinfo
         securityContext:
           readOnlyRootFilesystem: true
           runAsGroup: 32024
@@ -212,10 +216,22 @@ data:
         configMap:
           defaultMode: 0777
           name: istio-ca-root-cert
+      - name: podinfo
+        downwardAPI:
+          items:
+          - path: "labels"
+            fieldRef:
+              fieldPath: metadata.labels
+          - path: "annotations"
+            fieldRef:
+              fieldPath: metadata.annotations
   values: |-
     {
       "global": {
         "jwtPolicy": "third-party-jwt",
-      }
+      },
+      "adcSelector": {
+        "adc": "citrix",
+       }
     }
 ---

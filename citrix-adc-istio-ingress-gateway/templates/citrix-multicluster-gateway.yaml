@@ -1,5 +1,5 @@
 {{- if eq .Values.ingressGateway.multiClusterIngress true }}
-apiVersion: networking.istio.io/v1beta1
+apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
 metadata:
   annotations:
@@ -14,27 +14,33 @@ spec:
   selector:
     app: {{ .Values.ingressGateway.label | default "citrix-ingressgateway" }}
   servers:
-  - hosts:
-    - {{ printf "'*.%s'" .Values.ingressGateway.multiClusterSvcDomain }}
-    port:
-      name: tls
-      number: {{ .Values.ingressGateway.multiClusterListenerPort }}
-      protocol: TLS
-    tls:
-      mode: AUTO_PASSTHROUGH
+    - port:
+        name: tls-mc-port
+        number: {{ .Values.ingressGateway.multiClusterListenerPort }}
+        protocol: tls
+      tls:
+        mode: PASSTHROUGH
+      hosts:
+        - {{ printf "'*.%s'" .Values.ingressGateway.multiClusterSvcDomain }}
 ---
-apiVersion: networking.istio.io/v1beta1
-kind: DestinationRule
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
 metadata:
-  annotations:
-  labels:
-    app: {{ .Values.ingressGateway.label | default "citrix-ingressgateway" }}
   name: citrix-multicluster-ingressgateway
-  namespace: {{ .Release.Namespace }}
 spec:
-  host: {{ printf "'*.%s'" .Values.ingressGateway.multiClusterSvcDomain }}
-  trafficPolicy:
-    tls:
-      mode: ISTIO_MUTUAL
+  hosts:
+  - {{ printf "'*.%s'" .Values.ingressGateway.multiClusterSvcDomain }}
+  gateways:
+  - citrix-multicluster-ingressgateway
+  tls:
+  - match:
+    - port: {{ .Values.ingressGateway.multiClusterListenerPort }}
+      sniHosts:
+      - {{ printf "'*.%s'" .Values.ingressGateway.multiClusterSvcDomain }}
+    route:
+    - destination:
+        host: {{ template "generate-name" (list . (dict "suffixname" "citrix-ingress-svc")) }}
+        port:
+          number: {{ .Values.ingressGateway.multiClusterListenerPort }}
 ---
 {{- end }}

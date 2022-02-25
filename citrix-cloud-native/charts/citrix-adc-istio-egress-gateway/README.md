@@ -40,7 +40,8 @@ Below table provides info about recommended Citrix xDS-Adaptor version to be use
 
 | Citrix xDS-Adaptor version | Istio version |
 |----------------------------|---------------|
-| quay.io/citrix/citrix-xds-adaptor:0.9.9 | Istio v1.10+ |
+| quay.io/citrix/citrix-xds-adaptor:0.10.1 | Istio v1.12+ |
+| quay.io/citrix/citrix-xds-adaptor:0.9.9 | Istio v1.10 to Istio v1.11 |
 | quay.io/citrix/citrix-xds-adaptor:0.9.8 | Istio v1.8 to Istio v1.9 |
 | quay.io/citrix/citrix-xds-adaptor:0.9.5 | Istio v1.6 |
 
@@ -309,7 +310,7 @@ The following table lists the configurable parameters in the Helm chart and thei
 | Parameter                      | Description                   | Default                   | Optional/Mandatory                  |
 |--------------------------------|-------------------------------|---------------------------|---------------------------|
 | `iaEgress.citrixCPX`                    | Citrix ADC CPX                    | FALSE                  | Mandatory for Citrix ADC CPX |
-| `iaEgress.xDSAdaptor.image`            | Image of the Citrix xDS adaptor container |quay.io/citrix/citrix-xds-adaptor:0.9.9 | Mandatory|
+| `iaEgress.xDSAdaptor.image`            | Image of the Citrix xDS adaptor container |quay.io/citrix/citrix-xds-adaptor:0.10.1 | Mandatory|
 | `iaEgress.xDSAdaptor.imagePullPolicy`   | Image pull policy for xDS adaptor | IfNotPresent       | Optional|
 | `iaEgress.xDSAdaptor.secureConnect`     | If this value is set to true, xDS-adaptor establishes secure gRPC channel with Istio Pilot   | TRUE                       | Optional|
 | `iaEgress.xDSAdaptor.logLevel`   | Log level to be set for xDS-adaptor log messages. Possible values: TRACE (most verbose), DEBUG, INFO, WARN, ERROR (least verbose) | DEBUG       | Optional|

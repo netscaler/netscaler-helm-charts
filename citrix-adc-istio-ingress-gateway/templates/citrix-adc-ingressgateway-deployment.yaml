@@ -17,6 +17,8 @@ spec:
       labels:
         app: {{ .Values.ingressGateway.label | default "citrix-ingressgateway" }}
         citrix.com/no.sidecar: "true"
+        adc: "citrix"
+        deployment: "cpx-ingressgateway" # This label is useful in ServiceGraph
       annotations:
         scheduler.alpha.kubernetes.io/critical-pod: ""
         prometheus.io/port: "{{ .Values.metricExporter.port }}"
@@ -31,6 +33,15 @@ spec:
         secret:
           optional: true
           secretName: "citrix-ingressgateway-ca-certs" # IMPORTANT: This secret MUST BE created before deploying gateway and ingress-gateway
+      - name: podinfo
+        downwardAPI:
+          items:
+          - path: "labels"
+            fieldRef:
+              fieldPath: metadata.labels
+          - path: "annotations"
+            fieldRef:
+              fieldPath: metadata.annotations
      {{- range .Values.ingressGateway.secretVolumes }}
       - name: {{ .name }}
         secret:
@@ -170,7 +181,10 @@ spec:
 {{- if eq .Values.xDSAdaptor.jsonLog true }}
           - name: JSONLOG
             value: "TRUE"
+
 {{- end }}
+          - name: ENABLE_LABELS_FEATURE
+            value: "FALSE"
           securityContext:
             readOnlyRootFilesystem: true
             runAsGroup: 32024
@@ -193,6 +207,8 @@ spec:
           - mountPath: /etc/istio/ingressgateway-ca-certs # Make sure that Gateway definition has this path mentioned in server.tls section for MUTUAL TLS
             name: citrix-ingressgateway-ca-certs
             readOnly: true
+          - mountPath: /etc/podinfo
+            name: podinfo
           {{- range .Values.ingressGateway.secretVolumes }}
           - name: {{ .name }}
             mountPath: {{ .mountPath | quote }}
@@ -233,8 +249,10 @@ spec:
             value: "{{ .Values.ingressGateway.mgmtHttpPort }}"
           - name: "MGMT_HTTPS_PORT"
             value: "{{ .Values.ingressGateway.mgmtHttpsPort }}"
+{{- if .Values.ingressGateway.lightWeightCPX }}
           - name: "NS_CPX_LITE"
-            value: "{{ .Values.ingressGateway.lightWeightCPX }}"
+            value: "1"
+{{- end }}            
 {{- if or .Values.coe.coeURL .Values.ADMSettings.ADMIP }}
           - name: "NS_ENABLE_NEWNSLOG"
             value: "1"
@@ -298,6 +316,7 @@ spec:
       labels:
         app: {{ .Values.ingressGateway.label | default "citrix-ingressgateway" }}
         citrix.com/no.sidecar: "true"
+        adc: "citrix"
       annotations:
         scheduler.alpha.kubernetes.io/critical-pod: ""
         prometheus.io/port: "{{ .Values.metricExporter.port }}"
@@ -379,6 +398,8 @@ spec:
         - name: JSONLOG
           value: "TRUE"
 {{- end }}
+        - name: ENABLE_LABELS_FEATURE
+          value: "FALSE"
         - name: NS_USER
           valueFrom:
             secretKeyRef:
@@ -452,6 +473,8 @@ spec:
         - mountPath: /etc/istio/ingressgateway-ca-certs # Make sure that Gateway definition has this path mentioned in server.tls section for MUTUAL TLS
           name: citrix-ingressgateway-ca-certs
           readOnly: true  
+        - mountPath: /etc/podinfo
+          name: podinfo
         {{- range .Values.ingressGateway.secretVolumes }}
         - name: {{ .name }}
           mountPath: {{ .mountPath | quote }}
@@ -482,7 +505,16 @@ spec:
       - name: citrix-ingressgateway-ca-certs
         secret:
           optional: true
-          secretName: "citrix-ingressgateway-ca-certs" # IMPORTANT: This secret MUST BE created before deploying gateway and ingress-gateway 
+          secretName: "citrix-ingressgateway-ca-certs" # IMPORTANT: This secret MUST BE created before deploying gateway and ingress-gateway
+      - name: podinfo
+        downwardAPI:
+          items:
+          - path: "labels"
+            fieldRef:
+              fieldPath: metadata.labels
+          - path: "annotations"
+            fieldRef:
+              fieldPath: metadata.annotations
      {{- range .Values.ingressGateway.secretVolumes }}
       - name: {{ .name }}
         secret:

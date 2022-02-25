@@ -51,7 +51,8 @@ Below table provides info about recommended Citrix xDS-Adaptor version to be use
 
 | Citrix xDS-Adaptor version | Istio version |
 |----------------------------|---------------|
-| quay.io/citrix/citrix-xds-adaptor:0.9.9 | Istio v1.10+ |
+| quay.io/citrix/citrix-xds-adaptor:0.10.1 | Istio v1.12+ |
+| quay.io/citrix/citrix-xds-adaptor:0.9.9 | Istio v1.10 to Istio v1.11 |
 | quay.io/citrix/citrix-xds-adaptor:0.9.8 | Istio v1.8 to Istio v1.9 |
 | quay.io/citrix/citrix-xds-adaptor:0.9.5 | Istio v1.6 |
 
@@ -435,7 +436,7 @@ The following table lists the configurable parameters in the Helm chart and thei
 |--------------------------------|-------------------------------|---------------------------|---------------------------|
 | `iaIngress.enabled` | Mandatory | False | Set to "True" for deploying Citrix ADC as an Ingress Gateway in Istio environment. |
 | `iaIngress.citrixCPX`                    | Citrix ADC CPX                    | FALSE                  | Mandatory for Citrix ADC CPX |
-| `iaIngress.xDSAdaptor.image`            | Image of the Citrix xDS-adaptor container (Refer compatibility matrix) |quay.io/citrix/citrix-xds-adaptor:0.9.9 | Mandatory|
+| `iaIngress.xDSAdaptor.image`            | Image of the Citrix xDS-adaptor container (Refer compatibility matrix) |quay.io/citrix/citrix-xds-adaptor:0.10.1 | Mandatory|
 | `iaIngress.xDSAdaptor.imagePullPolicy`   | Image pull policy for xDS-adaptor | IfNotPresent       | Optional|
 | `iaIngress.xDSAdaptor.secureConnect`     | If this value is set to true, Istio-adaptor establishes secure gRPC channel with Istio Pilot   | TRUE                       | Optional|
 | `iaIngress.xDSAdaptor.logLevel`   | Log level to be set for xDS-adaptor log messages. Possible values: TRACE (most verbose), DEBUG, INFO, WARN, ERROR (least verbose) | DEBUG       | Optional|

@@ -3,7 +3,7 @@
 # Declare variables to be passed into your templates.
 
 xDSAdaptor:
-    image: quay.io/citrix/citrix-xds-adaptor:0.9.9
+    image: quay.io/citrix/citrix-xds-adaptor:0.10.1
     imagePullPolicy: IfNotPresent
     proxyType: sidecar
     secureConnect: true
@@ -41,11 +41,11 @@ cpxProxy:
     #licenseServerIP: this value is taken from ADMSettings.ADMIP
 
 sidecarWebHook:
-    webhookImage: quay.io/citrix/cpx-istio-sidecar-injector:1.1.0
+    webhookImage: quay.io/citrix/cpx-istio-sidecar-injector:1.2.0
     imagePullPolicy: IfNotPresent
 
 sidecarCertsGenerator:
-    image: quay.io/citrix/cpx-sidecar-injector-certgen:1.1.0
+    image: quay.io/citrix/cpx-sidecar-injector-certgen:1.2.0
     imagePullPolicy: IfNotPresent
 
 ADMSettings:
