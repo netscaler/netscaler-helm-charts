@@ -1,9 +1,11 @@
 cic:
   enabled: False
-  
-  image: quay.io/citrix/citrix-k8s-ingress-controller:1.22.7
+
+  image: quay.io/citrix/citrix-k8s-ingress-controller:1.23.10
   pullPolicy: IfNotPresent
   imagePullSecrets: []
+  nameOverride: ""
+  fullnameOverride: ""
   openshift: false
   adcCredentialSecret:
   nsIP: x.x.x.x
@@ -14,6 +16,7 @@ cic:
   nsPort: 443
   nsProtocol: HTTPS
   logLevel: INFO
+  jsonLog: false
   entityPrefix:
   kubernetesURL:
   clusterName:
@@ -31,12 +34,13 @@ cic:
   nodeSelector:
     key:
     value:
-  updateIngressStatus: False
+  updateIngressStatus: True
   nsHTTP2ServerSide: "OFF"
   nsCookieVersion: "0"
 
   routeLabels:
   namespaceLabels:
+  disableOpenshiftRoutes:
 
   exporter:
     required: false
@@ -44,6 +48,7 @@ cic:
     pullPolicy: IfNotPresent
     ports:
       containerPort: 8888
+    resources: {}
 
   crds:
     install: false
@@ -72,10 +77,16 @@ cic:
   serviceAccount:
     create: true
 
+  podAnnotations: {}
+
+  resources: {}
+
+  affinity: {}
+
 mcIngress:
   enabled: False
 
-  image: quay.io/citrix/citrix-k8s-ingress-controller:1.22.7
+  image: quay.io/citrix/citrix-k8s-ingress-controller:1.23.10
   pullPolicy: IfNotPresent
   openshift: false
   localRegion:
@@ -103,6 +114,8 @@ cpx:
   image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-83.27
   pullPolicy: IfNotPresent
   imagePullSecrets: []
+  nameOverride: ""
+  fullnameOverride: ""
 
   mgmtHttpPort: 9080
   mgmtHttpsPort: 9443
@@ -144,20 +157,23 @@ cpx:
   servicePorts: []
 
   cic:
-    image: quay.io/citrix/citrix-k8s-ingress-controller:1.22.7
+    image: quay.io/citrix/citrix-k8s-ingress-controller:1.23.10
     pullPolicy: IfNotPresent
     required: true
+    resources: {}
   entityPrefix:
   license:
     accept: no
   ingressClass:
   setAsDefaultIngressClass: False
   logLevel: INFO
+  jsonLog: false
   defaultSSLCertSecret:
   updateIngressStatus: False
   disableAPIServerCertVerify: False
   logProxy:
   kubernetesURL:
+  disableOpenshiftRoutes:
 
   ADMSettings:
     licenseServerIP:
@@ -175,6 +191,7 @@ cpx:
     pullPolicy: IfNotPresent
     ports:
       containerPort: 8888
+    resources: {}
 
   crds:
     install: false
@@ -214,11 +231,17 @@ cpx:
   serviceAccount:
     create: true
 
+  podAnnotations: {}
+
+  resources: {}
+
+  affinity: {}
+
 iaIngress:
   enabled: False
 
-  citrixCPX: false 
-  
+  citrixCPX: false
+
   coe:
     coeURL:
     coeTracing: false
@@ -251,7 +274,7 @@ iaIngress:
     caPort: 15012
     trustDomain: cluster.local
     certTTLinHours: 720
-    clusterId: Kubernetes 
+    clusterId: Kubernetes
     jwtPolicy: #specify third-party-jwt if Kubernetes cluster supports third-party tokens
 
 
@@ -296,9 +319,9 @@ iaEgress:
   citrixCPX: false
 
   coe:
-      coeURL: 
+      coeURL:
       coeTracing: false
-  
+
   metricExporter:
     required: true
     image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.9
@@ -355,7 +378,7 @@ iaEgress:
 
   secretName: nsloginegress
 
-             
+
 iaSidecar:
   enabled: False
 
@@ -408,7 +431,7 @@ iaSidecar:
     webhookImage: quay.io/citrix/cpx-istio-sidecar-injector:1.2.0
     imagePullPolicy: IfNotPresent
 
-sidecarCertsGenerator:
+  sidecarCertsGenerator:
     image: quay.io/citrix/cpx-sidecar-injector-certgen:1.2.0
     imagePullPolicy: IfNotPresent
 
@@ -442,18 +465,18 @@ coe:
   pullPolicy: IfNotPresent
   replicas: 1
   license:
-    accept: no 
+    accept: no
   nodePortRequired: false
   headless: false
   transaction:
     nodePort: 30001
   ns_tracing:
     enabled: false
-    server: "zipkin:9411/api/v1/spans" 
+    server: "zipkin:9411/api/v1/spans"
   splunk:
     enabled: false
     server:
-    authtoken: 
+    authtoken:
     indexprefix:
   elasticsearch:
     enabled: false

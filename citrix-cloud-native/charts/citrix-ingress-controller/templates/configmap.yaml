@@ -5,6 +5,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
 data:
   LOGLEVEL: {{ .Values.logLevel | quote | lower }}
+  JSONLOG: {{ .Values.jsonLog | quote | lower }}
   NS_PROTOCOL: {{ .Values.nsProtocol | quote | lower }}
   NS_PORT: {{ .Values.nsPort | quote }}
 {{- if .Values.nsSNIPS }}

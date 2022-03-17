@@ -19,7 +19,13 @@ spec:
       name: {{ include "citrix-cpx-ingress-controller.fullname" . }}
       labels:
         app: {{ include "citrix-cpx-ingress-controller.fullname" . }}
+        adc: "citrix"
+{{- with .Values.podAnnotations }}
       annotations:
+        {{- toYaml . | nindent 8 }}
+{{- end }}
+      labels:
+        app: {{ include "citrix-cpx-ingress-controller.fullname" . }}
     spec:
       serviceAccountName: {{ include "citrix-cpx-ingress-controller.serviceAccountName" . }}
 {{- if .Values.cpxBgpRouter }}
@@ -101,6 +107,8 @@ spec:
           - name: "METRICS_EXPORTER_PORT"
             value: {{ .Values.exporter.ports.containerPort | quote }}
 {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
             - mountPath: /var/deviceinfo
               name: shared-data
@@ -179,6 +187,10 @@ spec:
           - name: "kubernetes_url"
             value: "{{ .Values.kubernetesURL }}"
 {{- end }}
+{{- if .Values.disableOpenshiftRoutes }}
+          - name: "DISABLE_OPENSHIFT_ROUTES"
+            value: "{{ .Values.disableOpenshiftRoutes }}"
+{{- end }}
 {{- if .Values.cpxBgpRouter }}
           securityContext:
             runAsUser: 0
@@ -224,6 +236,8 @@ spec:
           volumeMounts:
             - mountPath: /var/deviceinfo
               name: shared-data
+          resources:
+            {{- toYaml .Values.cic.resources | nindent 12 }}
 {{- if .Values.exporter.required }}
         - name: exporter
           image: "{{ .Values.exporter.image }}"
@@ -244,6 +258,8 @@ spec:
           volumeMounts:
             - mountPath: /var/deviceinfo
               name: shared-data
+          resources:
+            {{- toYaml .Values.exporter.resources | nindent 12 }}
 {{- end }}
       volumes:
         - name: shared-data
@@ -256,6 +272,10 @@ spec:
 {{- end }}
 {{- if .Values.tolerations }}
       tolerations: {{ .Values.tolerations | toYaml | nindent 8 }}
+{{- end }}
+{{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
 {{- end }}
 
 ---

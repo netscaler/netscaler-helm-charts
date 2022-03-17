@@ -6,7 +6,8 @@
 image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-83.27
 pullPolicy: IfNotPresent
 imagePullSecrets: []
-
+nameOverride: ""
+fullnameOverride: ""
 mgmtHttpPort: 9080
 mgmtHttpsPort: 9443
 openshift: false
@@ -64,19 +65,34 @@ servicePorts: []
 
 # Citrix Ingress Controller config details
 cic:
-  image: quay.io/citrix/citrix-k8s-ingress-controller:1.22.7
+  image: quay.io/citrix/citrix-k8s-ingress-controller:1.23.10
   pullPolicy: IfNotPresent
   required: true
+  resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # Following values depends on no of ingresses configured by Ingress Controllers, so it is
+  # advised to test with maximum no of ingresses to set these values.
+  # limits:
+  #   cpu: 1000m
+  #   memory: 1000Mi
+  # requests:
+  #   cpu: 250m
+  #   memory: 256Mi
 entityPrefix:
 license:
   accept: no
 ingressClass:
 setAsDefaultIngressClass: False
 logLevel: INFO
+jsonLog: false 
 defaultSSLCertSecret:
 updateIngressStatus: False
 logProxy:
 kubernetesURL:
+disableOpenshiftRoutes:
 
 # Citrix ADM/License Server config details
 ADMSettings:
@@ -96,6 +112,17 @@ exporter:
   pullPolicy: IfNotPresent
   ports:
     containerPort: 8888
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
 
 
 # For CRDs supported by Citrix Ingress Controller
@@ -146,3 +173,20 @@ serviceAccount:
   # The name of the ServiceAccount to use.
   # If not set and `create` is true, a name is generated using the fullname template
   # name:
+
+podAnnotations: {}
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'
+  # This is the resource for CPX container.
+  # limits:
+  #   cpu: 500m
+  #   memory: 512Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+affinity: {}
