@@ -10,10 +10,10 @@ metadata:
   namespace: {{ .Release.Namespace }}
 spec:
   selector:
-{{- if .Values.openshift }}
-     router: {{ include "citrix-ingress-controller.fullname" . }}
-{{- else }}
     matchLabels:
+{{- if .Values.openshift }}
+      router: {{ include "citrix-ingress-controller.fullname" . }}
+{{- else }}
       app: {{ include "citrix-ingress-controller.fullname" . }}
 {{- end }}
   replicas: 1
@@ -36,6 +36,10 @@ spec:
         router: {{ include "citrix-ingress-controller.fullname" . }}
 {{- else }}
         app: {{ include "citrix-ingress-controller.fullname" . }}
+{{- end }}
+{{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
 {{- end }}
     spec:
       serviceAccountName: {{ include "citrix-ingress-controller.serviceAccountName" . }}
@@ -119,6 +123,12 @@ spec:
         - name: "NS_LOGPROXY"
           value: "{{ .Values.logProxy }}"
 {{- end }}
+{{- if .Values.disableOpenshiftRoutes }}
+        - name: "DISABLE_OPENSHIFT_ROUTES"
+          value: "{{ .Values.disableOpenshiftRoutes }}"
+{{- end }}
+        resources:
+            {{- toYaml .Values.resources | nindent 12 }}
 {{- if .Values.exporter.required }}
       - name: exporter
         image: "{{ .Values.exporter.image }}"
@@ -132,6 +142,8 @@ spec:
             readOnly: true
         securityContext:
           readOnlyRootFilesystem: true
+        resources:
+            {{- toYaml .Values.exporter.resources | nindent 12 }}
       volumes:
       - name: nslogin
         secret:
@@ -143,6 +155,10 @@ spec:
 {{- end }}
 {{- if .Values.tolerations }}
       tolerations: {{ .Values.tolerations | toYaml | nindent 8 }}
+{{- end }}
+{{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
 {{- end }}
 
 ---

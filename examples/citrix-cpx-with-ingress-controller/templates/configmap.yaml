@@ -5,6 +5,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
 data:
   LOGLEVEL: {{ .Values.logLevel | quote | lower }}
+  JSONLOG: {{ .Values.jsonLog | quote | lower }}
 {{- if eq (upper .Values.nsProtocol) "HTTPS" }}
   NS_PROTOCOL: "https"
 {{- if .Values.cpxBgpRouter }}
