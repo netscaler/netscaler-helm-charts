@@ -8,6 +8,7 @@ pullPolicy: IfNotPresent
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
+replicaCount: 1
 mgmtHttpPort: 9080
 mgmtHttpsPort: 9443
 openshift: false
@@ -65,7 +66,7 @@ servicePorts: []
 
 # Citrix Ingress Controller config details
 cic:
-  image: quay.io/citrix/citrix-k8s-ingress-controller:1.23.10
+  image: quay.io/citrix/citrix-k8s-ingress-controller:1.24.4
   pullPolicy: IfNotPresent
   required: true
   resources: {}
