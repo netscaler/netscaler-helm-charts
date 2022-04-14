@@ -442,7 +442,7 @@ The following table lists the configurable parameters of the Citrix ADC CPX with
 | cpx.license.accept | Mandatory | no | Set `yes` to accept the Citrix ingress controller end user license agreement. |
 | cpx.image | Mandatory | `quay.io/citrix/citrix-k8s-cpx-ingress:13.0-83.27` | The Citrix ADC CPX image. |
 | cpx.pullPolicy | Mandatory | IfNotPresent | The Citrix ADC CPX image pull policy. |
-| cpx.cic.image | Mandatory | `quay.io/citrix/citrix-k8s-ingress-controller:1.23.10` | The Citrix ingress controller image. |
+| cpx.cic.image | Mandatory | `quay.io/citrix/citrix-k8s-ingress-controller:1.24.4` | The Citrix ingress controller image. |
 | cpx.cic.pullPolicy | Mandatory | IfNotPresent | The Citrix ingress controller image pull policy. |
 | cpx.cic.required | Mandatory | true | CIC to be run as sidecar with Citrix ADC CPX |
 | cpx.cic.resources | Optional | {} |	CPU/Memory resource requests/limits for Citrix Ingress Controller container |
@@ -458,6 +458,7 @@ The following table lists the configurable parameters of the Citrix ADC CPX with
 | cpx.logProxy | Optional | N/A | Provide Elasticsearch or Kafka or Zipkin endpoint for Citrix observability exporter. |
 | cpx.nsProtocol | Optional | http | Protocol http or https used for the communication between Citrix Ingress Controller and CPX |
 | cpx.cpxBgpRouter | Optional | false| If set to true, this CPX is deployed as daemonset in BGP controller mode wherein BGP advertisements are done for attracting external traffic to Kubernetes clusters |
+| cpx.replicaCount  | Optional  | 1 | Number of CPX-CIC pods to be deployed. With `cpx.cpxBgpRouter : true`, replicaCount is 1 since CPX will be deployed as DaemonSet |
 | cpx.nsIP | Optional | 192.168.1.2 | NSIP used by CPX for internal communication when run in Host mode, i.e when cpxBgpRouter is set to true. A /24 internal network is created in this IP range which is used for internal communications withing the network namespace. |
 | cpx.nsGateway | Optional | 192.168.1.1 | Gateway used by CPX for internal communication when run in Host mode, i.e when cpxBgpRouter is set to true. If not specified, first IP in the nsIP network is used as gateway. It must be in same network as nsIP |
 | cpx.bgpPort | Optional | 179 | BGP port used by CPX for BGP advertisement if cpxBgpRouter is set to true|

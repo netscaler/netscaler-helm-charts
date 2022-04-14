@@ -12,7 +12,7 @@ spec:
     matchLabels:
       app: {{ include "citrix-cpx-ingress-controller.fullname" . }}
 {{- if not .Values.cpxBgpRouter }}
-  replicas: 1
+  replicas: {{ .Values.replicaCount }}
 {{- end }}
   template:
     metadata:
