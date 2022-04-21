@@ -24,8 +24,6 @@ spec:
       annotations:
         {{- toYaml . | nindent 8 }}
 {{- end }}
-      labels:
-        app: {{ include "citrix-cpx-ingress-controller.fullname" . }}
     spec:
       serviceAccountName: {{ include "citrix-cpx-ingress-controller.serviceAccountName" . }}
 {{- if .Values.cpxBgpRouter }}
@@ -315,6 +313,9 @@ spec:
 {{- if or .Values.serviceType.loadBalancer.enabled ( and (.Values.updateIngressStatus) (not .Values.cpxBgpRouter)) }}
   externalTrafficPolicy: {{ .Values.serviceType.loadBalancer.externalTrafficPolicy }}
   type: LoadBalancer
+{{- if .Values.serviceType.loadBalancer.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.serviceType.loadBalancer.loadBalancerIP }}
+{{- end }}
 {{- else if .Values.serviceType.nodePort.enabled }}
   type: NodePort
 {{- end }}

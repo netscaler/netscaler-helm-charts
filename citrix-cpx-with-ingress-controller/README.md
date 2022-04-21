@@ -473,6 +473,8 @@ The following table lists the configurable parameters of the Citrix ADC CPX with
 | affinity | Optional | N/A | Affinity labels for pod assignment. |
 | tolerations | Optional | N/A | Specify the tolerations for the CPX-CIC deployment. |
 | serviceType.loadBalancer.enabled | Optional | False | Set this argument if you want servicetype of CPX service to be LoadBalancer. |
+| serviceType.loadBalancer.externalTrafficPolicy | Optional | Cluster | Use this parameter to provide externalTrafficPolicy for CPX service of type LoadBalancer. |
+| serviceType.loadBalancer.loadBalancerIP | Optional | N/A | Use this parameter to provide LoadBalancer IP to CPX service of type LoadBalancer. |
 | serviceType.nodePort.enabled | Optional | False | Set this argument if you want servicetype of CPX service to be NodePort. |
 | serviceType.nodePort.httpPort | Optional | N/A | Specify the HTTP nodeport to be used for NodePort CPX service. |
 | serviceType.nodePort.httpsPort | Optional | N/A | Specify the HTTPS nodeport to be used for NodePort CPX service. |

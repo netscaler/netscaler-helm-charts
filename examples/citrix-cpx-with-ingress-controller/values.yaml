@@ -6,10 +6,9 @@
 image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-83.27
 pullPolicy: IfNotPresent
 imagePullSecrets: []
-
+replicaCount: 1
 nameOverride: ""
 fullnameOverride: ""
-replicaCount: 1
 mgmtHttpPort: 9080
 mgmtHttpsPort: 9443
 openshift: false
@@ -52,7 +51,8 @@ tolerations: []
 serviceType:
   loadBalancer:
     enabled: False
-    externalTrafficPolicy: "Local"
+    externalTrafficPolicy: "Cluster"
+    loadBalancerIP:
   nodePort:
     enabled: False
     httpPort:
