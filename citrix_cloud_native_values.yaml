@@ -144,8 +144,6 @@ cpx:
   serviceType:
     loadBalancer:
       enabled: False
-      externalTrafficPolicy: "Cluster"
-      loadBalancerIP:
     nodePort:
       enabled: False
       httpPort:
@@ -154,7 +152,9 @@ cpx:
   serviceAnnotations: {}
 
   serviceSpec:
-    loadBalancerSourceRanges:
+    externalTrafficPolicy: "Cluster"
+    loadBalancerIP:
+    loadBalancerSourceRanges: []
 
   servicePorts: []
 

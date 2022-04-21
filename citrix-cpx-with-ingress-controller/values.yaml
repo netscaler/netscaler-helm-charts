@@ -51,8 +51,6 @@ tolerations: []
 serviceType:
   loadBalancer:
     enabled: False
-    externalTrafficPolicy: "Cluster"
-    loadBalancerIP:
   nodePort:
     enabled: False
     httpPort:
@@ -61,6 +59,8 @@ serviceType:
 serviceAnnotations: {}
 
 serviceSpec:
+  externalTrafficPolicy: "Cluster"
+  loadBalancerIP:
   loadBalancerSourceRanges: []
 
 servicePorts: []
