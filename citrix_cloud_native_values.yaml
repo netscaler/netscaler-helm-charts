@@ -144,7 +144,6 @@ cpx:
   serviceType:
     loadBalancer:
       enabled: False
-      externalTrafficPolicy: "Local"
     nodePort:
       enabled: False
       httpPort:
@@ -153,7 +152,9 @@ cpx:
   serviceAnnotations: {}
 
   serviceSpec:
-    loadBalancerSourceRanges:
+    externalTrafficPolicy: "Cluster"
+    loadBalancerIP:
+    loadBalancerSourceRanges: []
 
   servicePorts: []
 
@@ -499,9 +500,10 @@ ipam:
   vipRange:
 
 ao:
-  image: quay.io/citrix/adm-agent-onboarding:1.0.0
+  image: quay.io/citrix/adm-agent-onboarding:1.1.0
   pullPolicy: IfNotPresent
   token:
+  cloudUrl: https://adm.cloud.com
 
   admAgent:
     name: admagent

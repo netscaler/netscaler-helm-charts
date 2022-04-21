@@ -19,6 +19,7 @@ spec:
       name: {{ include "citrix-cpx-ingress-controller.fullname" . }}
       labels:
         app: {{ include "citrix-cpx-ingress-controller.fullname" . }}
+        adc: "citrix"
 {{- with .Values.podAnnotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
@@ -256,7 +257,7 @@ spec:
             - mountPath: /var/deviceinfo
               name: shared-data
           resources:
-              {{- toYaml .Values.exporter.resources | nindent 12 }}
+            {{- toYaml .Values.exporter.resources | nindent 12 }}
 {{- end }}
       volumes:
         - name: shared-data
@@ -310,12 +311,16 @@ metadata:
 {{- end }}
 spec:
 {{- if or .Values.serviceType.loadBalancer.enabled ( and (.Values.updateIngressStatus) (not .Values.cpxBgpRouter)) }}
-  externalTrafficPolicy: {{ .Values.serviceType.loadBalancer.externalTrafficPolicy }}
+  externalTrafficPolicy: {{ .Values.serviceSpec.externalTrafficPolicy }}
   type: LoadBalancer
+{{- if .Values.serviceSpec.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.serviceSpec.loadBalancerIP }}
+{{- end }}
 {{- else if .Values.serviceType.nodePort.enabled }}
   type: NodePort
+  externalTrafficPolicy: {{ .Values.serviceSpec.externalTrafficPolicy }}
 {{- end }}
-{{- if .Values.serviceSpec.loadBalancerSourceRanges }}
+{{- if and .Values.serviceType.loadBalancer.enabled .Values.serviceSpec.loadBalancerSourceRanges }}
   loadBalancerSourceRanges:
 {{- range .Values.serviceSpec.loadBalancerSourceRanges}}
     - {{.}}
