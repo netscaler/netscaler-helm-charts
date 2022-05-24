@@ -3,10 +3,10 @@
 Analytics Server IP or DNS
 */}}
 {{- define "analytics.server" -}}
-{{- if .Values.coeConfig.endpoint.server -}}
-{{- printf .Values.coeConfig.endpoint.server -}}
+{{- if .Values.analyticsConfig.endpoint.server -}}
+{{- printf .Values.analyticsConfig.endpoint.server -}}
 {{- else -}}
-{{- printf "coe.%s.svc.cluster.local" .Release.Namespace -}}
+{{- printf "analytics.%s.svc.cluster.local" .Release.Namespace -}}
 {{- end -}}
 {{- end -}}
 

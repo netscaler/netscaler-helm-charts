@@ -3,8 +3,8 @@
 Analytics Server IP or DNS
 */}}
 {{- define "analytics.server" -}}
-{{- if .Values.coeConfig.endpoint.server -}}
-{{- printf .Values.coeConfig.endpoint.server -}}
+{{- if .Values.analyticsConfig.endpoint.server -}}
+{{- printf .Values.analyticsConfig.endpoint.server -}}
 {{- else -}}
 {{- $addresses := first (first (lookup "v1" "Node" "" "").items).status.addresses -}}
 {{- printf "%s" ($addresses).address -}}

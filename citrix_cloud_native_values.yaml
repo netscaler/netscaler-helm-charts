@@ -1,7 +1,7 @@
 cic:
   enabled: False
 
-  image: quay.io/citrix/citrix-k8s-ingress-controller:1.24.4
+  image: quay.io/citrix/citrix-k8s-ingress-controller:1.25.6
   pullPolicy: IfNotPresent
   imagePullSecrets: []
   nameOverride: ""
@@ -15,6 +15,7 @@ cic:
     accept: no
   nsPort: 443
   nsProtocol: HTTPS
+  nitroReadTimeout:
   logLevel: INFO
   jsonLog: false
   entityPrefix:
@@ -54,13 +55,14 @@ cic:
     install: false
     retainOnDelete: false
 
-  coeConfig:
+  analyticsConfig:
     required: false
     distributedTracing:
       enable: false
       samplingrate: 100
     endpoint:
       server:
+      service:
     timeseries:
       port: 30002
       metrics:
@@ -74,6 +76,11 @@ cic:
       enable: false
       port: 30001
 
+  nsLbHashAlgo:
+    required: false
+    hashFingers: 256
+    hashAlgorithm: 'DEFAULT'
+
   serviceAccount:
     create: true
 
@@ -86,7 +93,7 @@ cic:
 mcIngress:
   enabled: False
 
-  image: quay.io/citrix/citrix-k8s-ingress-controller:1.24.4
+  image: quay.io/citrix/citrix-k8s-ingress-controller:1.25.6
   pullPolicy: IfNotPresent
   openshift: false
   localRegion:
@@ -95,6 +102,7 @@ mcIngress:
     accept: no
   nsPort: 443
   nsProtocol: HTTPS
+  nitroReadTimeout:
   logLevel: INFO
   entityPrefix:
   disableAPIServerCertVerify: False
@@ -159,7 +167,7 @@ cpx:
   servicePorts: []
 
   cic:
-    image: quay.io/citrix/citrix-k8s-ingress-controller:1.24.4
+    image: quay.io/citrix/citrix-k8s-ingress-controller:1.25.6
     pullPolicy: IfNotPresent
     required: true
     resources: {}
@@ -168,6 +176,7 @@ cpx:
     accept: no
   ingressClass:
   setAsDefaultIngressClass: False
+  nitroReadTimeout:
   logLevel: INFO
   jsonLog: false
   defaultSSLCertSecret:
@@ -199,13 +208,14 @@ cpx:
     install: false
     retainOnDelete: false
 
-  coeConfig:
+  analyticsConfig:
     required: false
     distributedTracing:
       enable: false
       samplingrate: 100
     endpoint:
       server:
+      service:
     timeseries:
       port: 5563
       metrics:
@@ -229,6 +239,11 @@ cpx:
           remoteAS: 100
           advertisementInterval: 10
           ASOriginationInterval: 10
+
+  nsLbHashAlgo:
+    required: false
+    hashFingers: 256
+    hashAlgorithm: 'DEFAULT'
 
   serviceAccount:
     create: true

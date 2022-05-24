@@ -1,4 +1,3 @@
-
 # Observability using Citrix ADM for Citrix ADC deployed in dual tier topology
 
 The aim of this example is to help visualising the request flow between different microservices using Citrix ADM.
@@ -134,7 +133,7 @@ Download the consolidated YAML file which can deploy Citrix ingress controller t
 
 Update `cic.nsIP` with the Citrix ADC device/management IP address in `values.yaml`.
 
-**Update**  `cic.coeConfig.endpoint.server` with the `Citrix ADM agent POD IP` in `values.yaml`.
+**Update**  `cic.analyticsConfig.endpoint.server` with the `Citrix ADM agent POD IP` in `values.yaml`.
 
 To get the Citrix ADM Agent pod IP address, use the following command:
 
@@ -148,7 +147,7 @@ Use the following command to list the service IP address for Citrix ADM Agent.
 
     kubectl get svc admagent -o wide 
 
-Update the `cpx.coeConfig.endpoint.server`  and `ADMIP` with the `Cluster IP` of Citrix ADM agent in `values.yaml`.
+Update the `cpx.analyticsConfig.endpoint.server`  and `ADMIP` with the `Cluster IP` of Citrix ADM agent in `values.yaml`.
 
 After updating the `values.yaml`, deploy Citrix dual Tier deployment using the following commands:
   

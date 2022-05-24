@@ -48,6 +48,10 @@ spec:
           value: "{{ .Values.nsProtocol }}"
         - name: "NS_PORT"
           value: "{{ .Values.nsPort }}"
+{{- if .Values.nitroReadTimeout }}
+        - name: "NS_NITRO_READ_TIMEOUT"
+          value: "{{ .Values.nitroReadTimeout }}"
+{{- end }} 
         - name: "LOCAL_REGION"
           value: {{ .Values.localRegion }}
         - name: "LOCAL_CLUSTER"

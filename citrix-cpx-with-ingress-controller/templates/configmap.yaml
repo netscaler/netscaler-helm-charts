@@ -29,25 +29,25 @@ data:
   NS_COOKIE_VERSION: {{ .Values.nsCookieVersion | quote }}
 {{- end }}
 
-{{- if .Values.coeConfig.required }}
+{{- if .Values.analyticsConfig.required }}
   NS_ANALYTICS_CONFIG: |
     distributed_tracing:
-      enable: {{ .Values.coeConfig.distributedTracing.enable | quote }}
-      samplingrate: {{ .Values.coeConfig.distributedTracing.samplingrate }}
+      enable: {{ .Values.analyticsConfig.distributedTracing.enable | quote }}
+      samplingrate: {{ .Values.analyticsConfig.distributedTracing.samplingrate }}
     endpoint:
       server: {{ include "analytics.server" . | quote }}
     timeseries:
-      port: {{ .Values.coeConfig.timeseries.port }}
+      port: {{ .Values.analyticsConfig.timeseries.port }}
       metrics:
-        enable: {{ .Values.coeConfig.timeseries.metrics.enable | quote }}
-        mode: {{ .Values.coeConfig.timeseries.metrics.mode | quote }}
+        enable: {{ .Values.analyticsConfig.timeseries.metrics.enable | quote }}
+        mode: {{ .Values.analyticsConfig.timeseries.metrics.mode | quote }}
       auditlogs:
-        enable: {{ .Values.coeConfig.timeseries.auditlogs.enable | quote }}
+        enable: {{ .Values.analyticsConfig.timeseries.auditlogs.enable | quote }}
       events:
-        enable: {{ .Values.coeConfig.timeseries.events.enable | quote }}
+        enable: {{ .Values.analyticsConfig.timeseries.events.enable | quote }}
     transactions:
-      enable: {{ .Values.coeConfig.transactions.enable | quote }}
-      port: {{ .Values.coeConfig.transactions.port }}
+      enable: {{ .Values.analyticsConfig.transactions.enable | quote }}
+      port: {{ .Values.analyticsConfig.transactions.port }}
 {{- end }}
 
 {{- if .Values.cpxBgpRouter }}
@@ -58,4 +58,10 @@ data:
 {{ toYaml . | indent 4 }}
 {{- end }}
 {{- end }}
+{{- end }}
+
+{{- if .Values.nsLbHashAlgo.required }}
+  NS_LB_HASH_ALGO: |
+    hashFingers: {{ .Values.nsLbHashAlgo.hashFingers }}
+    hashAlgorithm: {{ .Values.nsLbHashAlgo.hashAlgorithm | quote }}
 {{- end }}

@@ -32,6 +32,9 @@ nsGateway: 192.168.1.1
 # Protocol used for communication between Citrix Ingress Controller sidecar and Citrix CPX
 nsProtocol: http
 
+# nitroReadTimeout is timeout value in seconds for nitro api read timeout(default is 20)
+nitroReadTimeout:
+
 # External IP for ingress resource when bgpRouter is set to True
 ingressIP:
 
@@ -67,7 +70,7 @@ servicePorts: []
 
 # Citrix Ingress Controller config details
 cic:
-  image: quay.io/citrix/citrix-k8s-ingress-controller:1.24.4
+  image: quay.io/citrix/citrix-k8s-ingress-controller:1.25.6
   pullPolicy: IfNotPresent
   required: true
   resources: {}
@@ -133,7 +136,7 @@ crds:
   retainOnDelete: false
 
 # Config required to be done by Citrix Ingress Controller for sending metrics to Citrix Observability Exporter
-coeConfig:
+analyticsConfig:
   required: false
   distributedTracing:
     enable: false
@@ -168,6 +171,11 @@ bgpSettings:
         remoteAS: 100
         advertisementInterval: 10
         ASOriginationInterval: 10
+
+nsLbHashAlgo:
+  required: false
+  hashFingers: 256
+  hashAlgorithm: 'DEFAULT'
 
 # Specifies whether a ServiceAccount should be created
 serviceAccount:
