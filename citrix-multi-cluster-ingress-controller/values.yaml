@@ -3,7 +3,7 @@
 # Declare variables to be passed into your templates.
 
 # image contains information needed to fetch CIC image
-image: quay.io/citrix/citrix-k8s-ingress-controller:1.24.4
+image: quay.io/citrix/citrix-k8s-ingress-controller:1.25.6
 pullPolicy: IfNotPresent
 # openshift is set to true if charts are being deployed in OpenShift environment.
 openshift: false
@@ -13,6 +13,8 @@ license:
 nsPort: 443
 # nsProtocol is protocol for NetScaler NITRO
 nsProtocol: HTTPS
+# nitroReadTimeout is timeout value in seconds for nitro api read timeout(default is 20)
+nitroReadTimeout:
 # logLevel is to set level of CIC Logs
 logLevel: INFO
 # entityPrefix is the prefix for the resources on the Citrix ADC

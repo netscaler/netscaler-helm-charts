@@ -87,7 +87,7 @@ The following table lists the configurable parameters of the Citrix ADC CPX with
 | license.accept | Mandatory | no | Set `yes` to accept the Citrix ingress controller end user license agreement. |
 | image | Mandatory | `quay.io/citrix/citrix-k8s-cpx-ingress:13.0-83.27` | The Citrix ADC CPX image. |
 | pullPolicy | Mandatory | IfNotPresent | The Citrix ADC CPX image pull policy. |
-| cic.image | Mandatory | `quay.io/citrix/citrix-k8s-ingress-controller:1.24.4` | The Citrix ingress controller image. |
+| cic.image | Mandatory | `quay.io/citrix/citrix-k8s-ingress-controller:1.25.6` | The Citrix ingress controller image. |
 | cic.pullPolicy | Mandatory | IfNotPresent | The Citrix ingress controller image pull policy. |
 | cic.required | Mandatory | true | CIC to be run as sidecar with Citrix ADC CPX |
 | cic.resources | Optional | {} |	CPU/Memory resource requests/limits for Citrix Ingress Controller container |
@@ -102,6 +102,7 @@ The following table lists the configurable parameters of the Citrix ADC CPX with
 | nsCookieVersion | Optional | 0 | Specify the persistence cookie version (0 or 1). |
 | logProxy | Optional | N/A | Provide Elasticsearch or Kafka or Zipkin endpoint for Citrix observability exporter. |
 | nsProtocol | Optional | http | Protocol http or https used for the communication between Citrix Ingress Controller and CPX |
+| nitroReadTimeout | Optional | 20 | The nitro Read timeout in seconds, defaults to 20 |
 | cpxBgpRouter | Optional | false| If set to true, this CPX is deployed as daemonset in BGP controller mode wherein BGP advertisements are done for attracting external traffic to Kubernetes clusters |
 | nsIP | Optional | 192.168.1.2 | NSIP used by CPX for internal communication when run in Host mode, i.e when cpxBgpRouter is set to true. A /24 internal network is created in this IP range which is used for internal communications withing the network namespace. |
 | nsGateway | Optional | 192.168.1.1 | Gateway used by CPX for internal communication when run in Host mode, i.e when cpxBgpRouter is set to true. If not specified, first IP in the nsIP network is used as gateway. It must be in same network as nsIP |
@@ -142,22 +143,24 @@ bels | Optional | N/A | You can use this parameter to provide the route labels s
 | exporter.image | Optional | `quay.io/citrix/citrix-adc-metrics-exporter:1.4.9` | The Exporter for Citrix ADC Stats image. |
 | exporter.pullPolicy | Optional | IfNotPresent | The Exporter for Citrix ADC Stats image pull policy. |
 | exporter.ports.containerPort | Optional | 8888 | The Exporter for Citrix ADC Stats container port. |
-| exporter.resources | Optional | {} |	CPU/Memory resource requests/limits for Metrics exporter container |
-| coeConfig.required | Mandatory | false | Set this to true if you want to configure Citrix ADC to send metrics and transaction records to COE. |
-| coeConfig.distributedTracing.enable | Optional | false | Set this value to true to enable OpenTracing in Citrix ADC. |
-| coeConfig.distributedTracing.samplingrate | Optional | 100 | Specifies the OpenTracing sampling rate in percentage. |
-| coeConfig.endpoint.server | Optional | N/A | Set this value as the IP address or DNS address of the  analytics server. |
-| coeConfig.timeseries.port | Optional | 5563 | Specify the port used to expose COE service for timeseries endpoint. |
-| coeConfig.timeseries.metrics.enable | Optional | Set this value to true to enable sending metrics from Citrix ADC. |
-| coeConfig.timeseries.metrics.mode | Optional | avro |  Specifies the mode of metric endpoint. |
-| coeConfig.timeseries.auditlogs.enable | Optional | false | Set this value to true to export audit log data from Citrix ADC. |
-| coeConfig.timeseries.events.enable | Optional | false | Set this value to true to export events from the Citrix ADC. |
-| coeConfig.transactions.enable | Optional | false | Set this value to true to export transactions from Citrix ADC. |
-| coeConfig.transactions.port | Optional | 5557 | Specify the port used to expose COE service for transaction endpoint. |
+| analyticsConfig.required | Mandatory | false | Set this to true if you want to configure Citrix ADC to send metrics and transaction records to analytics service. |
+| analyticsConfig.distributedTracing.enable | Optional | false | Set this value to true to enable OpenTracing in Citrix ADC. |
+| analyticsConfig.distributedTracing.samplingrate | Optional | 100 | Specifies the OpenTracing sampling rate in percentage. |
+| analyticsConfig.endpoint.server | Optional | N/A | Set this value as the IP address or DNS address of the  analytics server. |
+| analyticsConfig.timeseries.port | Optional | 5563 | Specify the port used to expose analytics service for timeseries endpoint. |
+| analyticsConfig.timeseries.metrics.enable | Optional | Set this value to true to enable sending metrics from Citrix ADC. |
+| analyticsConfig.timeseries.metrics.mode | Optional | avro |  Specifies the mode of metric endpoint. |
+| analyticsConfig.timeseries.auditlogs.enable | Optional | false | Set this value to true to export audit log data from Citrix ADC. |
+| analyticsConfig.timeseries.events.enable | Optional | false | Set this value to true to export events from the Citrix ADC. |
+| analyticsConfig.transactions.enable | Optional | false | Set this value to true to export transactions from Citrix ADC. |
+| analyticsConfig.transactions.port | Optional | 5557 | Specify the port used to expose analytics service for transaction endpoint. |
 | crds.install | Optional | False | Unset this argument if you don't want to install CustomResourceDefinitions which are consumed by CIC. |
 | crds.retainOnDelete | Optional | false | Set this argument if you want to retain CustomResourceDefinitions even after uninstalling CIC. This will avoid data-loss of Custom Resource Objects created before uninstallation. |
 | bgpSettings.required | Optional | false | Set this argument if you want to enable BGP configurations for exposing service of Type Loadbalancer through BGP fabric|
 | bgpSettings.bgpConfig | Optional| N/A| This represents BGP configurations in YAML format. For the description about individual fields, please refer the [documentation](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/network/cpx-bgp-router.md) |
+| nsLbHashAlgo.required | Optional | false | Set this value to set the LB consistent hashing Algorithm |
+| nsLbHashAlgo.hashFingers | Optional | 256 | Specifies the number of fingers to be used for hashing algorithm. Possible values are from 1 to 1024, Default value is 256 |
+| nsLbHashAlgo.hashAlgorithm | Optional | 'default' | Specifies the supported algorithm. Supported algorithms are "default", "jarh", "prac", Default value is 'default' |
 
 > **Tip:**
 >

@@ -10,7 +10,7 @@ cic:
   ingressClass:
     - netflix-vpx
   logLevel: INFO
-  coeConfig: 
+  analyticsConfig:
     required: true
     timeseries:
       port: 5563
@@ -37,7 +37,7 @@ cpx:
   ADMSettings:
     ADMIP: X.X.X.X
     loginSecret: admlogin
-  coeConfig:
+  analyticsConfig:
     required: true
     timeseries:
       port: 5563

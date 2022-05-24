@@ -3,7 +3,7 @@
 # Declare variables to be passed into your templates.
 
 # Citrix Ingress Controller config details
-image: quay.io/citrix/citrix-k8s-ingress-controller:1.24.4
+image: quay.io/citrix/citrix-k8s-ingress-controller:1.25.6
 pullPolicy: IfNotPresent
 imagePullSecrets: []
 nameOverride: ""
@@ -17,6 +17,8 @@ license:
    accept: no
 nsPort: 443
 nsProtocol: HTTPS
+# nitroReadTimeout is timeout value in seconds for nitro api read timeout(default is 20)
+nitroReadTimeout:
 logLevel: INFO
 jsonLog: false 
 entityPrefix:
@@ -71,13 +73,14 @@ crds:
   retainOnDelete: false
 
 # Config required to be done by Citrix Ingress Controller for sending metrics to Citrix Observability Exporter
-coeConfig:
+analyticsConfig:
   required: false
   distributedTracing:
     enable: false
     samplingrate: 100
   endpoint:
     server:
+    service:
   timeseries:
     port: 30002
     metrics:
@@ -90,6 +93,11 @@ coeConfig:
   transactions:
     enable: false
     port: 30001
+
+nsLbHashAlgo:
+  required: false
+  hashFingers: 256
+  hashAlgorithm: 'DEFAULT'
 
 # Specifies whether a ServiceAccount should be created
 serviceAccount:

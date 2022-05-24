@@ -166,6 +166,10 @@ spec:
           - name: "NS_VIP"
             value: {{ .Values.ingressIP | quote }}
 {{- end }}
+{{- if .Values.nitroReadTimeout }}
+          - name: "NS_NITRO_READ_TIMEOUT"
+            value: "{{ .Values.nitroReadTimeout }}"
+{{- end }}  
           - name: POD_NAME
             valueFrom:
               fieldRef:

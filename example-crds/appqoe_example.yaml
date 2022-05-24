@@ -1,0 +1,15 @@
+apiVersion: citrix.com/v1
+kind: appqoepolicy
+metadata:
+  name: targeturlappqoe
+spec:
+  appqoe-policies:
+    - servicenames:
+        - appqoesvc
+      appqoe-policy:
+        operation-retry:
+          on-reset: 'YES'
+          on-timeout: 33
+        number-of-retries: 2
+        appqoe-criteria: 'HTTP.REQ.HEADER("User-Agent").CONTAINS("Android")'
+        direction: REQUEST
