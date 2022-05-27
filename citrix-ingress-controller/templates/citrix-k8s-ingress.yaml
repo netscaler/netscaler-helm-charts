@@ -55,7 +55,7 @@ spec:
             {{ .Release.Namespace }}/{{ .Values.defaultSSLCertSecret }}
 {{- end }}
 {{- if .Values.ingressClass }}
-          - --ingress-class
+          - --ingress-classes
 {{- range .Values.ingressClass}}
             {{.}}
 {{- end }}
