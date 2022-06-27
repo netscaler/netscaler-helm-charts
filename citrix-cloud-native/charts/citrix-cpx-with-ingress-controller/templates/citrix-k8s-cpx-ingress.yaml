@@ -216,7 +216,7 @@ spec:
               kube-bgp-router
 {{- end }}
 {{- if .Values.ingressClass }}
-            - --ingress-class
+            - --ingress-classes
 {{- range .Values.ingressClass}}
               {{.}}
 {{- end }}
