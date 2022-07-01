@@ -314,7 +314,7 @@ The following table lists the mandatory and optional parameters that you can con
 | --------- | --------------------- | ------------- | ----------- |
 | cic.enabled | Mandatory | False | Set to "True" for deploying Citrix Ingress Controller for Citrix ADC VPX/MPX. |
 | cic.license.accept | Mandatory | no | Set `yes` to accept the CIC end user license agreement. |
-| cic.image | Mandatory | `quay.io/citrix/citrix-k8s-ingress-controller:1.25.6` | The CIC image. |
+| cic.image | Mandatory | `quay.io/citrix/citrix-k8s-ingress-controller:1.26.7` | The CIC image. |
 | cic.pullPolicy | Mandatory | IfNotPresent | The CIC image pull policy. |
 | cic.imagePullSecrets | Optional | N/A | Provide list of Kubernetes secrets to be used for pulling the images from a private Docker registry or repository. For more information on how to create this secret please see [Pull an Image from a Private Registry](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/). |
 | cic.nameOverride | Optional | N/A | String to partially override deployment fullname template with a string (will prepend the release name) |
