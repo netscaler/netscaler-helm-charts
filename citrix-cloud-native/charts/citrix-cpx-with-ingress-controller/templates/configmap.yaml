@@ -28,6 +28,9 @@ data:
 {{- if ne (toString .Values.nsCookieVersion) "0" }}
   NS_COOKIE_VERSION: {{ .Values.nsCookieVersion | quote }}
 {{- end }}
+{{- if .Values.nsDnsNameserver }}
+  NS_DNS_NAMESERVER: {{ .Values.nsDnsNameserver }}
+{{- end }}
 
 {{- if .Values.analyticsConfig.required }}
   NS_ANALYTICS_CONFIG: |

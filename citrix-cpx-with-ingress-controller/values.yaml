@@ -14,6 +14,9 @@ mgmtHttpsPort: 9443
 openshift: false
 nsHTTP2ServerSide: "OFF"
 nsCookieVersion: "0"
+nsConfigDnsRec:
+nsSvcLbDnsRec:
+nsDnsNameserver:
 
 routeLabels:
 namespaceLabels:
