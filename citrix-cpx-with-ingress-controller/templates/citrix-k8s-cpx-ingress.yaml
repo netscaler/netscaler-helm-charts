@@ -193,6 +193,14 @@ spec:
           - name: "DISABLE_OPENSHIFT_ROUTES"
             value: "{{ .Values.disableOpenshiftRoutes }}"
 {{- end }}
+{{- if .Values.nsConfigDnsRec }}
+          - name: "NS_CONFIG_DNS_REC"
+            value: "{{ .Values.nsConfigDnsRec }}"
+{{- end }}
+{{- if .Values.nsSvcLbDnsRec }}
+          - name: "NS_SVC_LB_DNS_REC"
+            value: "{{ .Values.nsSvcLbDnsRec }}"
+{{- end }}
 {{- if .Values.cpxBgpRouter }}
           securityContext:
             runAsUser: 0

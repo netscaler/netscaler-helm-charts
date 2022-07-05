@@ -3,7 +3,7 @@
 # Declare variables to be passed into your templates.
 
 # Citrix Ingress Controller config details
-image: quay.io/citrix/citrix-k8s-ingress-controller:1.25.6
+image: quay.io/citrix/citrix-k8s-ingress-controller:1.26.7
 pullPolicy: IfNotPresent
 imagePullSecrets: []
 nameOverride: ""
@@ -43,6 +43,9 @@ tolerations: []
 updateIngressStatus: True
 nsHTTP2ServerSide: "OFF"
 nsCookieVersion: "0"
+nsConfigDnsRec:
+nsSvcLbDnsRec:
+nsDnsNameserver:
 
 routeLabels:
 namespaceLabels:

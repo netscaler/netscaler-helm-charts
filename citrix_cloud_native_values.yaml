@@ -1,7 +1,7 @@
 cic:
   enabled: False
 
-  image: quay.io/citrix/citrix-k8s-ingress-controller:1.25.6
+  image: quay.io/citrix/citrix-k8s-ingress-controller:1.26.7
   pullPolicy: IfNotPresent
   imagePullSecrets: []
   nameOverride: ""
@@ -38,6 +38,9 @@ cic:
   updateIngressStatus: True
   nsHTTP2ServerSide: "OFF"
   nsCookieVersion: "0"
+  nsConfigDnsRec:
+  nsSvcLbDnsRec:
+  nsDnsNameserver:
 
   routeLabels:
   namespaceLabels:
@@ -93,7 +96,7 @@ cic:
 mcIngress:
   enabled: False
 
-  image: quay.io/citrix/citrix-k8s-ingress-controller:1.25.6
+  image: quay.io/citrix/citrix-k8s-ingress-controller:1.26.7
   pullPolicy: IfNotPresent
   openshift: false
   localRegion:
@@ -167,7 +170,7 @@ cpx:
   servicePorts: []
 
   cic:
-    image: quay.io/citrix/citrix-k8s-ingress-controller:1.25.6
+    image: quay.io/citrix/citrix-k8s-ingress-controller:1.26.7
     pullPolicy: IfNotPresent
     required: true
     resources: {}
@@ -239,6 +242,8 @@ cpx:
           remoteAS: 100
           advertisementInterval: 10
           ASOriginationInterval: 10
+
+  bgpPort: 
 
   nsLbHashAlgo:
     required: false
