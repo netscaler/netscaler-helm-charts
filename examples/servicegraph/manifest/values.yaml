@@ -24,7 +24,7 @@ cic:
       enable: true
       port: 5557
     endpoint:
-      server: X.X.X.X
+      service: <namespace>/<service_name>
   nodeWatch: false
 cpx:
   enabled: true
@@ -48,6 +48,6 @@ cpx:
       enable: true
       samplingrate: 100
     endpoint:
-      server: X.X.X.X
+      service: <namespace>/<service_name>
   ingressClass:
     - netflix-cpx

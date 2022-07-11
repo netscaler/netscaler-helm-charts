@@ -133,11 +133,7 @@ Download the consolidated YAML file which can deploy Citrix ingress controller t
 
 Update `cic.nsIP` with the Citrix ADC device/management IP address in `values.yaml`.
 
-**Update**  `cic.analyticsConfig.endpoint.server` with the `Citrix ADM agent POD IP` in `values.yaml`.
-
-To get the Citrix ADM Agent pod IP address, use the following command:
-
-    kubectl get endpoints admagent
+**Update**  `cic.analyticsConfig.endpoint.service` with the `Citrix ADM service name with namespace as "namespace/service_name>" eg: default/adm-svc` in `values.yaml`.
 
 ## To configure the Tier-2 ADC CPX using CIC:
 
@@ -147,7 +143,7 @@ Use the following command to list the service IP address for Citrix ADM Agent.
 
     kubectl get svc admagent -o wide 
 
-Update the `cpx.analyticsConfig.endpoint.server`  and `ADMIP` with the `Cluster IP` of Citrix ADM agent in `values.yaml`.
+Update the `cpx.analyticsConfig.endpoint.service` with the `Citrix ADM service name with namespace as "namespace/service_name>" eg: default/adm-svc` and `ADMIP` with the `Cluster IP` of Citrix ADM agent in `values.yaml`.
 
 After updating the `values.yaml`, deploy Citrix dual Tier deployment using the following commands:
   
