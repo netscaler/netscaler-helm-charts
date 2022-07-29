@@ -39,6 +39,7 @@ data:
       samplingrate: {{ .Values.analyticsConfig.distributedTracing.samplingrate }}
     endpoint:
       server: {{ include "analytics.server" . | quote }}
+      service: {{ .Values.analyticsConfig.endpoint.service | quote }}
     timeseries:
       port: {{ .Values.analyticsConfig.timeseries.port }}
       metrics:

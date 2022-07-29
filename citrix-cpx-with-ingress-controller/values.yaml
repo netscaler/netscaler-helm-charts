@@ -145,6 +145,7 @@ analyticsConfig:
     samplingrate: 100
   endpoint:
     server:
+    service:
   timeseries:
     port: 5563
     metrics:
