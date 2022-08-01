@@ -277,12 +277,13 @@ iaIngress:
     imagePullPolicy: IfNotPresent
 
   xDSAdaptor:
-    image: quay.io/citrix/citrix-xds-adaptor:0.10.1
+    image: quay.io/citrix/citrix-xds-adaptor:0.10.3
     imagePullPolicy: IfNotPresent
     proxyType: router
     secureConnect: true
     logLevel: DEBUG
     jsonLog: false
+    defaultSSLListenerOn443: true
 
   istioPilot:
     name: istiod
@@ -302,7 +303,7 @@ iaIngress:
 
   ingressGateway:
     netscalerUrl: null
-    image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-83.27
+    image: quay.io/citrix/citrix-k8s-cpx-ingress:13.1-27.59
     imagePullPolicy: IfNotPresent
     EULA: NO
     mgmtHttpPort: 10080
@@ -368,17 +369,18 @@ iaEgress:
     jwtPolicy: #specify third-party-jwt if Kubernetes cluster supports third-party tokens
 
   xDSAdaptor:
-    image: quay.io/citrix/citrix-xds-adaptor:0.10.1
+    image: quay.io/citrix/citrix-xds-adaptor:0.10.3
     imagePullPolicy: IfNotPresent
     proxyType: router
     secureConnect: true
     logLevel: DEBUG
     jsonLog: false
+    defaultSSLListenerOn443: true
 
 
   egressGateway:
     netscalerUrl: null
-    image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-83.27
+    image: quay.io/citrix/citrix-k8s-cpx-ingress:13.1-27.59
     imagePullPolicy: IfNotPresent
     EULA: false
     mgmtHttpPort: 10080
@@ -405,12 +407,13 @@ iaSidecar:
   enabled: False
 
   xDSAdaptor:
-    image: quay.io/citrix/citrix-xds-adaptor:0.10.1
+    image: quay.io/citrix/citrix-xds-adaptor:0.10.3
     imagePullPolicy: IfNotPresent
     proxyType: sidecar
     secureConnect: true
     logLevel: DEBUG
     jsonLog: false
+    defaultSSLListenerOn443: true
 
   coe:
     coeURL:
@@ -433,7 +436,7 @@ iaSidecar:
 
   cpxProxy:
     netscalerUrl: "http://127.0.0.1"
-    image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-83.27
+    image: quay.io/citrix/citrix-k8s-cpx-ingress:13.1-27.59
     imagePullPolicy: IfNotPresent
     EULA: NO
     cpxSidecarMode: YES

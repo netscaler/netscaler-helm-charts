@@ -41,7 +41,8 @@ Below table provides info about recommended Citrix xDS-Adaptor version to be use
 
 | Citrix xDS-Adaptor version | Istio version |
 |----------------------------|---------------|
-| quay.io/citrix/citrix-xds-adaptor:0.10.1 | Istio v1.12+ |
+| quay.io/citrix/citrix-xds-adaptor:0.10.3 | Istio v1.14+ |
+| quay.io/citrix/citrix-xds-adaptor:0.10.1 | Istio v1.12 to Istio v1.13 |
 | quay.io/citrix/citrix-xds-adaptor:0.9.9 | Istio v1.10 to Istio v1.11 |
 | quay.io/citrix/citrix-xds-adaptor:0.9.8 | Istio v1.8 to Istio v1.9 |
 | quay.io/citrix/citrix-xds-adaptor:0.9.5 | Istio v1.6 |
@@ -241,11 +242,12 @@ The following table lists the configurable parameters and their default values i
 | Parameter                      | Description                   | Default                   |
 |--------------------------------|-------------------------------|---------------------------|
 | `iaSidecar.enabled` | Mandatory | False | Set to "True" for deploying Citrix ADC CPX as a sidecar in Istio environment. |
-| `iaSidecar.xDSadaptor.image`                    | Image of the Citrix xDS Adaptor container                    |  quay.io/citrix/citrix-xds-adaptor:0.10.1   |
+| `iaSidecar.xDSadaptor.image`                    | Image of the Citrix xDS Adaptor container                    |  quay.io/citrix/citrix-xds-adaptor:0.10.3   |
 | `iaSidecar.xDSadaptor.imagePullPolicy`   | Image pull policy for xDS-adaptor | IfNotPresent        |
 | `iaSidecar.xDSadaptor.secureConnect`     | If this value is set to true, xDS-adaptor establishes secure gRPC channel with Istio Pilot   | TRUE                       |
 | `iaSidecar.xDSAdaptor.logLevel`   | Log level to be set for xDS-adaptor log messages. Possible values: TRACE (most verbose), DEBUG, INFO, WARN, ERROR (least verbose) | DEBUG       | Optional|
 | `iaSidecar.xDSAdaptor.jsonLog`   | Set this argument to true if log messages are required in JSON format | false       | Optional|
+| `iaSidecar.xDSAdaptor.defaultSSLListenerOn443` | Create SSL vserver by default for LDS resource for 0.0.0.0 and port 443. If set to false, TCP vserver will be created in absence of TLSContext in tcp_proxy filter | true | Optional |
 | `iaSidecar.coe.coeURL`          | Name of [Citrix Observability Exporter](https://github.com/citrix/citrix-observability-exporter) Service in the form of _servicename.namespace_  | NIL            | Optional|
 | `iaSidecar.coe.coeTracing`          | Use COE to send appflow transactions to Zipkin endpoint. If it is set to true, ADM servicegraph (if configured) can be impacted.  | false           | Optional|
 | `iaSidecar.ADMSettings.ADMIP`     | Provide the Citrix Application Delivery Management (ADM) IP address | NIL                       |
@@ -260,7 +262,7 @@ The following table lists the configurable parameters and their default values i
 | `iaSidecar.istioPilot.proxyType`      | Type of Citrix ADC associated with the xDS-adaptor. Possible values are: sidecar and router.                                                                              |   sidecar|
 | `iaSidecar.istioPilot.SAN`                 | Subject alternative name for Istio Pilot which is the Secure Production Identity Framework For Everyone (SPIFFE) ID of Istio Pilot.                                   | null |
 | `iaSidecar.cpxProxy.netscalerUrl`   |    URL or IP address of the Citrix ADC which will be configured by xDS-adaptor.                                                            | http://127.0.0.1 |
-| `iaSidecar.cpxProxy.image`          | Citrix ADC CPX image used as sidecar proxy                                                                                                    | quay.io/citrix/citrix-k8s-cpx-ingress:13.0-83.27 |
+| `iaSidecar.cpxProxy.image`          | Citrix ADC CPX image used as sidecar proxy                                                                                                    | quay.io/citrix/citrix-k8s-cpx-ingress:13.1-27.59 |
 | `iaSidecar.cpxProxy.imagePullPolicy`           | Image pull policy for Citrix ADC                                                                                  | IfNotPresent                                                               |
 | `iaSidecar.cpxProxy.EULA`              |  End User License Agreement(EULA) terms and conditions. If yes, then user agrees to EULA terms and conditions.                                                     | NO |
 | `iaSidecar.cpxProxy.cpxSidecarMode`            | Environment variable for Citrix ADC CPX. It indicates that Citrix ADC CPX is running as sidecar mode or not.                                                                                               | YES                                                                    |

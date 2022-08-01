@@ -3,12 +3,13 @@
 # Declare variables to be passed into your templates.
 
 xDSAdaptor:
-    image: quay.io/citrix/citrix-xds-adaptor:0.10.1
+    image: quay.io/citrix/citrix-xds-adaptor:0.10.3
     imagePullPolicy: IfNotPresent
     proxyType: sidecar
     secureConnect: true
     logLevel: DEBUG
     jsonLog: false
+    defaultSSLListenerOn443: true
 
 coe:
     coeURL:
@@ -31,7 +32,7 @@ certProvider:
 
 cpxProxy:
     netscalerUrl: "http://127.0.0.1"
-    image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-83.27
+    image: quay.io/citrix/citrix-k8s-cpx-ingress:13.1-27.59
     imagePullPolicy: IfNotPresent
     EULA: NO
     cpxSidecarMode: YES
