@@ -75,7 +75,7 @@ The following table lists the mandatory and optional parameters that you can con
 | --------- | --------------------- | ------------- | ----------- |
 | coe.enabled | Mandatory | False | Set to "True" for deploying Citrix Observability Exporter. |
 | coe.license.accept | Mandatory | no | Set `yes` to accept the CIC end user license agreement. |
-| coe.image | Mandatory | `quay.io/citrix/citrix-observability-exporter:1.1.001` | The COE image. |
+| coe.image | Mandatory | `quay.io/citrix/citrix-observability-exporter:1.4.001` | The COE image. |
 | coe.pullPolicy | Mandatory | IfNotPresent | The COE image pull policy. |
 | coe.nodePortRequired | Optional | false | Set true to create a nodeport COE service. |
 | coe.headless | Optional | false | Set true to create Headless service. |
