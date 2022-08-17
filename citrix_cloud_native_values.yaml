@@ -486,7 +486,7 @@ cnc:
 
 coe:
   enabled: False
-  image: quay.io/citrix/citrix-observability-exporter:1.3.001
+  image: quay.io/citrix/citrix-observability-exporter:1.4.001
   pullPolicy: IfNotPresent
   replicas: 1
   license:
