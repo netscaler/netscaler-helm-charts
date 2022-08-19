@@ -362,8 +362,8 @@ spec:
         - name: ENABLE_LABELS_FEATURE
           value: "FALSE"
 {{- if eq .Values.xDSAdaptor.defaultSSLListenerOn443 true }}            
-          - name: DEFAULT_SSL_LISTENER_ON_443
-            value: "TRUE"
+        - name: DEFAULT_SSL_LISTENER_ON_443
+          value: "TRUE"
 {{- end }}
         - name: NS_USER
           valueFrom:
