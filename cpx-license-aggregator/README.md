@@ -100,11 +100,12 @@ For example:
 
 1. To see the CLA stats use the following URL in the browser:
 
-   https://<K8s-node-ip>:<cla-svc-nodeport>/stats
+   `https://<K8s-node-ip>:<cla-svc-nodeport>/stats`
 
 2. To see the Citrix ADC CPX information running in the cluster use the following URL in the browser:
 
-   https://<K8s-node-ip>:<cla-svc-nodeport>/cpxinfo
+   `https://<NodeIP:Nodeport>/cpxinfo`
+   > **Note:** HTTP request to this URL must contain HTTP header named x-cla with value 1.0.0
 
 ## Uninstalling the Chart
 We are using persistent volume for CLA to store and retain the Licensed Citrix ADC CPX information in case of any failures. As part of Helm install one persistent volume claim get created for the stateful set which needs to be deleted manually afterwards.
