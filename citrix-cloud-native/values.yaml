@@ -31,3 +31,6 @@ iaEgress:
 
 ao:
   enabled: False
+
+cla:
+  enabled: False

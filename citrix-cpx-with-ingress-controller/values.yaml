@@ -3,7 +3,7 @@
 # Declare variables to be passed into your templates.
 
 # Citrix ADC CPX config details
-image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-83.27
+image: quay.io/citrix/citrix-k8s-cpx-ingress:13.1-30.52
 pullPolicy: IfNotPresent
 imagePullSecrets: []
 nameOverride: ""
@@ -17,7 +17,7 @@ nsCookieVersion: "0"
 nsConfigDnsRec:
 nsSvcLbDnsRec:
 nsDnsNameserver:
-
+optimizeEndpointBinding:
 routeLabels:
 namespaceLabels:
 
@@ -43,6 +43,8 @@ ipam: False
 
 # API server Cert verification can be disabled, while communicating with API Server, if disableAPIServerCertVerify set to True
 disableAPIServerCertVerify: False
+
+cpxLicenseAggregator: 
 
 sslCertManagedByAWS: False
 
@@ -108,9 +110,11 @@ ADMSettings:
   ADMIP:
   loginSecret:
   bandWidthLicense: false
-  bandWidth:
+  bandWidth: 1000 #bandwidth value shoule be in Mbps
   vCPULicense: false
   cpxCores:
+  analyticsServerPort: 5557
+  edition: PLATINUM
 
 # Exporter config details
 exporter:
@@ -174,6 +178,8 @@ bgpSettings:
         remoteAS: 100
         advertisementInterval: 10
         ASOriginationInterval: 10
+
+bgpPort: 
 
 nsLbHashAlgo:
   required: false

@@ -38,11 +38,11 @@ certProvider:
     trustDomain: cluster.local
     certTTLinHours: 720
     clusterId: Kubernetes
-    jwtPolicy: #specify third-party-jwt if Kubernetes cluster supports third-party tokens
+    jwtPolicy: #specify third-party-jwt if Kubernetes cluster supports third-party tokens. Default from K8s v1.21
 
 ingressGateway:
     netscalerUrl: null 
-    image: quay.io/citrix/citrix-k8s-cpx-ingress:13.1-27.59
+    image: quay.io/citrix/citrix-k8s-cpx-ingress:13.1-30.52
     imagePullPolicy: IfNotPresent
     EULA: NO
     mgmtHttpPort: 10080
@@ -62,14 +62,18 @@ ingressGateway:
     multiClusterListenerPort: 15443
     multiClusterListenerNodePort: 32443
     multiClusterSvcDomain: global
+    cpxLicenseAggregator:
 
 ADMSettings:
     ADMIP:
     licenseServerIP:
     licenseServerPort: 27000
     bandWidthLicense: false
-    bandWidth:
+    bandWidth: 1000
     vCPULicense: false
     cpxCores:
+    analyticsServerPort: 5557
+    licenseEdition: PLATINUM
+    
 
 secretName: nslogin

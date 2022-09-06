@@ -252,9 +252,12 @@ The following table lists the configurable parameters and their default values i
 | `iaSidecar.coe.coeTracing`          | Use COE to send appflow transactions to Zipkin endpoint. If it is set to true, ADM servicegraph (if configured) can be impacted.  | false           | Optional|
 | `iaSidecar.ADMSettings.ADMIP`     | Provide the Citrix Application Delivery Management (ADM) IP address | NIL                       |
 | `iaSidecar.ADMSettings.licenseServerIP `          | Citrix License Server IP address  | NIL            | Optional |
-| `iaSidecar.ADMSettings.licenseServerPort`   | Citrix ADM port if a non-default port is used                                                                                      | 27000                                                          |
-| `iaSidecar.ADMSettings.bandWidth`          | Desired bandwidth capacity to be set for Citrix ADC CPX in Mbps  | NIL            | Optional |
+| `iaSidecar.ADMSettings.licenseServerPort`   | Citrix ADM port if a non-default port is used                                                                                      | 27000                                                          
+|
+| `iaSidecar.ADMSettings.bandWidth`          | Desired bandwidth capacity to be set for Citrix ADC CPX in Mbps  | 1000            | Optional |
 | `iaSidecar.ADMSettings.bandWidthLicense`          | To specify bandwidth based licensing  | false            | Optional |
+| `iaSidecar.ADMSettings.licenseEdition`| License edition that can be Standard, Platinum and Enterprise . By default, Platinum is selected | PLATINUM | optional |
+| `iaSidecar.ADMSettings.analyticsServerPort` | Port used for Analytics in ADM. Required to plot ServiceGraph. | 5557   | Optional |
 | `iaSidecar.istioPilot.name`                 | Name of the Istio Pilot (Istiod) service     | istiod                                                           |
 | `iaSidecar.istioPilot.namespace`     | Namespace where Istio Pilot is running       | istio-system                                                          |
 | `iaSidecar.istioPilot.secureGrpcPort`       | Secure GRPC port where Istio Pilot is listening (Default setting)                                                                  | 15012                                                                 |
@@ -262,11 +265,12 @@ The following table lists the configurable parameters and their default values i
 | `iaSidecar.istioPilot.proxyType`      | Type of Citrix ADC associated with the xDS-adaptor. Possible values are: sidecar and router.                                                                              |   sidecar|
 | `iaSidecar.istioPilot.SAN`                 | Subject alternative name for Istio Pilot which is the Secure Production Identity Framework For Everyone (SPIFFE) ID of Istio Pilot.                                   | null |
 | `iaSidecar.cpxProxy.netscalerUrl`   |    URL or IP address of the Citrix ADC which will be configured by xDS-adaptor.                                                            | http://127.0.0.1 |
-| `iaSidecar.cpxProxy.image`          | Citrix ADC CPX image used as sidecar proxy                                                                                                    | quay.io/citrix/citrix-k8s-cpx-ingress:13.1-27.59 |
+| `iaSidecar.cpxProxy.image`          | Citrix ADC CPX image used as sidecar proxy                                                                                                    | quay.io/citrix/citrix-k8s-cpx-ingress:13.1-30.52 |
 | `iaSidecar.cpxProxy.imagePullPolicy`           | Image pull policy for Citrix ADC                                                                                  | IfNotPresent                                                               |
 | `iaSidecar.cpxProxy.EULA`              |  End User License Agreement(EULA) terms and conditions. If yes, then user agrees to EULA terms and conditions.                                                     | NO |
 | `iaSidecar.cpxProxy.cpxSidecarMode`            | Environment variable for Citrix ADC CPX. It indicates that Citrix ADC CPX is running as sidecar mode or not.                                                                                               | YES                                                                    |
 | `iaSidecar.cpxProxy.cpxDisableProbe`            | Environment variable for Citrix ADC CPX. It indicates that Citrix ADC CPX will disable probing dynamic services. It should be enabled for multicluster setup. Possible values: YES/NO.                    | YES   |
+| `iaSidecar.cpxProxy.cpxLicenseAggregator`            | IP/FQDN of the CPX License Aggregator if it is being used to license the CPX.                                                                                               | Null                                                                    | optional |
 | `iaSidecar.sidecarWebHook.webhookImage`   | Mutating webhook associated with the sidecar injector. It invokes a service `cpx-sidecar-injector` to inject sidecar proxies in the application pod.                                                                                      | quay.io/citrix/cpx-istio-sidecar-injector:1.2.0 | 
 | `iaSidecar.sidecarWebHook.imagePullPolicy`   | Image pull policy                                                                          |IfNotPresent|
 | `iaSidecar.sidecarCertsGenerator.image`   | Certificate genrator image associated with sidecar injector. This image generates certificate and key needed for CPX sidecar injection.                                                                                      | quay.io/citrix/cpx-sidecar-injector-certgen:1.2.0 | 

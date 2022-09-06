@@ -73,9 +73,9 @@ data:
         - name: ENABLE_LABELS_FEATURE
           value: "FALSE"
 {{- if eq .Values.xDSAdaptor.defaultSSLListenerOn443 true }}            
-          - name: DEFAULT_SSL_LISTENER_ON_443
-            value: "TRUE"
-{{- end }}
+        - name: DEFAULT_SSL_LISTENER_ON_443
+          value: "TRUE"
+{{- end }}          
         - name: LOGLEVEL
           value: {{ .Values.xDSAdaptor.logLevel | default "DEBUG" | quote }}
 {{- if eq .Values.xDSAdaptor.jsonLog true }}
@@ -102,7 +102,10 @@ data:
         - -citrix-adm
         - {{ .Values.ADMSettings.ADMIP }}
 {{- end }}
-{{- if .Values.ADMSettings.licenseServerIP }}
+{{- if .Values.cpxProxy.cpxLicenseAggregator }}
+        - -citrix-license-server
+        - {{ .Values.cpxProxy.cpxLicenseAggregator  }}
+{{- else if .Values.ADMSettings.licenseServerIP }}
         - -citrix-license-server
         - {{ .Values.ADMSettings.licenseServerIP }}
 {{- end }}
@@ -138,6 +141,23 @@ data:
         securityContext:
           privileged: true
         env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+{{- if  .Values.cpxProxy.cpxLicenseAggregator }}
+        - name: "CLA"
+          value: "{{ .Values.cpxProxy.cpxLicenseAggregator }}"
+{{- else if .Values.ADMSettings.licenseServerIP  }}
+        - name: "LS_IP"
+          value: {{ .Values.ADMSettings.licenseServerIP }}
+        - name: "LS_PORT"
+          value: {{ .Values.ADMSettings.licenseServerPort}}
+{{- end}}
         - name: "EULA"
           value: "{{ .Values.cpxProxy.EULA }}"
         - name: "CPX_SIDECAR_MODE"
@@ -156,23 +176,25 @@ data:
         - name: "NS_ENABLE_NEWNSLOG"
           value: 1
 {{- end }}
-        - name: "LS_IP"
-          value: {{ .Values.ADMSettings.licenseServerIP | default "" }}
-        - name: "LS_PORT"
-          value: {{ .Values.ADMSettings.licenseServerPort}}
 {{- if .Values.ADMSettings.ADMIP }}
         - name: "NS_MGMT_SERVER"
-          value: {{ .Values.ADMSettings.ADMIP }}
+          value: {{ .Values.ADMSettings.ADMIP | quote }}
         - name: "NS_HTTP_PORT"
           value: {{ .Values.cpxProxy.mgmtHttpPort | quote }}
         - name: "NS_HTTPS_PORT"
           value: {{ .Values.cpxProxy.mgmtHttpsPort | quote }}
+        - name: "ANALYTICS_SERVER"
+          value: {{ .Values.ADMSettings.ADMIP | quote }}
+        - name: "ANALYTICS_SERVER_PORT"
+          value: {{.Values.ADMSettings.analyticsServerPort | quote }}
 {{- end }}
         - name: "LOGSTREAM_COLLECTOR_IP"
-          value: {{ .Values.ADMSettings.ADMIP | default "" }}
-{{- if and ( .Values.ADMSettings.licenseServerIP ) (eq .Values.ADMSettings.bandWidthLicense true) }}
-        - name: "BANDWIDTH" #bandwidth is required for provision bandwidth based licensing to Citrix ADC CPX from ADM
-          value: {{ required "Mention bandwidth for bandwidth based licensing" .Values.ADMSettings.bandWidth | quote }}
+          value: {{ .Values.ADMSettings.ADMIP | default "" | quote }}
+{{- if and ( or ( .Values.ADMSettings.licenseServerIP ) ( .Values.cpxProxy.cpxLicenseAggregator ) ) ( eq .Values.ADMSettings.bandWidthLicense true ) }}
+        - name: "BANDWIDTH" #Need to set env var BANDWIDTH in order to provide Bandwidth license to Citrix ADC CPX from ADM or CPX License Aggregator
+          value: {{ .Values.ADMSettings.bandWidth | quote }}
+        - name: "EDITION"
+          value: {{ .Values.ADMSettings.licenseEdition | quote }}
 {{- end }}
 {{- if or (.Values.ADMSettings.ADMIP) (.Values.ADMSettings.licenseServerIP) }}
         - name: NS_MGMT_USER
