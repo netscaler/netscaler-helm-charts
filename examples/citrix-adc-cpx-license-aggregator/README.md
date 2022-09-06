@@ -112,7 +112,7 @@ If Citrix ADC CPX License Aggregator is exposed to the client using NodePort, th
 ### Check the License Aggregator status
 Send HTTP request to /stats path.
 
-`curl -H "x-cla: 1.0.0" https://<NodeIP:Nodeport>/stats`
+`https://<NodeIP:Nodeport>/stats`
 
 Below is the sample JSON output of stats. It represents that Citrix ADC CPX License Aggregator owns 15 licenses of type **INSTANCE** and total 9 Citrix ADC CPX instances are licensed by the License Aggregator.
 
