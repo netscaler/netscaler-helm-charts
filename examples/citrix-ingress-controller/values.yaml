@@ -9,7 +9,20 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 openshift: false
-adcCredentialSecret:
+adcCredentialSecret: # K8s Secret Name
+# Enable secretStore to implement CSI Secret Provider classes for holding the nslogin credentials
+secretStore: 
+  enabled: false
+  username: {}
+    #valueFrom:
+    #  configMapKeyRef:
+    #    name: test1
+    #    key: username
+  password: {}
+    #valueFrom:
+    #  configMapKeyRef:
+    #    name: test1
+    #    key: password
 nsIP: x.x.x.x
 nsVIP:
 nsSNIPS:
@@ -17,6 +30,7 @@ license:
    accept: no
 nsPort: 443
 nsProtocol: HTTPS
+nsEnableLabel: true
 # nitroReadTimeout is timeout value in seconds for nitro api read timeout(default is 20)
 nitroReadTimeout:
 logLevel: INFO
@@ -46,7 +60,7 @@ nsCookieVersion: "0"
 nsConfigDnsRec:
 nsSvcLbDnsRec:
 nsDnsNameserver:
-
+optimizeEndpointBinding:
 routeLabels:
 namespaceLabels:
 disableOpenshiftRoutes:
@@ -69,6 +83,14 @@ exporter:
     # requests:
     #   cpu: 100m
     #   memory: 128Mi
+  extraVolumeMounts: []
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user.
+  #- name: github-key
+  #  mountPath: /etc/config/keys/
+  #  readOnly: true
+  #- name: agent-init-scripts
+  #  mountPath: /docker-entrypoint.d/
 
 # For CRDs supported by Citrix Ingress Controller
 crds:
@@ -126,3 +148,24 @@ resources: {}
   #   memory: 256Mi
 
 affinity: {}
+
+extraVolumeMounts: []
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user.
+  #- name: github-key
+  #  mountPath: /etc/config/keys/
+  #  readOnly: true
+  #- name: agent-init-scripts
+  #  mountPath: /docker-entrypoint.d/
+
+extraVolumes: []
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user.
+  #- name: agent-init-scripts
+  #  configMap:
+  #     name: agent-init-scripts
+  #     defaultMode: 0755
+  #- name: github-key
+  #  secret:
+  #    secretName: github-key
+  #    defaultMode: 0744

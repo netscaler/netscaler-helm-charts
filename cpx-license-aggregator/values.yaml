@@ -1,0 +1,54 @@
+# Default values for cpx-license-aggregator.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+licenseAggregator:
+  image: quay.io/citrix/cpx-license-aggregator:1.0.0
+  pullPolicy: IfNotPresent
+  service:
+    type: NodePort
+    nodePort:
+  username:
+  securityContext: {}
+  resources: {}
+
+nslped:
+  image: quay.io/citrix/nslped:1.0.0
+  pullPolicy: IfNotPresent
+  securityContext: {}
+  resources: {}
+
+redis:
+  image: redis:7.0.4
+  pullPolicy: IfNotPresent
+  secretName:
+  securityContext: {}
+  resources: {}
+
+sidecarCertsGenerator:
+  image: quay.io/citrix/cpx-sidecar-injector-certgen:1.2.0
+  pullPolicy: IfNotPresent
+
+serviceAccount:
+  annotations: {}
+
+licenseServer:
+  address:
+  port: 27000
+  
+licenseInfo:
+  quantum: 5
+  lowWatermark: 2
+  dbExpireTime: 172800
+
+adcInfo:
+  selectorLabel:
+    key: adc
+    value: citrix
+
+podAnnotations: {}
+podSecurityContext: {}
+nodeSelector: {}
+tolerations: []
+affinity: {}
+imagePullSecrets: []

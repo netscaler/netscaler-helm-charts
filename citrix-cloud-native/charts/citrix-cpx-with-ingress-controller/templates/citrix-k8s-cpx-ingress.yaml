@@ -37,18 +37,19 @@ spec:
           securityContext:
              privileged: true
           env:
+{{- if .Values.cpxLicenseAggregator}}
+          - name: "CLA"
+            value: {{ .Values.cpxLicenseAggregator | quote }}
+{{- else if .Values.ADMSettings.licenseServerIP }}
+          - name: "LS_IP"
+            value: {{ .Values.ADMSettings.licenseServerIP | quote }}
+          - name: "LS_PORT"
+            value: {{ .Values.ADMSettings.licenseServerPort | quote }}
+{{- end }}
           - name: "EULA"
             value: "{{ .Values.license.accept }}"
           - name: "KUBERNETES_TASK_ID"
             value: ""
-{{- if .Values.ADMSettings.licenseServerIP }}
-          - name: "LS_IP"
-            value: {{ .Values.ADMSettings.licenseServerIP | quote }}
-{{- end }}
-{{- if .Values.ADMSettings.licenseServerPort }}
-          - name: "LS_PORT"
-            value: {{ .Values.ADMSettings.licenseServerPort | quote }}
-{{- end }}
 {{- if not .Values.cpxBgpRouter }}
           - name: "MGMT_HTTP_PORT"
             value: {{ .Values.mgmtHttpPort | quote }}
@@ -76,19 +77,25 @@ spec:
             value: {{ .Values.mgmtHttpsPort | quote }}
           - name: "LOGSTREAM_COLLECTOR_IP"
             value: {{ .Values.ADMSettings.ADMIP | quote }}
+          - name: "ANALYTICS_SERVER"
+            value: {{ .Values.ADMSettings.ADMIP | quote }}
+          - name: "ANALYTICS_SERVER_PORT"
+            value: {{ .Values.ADMSettings.analyticsServerPort | quote }}
 {{- end }}
-#To povision bandwidth based licensing to Citrix ADC CPX from ADM, needs bandwidth
-{{- if and ( .Values.ADMSettings.licenseServerIP ) (eq .Values.ADMSettings.bandWidthLicense true) }}
+#Need to set env var BANDWIDTH in order to provide Bandwidth license to Citrix ADC CPX from ADM or CPX License Aggregator
+{{- if and ( or ( .Values.ADMSettings.licenseServerIP )  ( .Values.cpxLicenseAggregator ) ) ( eq .Values.ADMSettings.bandWidthLicense true ) }}
           - name: "BANDWIDTH"
-            value: {{ required "Mention bandwidth for bandwidth based licensing" .Values.ADMSettings.bandWidth | quote }}
+            value: {{ .Values.ADMSettings.bandWidth | quote }}
 {{- end }}
 #for multiple-PE support, need to set CPX_CORES
-{{- if .Values.ADMSettings.licenseServerIP }}
-{{- if or (eq .Values.ADMSettings.vCPULicense true) (eq .Values.ADMSettings.bandWidthLicense true) }}
+{{- if or .Values.ADMSettings.licenseServerIP  .Values.cpxLicenseAggregator }}
+{{- if or ( eq .Values.ADMSettings.vCPULicense true ) ( eq .Values.ADMSettings.bandWidthLicense true ) }}
           - name: "CPX_CORES"
             value: {{ .Values.ADMSettings.cpxCores | default 1 | quote }}
 {{- end }}
 {{- end }}
+          - name: "EDITION"
+            value: {{ .Values.ADMSettings.licenseEdition }}
 {{- if or (.Values.ADMSettings.ADMIP) (.Values.ADMSettings.licenseServerIP) }}
           - name: NS_MGMT_USER
             valueFrom:
@@ -169,7 +176,7 @@ spec:
 {{- if .Values.nitroReadTimeout }}
           - name: "NS_NITRO_READ_TIMEOUT"
             value: "{{ .Values.nitroReadTimeout }}"
-{{- end }} 
+{{- end }}
           - name: POD_NAME
             valueFrom:
               fieldRef:
@@ -201,6 +208,10 @@ spec:
           - name: "NS_SVC_LB_DNS_REC"
             value: "{{ .Values.nsSvcLbDnsRec }}"
 {{- end }}
+{{- if .Values.optimizeEndpointBinding }}
+          - name: "OPTIMIZE_ENDPOINT_BINDING"
+            value: "{{ .Values.optimizeEndpointBinding }}"
+{{- end }} 
 {{- if .Values.cpxBgpRouter }}
           securityContext:
             runAsUser: 0

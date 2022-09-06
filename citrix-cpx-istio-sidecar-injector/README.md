@@ -251,22 +251,24 @@ The following table lists the configurable parameters and their default values i
 | `coe.coeURL`          | Name of [Citrix Observability Exporter](https://github.com/citrix/citrix-observability-exporter) Service in the form of _servicename.namespace_  | NIL            | Optional|
 | `coe.coeTracing`          | Use COE to send appflow transactions to Zipkin endpoint. If it is set to true, ADM servicegraph (if configured) can be impacted.  | false           | Optional|
 | `ADMSettings.ADMIP`     | Provide the Citrix Application Delivery Management (ADM) IP address | NIL                       |
-| `ADMSettings.licenseServerIP `          | Citrix License Server IP address  | NIL            | Optional |
+| `ADMSettings.licenseServerIP`          | Citrix License Server IP address  | NIL            | Optional |
 | `ADMSettings.licenseServerPort`   | Citrix ADM port if a non-default port is used                                                                                      | 27000                                                          |
-| `ADMSettings.bandWidth`          | Desired bandwidth capacity to be set for Citrix ADC CPX in Mbps  | NIL            | Optional |
-| `ADMSettings.bandWidthLicense`          | To specify bandwidth based licensing  | false            | Optional |
-| `istioPilot.name`                 | Name of the Istio Pilot service     | istio-pilot                                                           |
+| `ADMSettings.bandWidth`          | Desired bandwidth capacity to be set for Citrix ADC CPX in Mbps  | 1000            | Optional |
+| `ADMSettings.analyticsServerPort` | Port used for Analytics in ADM. Required to plot ServiceGraph. | 5557   | Optional |
+| `ADMSettings.licenseEdition`| License edition that can be Standard, Platinum and Enterprise . By default, Platinum is selected | PLATINUM | optional |
+| `istioPilot.name`                 | Name of the Istio Pilot service     | istio-pilot | Mandatory |
 | `istioPilot.namespace`     | Namespace where Istio Pilot is running       | istio-system                                                          |
 | `istioPilot.secureGrpcPort`       | Secure GRPC port where Istio Pilot is listening (Default setting)                                                                  | 15011                                                                 |
 | `istioPilot.insecureGrpcPort`      | Insecure GRPC port where Istio Pilot is listening                                                                                  | 15010                                                                 |
 | `istioPilot.proxyType`      | Type of Citrix ADC associated with the xDS-adaptor. Possible values are: sidecar and router.                                                                              |   sidecar|
 | `istioPilot.SAN`                 | Subject alternative name for Istio Pilot which is the Secure Production Identity Framework For Everyone (SPIFFE) ID of Istio Pilot.                                   | NIL |
 | `cpxProxy.netscalerUrl`   |    URL or IP address of the Citrix ADC which will be configured by Istio-adaptor.                                                            | http://127.0.0.1 |
-| `cpxProxy.image`          | Citrix ADC CPX image used as sidecar proxy                                                                                                    | quay.io/citrix/citrix-k8s-cpx-ingress:13.1-27.59 |
+| `cpxProxy.image`          | Citrix ADC CPX image used as sidecar proxy                                                                                                    | quay.io/citrix/citrix-k8s-cpx-ingress:13.1-30.52 |
 | `cpxProxy.imagePullPolicy`           | Image pull policy for Citrix ADC                                                                                  | IfNotPresent                                                               |
 | `cpxProxy.EULA`              |  End User License Agreement(EULA) terms and conditions. If yes, then user agrees to EULA terms and conditions.                                                     | NO |
 | `cpxProxy.cpxSidecarMode`            | Environment variable for Citrix ADC CPX. It indicates that Citrix ADC CPX is running as sidecar mode or not.                                                                                               | YES                                                                    |
 | `cpxProxy.cpxDisableProbe`            | Environment variable for Citrix ADC CPX. It indicates that Citrix ADC CPX will disable probing dynamic services. It should be enabled for multicluster setup.                                                                                               | YES                                                                    |
+| `cpxProxy.cpxLicenseAggregator`            | IP/FQDN of the CPX License Aggregator if it is being used to license the CPX.                                                                                               | Null                                                                    | optional |
 | `sidecarWebHook.webhookImage`   | Mutating webhook associated with the sidecar injector. It invokes a service `cpx-sidecar-injector` to inject sidecar proxies in the application pod.                                                                                      | quay.io/citrix/cpx-istio-sidecar-injector:1.2.0 |
 | `sidecarWebHook.imagePullPolicy`   | Image pull policy                                                                          |IfNotPresent|
 | `sidecarCertsGenerator.image`   | Certificate genrator image associated with sidecar injector. This image generates certificate and key needed for CPX sidecar injection.                                                                                      | quay.io/citrix/cpx-sidecar-injector-certgen:1.2.0 |
@@ -278,6 +280,6 @@ The following table lists the configurable parameters and their default values i
 | `certProvider.certTTLinHours`   | Validity of certificate generated by xds-adaptor and signed by Istiod (Istio Citadel) in hours. Default is 30 days validity              | 720 | Optional |
 | `certProvider.clusterId`   | clusterId is the ID of the cluster where Istiod CA instance resides (default Kubernetes). It can be different value on some cloud platforms or in multicluster environments. For example, in Anthos servicemesh, it might be of the format of `cn<project-name>-<region>-<cluster_name>`. In multiCluster environments, it is the value of global.multiCluster.clusterName provided during servicemesh control plane installation              | Kubernetes | Optional |
 | `certProvider.jwtPolicy`   | Service Account token type. Kubernetes platform supports First party tokens and Third party tokens.  | first-party-jwt | Optional |
-| `certProvider.jwtPolicy`   | Service Account token type. Kubernetes platform supports First party tokens and Third party tokens. Usually public cloud based Kubernetes has third-party-jwt | null | Optional |
+| `certProvider.jwtPolicy`   | Service Account token type. Kubernetes platform supports First party tokens and Third party tokens. Usually public cloud based Kubernetes has third-party-jwt | Null | Optional |
 
 **Note:** You can use the `values.yaml` file packaged in the chart. This file contains the default configuration values for the chart.

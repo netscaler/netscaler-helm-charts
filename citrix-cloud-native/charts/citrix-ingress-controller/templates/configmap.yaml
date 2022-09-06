@@ -11,6 +11,9 @@ data:
 {{- if .Values.nsSNIPS }}
   NS_SNIPS: {{ .Values.nsSNIPS | toJson}}
 {{- end }}
+{{- if and .Values.analyticsConfig.required .Values.nsEnableLabel  }}
+  NS_ENABLE_LABELS: {{ .Values.nsEnableLabel | quote}}
+{{- end }}
 {{- if .Values.podIPsforServiceGroupMembers }}
   POD_IPS_FOR_SERVICEGROUP_MEMBERS: {{ .Values.podIPsforServiceGroupMembers | quote }}
 {{- end }}

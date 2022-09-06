@@ -1,0 +1,170 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    {{- include "cpx-license-aggregator.labels" . | nindent 4 }}
+  name: {{ include "cpx-license-aggregator.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "cpx-license-aggregator.selectorLabels" . | nindent 6 }}
+  replicas: 1
+  serviceName: {{ include "redis-db.fullname" . }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "cpx-license-aggregator.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccount: {{ include "cpx-license-aggregator.fullname" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      initContainers:
+      - name: sidecar-certs-generator
+        image: {{ .Values.sidecarCertsGenerator.image }}
+        imagePullPolicy: {{ .Values.sidecarCertsGenerator.pullPolicy }}
+        args:
+        - -service-name={{ include "cpx-license-aggregator.fullname" . }}
+        - -service-namespace={{ .Release.Namespace }}
+        volumeMounts:
+        - name: certs
+          mountPath: /tmp
+      containers:
+      - name: license-aggregator
+        image: {{ .Values.licenseAggregator.image }}
+        imagePullPolicy: {{ .Values.licenseAggregator.pullPolicy }}
+        securityContext:
+          {{- toYaml .Values.licenseAggregator.securityContext | nindent 10 }}
+        args:
+        - -license-server={{ required "Please provide License Server IP or FQDN" .Values.licenseServer.address }}
+        - -license-server-port={{ .Values.licenseServer.port }}
+        - -license-quantum={{ .Values.licenseInfo.quantum }}
+        - -license-low-watermark={{ .Values.licenseInfo.lowWatermark }}
+        - -tls-certfile=/etc/certs/cert.pem
+        - -tls-keyfile=/etc/certs/key.pem
+        env:
+        - name: "DEBUG"
+          value: "TRUE"
+        - name: "REDIS_HOST"
+          value: "localhost"
+        - name: "REDIS_PORT"
+          value: "6379"
+        - name: "ADCSELECTOR_LABEL_KEY"
+          value: {{ .Values.adcInfo.selectorLabel.key | quote }}
+        - name: "ADCSELECTOR_LABEL_VALUE"
+          value: {{ .Values.adcInfo.selectorLabel.value | quote }}
+        - name: "DB_EXPIRE_TIME"
+          value: {{ .Values.licenseInfo.dbExpireTime | quote }}
+        - name: "DB_PASSWORD"
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.redis.secretName | quote }}
+              key: password
+        - name: "APPLICATION_NAME"
+          value: {{ include "cpx-license-aggregator.fullname" . }}
+        - name: "USERNAME"
+          value: {{ required "Please provide the username/clustername that can uniquely identify this license aggregator service with the Citrix ADM License server" .Values.licenseAggregator.username | quote }}
+        - name: "POD_NAMESPACE"
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+        ports:
+        - containerPort: 443
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 443
+            scheme: HTTPS
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 443
+            scheme: HTTPS
+        resources:
+          {{- toYaml .Values.licenseAggregator.resources | nindent 10 }}
+        volumeMounts:
+        - name: certs
+          mountPath: /etc/certs
+          readOnly: true
+        - name: socket
+          mountPath: /tmp
+      - name: nslped
+        image: {{ .Values.nslped.image }}
+        imagePullPolicy: {{ .Values.nslped.pullPolicy }}
+        tty: true
+        securityContext:
+          {{- toYaml .Values.nslped.securityContext | nindent 10 }}
+        resources:
+          {{- toYaml .Values.nslped.resources | nindent 10 }}
+        volumeMounts:
+        - name: socket
+          mountPath: /tmp
+      - name: redis
+        image: {{ .Values.redis.image }}
+        imagePullPolicy: {{ .Values.redis.pullPolicy }}
+        securityContext:
+          {{- toYaml .Values.redis.securityContext | nindent 10 }}
+        resources:
+          {{- toYaml .Values.redis.resources | nindent 10 }}
+        command:
+        - redis-server
+        - "/redis-master/redis.conf"
+        - requirepass
+        - "$(REDIS_PASSWORD)"
+        env:
+        - name: "REDIS_PASSWORD"
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.redis.secretName | quote }}
+              key: password
+        - name: MASTER
+          value: "true"
+        ports:
+        - name: redis
+          containerPort: 6379
+        resources:
+          limits:
+            cpu: "0.1"
+        volumeMounts:
+        - mountPath: /data
+          name: data
+        - mountPath: /redis-master
+          name: config
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
+      volumes:
+      - name: certs
+        emptyDir: {}
+      - name: socket
+        emptyDir: {}
+      - name: config
+        configMap:
+          name: {{ include "redis-db.fullname" . }}
+          items:
+          - key: redis-config
+            path: redis.conf
+      restartPolicy: Always
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes:
+      - "ReadWriteOnce"
+      resources:
+        requests:
+          storage: "200Mi"

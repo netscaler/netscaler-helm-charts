@@ -10,10 +10,10 @@ metadata:
   namespace: {{ .Release.Namespace }}
 spec:
   selector:
-    matchLabels:
 {{- if .Values.openshift }}
-      router: {{ include "citrix-ingress-controller.fullname" . }}
+     router: {{ include "citrix-ingress-controller.fullname" . }}
 {{- else }}
+    matchLabels:
       app: {{ include "citrix-ingress-controller.fullname" . }}
 {{- end }}
   replicas: 1
@@ -92,17 +92,25 @@ spec:
 {{- if .Values.nitroReadTimeout }}
         - name: "NS_NITRO_READ_TIMEOUT"
           value: "{{ .Values.nitroReadTimeout }}"
-{{- end }} 
+{{- end }}
         - name: "NS_USER"
+        {{- if and .Values.secretStore.enabled .Values.secretStore.username}}
+        {{- toYaml .Values.secretStore.username | nindent 10 }}
+        {{- else }}
           valueFrom:
             secretKeyRef:
               name: {{ .Values.adcCredentialSecret }}
               key: username
+        {{- end }}
         - name: "NS_PASSWORD"
+        {{- if and .Values.secretStore.enabled .Values.secretStore.password}}
+        {{- toYaml .Values.secretStore.password | nindent 10 }}
+        {{- else }}
           valueFrom:
             secretKeyRef:
               name: {{ .Values.adcCredentialSecret }}
               key: password
+        {{- end }}
         - name: "EULA"
           value: "{{ .Values.license.accept }}"
 {{- if and .Values.openshift .Values.routeLabels }}
@@ -139,8 +147,16 @@ spec:
         - name: "NS_SVC_LB_DNS_REC"
           value: "{{ .Values.nsSvcLbDnsRec }}"
 {{- end }}
+{{- if .Values.optimizeEndpointBinding }}
+        - name: "OPTIMIZE_ENDPOINT_BINDING"
+          value: "{{ .Values.optimizeEndpointBinding }}"
+{{- end }}
         resources:
             {{- toYaml .Values.resources | nindent 12 }}
+        {{- if ne (len .Values.extraVolumeMounts) 0 }}
+        volumeMounts:
+{{- toYaml .Values.extraVolumeMounts | nindent 8 }}
+        {{- end }}
 {{- if .Values.exporter.required }}
       - name: exporter
         image: "{{ .Values.exporter.image }}"
@@ -148,18 +164,39 @@ spec:
         args:
           - "--target-nsip={{ .Values.nsIP }}"
           - "--port={{ .Values.exporter.ports.containerPort }}"
+        env:
+        - name: "NS_USER"
+        {{- if and .Values.secretStore.enabled .Values.secretStore.username}}
+        {{- toYaml .Values.secretStore.username | nindent 10 }}
+        {{- else }}
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.adcCredentialSecret }}
+              key: username
+        {{- end }}
+        - name: "NS_PASSWORD"
+        {{- if and .Values.secretStore.enabled .Values.secretStore.password}}
+        {{- toYaml .Values.secretStore.password | nindent 10 }}
+        {{- else }}
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.adcCredentialSecret }}
+              key: password
+        {{- end }}
+        {{- if ne (len .Values.exporter.extraVolumeMounts) 0 }}
         volumeMounts:
-          - name: nslogin
-            mountPath: "/mnt/nslogin"
-            readOnly: true
+        {{- toYaml .Values.exporter.extraVolumeMounts | nindent 8 }}
+        {{- end }}
         securityContext:
           readOnlyRootFilesystem: true
         resources:
-            {{- toYaml .Values.exporter.resources | nindent 12 }}
+{{- toYaml .Values.exporter.resources | nindent 12 }}
+{{- end }}
+{{- if or (and .Values.extraVolumeMounts .Values.extraVolumes) (and .Values.exporter.extraVolumeMounts .Values.extraVolumes) }}
       volumes:
-      - name: nslogin
-        secret:
-          secretName: {{ .Values.adcCredentialSecret }}
+{{- end }}
+{{- if ne (len .Values.extraVolumes) 0 }}
+{{ toYaml .Values.extraVolumes | indent 6 }}
 {{- end }}
 {{- if and .Values.nodeSelector.key .Values.nodeSelector.value }}
       nodeSelector:

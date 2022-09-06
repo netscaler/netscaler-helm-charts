@@ -104,7 +104,11 @@ spec:
           - -citrix-adm
           - {{ .Values.ADMSettings.ADMIP }}
 {{- end }}
-{{- if .Values.ADMSettings.licenseServerIP }}
+
+{{- if .Values.egressGateway.cpxLicenseAggregator }}
+          - -citrix-license-server
+          - {{ .Values.egressGateway.cpxLicenseAggregator  }}
+{{- else if .Values.ADMSettings.licenseServerIP }}
           - -citrix-license-server
           - {{ .Values.ADMSettings.licenseServerIP }}
 {{- end }}
@@ -210,6 +214,23 @@ spec:
             - containerPort: {{ .Values.egressGateway.mgmtHttpsPort }}
 {{- end }}
           env:
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+{{- if .Values.egressGateway.cpxLicenseAggregator }}
+          - name: "CLA"
+            value: "{{ .Values.egressGateway.cpxLicenseAggregator }}"
+{{- else if .Values.ADMSettings.licenseServerIP }}
+          - name: "LS_IP"
+            value: {{ .Values.ADMSettings.licenseServerIP }}
+          - name: "LS_PORT"
+            value: "{{ .Values.ADMSettings.licenseServerPort }}"
+{{- end }}
           - name: "EULA"
             value: "{{ .Values.egressGateway.EULA }}"
 {{- if .Values.metricExporter.required }}
@@ -220,7 +241,7 @@ spec:
             value: "{{ .Values.egressGateway.mgmtHttpPort }}"
           - name: "MGMT_HTTPS_PORT"
             value: "{{ .Values.egressGateway.mgmtHttpsPort }}"
-{{- if .Values.egressGateway.lightWeightCPX }}            
+{{- if .Values.egressGateway.lightWeightCPX }}
           - name: "NS_CPX_LITE"
             value: "1"
 {{- end }}
@@ -230,30 +251,34 @@ spec:
 {{- end }}
           - name: "KUBERNETES_TASK_ID"
             value: ""
-          - name: "LS_IP"
-            value: {{ .Values.ADMSettings.licenseServerIP | default "" }}
 {{- if .Values.ADMSettings.ADMIP }}
           - name: "NS_MGMT_SERVER"
-            value: {{ .Values.ADMSettings.ADMIP }}
+            value: {{ .Values.ADMSettings.ADMIP | quote  }}
           - name: "NS_HTTP_PORT"
             value: {{ .Values.egressGateway.mgmtHttpPort | quote }}
           - name: "NS_HTTPS_PORT"
             value: {{ .Values.egressGateway.mgmtHttpsPort | quote }}
+          - name: "ANALYTICS_SERVER"
+            value: "{{ .Values.ADMSettings.ADMIP | quote }}"
+          - name: "ANALYTICS_SERVER_PORT"
+            value: "{{ .Values.ADMSettings.analyticsServerPort | quote  }}"
 {{- end }}
           - name: "LOGSTREAM_COLLECTOR_IP"
-            value: {{ .Values.ADMSettings.ADMIP | default ""}}
-            #To povision bandwidth based licensing to Citrix ADC CPX from ADM, needs bandwidth
-{{- if and ( .Values.ADMSettings.licenseServerIP ) (eq .Values.ADMSettings.bandWidthLicense true) }}
+            value: {{ .Values.ADMSettings.ADMIP | default "" | quote }}
+            #Need to set env var BANDWIDTH in order to provide Bandwidth license to Citrix ADC CPX from ADM or CPX License Aggregator
+{{- if and ( or ( .Values.ADMSettings.licenseServerIP )  ( .Values.egressGateway.cpxLicenseAggregator ) ) ( eq .Values.ADMSettings.bandWidthLicense true ) }}
           - name: "BANDWIDTH"
-            value: {{ required "Mention bandwidth for bandwidth based licensing" .Values.ADMSettings.bandWidth | quote }}
+            value: {{ .Values.ADMSettings.bandWidth | quote }}
 {{- end }}
 #for multiple-PE support, need to set CPX_CORES
-{{- if .Values.ADMSettings.licenseServerIP }}
-{{- if or (eq .Values.ADMSettings.vCPULicense true) (eq .Values.ADMSettings.bandWidthLicense true) }}
+{{- if or .Values.ADMSettings.licenseServerIP .Values.egressGateway.cpxLicenseAggregator }}
+{{- if or ( eq .Values.ADMSettings.vCPULicense true ) ( eq .Values.ADMSettings.bandWidthLicense true ) }}
           - name: "CPX_CORES"
             value: {{ .Values.ADMSettings.cpxCores | default 1 | quote }}
 {{- end }}
 {{- end }}
+          - name: "EDITION"
+            value: {{ .Values.ADMSettings.licenseEdition | quote}}
 {{- if or (.Values.ADMSettings.ADMIP) (.Values.ADMSettings.licenseServerIP) }}
           - name: NS_MGMT_USER
             valueFrom:

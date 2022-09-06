@@ -7,7 +7,20 @@ cic:
   nameOverride: ""
   fullnameOverride: ""
   openshift: false
-  adcCredentialSecret:
+  adcCredentialSecret: # K8s Secret Name
+  # Enable secretStore to implement CSI Secret Provider classes for holding the nslogin credentials
+  secretStore: 
+    enabled: false
+    username: {}
+      #valueFrom:
+      #  configMapKeyRef:
+      #    name: test1
+      #    key: username
+    password: {}
+      #valueFrom:
+      #  configMapKeyRef:
+      #    name: test1
+      #    key: password
   nsIP: x.x.x.x
   nsVIP:
   nsSNIPS:
@@ -15,6 +28,7 @@ cic:
     accept: no
   nsPort: 443
   nsProtocol: HTTPS
+  nsEnableLabel: true
   nitroReadTimeout:
   logLevel: INFO
   jsonLog: false
@@ -41,7 +55,7 @@ cic:
   nsConfigDnsRec:
   nsSvcLbDnsRec:
   nsDnsNameserver:
-
+  optimizeEndpointBinding:
   routeLabels:
   namespaceLabels:
   disableOpenshiftRoutes:
@@ -53,6 +67,24 @@ cic:
     ports:
       containerPort: 8888
     resources: {}
+      # We usually recommend not to specify default resources and to leave this as a conscious
+      # choice for the user. This also increases chances charts run on environments with little
+      # resources, such as Minikube. If you do want to specify resources, uncomment the following
+      # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+      # limits:
+      #   cpu: 100m
+      #   memory: 128Mi
+      # requests:
+      #   cpu: 100m
+      #   memory: 128Mi
+    extraVolumeMounts: []
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user.
+    #- name: github-key
+    #  mountPath: /etc/config/keys/
+    #  readOnly: true
+    #- name: agent-init-scripts
+    #  mountPath: /docker-entrypoint.d/
 
   crds:
     install: false
@@ -93,6 +125,27 @@ cic:
 
   affinity: {}
 
+  extraVolumeMounts: []
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user.
+    #- name: github-key
+    #  mountPath: /etc/config/keys/
+    #  readOnly: true
+    #- name: agent-init-scripts
+    #  mountPath: /docker-entrypoint.d/
+  
+  extraVolumes: []
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user.
+    #- name: agent-init-scripts
+    #  configMap:
+    #     name: agent-init-scripts
+    #     defaultMode: 0755
+    #- name: github-key
+    #  secret:
+    #    secretName: github-key
+    #    defaultMode: 0744
+
 mcIngress:
   enabled: False
 
@@ -122,7 +175,7 @@ mcIngress:
 cpx:
   enabled: False
 
-  image: quay.io/citrix/citrix-k8s-cpx-ingress:13.0-83.27
+  image: quay.io/citrix/citrix-k8s-cpx-ingress:13.1-30.52
   pullPolicy: IfNotPresent
   imagePullSecrets: []
   nameOverride: ""
@@ -134,6 +187,10 @@ cpx:
   openshift: false
   nsHTTP2ServerSide: "OFF"
   nsCookieVersion: "0"
+  nsConfigDnsRec:
+  nsSvcLbDnsRec:
+  nsDnsNameserver:
+  optimizeEndpointBinding:
 
   routeLabels:
   namespaceLabels:
@@ -146,6 +203,8 @@ cpx:
   ingressIP:
   ipam: False
 
+  cpxLicenseAggregator:
+  
   sslCertManagedByAWS: False
 
   nodeSelector:
@@ -195,9 +254,11 @@ cpx:
     ADMIP:
     loginSecret:
     bandWidthLicense: false
-    bandWidth:
+    bandWidth: 1000
     vCPULicense: false
     cpxCores:
+    analyticsServerPort: 5557
+    licenseEdition: PLATINUM
 
   exporter:
     required: false
@@ -242,7 +303,7 @@ cpx:
           remoteAS: 100
           advertisementInterval: 10
           ASOriginationInterval: 10
-
+          
   bgpPort: 
 
   nsLbHashAlgo:
@@ -303,7 +364,7 @@ iaIngress:
 
   ingressGateway:
     netscalerUrl: null
-    image: quay.io/citrix/citrix-k8s-cpx-ingress:13.1-27.59
+    image: quay.io/citrix/citrix-k8s-cpx-ingress:13.1-30.52
     imagePullPolicy: IfNotPresent
     EULA: NO
     mgmtHttpPort: 10080
@@ -323,6 +384,7 @@ iaIngress:
     multiClusterListenerPort: 15443
     multiClusterListenerNodePort: 32443
     multiClusterSvcDomain: global
+    cpxLicenseAggregator:
 
 
   ADMSettings:
@@ -330,9 +392,11 @@ iaIngress:
     licenseServerIP:
     licenseServerPort: 27000
     bandWidthLicense: false
-    bandWidth:
+    bandWidth: 1000
     vCPULicense: false
     cpxCores:
+    analyticsServerPort: 5557
+    licenseEdition: PLATINUM
 
   secretName: nslogin
 
@@ -380,7 +444,7 @@ iaEgress:
 
   egressGateway:
     netscalerUrl: null
-    image: quay.io/citrix/citrix-k8s-cpx-ingress:13.1-27.59
+    image: quay.io/citrix/citrix-k8s-cpx-ingress:13.1-30.52
     imagePullPolicy: IfNotPresent
     EULA: false
     mgmtHttpPort: 10080
@@ -390,15 +454,18 @@ iaEgress:
     vserverIP: nsip
     adcServerName:
     netProfile:
+    cpxLicenseAggregator:
 
   ADMSettings:
     ADMIP:
     licenseServerIP:
     licenseServerPort: 27000
     bandWidthLicense: false
-    bandWidth:
+    bandWidth: 1000
     vCPULicense: false
     cpxCores:
+    analyticsServerPort: 5557
+    licenseEdition: PLATINUM
 
   secretName: nsloginegress
 
@@ -436,13 +503,14 @@ iaSidecar:
 
   cpxProxy:
     netscalerUrl: "http://127.0.0.1"
-    image: quay.io/citrix/citrix-k8s-cpx-ingress:13.1-27.59
+    image: quay.io/citrix/citrix-k8s-cpx-ingress:13.1-30.52
     imagePullPolicy: IfNotPresent
     EULA: NO
     cpxSidecarMode: YES
     mgmtHttpPort: 10080
     mgmtHttpsPort: 10443
     cpxDisableProbe: "YES"
+    cpxLicenseAggregator:
     #licenseServerIP: this value is taken from ADMSettings.ADMIP
 
   ADMSettings:
@@ -450,7 +518,9 @@ iaSidecar:
     licenseServerIP:
     licenseServerPort: 27000
     bandWidthLicense: false
-    bandWidth:
+    bandWidth: 1000
+    analyticsServerPort: 5557
+    licenseEdition: PLATINUM
 
   sidecarWebHook:
     webhookImage: quay.io/citrix/cpx-istio-sidecar-injector:1.2.0
@@ -539,3 +609,57 @@ ao:
     mgmtHTTPPort: 80
     mgmtHTTPSPort: 443
     loginSecret: nslogin
+
+cla:
+  enabled: False
+
+  licenseAggregator:
+    image: quay.io/citrix/cpx-license-aggregator:1.0.0
+    pullPolicy: IfNotPresent
+    service:
+      type: NodePort
+      nodePort:
+    username:
+    securityContext: {}
+    resources: {}
+
+  nslped:
+    image: quay.io/citrix/nslped:1.0.0
+    pullPolicy: IfNotPresent
+    securityContext: {}
+    resources: {}
+
+  redis:
+    image: redis:7.0.4
+    pullPolicy: IfNotPresent
+    secretName:
+    securityContext: {}
+    resources: {}
+
+  sidecarCertsGenerator:
+    image: quay.io/citrix/cpx-sidecar-injector-certgen:1.2.0
+    pullPolicy: IfNotPresent
+
+  serviceAccount:
+    annotations: {}
+
+  licenseServer:
+    address:
+    port: 27000
+
+  licenseInfo:
+    quantum: 5
+    lowWatermark: 2
+    dbExpireTime: 172800
+
+  adcInfo:
+    selectorLabel:
+      key: adc
+      value: citrix
+
+  podAnnotations: {}
+  podSecurityContext: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  imagePullSecrets: []

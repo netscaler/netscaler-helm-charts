@@ -447,7 +447,7 @@ The following table lists the configurable parameters of the Citrix ADC CPX with
 | ---------- | --------------------- | ------------- | ----------- |
 | cpx.enabled | Mandatory | False | Set to "True" for deploying Citrix ADC CPX with Citrix Ingress Controller running as sidecar. |
 | cpx.license.accept | Mandatory | no | Set `yes` to accept the Citrix ingress controller end user license agreement. |
-| cpx.image | Mandatory | `quay.io/citrix/citrix-k8s-cpx-ingress:13.0-83.27` | The Citrix ADC CPX image. |
+| cpx.image | Mandatory | `quay.io/citrix/citrix-k8s-cpx-ingress:13.1-30.52` | The Citrix ADC CPX image. |
 | cpx.pullPolicy | Mandatory | IfNotPresent | The Citrix ADC CPX image pull policy. |
 | cpx.cic.image | Mandatory | `quay.io/citrix/citrix-k8s-ingress-controller:1.26.7` | The Citrix ingress controller image. |
 | cpx.cic.pullPolicy | Mandatory | IfNotPresent | The Citrix ingress controller image pull policy. |
@@ -463,8 +463,10 @@ The following table lists the configurable parameters of the Citrix ADC CPX with
 | cpx.nsConfigDnsRec | Optional | false | To enable/disable DNS address Record addition in ADC through Ingress |
 | cpx.nsSvcLbDnsRec | Optional | false | To enable/disable DNS address Record addition in ADC through Type Load Balancer Service |
 | cpx.nsDnsNameserver | Optional | N/A | To add DNS Nameservers in ADC |
+| cpx.optimizeEndpointBinding | Optional | false | To enable/disable binding of backend endpoints to servicegroup in a single API-call. Recommended when endpoints(pods) per application are large in number. Applicable only for Citrix ADC Version >=13.0-45.7  |
 | cpx.defaultSSLCertSecret | Optional | N/A | Provide Kubernetes secret name that needs to be used as a default non-SNI certificate in Citrix ADC. |
 | cpx.nsHTTP2ServerSide | Optional | OFF | Set this argument to `ON` for enabling HTTP2 for Citrix ADC service group configurations. |
+| cpx.cpxLicenseAggregator | Optional | N/A | IP/FQDN of the CPX License Aggregator if it is being used to license the CPX. |
 | cpx.nsCookieVersion | Optional | 0 | Specify the persistence cookie version (0 or 1). |
 | cpx.logProxy | Optional | N/A | Provide Elasticsearch or Kafka or Zipkin endpoint for Citrix observability exporter. |
 | cpx.nsProtocol | Optional | http | Protocol http or https used for the communication between Citrix Ingress Controller and CPX |
@@ -503,9 +505,11 @@ The following table lists the configurable parameters of the Citrix ADC CPX with
 | cpx.ADMSettings.ADMIP | Optional | N/A |  Citrix Application Delivery Management (ADM) IP address. |
 | cpx.ADMSettings.loginSecret | Optional | N/A | The secret key to login to the ADM. For information on how to create the secret keys, see [Prerequisites](#prerequistes). |
 | cpx.ADMSettings.bandWidthLicense | Optional | False | Set to true if you want to use bandwidth based licensing for Citrix ADC CPX. |
-| cpx.ADMSettings.bandWidth | Optional | N/A | Desired bandwidth capacity to be set for Citrix ADC CPX in Mbps. |
+| cpx.ADMSettings.bandWidth | Optional | 1000 | Desired bandwidth capacity to be set for Citrix ADC CPX in Mbps. |
 | cpx.ADMSettings.vCPULicense | Optional | N/A | Set to true if you want to use vCPU based licensing for Citrix ADC CPX. |
 | cpx.ADMSettings.cpxCores | Optional | 1 | Desired number of vCPU to be set for Citrix ADC CPX. |
+| cpx.ADMSettings.analyticsServerPort | Optional | 5557 | Port used for Analytics by ADM. Required to plot ServiceGraph. |
+| cpx.ADMSettings.licenseEdition| Optional | PLATINNUM | License edition that can be Standard, Platinum and Enterprise . By default, Platinum is selected.|
 | cpx.exporter.required | Optional | false | Use the argument if you want to run the [Exporter for Citrix ADC Stats](https://github.com/citrix/citrix-adc-metrics-exporter) along with Citrix ingress controller to pull metrics for the Citrix ADC CPX|
 | cpx.exporter.image | Optional | `quay.io/citrix/citrix-adc-metrics-exporter:1.4.9` | The Exporter for Citrix ADC Stats image. |
 | cpx.exporter.pullPolicy | Optional | IfNotPresent | The Exporter for Citrix ADC Stats image pull policy. |

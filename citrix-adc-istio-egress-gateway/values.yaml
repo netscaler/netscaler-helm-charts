@@ -44,7 +44,7 @@ certProvider:
 
 egressGateway:
     netscalerUrl: null
-    image: quay.io/citrix/citrix-k8s-cpx-ingress:13.1-27.59
+    image: quay.io/citrix/citrix-k8s-cpx-ingress:13.1-30.52
     imagePullPolicy: IfNotPresent
     EULA: false
     mgmtHttpPort: 10080
@@ -54,14 +54,17 @@ egressGateway:
     vserverIP: nsip
     adcServerName:
     netProfile:
+    cpxLicenseAggregator:
 
 ADMSettings:
     ADMIP:
     licenseServerIP:
     licenseServerPort: 27000
     bandWidthLicense: false
-    bandWidth:
+    bandWidth: 1000 # bandwidth should be given in Mbps
     vCPULicense: false
     cpxCores:
+    analyticsServerPort: 5557
+    licenseEdition: PLATINUM
 
 secretName: nsloginegress

@@ -4,6 +4,7 @@
 Citrix Application Delivery Controller (ADC) can be deployed as an Istio Egress Gateway to control the egress traffic to Istio service mesh.
 
 # Table of Contents
+
 1. [TL; DR;](#tldr)
 2. [Introduction](#introduction)
 3. [Deploy Citrix ADC VPX or MPX as an Egress Gateway](#deploy-citrix-adc-vpx-or-mpx-as-an-egress-gateway)
@@ -18,25 +19,23 @@ Citrix Application Delivery Controller (ADC) can be deployed as an Istio Egress 
 
 ## <a name="tldr">TL; DR;</a>
   
-### To deploy Citrix ADC VPX or MPX as an Egress Gateway:
+### To deploy Citrix ADC VPX or MPX as an Egress Gateway
 
-       kubectl create secret generic nsloginegress --from-literal=username=<citrix-adc-user> --from-literal=password=<citrix-adc-password> -n citrix-system
+      kubectl create secret generic nsloginegress --from-literal=username=<citrix-adc-user> --from-literal=password=<citrix-adc-password> -n citrix-system
 
-       helm repo add citrix https://citrix.github.io/citrix-helm-charts/
+      helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-        helm install citrix-adc-istio-egress-gateway citrix/citrix-adc-istio-egress-gateway --namespace citrix-system --set egressGateway.EULA=YES --set egressGateway.netscalerUrl=https://<nsip>[:port] --set egressGateway.vserverIP=<IPv4 Address> --set secretName=nsloginegress
+      helm install citrix-adc-istio-egress-gateway citrix/citrix-adc-istio-egress-gateway --namespace citrix-system --set egressGateway.EULA=YES --set egressGateway.netscalerUrl=https://<nsip>[:port] --set egressGateway.vserverIP=<IPv4 Address> --set secretName=nsloginegress
 
-### To deploy Citrix ADC CPX as an Egress Gateway:
+### To deploy Citrix ADC CPX as an Egress Gateway
 
-       helm repo add citrix https://citrix.github.io/citrix-helm-charts/
+      helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-       helm install citrix-adc-istio-egress-gateway citrix/citrix-adc-istio-egress-gateway --namespace citrix-system --set egressGateway.EULA=true --set citrixCPX=true
-
-
+      helm install citrix-adc-istio-egress-gateway citrix/citrix-adc-istio-egress-gateway --namespace citrix-system --set egressGateway.EULA=true --set citrixCPX=true
 
 ## <a name="introduction">Introduction</a>
 
-    This chart deploys Citrix CPX as an Egress Gateway. An egress gateway defines the exit point from the mesh. It provides features like load balancing at the edge of the mesh, monitoring, and routing rules to exiting the mesh. 
+This chart deploys Citrix CPX as an Egress Gateway. An egress gateway defines the exit point from the mesh. It provides features like load balancing at the edge of the mesh, monitoring, and routing rules to exiting the mesh. 
 
 ### Compatibility Matrix between Citrix xDS-adaptor and Istio version
 
@@ -60,18 +59,18 @@ The following prerequisites are required for deploying Citrix ADC as an Egress G
 
   You can verify the API by using the following command:
 
-        kubectl api-versions | grep admissionregistration.k8s.io/v1
+      kubectl api-versions | grep admissionregistration.k8s.io/v1
 
   The following output indicates that the API is enabled:
 
-        admissionregistration.k8s.io/v1
-        admissionregistration.k8s.io/v1beta1
+      admissionregistration.k8s.io/v1
+      admissionregistration.k8s.io/v1beta1
 
 - **For deploying Citrix ADC VPX or MPX as an Egress gateway:**
 
   Create a Kubernetes secret for the Citrix ADC user name and password using the following command:
   
-        kubectl create secret generic nsloginegress --from-literal=username=<citrix-adc-user> --from-literal=password=<citrix-adc-password> -n citrix-system
+      kubectl create secret generic nsloginegress --from-literal=username=<citrix-adc-user> --from-literal=password=<citrix-adc-password> -n citrix-system
 - Ensure that your cluster has Kubernetes version 1.16.0 or later and the `admissionregistration.k8s.io/v1beta1` API is enabled
 
 - **Create system user account for xDS-adaptor in Citrix ADC:**
@@ -79,32 +78,28 @@ The following prerequisites are required for deploying Citrix ADC as an Egress G
   The Citrix ADC appliance needs to have system user account (non-default) with certain privileges so that `xDS-adaptor` can configure the Citrix ADC VPX or MPX appliance. Follow the instructions to create the system user account on Citrix ADC.
 
     Create a Kubernetes secret for the user name and password using the following command:
-
-    ```
-       kubectl create secret generic nslogin --from-literal=username='cxa' --from-literal=password='mypassword'
-    ```
+      kubectl create secret generic nslogin --from-literal=username='cxa' --from-literal=password='mypassword'
 
   The `xDS-adaptor` configures the Citrix ADC using a system user account of the Citrix ADC. The system user account should have certain privileges so that the xDS-adaptor has permissions configure the following on the Citrix ADC:
 
-  -  Add, Delete, or View Content Switching (CS) virtual server
-  -  Configure CS policies and actions
-  -  Configure Load Balancing (LB) virtual server
-  -  Configure Service groups
-  -  Cofigure SSl certkeys
-  -  Configure routes
-  -  Configure user monitors
-  -  Add system file (for uploading SSL certkeys from Kubernetes)
-  -  Configure Virtual IP address (VIP)
-  -  Check the status of the Citrix ADC appliance
-  -  Add, Delete or view authentication virtual server, policy, authaction
-  -  Add, Delete or view Policy
-  -  Add, Delete or view Responder policy, action, param
-  -  Add, Delete or view Rewrite policy, action, param
-  -  Add, Delete or view analytics profile
-  -  Add, Delete or view DNS name server
-  -  Add, Delete or view network netprofile
-  -  Add, Delete or view Traffic Management Commands(sessionaction, session policy, sessionparameter)
-
+  - Add, Delete, or View Content Switching (CS) virtual server
+  - Configure CS policies and actions
+  - Configure Load Balancing (LB) virtual server
+  - Configure Service groups
+  - Cofigure SSl certkeys
+  - Configure routes
+  - Configure user monitors
+  - Add system file (for uploading SSL certkeys from Kubernetes)
+  - Configure Virtual IP address (VIP)
+  - Check the status of the Citrix ADC appliance
+  - Add, Delete or view authentication virtual server, policy, authaction
+  - Add, Delete or view Policy
+  - Add, Delete or view Responder policy, action, param
+  - Add, Delete or view Rewrite policy, action, param
+  - Add, Delete or view analytics profile
+  - Add, Delete or view DNS name server
+  - Add, Delete or view network netprofile
+  - Add, Delete or view Traffic Management Commands(sessionaction, session policy, sessionparameter)
 
 > **Note:**
 >
@@ -112,40 +107,27 @@ The following prerequisites are required for deploying Citrix ADC as an Egress G
 
  To create the system user account, do the following:
 
- 1.  Log on to the Citrix ADC appliance. Perform the following:
-     1.  Use an SSH client, such as PuTTy, to open an SSH connection to the Citrix ADC appliance.
+ 1. Log on to the Citrix ADC appliance. Perform the following:
+     1. Use an SSH client, such as PuTTy, to open an SSH connection to the Citrix ADC appliance.
 
-     2.  Log on to the appliance by using the administrator credentials.
+     2. Log on to the appliance by using the administrator credentials.
 
- 2.  Create the system user account using the following command:
+ 2. Create the system user account using the following command:
+      add system user <username> <password>
+For example:
+      add system user cxa mypassword
 
-     ```
-        add system user <username> <password>
-     ```
+ 3. Create a policy to provide required permissions to the system user account. Use the following command:
 
-     For example:
-
-     ```
-        add system user cxa mypassword
-     ```
-
- 3.  Create a policy to provide required permissions to the system user account. Use the following command:
-
-     ```
-        add cmdpolicy cxa-policy ALLOW "((^\S+\s+cs\s+\S+)|(^\S+\s+lb\s+\S+)|(^\S+\s+service\s+\S+)|(^\S+\s+servicegroup\s+\S+)|(^stat\s+system)|(^show\s+ha)|(^\S+\s+ssl\s+certKey)|(^\S+\s+ssl)|(^\S+\s+route)|(^\S+\s+monitor)|(^show\s+ns\s+ip)|(^\S+\s+system\s+file)|)|(^\S+\s+aaa\s+\S+)|(^\S+\s+aaa\s+\S+\s+.*)|(^\S+\s+authentication\s+\S+)|(^\S+\s+authentication\s+\S+\s+.*)|(^\S+\s+policy\s+\S+)|(^\S+\s+policy\s+\S+\s+.*)|(^\S+\s+rewrite\s+\S+)|(^\S+\s+rewrite\s+\S+\s+.*)|(^\S+\s+analytics\s+\S+)|(^\S+\s+analytics\s+\S+\s+.*)|(^\S+\s+dns\s+\S+)|(^\S+\s+dns\s+\S+\s+.*)|(^\S+\s+netProfile)|(^\S+\s+netProfile\s+.*)|(^\S+\s+tm\s+\S+)|(^\S+\s+tm\s+\S+\s+.*)"
-     ```
-
- 4.  Bind the policy to the system user account using the following command:
-
-     ```
-        bind system user cxa cxa-policy 0
-     ```
+      add cmdpolicy cxa-policy ALLOW "((^\S+\s+cs\s+\S+)|(^\S+\s+lb\s+\S+)|(^\S+\s+service\s+\S+)|(^\S+\s+servicegroup\s+\S+)|(^stat\s+system)|(^show\s+ha)|(^\S+\s+ssl\s+certKey)|(^\S+\s+ssl)|(^\S+\s+route)|(^\S+\s+monitor)|(^show\s+ns\s+ip)|(^\S+\s+system\s+file)|)|(^\S+\s+aaa\s+\S+)|(^\S+\s+aaa\s+\S+\s+.*)|(^\S+\s+authentication\s+\S+)|(^\S+\s+authentication\s+\S+\s+.*)|(^\S+\s+policy\s+\S+)|(^\S+\s+policy\s+\S+\s+.*)|(^\S+\s+rewrite\s+\S+)|(^\S+\s+rewrite\s+\S+\s+.*)|(^\S+\s+analytics\s+\S+)|(^\S+\s+analytics\s+\S+\s+.*)|(^\S+\s+dns\s+\S+)|(^\S+\s+dns\s+\S+\s+.*)|(^\S+\s+netProfile)|(^\S+\s+netProfile\s+.*)|(^\S+\s+tm\s+\S+)|(^\S+\s+tm\s+\S+\s+.*)"
+ 4. Bind the policy to the system user account using the following command:
+      bind system user cxa cxa-policy 0
 
 - **Registration of Citrix ADC CPX in ADM**
 
 Create a secret for ADM username and password
 
-        kubectl create secret generic admloginegress --from-literal=username=<adm-username> --from-literal=password=<adm-password> -n citrix-system
+      kubectl create secret generic admloginegress --from-literal=username=<adm-username> --from-literal=password=<adm-password> -n citrix-system
 
 - **Important Note:** For deploying Citrix ADC VPX or MPX as egress gateway, you should establish the connectivity between Citrix ADC VPX or MPX and cluster nodes. This connectivity can be established by configuring routes on Citrix ADC as mentioned [here](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/network/staticrouting.md) or by deploying [Citrix Node Controller](https://github.com/citrix/citrix-k8s-node-controller).
 
@@ -153,18 +135,19 @@ Create a secret for ADM username and password
 
  To deploy Citrix ADC VPX or MPX as an Egress Gateway in the Istio service mesh, do the following step. In this example, release name is specified as `citrix-adc-istio-egress-gateway` and namespace as `citrix-system`.
 
-        kubectl create secret generic nsloginegress --from-literal=username=<citrix-adc-user> --from-literal=password=<citrix-adc-password> -n citrix-system
+      kubectl create secret generic nsloginegress --from-literal=username=<citrix-adc-user> --from-literal=password=<citrix-adc-password> -n citrix-system
         
-        helm repo add citrix https://citrix.github.io/citrix-helm-charts/
+      helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-        helm install citrix-adc-istio-egress-gateway citrix/citrix-adc-istio-egress-gateway --namespace citrix-system --set egressGateway.EULA=YES,egressGateway.netscalerUrl=https://<nsip>[:port],egressGateway.vserverIP=<IPv4 Address> --set secretName=nsloginegress
+      helm install citrix-adc-istio-egress-gateway citrix/citrix-adc-istio-egress-gateway --namespace citrix-system --set egressGateway.EULA=YES,egressGateway.netscalerUrl=https://<nsip>[:port],egressGateway.vserverIP=<IPv4 Address> --set secretName=nsloginegress
+
 ## <a name="deploy-citrix-adc-cpx-as-an-egress-gateway">Deploy Citrix ADC CPX as an Egress Gateway</a>
 
  To deploy Citrix ADC CPX as an egress Gateway, do the following step. In this example, release name is specified as `citrix-adc-istio-egress-gateway` and namespace is used as `citrix-system`.
 
-        helm repo add citrix https://citrix.github.io/citrix-helm-charts/
+      helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-        helm install citrix-adc-istio-egress-gateway citrix/citrix-adc-istio-egress-gateway --namespace citrix-system --set egressGateway.EULA=true --set citrixCPX=true
+      helm install citrix-adc-istio-egress-gateway citrix/citrix-adc-istio-egress-gateway --namespace citrix-system --set egressGateway.EULA=true --set citrixCPX=true
 
 ## <a name="visualizing-statistics-of-citrix-adc-Egress-gateway-with-metrics-exporter">Visualizing statistics of Citrix ADC Egress Gateway with Metrics Exporter</a>
 
@@ -176,49 +159,44 @@ When Citrix ADC CPX is deployed as Egress Gateway, Metrics Exporter runs along w
 
 To deploy Citrix ADC CPX as Egress Gateway without Metrics Exporter, set the value of `metricExporter.required` as false.
 
-  
-        helm repo add citrix https://citrix.github.io/citrix-helm-charts/
+      helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-        helm install citrix-adc-istio-egress-gateway citrix/citrix-adc-istio-egress-gateway --namespace citrix-system --set egressGateway.EULA=YES --set citrixCPX=true --set metricExporter.required=false
+      helm install citrix-adc-istio-egress-gateway citrix/citrix-adc-istio-egress-gateway --namespace citrix-system --set egressGateway.EULA=YES --set citrixCPX=true --set metricExporter.required=false
 
 To deploy Citrix ADC VPX or MPX as Egress Gateway without Metrics Exporter, set the value of `metricExporter.required` as false.
 
-
-        kubectl create secret generic nsloginegress --from-literal=username=<citrix-adc-user> --from-literal=password=<citrix-adc-password> -n citrix-system
+      kubectl create secret generic nsloginegress --from-literal=username=<citrix-adc-user> --from-literal=password=<citrix-adc-password> -n citrix-system
     
-        helm repo add citrix https://citrix.github.io/citrix-helm-charts/
+      helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-        helm install citrix-adc-istio-egress-gateway citrix/citrix-adc-istio-egress-gateway --namespace citrix-system --set egressGateway.EULA=YES,egressGateway.netscalerUrl=https://<nsip>[:port],egressGateway.vserverIP=<IPv4 Address>,metricExporter.required=false,secretName=nsloginegress
+      helm install citrix-adc-istio-egress-gateway citrix/citrix-adc-istio-egress-gateway --namespace citrix-system --set egressGateway.EULA=YES,egressGateway.netscalerUrl=https://<nsip>[:port],egressGateway.vserverIP=<IPv4 Address>,metricExporter.required=false,secretName=nsloginegress
 
 "Note:" To remotely access telemetry addons such as Prometheus and Grafana, see [Remotely Accessing Telemetry Addons](https://istio.io/docs/tasks/telemetry/gateways/).
 
 ## <a name="generate-certificate-for-egress-gateway">Generate Certificate for Egress Gateway </a>
 
-Citrix Egress gateway needs TLS certificate-key pair for establishing secure communication channel with applications. Earlier these certificates were issued by Istio Citadel and bundled in Kubernetes secret. Certificate was loaded in the application pod by doing volume mount of secret. Now `xDS-Adaptor` can generate its own certificate and get it signed by the Istio Citadel (Istiod). This eliminates the need of secret and associated [risks](https://kubernetes.io/docs/concepts/configuration/secret/#risks). 
+Citrix Egress gateway needs TLS certificate-key pair for establishing secure communication channel with applications. Earlier these certificates were issued by Istio Citadel and bundled in Kubernetes secret. Certificate was loaded in the application pod by doing volume mount of secret. Now `xDS-Adaptor` can generate its own certificate and get it signed by the Istio Citadel (Istiod). This eliminates the need of secret and associated [risks](https://kubernetes.io/docs/concepts/configuration/secret/#risks).
 
-xDS-Adaptor needs to be provided with details Certificate Authority (CA) for successful signing of Certificate Signing Request (CSR). By default, CA is `istiod.istio-system.svc` which accepts CSRs on port 15012. 
+xDS-Adaptor needs to be provided with details Certificate Authority (CA) for successful signing of Certificate Signing Request (CSR). By default, CA is `istiod.istio-system.svc` which accepts CSRs on port 15012.
 To skip this process, don't provide any value (empty string) to `certProvider.caAddr`.
-```
-        helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-        helm install citrix-adc-istio-egress-gateway citrix/citrix-adc-istio-egress-gateway --namespace citrix-system --set egressGateway.EULA=YES --set citrixCPX=true --set certProvider.caAddr=""
-```
+      helm repo add citrix https://citrix.github.io/citrix-helm-charts/
+
+      helm install citrix-adc-istio-egress-gateway citrix/citrix-adc-istio-egress-gateway --namespace citrix-system --set egressGateway.EULA=YES --set citrixCPX=true --set certProvider.caAddr=""
+
 ### <a name="using-third-party-service-account-tokens">Configure Third Party Service Account Tokens</a>
 
-In order to generate certificate for application workload, xDS-Adaptor needs to send valid service account token along with Certificate Signing Request (CSR) to the Istio control plane (Citadel CA). Istio control plane authenticates the xDS-Adaptor using this JWT. 
+In order to generate certificate for application workload, xDS-Adaptor needs to send valid service account token along with Certificate Signing Request (CSR) to the Istio control plane (Citadel CA). Istio control plane authenticates the xDS-Adaptor using this JWT.
 Kubernetes supports two forms of these tokens:
 
-* Third party tokens, which have a scoped audience and expiration.
-* First party tokens, which have no expiration and are mounted into all pods.
- 
+- Third party tokens, which have a scoped audience and expiration.
+- First party tokens, which have no expiration and are mounted into all pods.
+
  If Kubernetes cluster is installed with third party tokens, then the same information needs to be provided for automatic sidecar injection by passing `--set certProvider.jwtPolicy="third-party-jwt"`. By default, it is `first-party-jwt`.
 
-```
-        helm repo add citrix https://citrix.github.io/citrix-helm-charts/
+      helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-        helm install cpx-sidecar-injector citrix/citrix-cpx-istio-sidecar-injector --namespace citrix-system --set cpxProxy.EULA=YES --set certProvider.caAddr="istiod.istio-system.svc" --set certProvider.jwtPolicy="third-party-jwt"
-
-```
+      helm install cpx-sidecar-injector citrix/citrix-cpx-istio-sidecar-injector --namespace citrix-system --set cpxProxy.EULA=YES --set certProvider.caAddr="istiod.istio-system.svc" --set certProvider.jwtPolicy="third-party-jwt"
 
 To determine if your cluster supports third party tokens, look for the TokenRequest API using below command. If there is no output, then it is `first-party-jwt`. In case of `third-party-jwt`, output will be like below.
 
@@ -240,60 +218,61 @@ To determine if your cluster supports third party tokens, look for the TokenRequ
 ```
 
 ## <a name="citrix-adc-cpx-license-provisioning">**Citrix ADC CPX License Provisioning**</a>
+
 By default, CPX runs with 20 Mbps bandwidth called as [CPX Express](https://www.citrix.com/en-in/products/citrix-adc/cpx-express.html) however for better performance and production deployment customer needs licensed CPX instances. [Citrix ADM](https://www.citrix.com/en-in/products/citrix-application-delivery-management/) is used to check out licenses for Citrix ADC CPX.
 
 **Bandwidth based licensing**
 For provisioning licensing on Citrix ADC CPX, it is mandatory to provide License Server information to CPX. This can be done by setting **ADMSettings.licenseServerIP** as License Server IP. In addition to this, **ADMSettings.bandWidthLicense** needs to be set true and desired bandwidth capacity in Mbps should be set **ADMSettings.bandWidth**.
 For example, to set 2Gbps as bandwidth capacity, below command can be used.
 
-    helm repo add citrix https://citrix.github.io/citrix-helm-charts/
+      helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-    helm install citrix-adc-istio-egress-gateway citrix/citrix-adc-istio-egress-gateway --namespace citrix-system --set egressGateway.EULA=YES --set ADMSettings.licenseServerIP=<Licenseserver_IP>,ADMSettings.bandWidthLicense=True --set ADMSettings.bandWidth=2000 --set citrixCPX=true
+      helm install citrix-adc-istio-egress-gateway citrix/citrix-adc-istio-egress-gateway --namespace citrix-system --set egressGateway.EULA=YES --set ADMSettings.licenseServerIP=<Licenseserver_IP>,ADMSettings.bandWidthLicense=True --set ADMSettings.bandWidth=2000 --set citrixCPX=true
 
 ## <a name="configuration-for-servicegraph">**Service Graph configuration**</a>
-   Citrix ADM Service graph is an observability tool that allows user to analyse service to service communication. The service graph is generated by ADM post collection of transactional data from registered Citrix ADC instances. More details about it can be found [here](https://docs.citrix.com/en-us/citrix-application-delivery-management-service/application-analytics-and-management/service-graph.html).
-   Citrix ADC needs to be provided with ADM details for registration and data export. This section lists the steps needed to deploy Citrix ADC and register it with ADM.
+
+Citrix ADM Service graph is an observability tool that allows user to analyse service to service communication. The service graph is generated by ADM post collection of transactional data from registered Citrix ADC instances. More details about it can be found [here](https://docs.citrix.com/en-us/citrix-application-delivery-management-service/application-analytics-and-management/service-graph.html).
+Citrix ADC needs to be provided with ADM details for registration and data export. This section lists the steps needed to deploy Citrix ADC and register it with ADM.
 
 **Deploy Citrix ADC CPX as egress gateway**
-   1. Create secret using Citrix ADM Agent credentials, which will be used by Citrix ADC CPX to communicate with Citrix ADM Agent:
 
-	kubectl create secret generic admlogin --from-literal=username=<adm-agent-username> --from-literal=password=<adm-agent-password>
+1. Create secret using Citrix ADM Agent credentials, which will be used by Citrix ADC CPX to communicate with Citrix ADM Agent:
 
-   2. Deploy Citrix ADC CPX as egress gateway using helm command with `ADM` deatils:
+      kubectl create secret generic admlogin --from-literal=username=<adm-agent-username> --from-literal=password=<adm-agent-password>
 
-	helm install citrix-adc-istio-egress-gateway citrix/citrix-adc-istio-egress-gateway --namespace citrix-system --set egressGateway.EULA=true --set citrixCPX=true --set ADMSettings.ADMIP=<ADM-Agent-IP>
+2. Deploy Citrix ADC CPX as egress gateway using helm command with `ADM` deatils:
+
+      helm install citrix-adc-istio-egress-gateway citrix/citrix-adc-istio-egress-gateway --namespace citrix-system --set egressGateway.EULA=true --set citrixCPX=true --set ADMSettings.ADMIP=< ADM-Agent-IP >
 
 > **Note:**
 > If container agent is being used here for Citrix ADM, specify `serviceIP` of container agent in the `ADMSettings.ADMIP` parameter.
 
 **Deploy Citrix ADC VPX/MPX as egress gateway**
 
-   Deploy Citrix ADC VPX/MPX as egress gateway using the following helm command and set analytics settings on Citrix ADC VPX/MPX for sending transaction metrics to Citrix ADM
-	
-	helm install citrix-adc-istio-egress-gateway citrix/citrix-adc-istio-egress-gateway --namespace citrix-system --set egressGateway.EULA=YES --set egressGateway.netscalerUrl=https://<nsip>[:port] --set egressGateway.vserverIP=<IPv4 Address> --set secretName=nsloginegress	
+Deploy Citrix ADC VPX/MPX as egress gateway using the following helm command and set analytics settings on Citrix ADC VPX/MPX for sending transaction metrics to Citrix ADM
+
+      helm install citrix-adc-istio-egress-gateway citrix/citrix-adc-istio-egress-gateway --namespace citrix-system --set egressGateway.EULA=YES --set egressGateway.netscalerUrl=https://<nsip>[:port] --set egressGateway.vserverIP=<IPv4 Address> --set secretName=nsloginegress
 
    Add the following configurations in Citrix ADC VPX/MPX
 
-        en ns mode ulfd
+      en ns mode ulfd
 
-        en ns feature appflow
+      en ns feature appflow
 
-        add appflow collector logproxy_lstreamd -IPAddress <ADM-AGENT-IP/POD-IP> -port 5557 -Transport logstream
+      add appflow collector logproxy_lstreamd -IPAddress <ADM-AGENT-IP/POD-IP> -port 5557 -Transport logstream
 
-        set appflow param -templateRefresh 3600 -httpUrl ENABLED -httpCookie ENABLED -httpReferer ENABLED -httpMethod ENABLED -httpHost ENABLED -httpUserAgent ENABLED -httpContentType ENABLED -httpAuthorization ENABLED -httpVia ENABLED -httpXForwardedFor ENABLED -httpLocation ENABLED -httpSetCookie ENABLED -httpSetCookie2 ENABLED -httpDomain ENABLED -httpQueryWithUrl ENABLED  metrics ENABLED -events ENABLED -auditlogs ENABLED
+      set appflow param -templateRefresh 3600 -httpUrl ENABLED -httpCookie ENABLED -httpReferer ENABLED -httpMethod ENABLED -httpHost ENABLED -httpUserAgent ENABLED -httpContentType ENABLED -httpAuthorization ENABLED -httpVia ENABLED -httpXForwardedFor ENABLED -httpLocation ENABLED -httpSetCookie ENABLED -httpSetCookie2 ENABLED -httpDomain ENABLED -httpQueryWithUrl ENABLED  metrics ENABLED -events ENABLED -auditlogs ENABLED
 
-        add appflow action logproxy_lstreamd -collectors logproxy_lstreamd
+      add appflow action logproxy_lstreamd -collectors logproxy_lstreamd
 
-        add appflow policy logproxy_policy true logproxy_lstreamd
+      add appflow policy logproxy_policy true logproxy_lstreamd
 
-        bind appflow global logproxy_policy 10 END -type REQ_DEFAULT
+      bind appflow global logproxy_policy 10 END -type REQ_DEFAULT
 
-        bind appflow global logproxy_policy 10 END -type OTHERTCP_REQ_DEFAULT
-
+      bind appflow global logproxy_policy 10 END -type OTHERTCP_REQ_DEFAULT
 
 > **Note:**
 > If container agent is being used here for Citrix ADM, please provide `PodIP` of container agent in above manual config.
-
 
 ## <a name="citrix-adc-as-egress-gateway-a-sample-deployment">Citrix ADC as Egress Gateway: a sample deployment</a>
 
@@ -303,7 +282,7 @@ A sample deployment of Citrix ADC as an Egress gateway to excess external servic
 
 To uninstall or delete a chart with release name as `citrix-adc-istio-egress-gateway`, do the following step.
 
-        helm uninstall citrix-adc-istio-egress-gateway -n citrix-system
+      helm uninstall citrix-adc-istio-egress-gateway -n citrix-system
 
 The command removes all the Kubernetes components associated with the chart and deletes the release.
 
@@ -322,20 +301,23 @@ The following table lists the configurable parameters in the Helm chart and thei
 | `xDSAdaptor.defaultSSLListenerOn443` | Create SSL vserver by default for LDS resource for 0.0.0.0 and port 443. If set to false, TCP vserver will be created in absence of TLSContext in tcp_proxy filter | true | Optional |
 | `coe.coeURL`          | Name of [Citrix Observability Exporter](https://github.com/citrix/citrix-observability-exporter) Service in the form of "<servicename>.<namespace>"  | null            | Optional|
 | `coe.coeTracing`          | Use COE to send appflow transactions to Zipkin endpoint. If it is set to true, ADM servicegraph (if configured) can be impacted.  | false           | Optional|
-| `ADMSettings.ADMIP `          | Citrix Application Delivery Management (ADM) IP address  | null            | Mandatory for Citrix ADC CPX |
-| `ADMSettings.licenseServerIP `          | Citrix License Server IP address  | null            | Optional |
+| `ADMSettings.ADMIP`          | Citrix Application Delivery Management (ADM) IP address | null            | Mandatory for Citrix ADC CPX |
+| `ADMSettings.licenseServerIP`          | Citrix License Server IP address  | null            | Optional |
 | `ADMSettings.licenseServerPort` | Citrix ADM port if a non-default port is used                                                                                        | 27000                                                                 | Optional|
-| `ADMSettings.bandWidth`          | Desired bandwidth capacity to be set for Citrix ADC CPX in Mbps  | null            | Optional |
+| `ADMSettings.bandWidth`          | Desired bandwidth capacity to be set for Citrix ADC CPX in Mbps  | 1000            | Optional |
 | `ADMSettings.bandWidthLicense`          | To specify bandwidth based licensing  | false            | Optional |
- `egressGateway.netscalerUrl`       | URL or IP address of the Citrix ADC which Istio-adaptor configures (Mandatory if citrixCPX=false)| null   |Mandatory for Citrix ADC MPX or VPX|
+| `ADMSettings.licenseEdition`| License edition that can be Standard, Platinum and Enterprise . By default, Platinum is selected | PLATINUM | optional |
+| `ADMSettings.analyticsServerPort` |      Port used for Analytics in ADM. Required to plot ServiceGraph.                                                                                   | 5557                                                                 | Optional|
+| `egressGateway.netscalerUrl`       | URL or IP address of the Citrix ADC which Istio-adaptor configures (Mandatory if citrixCPX=false)| null   |Mandatory for Citrix ADC MPX or VPX|
 | `egressGateway.vserverIP`       | Virtual server IP address on Citrix ADC (Mandatory if citrixCPX=false) | null | Mandatory for Citrix ADC MPX or VPX|
-| `egressGateway.adcServerName `          | Citrix ADC ServerName used in the Citrix ADC certificate  | null            | Optional |
-| `egressGateway.image`             | Image of Citrix ADC CPX designated to run as egress Gateway                                                                       |quay.io/citrix/citrix-k8s-cpx-ingress:13.1-27.59 |   Mandatory for Citrix ADC CPX |
+| `egressGateway.adcServerName`          | Citrix ADC ServerName used in the Citrix ADC certificate  | null            | Optional |
+| `egressGateway.image`             | Image of Citrix ADC CPX designated to run as egress Gateway                                                                       |quay.io/citrix/citrix-k8s-cpx-ingress:13.1-30.52 |   Mandatory for Citrix ADC CPX |
 | `egressGateway.imagePullPolicy`   | Image pull policy                                                                                                                  | IfNotPresent                                                          | Optional|
 | `egressGateway.mgmtHttpPort`      | Management port of the Citrix ADC CPX                                                                                              | 9080                                                                  | Optional|
 | `egressGateway.mgmtHttpsPort`    | Secure management port of Citrix ADC CPX                                                                                           | 9443                                                                  | Optional|
 | `egressGateway.EULA`             | End User License Agreement(EULA) terms and conditions. If yes, then user agrees to EULA terms and conditions.                                     | false                                                                    | Mandatory for Citrix ADC CPX
 | `egressGateway.label` | Custom label for the egress Gateway service                                                                                       | citrix-egressgateway                                                                 |Optional|
+| `egressGateway.cpxLicenseAggregator` | IP/FQDN of the CPX License Aggregator if it is being used to license the CPX. | null                                                                |Optional|
 | `istioPilot.name`                 | Name of the Istio Pilot (Istiod) service                                                                                                        | istiod                                                           |Optional|
 | `istioPilot.namespace`     | Namespace where Istio Pilot is running                                                                                        | istio-system                                                          |Optional|
 | `istioPilot.secureGrpcPort`       | Secure GRPC port where Istiod (Istio Pilot) is listening (default setting)                                                                  | 15012                                                                 |Optional|
@@ -354,4 +336,3 @@ The following table lists the configurable parameters in the Helm chart and thei
 | `certProvider.clusterId`   | clusterId is the ID of the cluster where Istiod CA instance resides (default Kubernetes). It can be different value on some cloud platforms or in multicluster environments. For example, in Anthos servicemesh, it might be of the format of `cn<project-name>-<region>-<cluster_name>`. In multiCluster environments, it is the value of global.multiCluster.clusterName provided during servicemesh control plane installation        | Kubernetes | Optional |
 | `certProvider.jwtPolicy`   | Service Account token type. Kubernetes platform supports First party tokens and Third party tokens. Usually public cloud based Kubernetes has third-party-jwt | null | Optional |
 | `secretName`   | Name of the Kubernetes secret holding Citrix ADC credentials | nsloginegress | Mandatory for Citrix ADC VPX/MPX |
-

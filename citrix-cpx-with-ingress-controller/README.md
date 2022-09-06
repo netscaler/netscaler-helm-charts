@@ -441,7 +441,7 @@ The following table lists the configurable parameters of the Citrix ADC CPX with
 | Parameters | Mandatory or Optional | Default value | Description |
 | ---------- | --------------------- | ------------- | ----------- |
 | license.accept | Mandatory | no | Set `yes` to accept the Citrix ingress controller end user license agreement. |
-| image | Mandatory | `quay.io/citrix/citrix-k8s-cpx-ingress:13.0-83.27` | The Citrix ADC CPX image. |
+| image | Mandatory | `quay.io/citrix/citrix-k8s-cpx-ingress:13.1-30.52` | The Citrix ADC CPX image. |
 | pullPolicy | Mandatory | IfNotPresent | The Citrix ADC CPX image pull policy. |
 | cic.image | Mandatory | `quay.io/citrix/citrix-k8s-ingress-controller:1.26.7` | The Citrix ingress controller image. |
 | cic.pullPolicy | Mandatory | IfNotPresent | The Citrix ingress controller image pull policy. |
@@ -457,8 +457,10 @@ The following table lists the configurable parameters of the Citrix ADC CPX with
 | nsConfigDnsRec | Optional | false | To enable/disable DNS address Record addition in ADC through Ingress |
 | nsSvcLbDnsRec | Optional | false | To enable/disable DNS address Record addition in ADC through Type Load Balancer Service |
 | nsDnsNameserver | Optional | N/A | To add DNS Nameservers in ADC |
+| optimizeEndpointBinding | Optional | false | To enable/disable binding of backend endpoints to servicegroup in a single API-call. Recommended when endpoints(pods) per application are large in number. Applicable only for Citrix ADC Version >=13.0-45.7  |
 | defaultSSLCertSecret | Optional | N/A | Provide Kubernetes secret name that needs to be used as a default non-SNI certificate in Citrix ADC. |
 | nsHTTP2ServerSide | Optional | OFF | Set this argument to `ON` for enabling HTTP2 for Citrix ADC service group configurations. |
+| cpxLicenseAggregator | Optional | N/A | IP/FQDN of the CPX License Aggregator if it is being used to license the CPX. |
 | nsCookieVersion | Optional | 0 | Specify the persistence cookie version (0 or 1). |
 | logProxy | Optional | N/A | Provide Elasticsearch or Kafka or Zipkin endpoint for Citrix observability exporter. |
 | nsProtocol | Optional | http | Protocol http or https used for the communication between Citrix Ingress Controller and CPX |
@@ -497,9 +499,11 @@ The following table lists the configurable parameters of the Citrix ADC CPX with
 | ADMSettings.ADMIP | Optional | N/A |  Citrix Application Delivery Management (ADM) IP address. |
 | ADMSettings.loginSecret | Optional | N/A | The secret key to login to the ADM. For information on how to create the secret keys, see [Prerequisites](#prerequistes). |
 | ADMSettings.bandWidthLicense | Optional | False | Set to true if you want to use bandwidth based licensing for Citrix ADC CPX. |
-| ADMSettings.bandWidth | Optional | N/A | Desired bandwidth capacity to be set for Citrix ADC CPX in Mbps. |
+| ADMSettings.bandWidth | Optional | 1000 | Desired bandwidth capacity to be set for Citrix ADC CPX in Mbps. |
 | ADMSettings.vCPULicense | Optional | N/A | Set to true if you want to use vCPU based licensing for Citrix ADC CPX. |
+| ADMSettings.licenseEdition| Optional | PLATINNUM | License edition that can be Standard, Platinum and Enterprise . By default, Platinum is selected.|
 | ADMSettings.cpxCores | Optional | 1 | Desired number of vCPU to be set for Citrix ADC CPX. |
+| ADMSettings.analyticsServerPort | Optional | 5557 | Port used for Analytics by ADM. Required to plot ServiceGraph. |
 | exporter.required | Optional | false | Use the argument if you want to run the [Exporter for Citrix ADC Stats](https://github.com/citrix/citrix-adc-metrics-exporter) along with Citrix ingress controller to pull metrics for the Citrix ADC CPX|
 | exporter.image | Optional | `quay.io/citrix/citrix-adc-metrics-exporter:1.4.9` | The Exporter for Citrix ADC Stats image. |
 | exporter.pullPolicy | Optional | IfNotPresent | The Exporter for Citrix ADC Stats image pull policy. |
@@ -509,7 +513,7 @@ The following table lists the configurable parameters of the Citrix ADC CPX with
 | analyticsConfig.distributedTracing.enable | Optional | false | Set this value to true to enable OpenTracing in Citrix ADC. |
 | analyticsConfig.distributedTracing.samplingrate | Optional | 100 | Specifies the OpenTracing sampling rate in percentage. |
 | analyticsConfig.endpoint.server | Optional | N/A | Set this value as the IP address or DNS address of the  analytics server. |
-| analyticsConfig.endpoint.service | Optional | N/A | Set this value as the IP address or service name with namespace of the analytics service deployed in Kubernetes. Format: namespace/servicename|
+| analyticsConfig.endpoint.service | Optional | N/A | Set this value as the IP address or service name with namespace of the analytics service deployed in Kuberenetes. Format: namespace/servicename|
 | analyticsConfig.timeseries.port | Optional | 5563 | Specify the port used to expose analytics service for timeseries endpoint. |
 | analyticsConfig.timeseries.metrics.enable | Optional | Set this value to true to enable sending metrics from Citrix ADC. |
 | analyticsConfig.timeseries.metrics.mode | Optional | avro |  Specifies the mode of metric endpoint. |

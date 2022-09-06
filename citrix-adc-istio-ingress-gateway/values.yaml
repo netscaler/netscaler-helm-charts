@@ -42,7 +42,7 @@ certProvider:
 
 ingressGateway:
     netscalerUrl: null 
-    image: quay.io/citrix/citrix-k8s-cpx-ingress:13.1-27.59
+    image: quay.io/citrix/citrix-k8s-cpx-ingress:13.1-30.52
     imagePullPolicy: IfNotPresent
     EULA: NO
     mgmtHttpPort: 10080
@@ -62,14 +62,17 @@ ingressGateway:
     multiClusterListenerPort: 15443
     multiClusterListenerNodePort: 32443
     multiClusterSvcDomain: global
+    cpxLicenseAggregator:
 
 ADMSettings:
     ADMIP:
     licenseServerIP:
     licenseServerPort: 27000
     bandWidthLicense: false
-    bandWidth:
+    bandWidth: 1000  #Bandwidth should be given in Mbps
     vCPULicense: false
     cpxCores:
+    analyticsServerPort: 5557
+    licenseEdition: PLATINUM
 
 secretName: nslogin

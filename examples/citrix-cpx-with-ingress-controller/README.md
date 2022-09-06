@@ -85,7 +85,7 @@ The following table lists the configurable parameters of the Citrix ADC CPX with
 | Parameters | Mandatory or Optional | Default value | Description |
 | ---------- | --------------------- | ------------- | ----------- |
 | license.accept | Mandatory | no | Set `yes` to accept the Citrix ingress controller end user license agreement. |
-| image | Mandatory | `quay.io/citrix/citrix-k8s-cpx-ingress:13.0-83.27` | The Citrix ADC CPX image. |
+| image | Mandatory | `quay.io/citrix/citrix-k8s-cpx-ingress:13.1-30.52` | The Citrix ADC CPX image. |
 | pullPolicy | Mandatory | IfNotPresent | The Citrix ADC CPX image pull policy. |
 | cic.image | Mandatory | `quay.io/citrix/citrix-k8s-ingress-controller:1.26.7` | The Citrix ingress controller image. |
 | cic.pullPolicy | Mandatory | IfNotPresent | The Citrix ingress controller image pull policy. |
@@ -100,11 +100,13 @@ The following table lists the configurable parameters of the Citrix ADC CPX with
 | nsConfigDnsRec | Optional | false | To enable/disable DNS address Record addition in ADC through Ingress |
 | nsSvcLbDnsRec | Optional | false | To enable/disable DNS address Record addition in ADC through Type Load Balancer Service |
 | nsDnsNameserver | Optional | N/A | To add DNS Nameservers in ADC |
+| optimizeEndpointBinding | Optional | false | To enable/disable binding of backend endpoints to servicegroup in a single API-call. Recommended when endpoints(pods) per application are large in number. Applicable only for Citrix ADC Version >=13.0-45.7  |
 | defaultSSLCertSecret | Optional | N/A | Provide Kubernetes secret name that needs to be used as a default non-SNI certificate in Citrix ADC. |
 | nsHTTP2ServerSide | Optional | OFF | Set this argument to `ON` for enabling HTTP2 for Citrix ADC service group configurations. |
 | nsCookieVersion | Optional | 0 | Specify the persistence cookie version (0 or 1). |
 | logProxy | Optional | N/A | Provide Elasticsearch or Kafka or Zipkin endpoint for Citrix observability exporter. |
 | nsProtocol | Optional | http | Protocol http or https used for the communication between Citrix Ingress Controller and CPX |
+| cpxLicenseAggregator | Optional | N/A | IP/FQDN of the CPX License Aggregator if it is being used to license the CPX. |
 | nitroReadTimeout | Optional | 20 | The nitro Read timeout in seconds, defaults to 20 |
 | cpxBgpRouter | Optional | false| If set to true, this CPX is deployed as daemonset in BGP controller mode wherein BGP advertisements are done for attracting external traffic to Kubernetes clusters |
 | nsIP | Optional | 192.168.1.2 | NSIP used by CPX for internal communication when run in Host mode, i.e when cpxBgpRouter is set to true. A /24 internal network is created in this IP range which is used for internal communications withing the network namespace. |
@@ -139,9 +141,11 @@ bels | Optional | N/A | You can use this parameter to provide the route labels s
 | ADMSettings.ADMIP | Optional | N/A |  Citrix Application Delivery Management (ADM) IP address. |
 | ADMSettings.loginSecret | Optional | N/A | The secret key to login to the ADM. For information on how to create the secret keys, see [Prerequisites](#prerequistes). |
 | ADMSettings.bandWidthLicense | Optional | False | Set to true if you want to use bandwidth based licensing for Citrix ADC CPX. |
-| ADMSettings.bandWidth | Optional | N/A | Desired bandwidth capacity to be set for Citrix ADC CPX in Mbps. |
+| ADMSettings.bandWidth | Optional | 1000 | Desired bandwidth capacity to be set for Citrix ADC CPX in Mbps. |
 | ADMSettings.vCPULicense | Optional | N/A | Set to true if you want to use vCPU based licensing for Citrix ADC CPX. |
 | ADMSettings.cpxCores | Optional | 1 | Desired number of vCPU to be set for Citrix ADC CPX. |
+| ADMSettings.licenseEdition| Optional | PLATINNUM | License edition that can be Standard, Platinum and Enterprise . By default, Platinum is selected.|
+| ADMSettings.analyticsServerPort | Optional | 5557 | Port used for Analytics by ADM. Required to plot ServiceGraph. |
 | exporter.required | Optional | false | Use the argument if you want to run the [Exporter for Citrix ADC Stats](https://github.com/citrix/citrix-adc-metrics-exporter) along with Citrix ingress controller to pull metrics for the Citrix ADC CPX|
 | exporter.image | Optional | `quay.io/citrix/citrix-adc-metrics-exporter:1.4.9` | The Exporter for Citrix ADC Stats image. |
 | exporter.pullPolicy | Optional | IfNotPresent | The Exporter for Citrix ADC Stats image pull policy. |
