@@ -449,6 +449,7 @@ The following table lists the configurable parameters of the Citrix ADC CPX with
 | cpx.license.accept | Mandatory | no | Set `yes` to accept the Citrix ingress controller end user license agreement. |
 | cpx.image | Mandatory | `quay.io/citrix/citrix-k8s-cpx-ingress:13.1-30.52` | The Citrix ADC CPX image. |
 | cpx.pullPolicy | Mandatory | IfNotPresent | The Citrix ADC CPX image pull policy. |
+| cpx.daemonSet | Optional | False | Set this to true if Citrix ADC CPX needs to be deployed as DaemonSet. |
 | cpx.cic.image | Mandatory | `quay.io/citrix/citrix-k8s-ingress-controller:1.26.7` | The Citrix ingress controller image. |
 | cpx.cic.pullPolicy | Mandatory | IfNotPresent | The Citrix ingress controller image pull policy. |
 | cpx.cic.required | Mandatory | true | CIC to be run as sidecar with Citrix ADC CPX |
@@ -509,7 +510,7 @@ The following table lists the configurable parameters of the Citrix ADC CPX with
 | cpx.ADMSettings.vCPULicense | Optional | N/A | Set to true if you want to use vCPU based licensing for Citrix ADC CPX. |
 | cpx.ADMSettings.cpxCores | Optional | 1 | Desired number of vCPU to be set for Citrix ADC CPX. |
 | cpx.ADMSettings.analyticsServerPort | Optional | 5557 | Port used for Analytics by ADM. Required to plot ServiceGraph. |
-| cpx.ADMSettings.licenseEdition| Optional | PLATINNUM | License edition that can be Standard, Platinum and Enterprise . By default, Platinum is selected.|
+| cpx.ADMSettings.licenseEdition| Optional | PLATINUM | License edition that can be Standard, Platinum and Enterprise . By default, Platinum is selected.|
 | cpx.exporter.required | Optional | false | Use the argument if you want to run the [Exporter for Citrix ADC Stats](https://github.com/citrix/citrix-adc-metrics-exporter) along with Citrix ingress controller to pull metrics for the Citrix ADC CPX|
 | cpx.exporter.image | Optional | `quay.io/citrix/citrix-adc-metrics-exporter:1.4.9` | The Exporter for Citrix ADC Stats image. |
 | cpx.exporter.pullPolicy | Optional | IfNotPresent | The Exporter for Citrix ADC Stats image pull policy. |
