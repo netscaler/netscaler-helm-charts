@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-{{- if .Values.cpxBgpRouter }}
+{{- if or .Values.cpxBgpRouter .Values.daemonSet }}
 kind: DaemonSet
 {{- else }}
 kind: Deployment
@@ -11,7 +11,7 @@ spec:
   selector:
     matchLabels:
       app: {{ include "citrix-cpx-ingress-controller.fullname" . }}
-{{- if not .Values.cpxBgpRouter }}
+{{- if not ( or .Values.cpxBgpRouter .Values.daemonSet ) }}
   replicas: {{ .Values.replicaCount }}
 {{- end }}
   template:
