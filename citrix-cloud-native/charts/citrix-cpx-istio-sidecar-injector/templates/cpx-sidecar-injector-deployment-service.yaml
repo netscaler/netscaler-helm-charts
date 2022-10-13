@@ -45,6 +45,8 @@ spec:
         - name: sidecar-certs-generator
           image: {{ .Values.sidecarCertsGenerator.image }}
           imagePullPolicy: {{ .Values.sidecarCertsGenerator.imagePullPolicy }}
+          securityContext:
+            privileged: true
           volumeMounts:
           - name: certs
             mountPath: /tmp
@@ -52,6 +54,8 @@ spec:
         - name: sidecar-injector-webhook
           image: {{ .Values.sidecarWebHook.webhookImage }}
           imagePullPolicy: {{ .Values.sidecarWebHook.imagePullPolicy }}
+          securityContext:
+            privileged: true
           args:
             - --caCertFile=/etc/istio/certs/cert.pem
             - --tlsCertFile=/etc/istio/certs/cert.pem
