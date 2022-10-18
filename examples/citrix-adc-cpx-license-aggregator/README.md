@@ -33,15 +33,39 @@ Provide the IP address or FQDN of the Citrix ADM License Server in the helm vari
 
    helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-   helm install cla citrix/cpx-license-aggregator --namespace citrix-system --set licenseServer.address=<ADM-License-Server-IP or ADM-agent-FQDN>,licenseServer.port=27000,redis.secretName=<Kubernetes-Secret-containing-DB-credentials> --set licenseAggregator.username=<myname> --set licenseInfo.quantum=5,licenseInfo.lowWatermark=2
+   helm install cla citrix/cpx-license-aggregator --namespace citrix-system --set licenseServer.address=<ADM-License-Server-IP or ADM-agent-FQDN>,licenseServer.port=27000,redis.secretName=<Kubernetes-Secret-containing-DB-credentials> --set licenseAggregator.username=<myname> --set licenseInfo.instanceQuantum=18,licenseInfo.instanceLowWatermark=1 --set licenseInfo.bandwidthEnterpriseQuantum=5000,licenseInfo.bandwidthEnterpriseLowWatermark=2000 --set licenseInfo.vcpuEnterpriseQuantum=5,licenseInfo.vcpuEnterpriseLowWatermark=2
    ```
 In the above command, username represents the handler of license aggregator. In the ADM license server, the details of this instance of CPX License Aggregator would be associated with the provided username.
 
-`licenseInfo.quantum` represents the amount of licenses to be checked-out in bulk from Citrix ADM License Server when 
+## Bandwidth Pool Licensing
 
-i) License Aggregator boots up.
+Citrix ADC CPX licenses can be allocated based on the bandwidth consumption by the instances. By default, when the Citrix ADC CPX instance is licensed, it is unlocked with 1 Gbps throughput capacity. These CPX instances are allotted licenses from the `instance` quota of the Citrix ADC CPX License Aggregator. 
 
-ii) The available licenses fall below `licenseInfo.lowWatermark` value.
+If the Citrix ADC CPX instance needs to be allotted with more than 1 Gbps bandwidth, then CPX needs to provide additional bandwidth requirement in the registration request (apart from the instance check-out request) to the Citrix ADC CPX License Aggregator. This additional bandwidth is allotted from the Bandwidth quota present with the Citrix ADC CPX License Aggregator.
+
+
+In the above command,
+
+1) `licenseInfo.instanceQuantum` represents the amount of instance licenses to be checked-out in bulk from Citrix ADM License Server when 
+
+    * License Aggregator boots up.
+
+    * The available licenses fall below `licenseInfo.instanceLowWatermark` value.
+
+
+2) `licenseInfo.bandwidthEnterpriseQuantum` represents the total Enterprise bandwidth checked-out in **Mbps** by the CLA from License Server, and when the available/free capacity of the CLA falls below `licenseInfo.bandwidthEnterpriseLowWatermark` value, additional `bandwidthEnterpriseQuantum` will be checked-out again. 
+
+In the given example, 5 Gbps (5000 Mbps) enterprise bandwidth will be checked-out by the CLA. When the CLA allots 3 Gbps to the Citrix ADC CPX instances, additional 5 Gbps will be checked-out.
+
+## vCPU Pool Licensing
+In the virtual CPU-usage-based licensing, the license specifies the number of CPUs that a particular Citrix ADC CPX instance is entitled to. So, the Citrix ADC CPX can check out licenses for only the number of virtual CPUs from the Citrix ADC CPX License Aggregator.
+
+**Enterprise vCPU Licensing**
+`licenseInfo.vcpuEnterpriseQuantum` represents the total Enterprise vCPUs quota checked-out by the CLA from License Server, and when the available/free capacity of the CLA falls below `licenseInfo.vcpuEnterpriseLowWatermark` value, additional `vcpuEnterpriseQuantum` will be checked-out again. 
+
+In the above command, 5 vCPUs of enterprise category will be checked-out by the CLA. When the CLA has only 3 vCPUs available, it'll check-out 5 more vCPUs proactively.
+
+For more details about the Citrix ADC CPX licensing, read [this](https://docs.citrix.com/en-us/citrix-adc-cpx/current-release/cpx-licensing.html) guide.
 
 # <a name="cpx-with-cic">2. Deploying Standalone Citrix ADC CPX </a>
 Standalone Citrix ADC CPX can be any CPX that doesn't run as a sidecar in the pod along with application container.
@@ -57,13 +81,18 @@ ii) Citrix ADC CPX as Istio Ingress Gateway
 
 ##  i) Citrix ADC CPX as Kubernetes Ingress with CIC   
 
-    helm install cpx-with-ingress-controller citrix/citrix-cpx-with-ingress-controller --namespace citrix-system --set license.accept=yes,crds.install=true --set ADMSettings.bandWidthLicense=true --set cpxLicenseAggregator=cla-cpx-license-aggregator.citrix-system
+    helm install cpx-with-ingress-controller citrix/citrix-cpx-with-ingress-controller --namespace citrix-system --set license.accept=yes,crds.install=true --set cpxLicenseAggregator=cla-cpx-license-aggregator.citrix-system --set ADMSettings.vCPULicense=true,ADMSettings.cpxCores=2,ADMSettings.licenseEdition=enterprise
     
+The given command will fetch Enterprise category licenses with below capability
+* 2 vCPUs - Instantiating CPX with 2 Packet Engines (PEs)
 
 ##  ii) Citrix ADC CPX as Istio Ingress Gateway
     
-    helm install citrix-adc-istio-ingress-gateway citrix/citrix-adc-istio-ingress-gateway --namespace citrix-system --set ingressGateway.EULA=true --set citrixCPX=true --set ingressGateway.cpxLicenseAggregator=cla-cpx-license-aggregator.citrix-system --set ADMSettings.bandWidthLicense=true 
+    helm install citrix-adc-istio-ingress-gateway citrix/citrix-adc-istio-ingress-gateway --namespace citrix-system --set ingressGateway.EULA=true --set citrixCPX=true --set ingressGateway.cpxLicenseAggregator=cla-cpx-license-aggregator.citrix-system --set ADMSettings.bandWidthLicense=true,ADMSettings.bandWidth=2000,ADMSettings.licenseEdition=enterprise
     
+The given command will fetch Enterprise category licenses with below capabilities
+* instance license (in-built with 1 Gbps throughput capacity)
+* additional 1 Gbps capacity (total 2 Gbps throughput capacity of the CPX)
 
 *Note*: Ensure Istio servicemesh is installed to deploy Citrix ADC CPX as Istio Ingress Gateway.
 
@@ -75,7 +104,7 @@ The below command deploys the CPX sidecar injector webhook that is responsible t
 For more details about the Citrix ADC CPX sidecar injector, follow [this](https://github.com/citrix/citrix-helm-charts/tree/master/citrix-cpx-istio-sidecar-injector) link.
 
     
-    helm install cpx-sidecar-injector citrix/citrix-cpx-istio-sidecar-injector --namespace citrix-system --set cpxProxy.EULA=YES --set ADMSettings.bandWidthLicense=true --set cpxProxy.cpxLicenseAggregator=cla-cpx-license-aggregator.citrix-system
+    helm install cpx-sidecar-injector citrix/citrix-cpx-istio-sidecar-injector --namespace citrix-system --set cpxProxy.EULA=YES --set ADMSettings.bandWidthLicense=true,ADMSettings.licenseEdition=enterprise --set cpxProxy.cpxLicenseAggregator=cla-cpx-license-aggregator.citrix-system
     
 ### B. Deploy a sample application
 
@@ -110,24 +139,25 @@ ii) `/cpxinfo` URL path gives a list of Citrix ADC CPXs licensed by the license 
 If Citrix ADC CPX License Aggregator is exposed to the client using NodePort, then use `kubectl get service` command to identify the nodeport being used for License Aggregator service. Visit below URLs from your browser or using a cURL utility.
 
 ### Check the License Aggregator status
-Send HTTP request to /stats path.
+Send HTTP request to `/stats` path.
 
-`https://<NodeIP:Nodeport>/stats`
+```https://<NodeIP:Nodeport>/stats```
 
-Below is the sample JSON output of stats. It represents that Citrix ADC CPX License Aggregator owns 15 licenses of type **INSTANCE** and total 9 Citrix ADC CPX instances are licensed by the License Aggregator.
+Below is the snapshot of JSON output of stats. It represents that the Citrix ADC CPX License Aggregator 
 
-```
-{
-  "CurrentLicenseCapacity": 15,
-  "LicenseType": "INSTANCE",
-  "TotalLicensedCPXs": 9
-}
-```
+* Holds 5 Gbps Enterprise Bandwidth capacity out of which 1 Gbps has been given to the Citrix ADC CPXs, and it can serve the need up to 4 Gbps.
+
+* Owns Enterprise vCPU license and can allot total 5 vCPUs to CPXs. Right now, 2 vCPUs are already allotted and 3 more vCPU requests can be successfully handled.
+
+* Owns 18 licenses of type INSTANCE and total 15 Citrix ADC CPX instances are licensed by the License Aggregator.
+
+![](images/stats_snapshot.png)
+
 
 ### Check the details of licensed Citrix ADC CPXs
-Send HTTP request with custom header to /cpxinfo path.
+Send HTTP request with custom header to `/cpxinfo` path.
 
-`curl -H "x-cla: 1.0.0" https://<NodeIP:Nodeport>/cpxinfo`
+```curl -H "x-cla: 1.0.0" https://<NodeIP:Nodeport>/cpxinfo```
 
 Below snapshot captures the sample output of above cpxinfo request. Please note the presence of `sidecar` field alongwith `licenseInfo` details.
 

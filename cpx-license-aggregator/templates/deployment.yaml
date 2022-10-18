@@ -25,7 +25,7 @@ spec:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       initContainers:
       - name: sidecar-certs-generator
-        image: {{ .Values.sidecarCertsGenerator.image }}
+        image: {{ tpl .Values.sidecarCertsGenerator.image . }}
         imagePullPolicy: {{ .Values.sidecarCertsGenerator.pullPolicy }}
         args:
         - -service-name={{ include "cpx-license-aggregator.fullname" . }}
@@ -35,20 +35,34 @@ spec:
           mountPath: /tmp
       containers:
       - name: license-aggregator
-        image: {{ .Values.licenseAggregator.image }}
+        image: {{ tpl .Values.licenseAggregator.image . }}
         imagePullPolicy: {{ .Values.licenseAggregator.pullPolicy }}
         securityContext:
           {{- toYaml .Values.licenseAggregator.securityContext | nindent 10 }}
         args:
         - -license-server={{ required "Please provide License Server IP or FQDN" .Values.licenseServer.address }}
         - -license-server-port={{ .Values.licenseServer.port }}
-        - -license-quantum={{ .Values.licenseInfo.quantum }}
-        - -license-low-watermark={{ .Values.licenseInfo.lowWatermark }}
+        - -license-instance-quantum={{ .Values.licenseInfo.instanceQuantum }}
+        - -license-bandwidth-platinum-quantum={{ .Values.licenseInfo.bandwidthPlatinumQuantum }}
+        - -license-bandwidth-enterprise-quantum{{ .Values.licenseInfo.bandwidthEnterpriseQuantum }}
+        - -license-bandwidth-standard-quantum={{ .Values.licenseInfo.bandwidthStandardQuantum }}
+        - -license-vcpu-platinum-quantum={{ .Values.licenseInfo.vcpuPlatinumQuantum }}
+        - -license-vcpu-enterprise-quantum={{ .Values.licenseInfo.vcpuEnterpriseQuantum }}
+        - -license-vcpu-standard-quantum={{ .Values.licenseInfo.vcpuStandardQuantum }}
+        - -license-instance-low-watermark={{ .Values.licenseInfo.instanceLowWatermark }}
+        - -license-bandwidth-platinum-low-watermark={{ .Values.licenseInfo.bandwidthPlatinumLowWatermark }}
+        - -license-bandwidth-enterprise-low-watermark={{ .Values.licenseInfo.bandwidthEnterpriseLowWatermark }}
+        - -license-bandwidth-standard-low-watermark={{ .Values.licenseInfo.bandwidthStandardLowWatermark }}
+        - -license-vcpu-platinum-low-watermark={{ .Values.licenseInfo.vcpuPlatinumLowWatermark }}
+        - -license-vcpu-standard-low-watermark={{ .Values.licenseInfo.vcpuStandardLowWatermark }}
+        - -license-vcpu-enterprise-low-watermark={{ .Values.licenseInfo.vcpuEnterpriseLowWatermark }}
         - -tls-certfile=/etc/certs/cert.pem
         - -tls-keyfile=/etc/certs/key.pem
         env:
-        - name: "DEBUG"
-          value: "TRUE"
+        - name: "LOGLEVEL"
+          value: {{ .Values.licenseAggregator.loglevel | quote}}
+        - name: "JSONLOG"
+          value: {{ .Values.licenseAggregator.jsonlog | quote}}
         - name: "REDIS_HOST"
           value: "localhost"
         - name: "REDIS_PORT"
@@ -94,7 +108,7 @@ spec:
         - name: socket
           mountPath: /tmp
       - name: nslped
-        image: {{ .Values.nslped.image }}
+        image: {{ tpl .Values.nslped.image . }}
         imagePullPolicy: {{ .Values.nslped.pullPolicy }}
         tty: true
         securityContext:

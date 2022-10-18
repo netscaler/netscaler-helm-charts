@@ -54,6 +54,6 @@ dependencies:
     condition: ao.enabled
     alias: ao
   - name: cpx-license-aggregator
-    version: "1.0.0"
+    version: "1.1.0"
     condition: cla.enabled
     alias: cla
