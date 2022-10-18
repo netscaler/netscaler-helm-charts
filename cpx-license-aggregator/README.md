@@ -7,14 +7,56 @@ Citrix ADC CPX license aggregator reserves bulk license capacity for given clust
 
    ```
    helm repo add citrix https://citrix.github.io/citrix-helm-charts/
+   ```
+### 1 Installing Citrix ADC CPX License Aggregator to serve Pooled Licenses
 
-   helm install demo citrix/cpx-license-aggregator --set licenseServer.address=<License-Server-IP-or-FQDN>,redis.secretName=<Kubernetes-Secret-for-DB-password>,licenseAggregator.username=<unique-ID-for-CLA>
+#### 1.1 For Platinum Bandwidth Edition
+
+   ```
+   helm install demo citrix/cpx-license-aggregator --set licenseServer.address=<License-Server-IP-or-FQDN>,redis.secretName=<Kubernetes-Secret-for-DB-password>,licenseAggregator.username=<unique-ID-for-CLA>,licenseInfo.instanceQuantum=<QUANTUM>,licenseInfo.instanceLowWatermark=<LOW WATERMARK>,licenseInfo.bandwidthPlatinumQuantum=<QUANTUM-in-Mbps>,licenseInfo.bandwidthPlatinumLowWatermark=<LOW WATERMARK-in-Mbps>
    ```
 
+#### 1.2 For Enterprise Bandwidth Edition
+
+   ```
+   helm install demo citrix/cpx-license-aggregator --set licenseServer.address=<License-Server-IP-or-FQDN>,redis.secretName=<Kubernetes-Secret-for-DB-password>,licenseAggregator.username=<unique-ID-for-CLA>,licenseInfo.instanceQuantum=<QUANTUM>,licenseInfo.instanceLowWatermark=<LOW WATERMARK>,licenseInfo.bandwidthEnterpriseQuantum=<QUANTUM-in-Mbps>,licenseInfo.bandwidthEnterpriseLowWatermark=<LOW WATERMARK-in-Mbps>
+   ```
+
+#### 1.3 For Standard Bandwidth Edition
+
+   ```
+   helm install demo citrix/cpx-license-aggregator --set licenseServer.address=<License-Server-IP-or-FQDN>,redis.secretName=<Kubernetes-Secret-for-DB-password>,licenseAggregator.username=<unique-ID-for-CLA>,licenseInfo.instanceQuantum=<QUANTUM>,licenseInfo.instanceLowWatermark=<LOW WATERMARK>,licenseInfo.bandwidthStandardQuantum=<QUANTUM-in-Mbps>,licenseInfo.bandwidthStandardLowWatermark=<LOW WATERMARK-in-Mbps>
+   ```
+
+### Installing Citrix ADC CPX License Aggregator to serve VCPU Licenses
+
+#### 2.1 For Platinum VCPU Edition
+
+   ```
+   helm install demo citrix/cpx-license-aggregator --set licenseServer.address=<License-Server-IP-or-FQDN>,redis.secretName=<Kubernetes-Secret-for-DB-password>,licenseAggregator.username=<unique-ID-for-CLA>,licenseInfo.vcpuPlatinumQuantum=<QUANTUM>,licenseInfo.vcpuPlatinumLowWatermark=<LOW WATERMARK>
+   ```
+
+#### 2.2 For Enterprise VCPU Edition
+   
+   ```
+   helm install demo citrix/cpx-license-aggregator --set licenseServer.address=<License-Server-IP-or-FQDN>,redis.secretName=<Kubernetes-Secret-for-DB-password>,licenseAggregator.username=<unique-ID-for-CLA>,licenseInfo.vcpuEnterpriseQuantum=<QUANTUM>,licenseInfo.vcpuEnterpriseLowWatermark=<LOW WATERMARK>
+   ```
+
+#### 2.3 For Standard VCPU Edition
+
+   ```
+   helm install demo citrix/cpx-license-aggregator --set licenseServer.address=<License-Server-IP-or-FQDN>,redis.secretName=<Kubernetes-Secret-for-DB-password>,licenseAggregator.username=<unique-ID-for-CLA>,licenseInfo.vcpuStandardQuantum=<QUANTUM>,licenseInfo.vcpuStandardLowWatermark=<LOW WATERMARK>
+   ```
+
+
 > **Note:**
->
 > In the above command, username represents the handler of license aggregator. In the ADM license server, the details of this instance of CPX License Aggregator would be associated with the provided username.
 
+>Above commands deploy CPX License Aggregator for a particular type of license. If multiple types of licenses need to be managed by CLA, then relevant arguments of those licenses should be specified in the helm command.
+For example, to deploy CLA for "Pooled Platinum Bandwidth Edition" and "vCPU Platinum Edition" licenses, below command should be fired.
+```
+   helm install demo citrix/cpx-license-aggregator --set licenseServer.address=<License-Server-IP-or-FQDN>,redis.secretName=<Kubernetes-Secret-for-DB-password>,licenseAggregator.username=<unique-ID-for-CLA>,licenseInfo.instanceQuantum=<QUANTUM>,licenseInfo.instanceLowWatermark=<LOW WATERMARK>,licenseInfo.bandwidthPlatinumQuantum=<QUANTUM-in-Mbps>,licenseInfo.bandwidthPlatinumLowWatermark=<LOW WATERMARK-in-Mbps>,licenseInfo.vcpuPlatinumQuantum=<QUANTUM>,licenseInfo.vcpuPlatinumLowWatermark=LOW WATERMARK>
+```
 ## Introduction
 This Helm chart deploys Citrix ADC CPX License Aggregator in the [Kubernetes](https://kubernetes.io) or in the [Openshift](https://www.openshift.com) cluster using [Helm](https://helm.sh) package manager.
 
@@ -36,12 +78,57 @@ Add the Citrix ADC CPX License Aggregator helm chart repository using command:
 ```
 
 To install the chart with the release name, `my-release`, use the following command:
+
+### 1 Installing Citrix ADC CPX License Aggregator to serve Pooled Licenses
+
+#### 1.1 For Platinum Bandwidth Edition
+
    ```
-   helm install my-release citrix/cpx-license-aggregator --set licenseServer.address=<License-Server-IP-or-FQDN>,redis.secretName=<Kubernetes-Secret-for-DB-password>,licenseAggregator.username=<unique-ID-for-CLA>
+   helm install my-release citrix/cpx-license-aggregator --set licenseServer.address=<License-Server-IP-or-FQDN>,redis.secretName=<Kubernetes-Secret-for-DB-password>,licenseAggregator.username=<unique-ID-for-CLA>,licenseInfo.instanceQuantum=<QUANTUM>,licenseInfo.instanceLowWatermark=<LOW WATERMARK>,licenseInfo.bandwidthPlatinumQuantum=<QUANTUM-in-Mbps>,licenseInfo.bandwidthPlatinumLowWatermark=<LOW WATERMARK-in-Mbps>
+   ```
+
+#### 1.2 For Enterprise Bandwidth Edition
+
+   ```
+   helm install my-release citrix/cpx-license-aggregator --set licenseServer.address=<License-Server-IP-or-FQDN>,redis.secretName=<Kubernetes-Secret-for-DB-password>,licenseAggregator.username=<unique-ID-for-CLA>,licenseInfo.instanceQuantum=<QUANTUM>,licenseInfo.instanceLowWatermark=<LOW WATERMARK>,licenseInfo.bandwidthEnterpriseQuantum=<QUANTUM-in-Mbps>,licenseInfo.bandwidthEnterpriseLowWatermark=<LOW WATERMARK-in-Mbps>
+   ```
+
+#### 1.3 For Standard Bandwidth Edition
+
+   ```
+   helm install my-release citrix/cpx-license-aggregator --set licenseServer.address=<License-Server-IP-or-FQDN>,redis.secretName=<Kubernetes-Secret-for-DB-password>,licenseAggregator.username=<unique-ID-for-CLA>,licenseInfo.instanceQuantum=<QUANTUM>,licenseInfo.instanceLowWatermark=<LOW WATERMARK>,licenseInfo.bandwidthStandardQuantum=<QUANTUM-in-Mbps>,licenseInfo.bandwidthStandardLowWatermark=<LOW WATERMARK-in-Mbps>
+   ```
+
+### Installing Citrix ADC CPX License Aggregator to serve VCPU Licenses
+
+#### 2.1 For Platinum VCPU Edition
+
+   ```
+   helm install my-release citrix/cpx-license-aggregator --set licenseServer.address=<License-Server-IP-or-FQDN>,redis.secretName=<Kubernetes-Secret-for-DB-password>,licenseAggregator.username=<unique-ID-for-CLA>,licenseInfo.vcpuPlatinumQuantum=<QUANTUM>,licenseInfo.vcpuPlatinumLowWatermark=<LOW WATERMARK>
+   ```
+
+#### 2.2 For Enterprise VCPU Edition
+   
+   ```
+   helm install my-release citrix/cpx-license-aggregator --set licenseServer.address=<License-Server-IP-or-FQDN>,redis.secretName=<Kubernetes-Secret-for-DB-password>,licenseAggregator.username=<unique-ID-for-CLA>,licenseInfo.vcpuEnterpriseQuantum=<QUANTUM>,licenseInfo.vcpuEnterpriseLowWatermark=<LOW WATERMARK>
+   ```
+
+#### 2.3 For Standard VCPU Edition
+
+   ```
+   helm install my-release citrix/cpx-license-aggregator --set licenseServer.address=<License-Server-IP-or-FQDN>,redis.secretName=<Kubernetes-Secret-for-DB-password>,licenseAggregator.username=<unique-ID-for-CLA>,licenseInfo.vcpuStandardQuantum=<QUANTUM>,licenseInfo.vcpuStandardLowWatermark=<LOW WATERMARK>
    ```
 
 > **Note:**
->
+> In the above command, username represents the handler of license aggregator. In the ADM license server, the details of this instance of CPX License Aggregator would be associated with the provided username.
+
+>Above commands deploy CPX License Aggregator for a particular type of license. If multiple types of licenses need to be managed by CLA, then relevant arguments of those licenses should be specified in the helm command.
+For example, to deploy CLA for "Pooled Platinum Bandwidth Edition" and "vCPU Platinum Edition" licenses, below command should be fired.
+
+``` 
+helm install demo citrix/cpx-license-aggregator --set licenseServer.address=<License-Server-IP-or-FQDN>,redis.secretName=<Kubernetes-Secret-for-DB-password>,licenseAggregator.username=<unique-ID-for-CLA>,licenseInfo.instanceQuantum=<QUANTUM>,licenseInfo.instanceLowWatermark=<LOW WATERMARK>,licenseInfo.bandwidthPlatinumQuantum=<QUANTUM-in-Mbps>,licenseInfo.bandwidthPlatinumLowWatermark=<LOW WATERMARK-in-Mbps>,licenseInfo.vcpuPlatinumQuantum=<QUANTUM>,licenseInfo.vcpuPlatinumLowWatermark=LOW WATERMARK>
+```
+
 > By default the chart installs the recommended [RBAC](https://kubernetes.io/docs/admin/authorization/rbac/) roles and role bindings.
 
 The command deploys Citrix ADC CPX License Aggregator on Kubernetes cluster with the default configuration. The [configuration](#configuration) section lists the mandatory and optional parameters that you can configure during installation.
@@ -52,14 +139,21 @@ The following table lists the mandatory and optional parameters that you can con
 
 | Parameters | Mandatory or Optional | Default value | Description |
 | --------- | --------------------- | ------------- | ----------- |
-| licenseAggregator.image | Mandatory | quay.io/citrix/cpx-license-aggregator:1.0.0 | The CLA image. |
+| licenseAggregator.imageRegistry                   | Mandatory  |  `quay.io`               |  The CLA image registry             |  
+| licenseAggregator.imageRepository                 | Mandatory  |  `citrix/cpx-license-aggregator`              |   The CLA image repository             | 
+| licenseAggregator.imageTag                  | Mandatory  |  `1.0.0`               |  The CLA image tag            | 
 | licenseAggregator.pullPolicy | Mandatory | IfNotPresent | The CLA image pull policy. |
 | licenseAggregator.service.type | Mandatory | NodePort | Type of service used to expose CLA. |
 | licenseAggregator.service.nodePort | Optional | N/A | The port on the cluster node to be used to expose CLA service if the type of CLA service is NodePort. Make sure the parameter `licenseAggregator.service.type` has value `NodePort` for using this option. |
 | licenseAggregator.username | Mandatory | N/A | Please provide the username/clustername that can uniquely identify this license aggregator service with the Citrix ADM License server. CLA would register itself with <username>.<servicename>.<namespace> with the Citrix ADM. It helps Citrix ADM in keeping track of various License Aggregator instances. |
 | licenseAggregator.securityContext |  Optional | N/A | Security context for license-aggregator container. |
 | licenseAggregator.resources | Optional | N/A | Resouces restrictions for license-aggregator container. |
+| licenseAggregator.loglevel | Optional | INFO | Log level of the CLA service. Default value: INFO. Possible values: TRACE, DEBUG, INFO, WARN, ERROR |
+| licenseAggregator.jsonlog | Optional | FALSE | Logs to be generated in the JSON format. Default: False. Possible values: TRUE, FALSE |
 | nslped.image | Mandatory | quay.io/citrix/nslped:1.0.0 | The nslped image. |
+| nslped.imageRegistry                   | Mandatory  |  `quay.io`               |  The nslped image registry             |  
+| nslped.imageRepository                 | Mandatory  |  `citrix/nslped`              |   The nslped image repository             | 
+| nslped.imageTag                  | Mandatory  |  `1.0.0`               |  The nslped image tag            | 
 | nslped.pullPolicy | Mandatory | IfNotPresent | The nslped image pull policy. |
 | nslped.securityContext |  Optional | N/A | Security context for nslped container. |
 | nslped.resources | Optional | N/A | Resouces restrictions for nslped container. |
@@ -68,13 +162,27 @@ The following table lists the mandatory and optional parameters that you can con
 | redis.secretName | Mandatory | N/A | Kubernetes secret name created for Redis DB password. |
 | redis.securityContext |  Optional | N/A | Security context for redis container. |
 | redis.resources | Optional | N/A | Resouces restrictions for redis container. |
-| sidecarCertsGenerator.image | Mandatory | quay.io/citrix/cpx-sidecar-injector-certgen:1.2.0 | The sidecarCertsGenerator image. |
+| sidecarCertsGenerator.imageRegistry                | Mandatory | `quay.io`               | The sidecarCertsGenerator image registry |
+| sidecarCertsGenerator.imageRepository              | Mandatory | `citrix/cpx-sidecar-injector-certgen`               |  The sidecarCertsGenerator image repository             |
+| sidecarCertsGenerator.imageTag                     | Mandatory | `1.2.0`               |  The sidecarCertsGenerator image tag |
 | sidecarCertsGenerator.pullPolicy | Mandatory | IfNotPresent | The sidecarCertsGenerator image pull policy. |
 | serviceAccount.annotations |  Optional | N/A | Annotations to be used for serviceaccount that is being used by CLA. |
 | licenseServer.address | Mandatory | N/A | IP or FQDN of License Server. |
 | licenseServer.port | Mandatory | 27000 | Port to be used for making connection to License Server. |
-| licenseInfo.quantum | Mandatory | 5 | Number of licenses to be checked-out from license server at one time. |
-| licenseInfo.lowWatermark | Mandatory | 2 | If free licenses fall below this watermark, check-out additional license-quantum. |
+| licenseInfo.instanceQuantum | Optional | 0 | Quantum of Instance licenses to be checked-out from license server. |
+| licenseInfo.instanceLowWatermark | Optional | 0 | If available instance licenses fall below this watermark, check-out additional license-quantum. |
+| licenseInfo.bandwidthPlatinumQuantum | Optional | 0 | Quantum of Platinum category bandwidth throughput to be checked out from license server in Mbps. |
+| licenseInfo.bandwidthPlatinumLowWatermark | Optional | 0 |If available Platinum category bandwidth (Mbps) licenses fall below this watermark, check-out additional license-quantum. |
+| licenseInfo.bandwidthEnterpriseQuantum | Optional | 0 | Quantum of Enterprise category bandwidth throughput to be checked out from license server in Mbps. |
+| licenseInfo.bandwidthEnterpriseLowWatermark | Optional | 0 | If available Enterprise category bandwidth (Mbps) licenses fall below this watermark, check-out additional license-quantum.|
+| licenseInfo.bandwidthStandardQuantum | Optional | 0 | Quantum of Standard category vCPU licenses to be checked-out from license server. |
+| licenseInfo.bandwidthStandardLowWatermark | Optional | 0 | If available Standard category bandwidth (Mbps) licenses fall below this watermark, check-out additional license-quantum. |
+| licenseInfo.vcpuPlatinumQuantum | Optional | 0 | Quantum of Platinum category vCPU licenses to be checked-out from license server. |
+| licenseInfo.vcpuPlatinumLowWatermark | Optional | 0 | If available Platinum category vCPU licenses fall below this watermark, check-out additional license-quantum. |
+| licenseInfo.vcpuEnterpriseQuantum | Optional | 0 | Quantum of Enterprise category vCPU licenses to be checked-out from license server. |
+| licenseInfo.vcpuEnterpriseLowWatermark | Optional | 0 | If available Enterprise category vCPU licenses fall below this watermark, check-out additional license-quantum.|
+| licenseInfo.vcpuStandardQuantum | Optional | 0 | Quantum of Standard category vCPU licenses to be checked-out from license server. |
+| licenseInfo.vcpuStandardLowWatermark | Optional | 0 | If available Standard category vCPU licenses fall below this watermark, check-out additional license-quantum. |
 | licenseInfo.dbExpireTime | Mandatory | 172800 | Time to keep Citrix ADC CPX data in Redis DB without any heartbeat from Citrix ADC CPX in seconds. |
 | adcInfo.selectorLabel.key | Mandatory | adc | CLA will use this as key in the selector label for monitoring Citrix ADC CPX pod. |
 | adcInfo.selectorLabel.value | Mandatory | citrix | CLA will use this as value in the selector label for monitoring Citrix ADC CPX pod. |

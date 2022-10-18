@@ -3,7 +3,10 @@
 # Declare variables to be passed into your templates.
 
 licenseAggregator:
-  image: quay.io/citrix/cpx-license-aggregator:1.0.0
+  imageRegistry: quay.io
+  imageRepository: citrix/cpx-license-aggregator
+  imageTag: 1.1.0
+  image: "{{ .Values.licenseAggregator.imageRegistry }}/{{ .Values.licenseAggregator.imageRepository }}:{{ .Values.licenseAggregator.imageTag }}"
   pullPolicy: IfNotPresent
   service:
     type: NodePort
@@ -11,9 +14,14 @@ licenseAggregator:
   username:
   securityContext: {}
   resources: {}
+  loglevel: INFO
+  jsonlog: FALSE
 
 nslped:
-  image: quay.io/citrix/nslped:1.0.0
+  imageRegistry: quay.io
+  imageRepository: citrix/nslped
+  imageTag: 1.0.0
+  image: "{{ .Values.nslped.imageRegistry }}/{{ .Values.nslped.imageRepository }}:{{ .Values.nslped.imageTag }}"
   pullPolicy: IfNotPresent
   securityContext: {}
   resources: {}
@@ -26,7 +34,10 @@ redis:
   resources: {}
 
 sidecarCertsGenerator:
-  image: quay.io/citrix/cpx-sidecar-injector-certgen:1.2.0
+  imageRegistry: quay.io
+  imageRepository: citrix/cpx-sidecar-injector-certgen
+  imageTag: 1.2.0
+  image: "{{ .Values.sidecarCertsGenerator.imageRegistry }}/{{ .Values.sidecarCertsGenerator.imageRepository }}:{{ .Values.sidecarCertsGenerator.imageTag }}"
   pullPolicy: IfNotPresent
 
 serviceAccount:
@@ -37,8 +48,20 @@ licenseServer:
   port: 27000
   
 licenseInfo:
-  quantum: 5
-  lowWatermark: 2
+  instanceQuantum: 0
+  bandwidthPlatinumQuantum: 0
+  bandwidthEnterpriseQuantum: 0
+  bandwidthStandardQuantum: 0
+  vcpuPlatinumQuantum: 0
+  vcpuEnterpriseQuantum: 0
+  vcpuStandardQuantum: 0
+  instanceLowWatermark: 0
+  bandwidthPlatinumLowWatermark: 0
+  bandwidthEnterpriseLowWatermark: 0
+  bandwidthStandardLowWatermark: 0
+  vcpuPlatinumLowWatermark: 0
+  vcpuStandardLowWatermark: 0
+  vcpuEnterpriseLowWatermark: 0
   dbExpireTime: 172800
 
 adcInfo:
