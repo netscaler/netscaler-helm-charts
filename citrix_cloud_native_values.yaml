@@ -617,7 +617,7 @@ cla:
   licenseAggregator:
     imageRegistry: quay.io
     imageRepository: citrix/cpx-license-aggregator
-    imageTag: 1.0.0
+    imageTag: 1.1.0
     image: "{{ .Values.cla.licenseAggregator.imageRegistry }}/{{ .Values.cla.licenseAggregator.imageRepository }}:{{ .Values.cla.licenseAggregator.imageTag }}"
     pullPolicy: IfNotPresent
     service:
