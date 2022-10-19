@@ -536,7 +536,12 @@ iaSidecar:
 
 cnc:
   enabled: False
-  image: quay.io/citrix/citrix-k8s-node-controller:2.2.9
+  imageRegistry: quay.io
+  imageRepository: citrix/citrix-k8s-node-controller
+  imageTag: 2.2.10
+  image: "{{ .Values.cnc.imageRegistry }}/{{ .Values.cnc.imageRepository }}:{{ .Values.cnc.imageTag }}"
+  nameOverride: ""
+  fullnameOverride: ""
   pullPolicy: IfNotPresent
   license:
     accept: no
@@ -550,10 +555,13 @@ cnc:
   cniType:
   dsrIPRange:
   clusterName:
+  cncConfigMap:
   cncRouterImage:
+  cncRouterName:
 
   serviceAccount:
     create: true
+ 
 
 coe:
   enabled: False
