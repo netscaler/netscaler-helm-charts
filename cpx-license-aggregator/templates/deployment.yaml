@@ -44,7 +44,7 @@ spec:
         - -license-server-port={{ .Values.licenseServer.port }}
         - -license-instance-quantum={{ .Values.licenseInfo.instanceQuantum }}
         - -license-bandwidth-platinum-quantum={{ .Values.licenseInfo.bandwidthPlatinumQuantum }}
-        - -license-bandwidth-enterprise-quantum{{ .Values.licenseInfo.bandwidthEnterpriseQuantum }}
+        - -license-bandwidth-enterprise-quantum={{ .Values.licenseInfo.bandwidthEnterpriseQuantum }}
         - -license-bandwidth-standard-quantum={{ .Values.licenseInfo.bandwidthStandardQuantum }}
         - -license-vcpu-platinum-quantum={{ .Values.licenseInfo.vcpuPlatinumQuantum }}
         - -license-vcpu-enterprise-quantum={{ .Values.licenseInfo.vcpuEnterpriseQuantum }}
