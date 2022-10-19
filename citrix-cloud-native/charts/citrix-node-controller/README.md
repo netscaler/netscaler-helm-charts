@@ -112,8 +112,12 @@ The following table lists the mandatory and optional parameters that you can con
 | --------- | --------------------- | ------------- | ----------- |
 | cnc.enabled | Mandatory | False | Set to "True" for deploying Citrix Node Controller. |
 | cnc.license.accept | Mandatory | no | Set `yes` to accept the CNC end user license agreement. |
-| cnc.image | Mandatory | `quay.io/citrix/citrix-k8s-node-controller:2.2.9` | The CNC image. |
+| cnc.imageRegistry                   | Mandatory  |  `quay.io`               |  The CNC image registry             |  
+| cnc.imageRepository                 | Mandatory  |  `citrix/citrix-k8s-node-controller`              |   The CNC image repository             | 
+| cnc.imageTag                  | Mandatory  |  `2.2.10`               |  The CNC image tag            | 
 | cnc.pullPolicy | Mandatory | IfNotPresent | The CNC image pull policy. |
+| cnc.nameOverride | Optional | N/A | String to partially override deployment fullname template with a string (will prepend the release name) |
+| cnc.fullNameOverride | Optional | N/A | String to fully override deployment fullname template with a string |
 | cnc.adcCredentialSecret | Mandatory | N/A | The secret key to log on to the Citrix ADC VPX or MPX. For information on how to create the secret keys, see [Prerequisites](#prerequistes). |
 | cnc.nsIP | Mandatory | N/A | The IPaddress or Hostname of the Citrix ADC device. For details, see [Prerequisites](#prerequistes). |
 | cnc.vtepIP | Mandatory | N/A | The Citrix ADC SNIP. |
@@ -123,8 +127,9 @@ The following table lists the mandatory and optional parameters that you can con
 | cniType | Mandatory | N/A | The CNI used in k8s cluster. Valid values: flannel,calico,canal,weave,cilium |
 | cnc.dsrIPRange | Optional | N/A | This IP address range is used for DSR Iptable configuration on nodes. Both IP and subnet must be specified in format : "xx.xx.xx.xx/xx"  |
 | cnc.clusterName | Optional | N/A | Unique identifier for the kubernetes cluster on which CNC is deployed. If Provided CNC will configure PolicyBasedRoutes instead of static Routes. For details, see [CNC-PBR-SUPPORT](https://github.com/citrix/citrix-k8s-ingress-controller/tree/master/docs/how-to/pbr.md#configure-pbr-using-the-citrix-node-controller) |
+| cnc.cncConfigMap | Optional | N/A | ConfigMapName which CNC will watch for, to add/delete configurations. If not set, it will be auto-generated |
 | cnc.cncRouterImage | Optional | N/A | The Internal Repo Image to be used for kube-cnc-router helper pods when internet access is disabled on cluster nodes. For more details, see [running-cnc-without-internet-access](https://github.com/citrix/citrix-k8s-node-controller/blob/master/deploy/README.md#running-citrix-node-controller-without-internet-access) |
-
+| cnc.cncRouterName | Optional | N/A | The name to be used for ServiceAccount/RBAC/ConfigMap and even as prefix for kube-cnc-router helper pods. If not set, it will be auto-generated. | 
 Alternatively, you can define a YAML file with the values for the parameters and pass the values while installing the chart.
 
 > **Note:**

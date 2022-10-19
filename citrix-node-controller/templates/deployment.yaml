@@ -18,7 +18,7 @@ spec:
       serviceAccountName: {{ include "citrix-k8s-node-controller.serviceAccountName" . }}
       containers:
       - name: {{ include "citrix-k8s-node-controller.name" . }}
-        image: "{{ .Values.image }}"
+        image: "{{ tpl .Values.image . }}"
         imagePullPolicy: {{ .Values.pullPolicy }}
         env:
         - name: EULA
@@ -57,3 +57,7 @@ spec:
         - name: "CNC_ROUTER_IMAGE"
           value: {{ .Values.cncRouterImage | quote }}
 {{- end }}
+        - name: "CNC_ROUTER_NAME"
+          value: {{ include "citrix-k8s-node-controller.cncRouterName" . }} 
+        - name: "CNC_CONFIGMAP"
+          value: {{ include "citrix-k8s-node-controller.cncConfigMap" . }}
