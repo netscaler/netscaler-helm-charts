@@ -2,8 +2,13 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-image: quay.io/citrix/citrix-k8s-node-controller:2.2.9
+imageRegistry: quay.io
+imageRepository: citrix/citrix-k8s-node-controller
+imageTag: 2.2.10
+image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
 pullPolicy: IfNotPresent
+nameOverride: ""
+fullnameOverride: ""
 license:
   accept: no
 nsIP:
@@ -16,7 +21,9 @@ vxlan:
 cniType:
 dsrIPRange:
 clusterName:
+cncConfigMap:
 cncRouterImage:
+cncRouterName:
 
 serviceAccount:
   # Specifies whether a ServiceAccount should be created

@@ -68,3 +68,26 @@ Create the name of the service account to use
     {{ default "default" .Values.serviceAccount.name }}
 {{- end -}}
 {{- end -}}
+
+
+{{/*
+Create the name of the RBAC/ServiceAccount/ConfigMap/Prefix for router pods
+*/}}
+{{- define "citrix-k8s-node-controller.cncRouterName" -}}
+{{- if .Values.cncRouterName -}}
+    {{ .Values.cncRouterName | trunc 63 }}
+{{- else -}}
+    {{- printf "%s-%s" .Release.Name "kube-cnc-router" | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Create the name of the ConfigMap that helm deploys and CNC listens to add/delete configurations 
+*/}}
+{{- define "citrix-k8s-node-controller.cncConfigMap" -}}
+{{- if .Values.cncConfigMap -}}
+    {{ .Values.cncConfigMap | trunc 63 }}
+{{- else -}}
+    {{ include "citrix-k8s-node-controller.fullname" . }}
+{{- end -}}
+{{- end -}}
