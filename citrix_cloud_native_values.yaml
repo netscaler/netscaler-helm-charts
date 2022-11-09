@@ -1,7 +1,7 @@
 cic:
   enabled: False
 
-  image: quay.io/citrix/citrix-k8s-ingress-controller:1.26.7
+  image: quay.io/citrix/citrix-k8s-ingress-controller:1.27.15
   pullPolicy: IfNotPresent
   imagePullSecrets: []
   nameOverride: ""
@@ -149,7 +149,7 @@ cic:
 mcIngress:
   enabled: False
 
-  image: quay.io/citrix/citrix-k8s-ingress-controller:1.26.7
+  image: quay.io/citrix/citrix-k8s-ingress-controller:1.27.15
   pullPolicy: IfNotPresent
   openshift: false
   localRegion:
@@ -230,7 +230,7 @@ cpx:
   servicePorts: []
 
   cic:
-    image: quay.io/citrix/citrix-k8s-ingress-controller:1.26.7
+    image: quay.io/citrix/citrix-k8s-ingress-controller:1.27.15
     pullPolicy: IfNotPresent
     required: true
     resources: {}
