@@ -3,7 +3,10 @@
 # Declare variables to be passed into your templates.
 
 xDSAdaptor:
-    image: quay.io/citrix/citrix-xds-adaptor:0.10.3
+    imageRegistry: quay.io
+    imageRepository: citrix/citrix-xds-adaptor
+    imageTag: 0.10.3
+    image: "{{ .Values.xDSAdaptor.imageRegistry }}/{{ .Values.xDSAdaptor.imageRepository }}:{{ .Values.xDSAdaptor.imageTag }}"
     imagePullPolicy: IfNotPresent
     proxyType: sidecar
     secureConnect: true
@@ -32,7 +35,10 @@ certProvider:
 
 cpxProxy:
     netscalerUrl: "http://127.0.0.1"
-    image: quay.io/citrix/citrix-k8s-cpx-ingress:13.1-30.52
+    imageRegistry: quay.io
+    imageRepository: citrix/citrix-k8s-cpx-ingress
+    imageTag: 13.1-30.52
+    image: "{{ .Values.cpxProxy.imageRegistry }}/{{ .Values.cpxProxy.imageRepository }}:{{ .Values.cpxProxy.imageTag }}"
     imagePullPolicy: IfNotPresent
     EULA: NO
     cpxSidecarMode: YES
@@ -40,14 +46,21 @@ cpxProxy:
     mgmtHttpsPort: 10443
     cpxDisableProbe: "YES"
     cpxLicenseAggregator:
+    enableLabelsFeature: FALSE
     #licenseServerIP: this value is taken from ADMSettings.ADMIP
 
 sidecarWebHook:
-    webhookImage: quay.io/citrix/cpx-istio-sidecar-injector:1.2.0
+    webhookImageRegistry: quay.io
+    webhookImageRepository: citrix/cpx-istio-sidecar-injector
+    webhookImageTag: 1.3.0
+    webhookImage: "{{ .Values.sidecarWebHook.webhookImageRegistry }}/{{ .Values.sidecarWebHook.webhookImageRepository }}:{{ .Values.sidecarWebHook.webhookImageTag }}"
     imagePullPolicy: IfNotPresent
 
 sidecarCertsGenerator:
-    image: quay.io/citrix/cpx-sidecar-injector-certgen:1.2.0
+    imageRegistry: quay.io
+    imageRepository: citrix/cpx-sidecar-injector-certgen
+    imageTag: 1.2.0
+    image: "{{ .Values.sidecarCertsGenerator.imageRegistry }}/{{ .Values.sidecarCertsGenerator.imageRepository }}:{{ .Values.sidecarCertsGenerator.imageTag }}"
     imagePullPolicy: IfNotPresent
 
 ADMSettings:
@@ -57,7 +70,7 @@ ADMSettings:
     bandWidthLicense: false
     bandWidth: 1000
     analyticsServerPort: 5557
-    LicenseEdition: PLATINUM
+    licenseEdition: PLATINUM
 
 webhook:
     injectionLabelName: cpx-injection

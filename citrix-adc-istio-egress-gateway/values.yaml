@@ -9,7 +9,10 @@ coe:
 
 metricExporter:
     required: true
-    image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.9
+    imageRegistry: quay.io
+    imageRepository: citrix/citrix-adc-metrics-exporter
+    imageTag: 1.4.9
+    image: "{{ .Values.metricExporter.imageRegistry }}/{{ .Values.metricExporter.imageRepository }}:{{ .Values.metricExporter.imageTag }}"
     port: 8888
     secure: "FALSE"
     logLevel: ERROR
@@ -24,7 +27,10 @@ istioPilot:
 
 
 xDSAdaptor:
-    image: quay.io/citrix/citrix-xds-adaptor:0.10.3
+    imageRegistry: quay.io
+    imageRepository: citrix/citrix-xds-adaptor
+    imageTag: 0.10.3
+    image: "{{ .Values.xDSAdaptor.imageRegistry }}/{{ .Values.xDSAdaptor.imageRepository }}:{{ .Values.xDSAdaptor.imageTag }}"
     imagePullPolicy: IfNotPresent
     proxyType: router
     secureConnect: true
@@ -44,7 +50,10 @@ certProvider:
 
 egressGateway:
     netscalerUrl: null
-    image: quay.io/citrix/citrix-k8s-cpx-ingress:13.1-30.52
+    imageRegistry: quay.io
+    imageRepository: citrix/citrix-k8s-cpx-ingress
+    imageTag: 13.1-30.52
+    image: "{{ .Values.egressGateway.imageRegistry }}/{{ .Values.egressGateway.imageRepository }}:{{ .Values.egressGateway.imageTag }}"
     imagePullPolicy: IfNotPresent
     EULA: false
     mgmtHttpPort: 10080
@@ -55,6 +64,7 @@ egressGateway:
     adcServerName:
     netProfile:
     cpxLicenseAggregator:
+    enableLabelsFeature: FALSE
 
 ADMSettings:
     ADMIP:

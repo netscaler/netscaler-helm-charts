@@ -424,6 +424,13 @@ For more information, see the AppQoE support documentation. [Appqoe resource sha
 
 Example files: [appqoe-crd.yaml](https://github.com/citrix/citrix-helm-charts/tree/master/example-crds/appqoe_example.yaml)
 
+#### WILDCARDDNS CRD:
+
+[WILDCARDDNS CRD](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/crds/wildcarddns.md) Wildcard DNS domains are used to handle requests for nonexistent domains and subdomains. In a zone, use wildcard domains to redirect queries for all nonexistent domains or subdomains to a particular server, instead of creating a separate Resource Record (RR) for each domain. The most common use of a wildcard DNS domain is to create a zone that can be used to forward mail from the internet to some other mail system.
+For more information, see the Wild card DNS domains support documentation. [Wildcard DNS Entry CRD](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/crds/wildcarddns.md) documentation.
+
+Example files: [wildcarddns-crd.yaml](https://github.com/citrix/citrix-helm-charts/tree/master/example-crds/wildcarddns-example.yaml)
+
 ### Tolerations
 
 Taints are applied on cluster nodes whereas tolerations are applied on pods. Tolerations enable pods to be scheduled on node with matching taints. For more information see [Taints and Tolerations in Kubernetes](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/).
@@ -447,10 +454,14 @@ The following table lists the configurable parameters of the Citrix ADC CPX with
 | ---------- | --------------------- | ------------- | ----------- |
 | cpx.enabled | Mandatory | False | Set to "True" for deploying Citrix ADC CPX with Citrix Ingress Controller running as sidecar. |
 | cpx.license.accept | Mandatory | no | Set `yes` to accept the Citrix ingress controller end user license agreement. |
-| cpx.image | Mandatory | `quay.io/citrix/citrix-k8s-cpx-ingress:13.1-30.52` | The Citrix ADC CPX image. |
+| cpx.imageRegistry                   | Mandatory  |  `quay.io`               |  The Citrix ADC CPX image registry             |  
+| cpx.imageRepository                 | Mandatory  |  `citrix/citrix-k8s-cpx-ingress`              |   The Citrix ADC CPX image repository             | 
+| cpx.imageTag                  | Mandatory  |  `13.1-30.52`               |   The Citrix ADC CPX image tag            | 
 | cpx.pullPolicy | Mandatory | IfNotPresent | The Citrix ADC CPX image pull policy. |
 | cpx.daemonSet | Optional | False | Set this to true if Citrix ADC CPX needs to be deployed as DaemonSet. |
-| cpx.cic.image | Mandatory | `quay.io/citrix/citrix-k8s-ingress-controller:1.26.7` | The Citrix ingress controller image. |
+| cpx.cic.imageRegistry                   | Mandatory  |  `quay.io`               |  The Citrix ingress controller image registry             |  
+| cpx.cic.imageRepository                 | Mandatory  |  `citrix/citrix-k8s-ingress-controller`              |   The Citrix ingress controller image repository             | 
+| cpx.cic.imageTag                  | Mandatory  |  `1.27.15`               |   The Citrix ingress controller image tag            | 
 | cpx.cic.pullPolicy | Mandatory | IfNotPresent | The Citrix ingress controller image pull policy. |
 | cpx.cic.required | Mandatory | true | CIC to be run as sidecar with Citrix ADC CPX |
 | cpx.cic.resources | Optional | {} |	CPU/Memory resource requests/limits for Citrix Ingress Controller container |
@@ -512,7 +523,9 @@ The following table lists the configurable parameters of the Citrix ADC CPX with
 | cpx.ADMSettings.analyticsServerPort | Optional | 5557 | Port used for Analytics by ADM. Required to plot ServiceGraph. |
 | cpx.ADMSettings.licenseEdition| Optional | PLATINUM | License edition that can be Standard, Platinum and Enterprise . By default, Platinum is selected.|
 | cpx.exporter.required | Optional | false | Use the argument if you want to run the [Exporter for Citrix ADC Stats](https://github.com/citrix/citrix-adc-metrics-exporter) along with Citrix ingress controller to pull metrics for the Citrix ADC CPX|
-| cpx.exporter.image | Optional | `quay.io/citrix/citrix-adc-metrics-exporter:1.4.9` | The Exporter for Citrix ADC Stats image. |
+| cpx.exporter.imageRegistry                   | Optional  |  `quay.io`               |  The Exporter for Citrix ADC Stats image registry             |  
+| cpx.exporter.imageRepository                 | Optional  |  `citrix/citrix-adc-metrics-exporter`              |   The Exporter for Citrix ADC Stats image repository             | 
+| cpx.exporter.imageTag                  | Optional  |  `1.4.9`               |  The Exporter for Citrix ADC Stats image tag            | 
 | cpx.exporter.pullPolicy | Optional | IfNotPresent | The Exporter for Citrix ADC Stats image pull policy. |
 | cpx.exporter.resources | Optional | {} |	CPU/Memory resource requests/limits for Metrics exporter container |
 | cpx.exporter.ports.containerPort | Optional | 8888 | The Exporter for Citrix ADC Stats container port. |

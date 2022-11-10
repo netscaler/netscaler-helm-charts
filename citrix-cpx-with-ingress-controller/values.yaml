@@ -3,7 +3,10 @@
 # Declare variables to be passed into your templates.
 
 # Citrix ADC CPX config details
-image: quay.io/citrix/citrix-k8s-cpx-ingress:13.1-30.52
+imageRegistry: quay.io
+imageRepository: citrix/citrix-k8s-cpx-ingress
+imageTag: 13.1-30.52
+image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
 pullPolicy: IfNotPresent
 imagePullSecrets: []
 daemonSet: False
@@ -73,7 +76,10 @@ servicePorts: []
 
 # Citrix Ingress Controller config details
 cic:
-  image: quay.io/citrix/citrix-k8s-ingress-controller:1.26.7
+  imageRegistry: quay.io
+  imageRepository: citrix/citrix-k8s-ingress-controller
+  imageTag: 1.27.15
+  image: "{{ .Values.cic.imageRegistry }}/{{ .Values.cic.imageRepository }}:{{ .Values.cic.imageTag }}"
   pullPolicy: IfNotPresent
   required: true
   resources: {}
@@ -120,7 +126,10 @@ ADMSettings:
 # Exporter config details
 exporter:
   required: false
-  image: quay.io/citrix/citrix-adc-metrics-exporter:1.4.9
+  imageRegistry: quay.io
+  imageRepository: citrix/citrix-adc-metrics-exporter
+  imageTag: 1.4.9
+  image: "{{ .Values.exporter.imageRegistry }}/{{ .Values.exporter.imageRepository }}:{{ .Values.exporter.imageTag }}"
   pullPolicy: IfNotPresent
   ports:
     containerPort: 8888

@@ -14,15 +14,15 @@ maintainers:
   email: subash.dangol@citrix.com
 dependencies:
   - name: citrix-ingress-controller
-    version: "1.26.7"
+    version: "1.27.15"
     condition: cic.enabled
     alias: cic
   - name: citrix-cpx-with-ingress-controller
-    version: "1.26.7"
+    version: "1.27.15"
     condition: cpx.enabled
     alias: cpx
   - name: citrix-multi-cluster-ingress-controller
-    version: "1.26.7"
+    version: "1.27.15"
     condition: mcIngress.enabled
     alias: mcIngress
   - name: citrix-node-controller
@@ -42,7 +42,7 @@ dependencies:
     condition: iaIngress.enabled
     alias: iaIngress
   - name: citrix-cpx-istio-sidecar-injector
-    version: "1.14.0"
+    version: "1.14.1"
     condition: iaSidecar.enabled
     alias: iaSidecar
   - name: citrix-adc-istio-egress-gateway

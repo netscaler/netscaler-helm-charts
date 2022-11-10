@@ -45,7 +45,7 @@ spec:
       serviceAccountName: {{ include "citrix-ingress-controller.serviceAccountName" . }}
       containers:
       - name: cic
-        image: "{{ .Values.image }}"
+        image: "{{ tpl .Values.image . }}"
         imagePullPolicy: {{ .Values.pullPolicy }}
         args:
           - --configmap
@@ -159,7 +159,7 @@ spec:
         {{- end }}
 {{- if .Values.exporter.required }}
       - name: exporter
-        image: "{{ .Values.exporter.image }}"
+        image: "{{ tpl .Values.exporter.image . }}"
         imagePullPolicy: {{ .Values.exporter.pullPolicy }}
         args:
           - "--target-nsip={{ .Values.nsIP }}"
