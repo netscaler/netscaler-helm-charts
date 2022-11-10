@@ -2,14 +2,24 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-image: quay.io/citrix/adm-agent-onboarding:1.0.0
+imageRegistry: quay.io
+imageRepository: citrix/adm-agent-onboarding
+imageTag: 1.0.0
+image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
 pullPolicy: IfNotPresent
 token:
+cloudUrl: https://adm.cloud.com
 
 admAgent:
   name: admagent
-  image: quay.io/citrix/adm-agent:latest
-  helperImage: quay.io/citrix/adm-agent-helper:1.0.0
+  imageRegistry: quay.io
+  imageRepository: citrix/adm-agent
+  imageTag: latest
+  image: "{{ .Values.admAgent.imageRegistry }}/{{ .Values.admAgent.imageRepository }}:{{ .Values.admAgent.imageTag }}"
+  helperImageRegistry: quay.io
+  helperImageRepository: citrix/adm-agent-helper
+  helperImageTag: 1.0.0
+  helperImage: "{{ .Values.admAgent.helperImageRegistry }}/{{ .Values.admAgent.helperImageRepository }}:{{ .Values.admAgent.helperImageTag }}"
   loginSecret:
 
 adc:

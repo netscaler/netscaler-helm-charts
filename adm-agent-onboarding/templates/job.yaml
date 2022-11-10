@@ -11,11 +11,17 @@ spec:
      serviceAccountName: {{ .Chart.Name }} 
      containers:
      - name: {{ .Chart.Name }}
-       image: "{{ .Values.image}}"
+       image: "{{ tpl .Values.image . }}"
        imagePullPolicy: {{ .Values.pullPolicy | quote }}
        env:
+       - name: "API_ID"
+         value: {{ .Values.apiId | quote }}
+       - name: "API_SECRET"
+         value: {{ .Values.apiSecret | quote }}
+{{- if not .Values.apiId}}
        - name: "ADM_TOKEN"
          value: {{ required "Provide Authentication Token " .Values.token | quote }}
+{{- end }}
        - name: "AGENT_NAME"
          value: {{ .Values.admAgent.name | quote }}
 {{- if .Values.admAgent.loginSecret }}
@@ -26,9 +32,9 @@ spec:
              key: password
 {{- end }}
        - name: "ADM_AGENT_IMAGE"
-         value: {{ .Values.admAgent.image | quote }}  
+         value: {{ tpl .Values.admAgent.image . | quote }}  
        - name: "ADM_AGENT_HELPER_IMAGE"
-         value: {{ .Values.admAgent.helperImage | quote }}
+         value: {{ tpl .Values.admAgent.helperImage . | quote }}
 {{- if .Values.adc.IP }}
        - name: "ADC_IP"
          value: {{ .Values.adc.IP | quote }}
@@ -50,5 +56,5 @@ spec:
        - name: "SERVICE_ACCOUNT"
          value: {{ .Chart.Name }}
        - name: "CLOUD_URL"
-         value: "https://adm.cloud.com"
+         value: {{ .Values.cloudUrl | quote }}
      restartPolicy: OnFailure
