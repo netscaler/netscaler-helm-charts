@@ -41,7 +41,7 @@ spec:
       serviceAccountName: {{ include "citrix-multi-cluster-ingress-controller.serviceAccountName" . }}
       containers:
       - name: {{ include "citrix-multi-cluster-ingress-controller.name" . }}
-        image: "{{ .Values.image }}"
+        image: "{{ tpl .Values.image . }}"
         imagePullPolicy: {{ .Values.pullPolicy }}
         env:
         - name: "NS_PROTOCOL"

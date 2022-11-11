@@ -31,7 +31,7 @@ spec:
 {{- end }}
       containers:
         - name: cpx-ingress
-          image: "{{ .Values.image }}"
+          image: "{{ tpl .Values.image . }}"
           imagePullPolicy: {{ .Values.pullPolicy }}
           tty: true
           securityContext:
@@ -122,7 +122,7 @@ spec:
 {{- if .Values.cic.required }}
         # Add cic as a sidecar
         - name: cic
-          image: "{{ .Values.cic.image }}"
+          image: "{{ tpl .Values.cic.image . }}"
           imagePullPolicy: {{ .Values.cic.pullPolicy }}
           env:
           - name: "EULA"
@@ -261,7 +261,7 @@ spec:
             {{- toYaml .Values.cic.resources | nindent 12 }}
 {{- if .Values.exporter.required }}
         - name: exporter
-          image: "{{ .Values.exporter.image }}"
+          image: "{{ tpl .Values.exporter.image . }}"
           imagePullPolicy: {{ .Values.exporter.pullPolicy }}
           args:
             - "--secure=no"

@@ -211,7 +211,7 @@ Create a Kubernetes secret `nslogin` with the login credentials of Citrix ADC VP
 
       helm repo add citrix https://citrix.github.io/citrix-helm-charts/
    
-      helm install citrix-adc-istio-ingress-gateway citrix/citrix-adc-istio-ingress-gateway --namespace citrix-system --set ingressGateway.EULA=YES  --set secretName=nslogin --set coe.coeURL=coe.citrix-system --set ingressGateway.secretVolumes[0].name=httpbin-ingressgateway-certs,ingressGateway.secretVolumes[0].secretName=httpbin-ingressgateway-certs,ingressGateway.secretVolumes[0].mountPath=/etc/istio/httpbin-ingressgateway-certs --set ingressGateway.netscalerUrl=https://<Management IP> --set ingressGateway.vserverIP=<Virtual Service IP>
+      helm install citrix-adc-istio-ingress-gateway citrix/citrix-adc-istio-ingress-gateway --namespace citrix-system --set ingressGateway.EULA=YES  --set secretName=nslogin --set coe.coeURL=coe.citrix-system --set ingressGateway.secretVolumes[0].name=httpbin-ingressgateway-certs,ingressGateway.secretVolumes[0].secretName=httpbin-ingressgateway-certs,ingressGateway.secretVolumes[0].mountPath=/etc/istio/httpbin-ingressgateway-certs --set ingressGateway.enableLabelsFeature=TRUE --set ingressGateway.netscalerUrl=https://<Management IP> --set ingressGateway.vserverIP=<Virtual Service IP>
 
 **Note:** Replace management IP address with Citrix ADC VPX/MPX management IP address, Virtual Service IP address as IP address to which `Bookinfo` and `Httpbin` applications are exposed.
 
@@ -247,7 +247,7 @@ Deploy a Citrix ADC CPX sidecar injector to inject Citrix ADC CPX as a sidecar p
 
       helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-      helm install cpx-sidecar-injector citrix/citrix-cpx-istio-sidecar-injector --namespace citrix-system --set cpxProxy.EULA=YES --set coe.coeURL=coe.citrix-system  --set ADMSettings.ADMIP=<ADM-AGENT-SERVICE-IP>  
+      helm install cpx-sidecar-injector citrix/citrix-cpx-istio-sidecar-injector --namespace citrix-system --set cpxProxy.EULA=YES --set coe.coeURL=coe.citrix-system --set cpxProxy.enableLabelsFeature=TRUE --set ADMSettings.ADMIP=<ADM-AGENT-SERVICE-IP>  
 
 # <a name="deploying-bookinfo-httpbin">F) Deploying `Bookinfo` and `Httpbin`</a> 
 

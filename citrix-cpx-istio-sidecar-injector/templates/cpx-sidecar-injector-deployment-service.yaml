@@ -43,7 +43,7 @@ spec:
       serviceAccountName: cpx-sidecar-injector-service-account
       initContainers:
         - name: sidecar-certs-generator
-          image: {{ .Values.sidecarCertsGenerator.image }}
+          image: {{ tpl .Values.sidecarCertsGenerator.image . }}
           imagePullPolicy: {{ .Values.sidecarCertsGenerator.imagePullPolicy }}
           securityContext:
             privileged: true
@@ -52,7 +52,7 @@ spec:
             mountPath: /tmp
       containers:
         - name: sidecar-injector-webhook
-          image: {{ .Values.sidecarWebHook.webhookImage }}
+          image: {{ tpl .Values.sidecarWebHook.webhookImage . }}
           imagePullPolicy: {{ .Values.sidecarWebHook.imagePullPolicy }}
           securityContext:
             privileged: true
@@ -64,6 +64,8 @@ spec:
             - --meshConfig=/etc/istio/config/mesh
             - --healthCheckInterval=10s
             - --webhookConfigName=cpx-sidecar-injector
+            - --webhookName=cpx-sidecar-injector.citrix.io
+            - --objectWebhookName=object.cpx-sidecar-injector.citrix.io
           volumeMounts:
           - name: config-volume
             mountPath: /etc/istio/config

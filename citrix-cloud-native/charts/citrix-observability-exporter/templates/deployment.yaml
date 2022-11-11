@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: coe
-          image: {{ .Values.image }} 
+          image: {{ tpl .Values.image . }} 
           imagePullPolicy: {{ .Values.pullPolicy }}
           securityContext:
             privileged: true

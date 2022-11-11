@@ -73,7 +73,9 @@ The following table lists the mandatory and optional parameters that you can con
 | Parameters | Mandatory or Optional | Default value | Description |
 | --------- | --------------------- | ------------- | ----------- |
 | license.accept | Mandatory | no | Set `yes` to accept the CIC end user license agreement. |
-| image | Mandatory | `quay.io/citrix/citrix-observability-exporter:1.4.001` | The COE image. |
+| imageRegistry                   | Mandatory  |  `quay.io`               |  The COE image registry             |  
+| imageRepository                 | Mandatory  |  `citrix/citrix-observability-exporter`              |   The COE image repository             | 
+| imageTag                  | Mandatory  |  `1.4.001`               |  The COE image tag            | 
 | pullPolicy | Mandatory | IfNotPresent | The COE image pull policy. |
 | nodePortRequired | Optional | false | Set true to create a nodeport COE service. |
 | headless | Optional | false | Set true to create Headless service. |

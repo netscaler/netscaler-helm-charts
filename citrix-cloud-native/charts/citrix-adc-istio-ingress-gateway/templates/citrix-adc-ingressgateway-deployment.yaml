@@ -75,7 +75,7 @@ spec:
       containers:
 {{- if eq .Values.metricExporter.required true }}
         - name: exporter
-          image: {{ .Values.metricExporter.image }}
+          image: {{ tpl .Values.metricExporter.image . }}
           imagePullPolicy: IfNotPresent
           args:
           - "--target-nsip=127.0.0.1"
@@ -92,7 +92,7 @@ spec:
             name: cpx-pwd
 {{- end }}
         - name: istio-adaptor
-          image: {{ .Values.xDSAdaptor.image }}
+          image: {{ tpl .Values.xDSAdaptor.image . }}
           imagePullPolicy: {{ .Values.xDSAdaptor.imagePullPolicy }} 
           args:
           - -ads-server
@@ -222,7 +222,7 @@ spec:
             readOnly: true
           {{- end }}
         - name: citrix-ingressgateway
-          image: "{{ .Values.ingressGateway.image }}"
+          image: "{{ tpl .Values.ingressGateway.image . }}"
           imagePullPolicy: {{ .Values.ingressGateway.imagePullPolicy }}
           securityContext:
             privileged: true
@@ -351,7 +351,7 @@ spec:
       containers:
 {{- if eq .Values.metricExporter.required true }}
       - name: exporter
-        image: {{ .Values.metricExporter.image }}
+        image: {{ tpl .Values.metricExporter.image . }}
         imagePullPolicy: {{ .Values.metricExporter.imagePullPolicy }}
         args:
         - "--target-nsip={{- include "exporter_nsip" . -}}"
@@ -366,7 +366,7 @@ spec:
           readOnly: true
 {{- end }}
       - name: istio-adaptor
-        image: {{ .Values.xDSAdaptor.image }}
+        image: {{ tpl .Values.xDSAdaptor.image . }}
         imagePullPolicy: {{ .Values.xDSAdaptor.imagePullPolicy }}  
         env:
         - name: POD_NAME
@@ -425,7 +425,7 @@ spec:
           value: "TRUE"
 {{- end }}
         - name: ENABLE_LABELS_FEATURE
-          value: "FALSE"
+          value: {{ .Values.ingressGateway.enableLabelsFeature | quote }}
 {{- if eq .Values.xDSAdaptor.defaultSSLListenerOn443 true }}            
         - name: DEFAULT_SSL_LISTENER_ON_443
           value: "TRUE"

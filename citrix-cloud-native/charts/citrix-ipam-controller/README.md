@@ -47,7 +47,9 @@ The following table lists the configurable parameters of the Citrix ADC CPX with
 
 | Parameters | Mandatory or Optional | Default value | Description |
 | ---------- | --------------------- | ------------- | ----------- |
-| ipam.image | Mandatory | `quay.io/citrix/citrix-ipam-controller:1.0.3` | The Citrix IPAM Contoller image. |
+| ipam.imageRegistry                   | Mandatory  |  `quay.io`               |  The Citrix IPAM Contoller image registry             |  
+| ipam.imageRepository                 | Mandatory  |  `citrix/citrix-ipam-controller`              |   The Citrix IPAM Contoller image repository             | 
+| ipam.imageTag                  | Mandatory  |  `1.0.3`               |  The Citrix IPAM Contoller image tag            | 
 | ipam.pullPolicy | Mandatory | `IfNotPresent` | The Citrix IPAM Contoller image pull policy. |
 | ipam.vipRange | Mandatory | N/A | This variable allows you to define the IP address range. You can either define IP address range or an IP address range associated with a unique name. Citrix IPAM controller assigns the IP address from this IP address range to the service of type LoadBalancer. |
 

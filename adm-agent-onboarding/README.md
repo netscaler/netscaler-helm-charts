@@ -179,12 +179,18 @@ The following table provides the configurable parameters and their default value
 
 | Parameter                      | Description                   | Default                   |
 |--------------------------------|-------------------------------|---------------------------|
-| `image`                    | Specifies the image of the ADM agent onboarding container                    |  "quay.io/citrix/adm-agent-onboarding:1.0.0"   |
+| `imageRegistry`			   | Image registry of the ADM agent onboarding container               | `quay.io`               |
+| `imageRepository`			   | Image repository of the ADM agent onboarding container               | `citrix/adm-agent-onboarding`               |
+| `imageTag`			   | Image tag  of the ADM agent onboarding container               | `1.0.0`               |
 | `pullPolicy`   | Specifies the image pull policy for ADM agent onboarding. | IfNotPresent        |
 | `token`     | Authentication and authorization bearer token generated using access ID and access secret.  | nil |
 |`admAgent.name`| Name for the ADM Agent.| "admagent" |
-|`admAgent.image`| Specifies the image of the Citrix ADM Agent.| "quay.io/citrix/adm-agent:latest" |
-|`admAgent.helperImage`| Specifies the image of Citrix ADM agent helper. | "quay.io/citrix/adm-agent-helper:1.0.0" |
+|`admAgent.imageRegistry`			   | Image registry of the Citrix ADM agent               | `quay.io`               |
+|`admAgent.imageRepository`			   | Image repository of the Citrix ADM agent               | `citrix/adm-agent`               |
+|`admAgent.imageTag`			   | Image tag  of the Citrix ADM agent               | `latest`               |
+|`admAgent.helperImageRegistry`			   | Image registry of Citrix ADM agent helper               | `quay.io`               |
+|`admAgent.helperImageRepository`			   | Image repository of Citrix ADM agent helper               | `citrix/adm-agent-helper`               |
+|`admAgent.helperImageTag`			   | Image tag of Citrix ADM agent helper               | `1.0.0`               |
 |`admAgent.loginSecret`|Specifies the login Secret of Citrix ADM agent.| Nil|
 |`adc.IP`| Specifies the Citrix ADC VPX/MPS management IP address.| Nil |
 |`adc.mgmtHTTPPort`| Specifies the Citrix ADC VPX/MPX management HTTP port.| 80 |

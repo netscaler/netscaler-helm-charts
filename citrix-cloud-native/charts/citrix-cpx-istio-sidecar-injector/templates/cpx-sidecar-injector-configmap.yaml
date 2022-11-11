@@ -22,7 +22,7 @@ data:
     template: |-
       containers:
       - name: istio-adaptor
-        image: {{ .Values.xDSAdaptor.image }}
+        image: {{ tpl .Values.xDSAdaptor.image . }}
         imagePullPolicy: {{ .Values.xDSAdaptor.imagePullPolicy }} 
         env:
         - name: POD_NAME
@@ -71,7 +71,7 @@ data:
           value: "TRUE"
 {{- end }}
         - name: ENABLE_LABELS_FEATURE
-          value: "FALSE"
+          value: {{ .Values.cpxProxy.enableLabelsFeature | quote}}
 {{- if eq .Values.xDSAdaptor.defaultSSLListenerOn443 true }}            
         - name: DEFAULT_SSL_LISTENER_ON_443
           value: "TRUE"
@@ -136,7 +136,7 @@ data:
           runAsUser: 32024 # UID of xds-adaptor container's user
           runAsNonRoot: true
       - name: cpx-proxy
-        image: {{ .Values.cpxProxy.image }}
+        image: {{ tpl .Values.cpxProxy.image . }}
         imagePullPolicy: IfNotPresent
         securityContext:
           privileged: true
