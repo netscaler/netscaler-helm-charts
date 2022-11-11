@@ -180,16 +180,22 @@ The following table provides the configurable parameters and their default value
 
 | Parameter                      | Description                   | Default                   |
 |--------------------------------|-------------------------------|---------------------------|
-| `ao.image`                    | Image of the ADM agent onboarding container                    |  "quay.io/citrix/citrix-cloud-native:1.0.0"   |
-| `ao.pullPolicy`   | Image pull policy for Citrix ADM-adaptor | IfNotPresent        |
-| `ao.token`     | Authentication and authorization bearer token generated using access ID and access secret.  | nil                     |
-|`ao.admAgent.name`|  Name for the ADM Agent.| "admagent" |
-|`ao.admAgent.image`| Image of the Citrix ADM Agent| "quay.io/citrix/adm-agent:latest" |
-|`ao.admAgent.helperImage`| Image of Citrix ADM Agent Helper | "quay.io/citrix/adm-agent-helper:1.0.0" |
-|`ao.admAgent.loginSecret`|Login Secret of Citrix ADM Agent| Nil|
-|`ao.adc.IP`| Citrix ADC VPX/MPS management IP | Nil |
-|`ao.adc.mgmtHTTPPort`| Citrix ADC VPX/MPX Management HTTP Port| 80 |
-|`ao.adc.mgmtHTTPSPort`|Citrix ADC VPX/MPX Management HTTPS Port| 443|
-|`ao.adc.loginSecret`| Kubernetes secret containing Citrix ADC VPX/MPX login Credentials | nslogin|
+| `ao.imageRegistry`			   | Image registry of the ADM agent onboarding container               | `quay.io`               |
+| `ao.imageRepository`			   | Image repository of the ADM agent onboarding container               | `citrix/adm-agent-onboarding`               |
+| `ao.imageTag`			   | Image tag  of the ADM agent onboarding container               | `1.0.0`               |
+| `ao.pullPolicy`   | Specifies the image pull policy for ADM agent onboarding. | IfNotPresent        |
+| `ao.token`     | Authentication and authorization bearer token generated using access ID and access secret.  | nil |
+|`ao.admAgent.name`| Name for the ADM Agent.| "admagent" |
+|`ao.admAgent.imageRegistry`			   | Image registry of the Citrix ADM agent               | `quay.io`               |
+|`ao.admAgent.imageRepository`			   | Image repository of the Citrix ADM agent               | `citrix/adm-agent`               |
+|`ao.admAgent.imageTag`			   | Image tag  of the Citrix ADM agent               | `latest`               |
+|`ao.admAgent.helperImageRegistry`			   | Image registry of Citrix ADM agent helper               | `quay.io`               |
+|`ao.admAgent.helperImageRepository`			   | Image repository of Citrix ADM agent helper               | `citrix/adm-agent-helper`               |
+|`ao.admAgent.helperImageTag`			   | Image tag of Citrix ADM agent helper               | `1.0.0`               |
+|`ao.admAgent.loginSecret`|Specifies the login Secret of Citrix ADM agent.| Nil|
+|`ao.adc.IP`| Specifies the Citrix ADC VPX/MPS management IP address.| Nil |
+|`ao.adc.mgmtHTTPPort`| Specifies the Citrix ADC VPX/MPX management HTTP port.| 80 |
+|`ao.adc.mgmtHTTPSPort`|Specifies the Citrix ADC VPX/MPX management HTTPS port.| 443|
+|`ao.adc.loginSecret`| Specifies the the Kubernetes secret containing Citrix ADC VPX/MPX login credentials. | nslogin|
 
 **Note:** You can use the `values.yaml` file packaged in the chart. This file contains the default configuration values for the chart.

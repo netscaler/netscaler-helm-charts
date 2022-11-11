@@ -36,6 +36,9 @@ rules:
   - apiGroups: ["*"]
     resources: ["serviceaccounts"]
     verbs: ["get", "list", "create", "delete"]
+  - apiGroups: ["autoscaling"]
+    resources: ["horizontalpodautoscalers"]
+    verbs: ["*"]
 ---
  
 kind: ClusterRoleBinding

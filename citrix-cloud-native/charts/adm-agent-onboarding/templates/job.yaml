@@ -50,5 +50,5 @@ spec:
        - name: "SERVICE_ACCOUNT"
          value: {{ .Chart.Name }}
        - name: "CLOUD_URL"
-         value: "https://adm.cloud.com"
+         value: {{ .Values.cloudUrl | quote }}
      restartPolicy: OnFailure
