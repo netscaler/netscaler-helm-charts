@@ -323,7 +323,7 @@ The following table lists the mandatory and optional parameters that you can con
 | cic.license.accept | Mandatory | no | Set `yes` to accept the CIC end user license agreement. |
 | cic.imageRegistry                   | Mandatory  |  `quay.io`               |  The Citrix ingress controller image registry             |  
 | cic.imageRepository                 | Mandatory  |  `citrix/citrix-k8s-ingress-controller`              |   The Citrix ingress controller image repository             | 
-| cic.imageTag                  | Mandatory  |  `1.27.15`               |   The Citrix ingress controller image tag            | 
+| cic.imageTag                  | Mandatory  |  `1.28.2`               |   The Citrix ingress controller image tag            | 
 | cic.pullPolicy | Mandatory | IfNotPresent | The CIC image pull policy. |
 | cic.imagePullSecrets | Optional | N/A | Provide list of Kubernetes secrets to be used for pulling the images from a private Docker registry or repository. For more information on how to create this secret please see [Pull an Image from a Private Registry](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/). |
 | cic.nameOverride | Optional | N/A | String to partially override deployment fullname template with a string (will prepend the release name) |
@@ -399,6 +399,7 @@ The following table lists the mandatory and optional parameters that you can con
 | cic.nsLbHashAlgo.hashAlgorithm | Optional | 'default' | Specifies the supported algorithm. Supported algorithms are "default", "jarh", "prac", Default value is 'default' |
 | cic.extraVolumeMounts  |  Optional |  [] |  Specify the Additional VolumeMounts to be mounted in CIC container  |
 | cic.extraVolumes  |  Optional |  [] |  Specify the Additional Volumes for additional volumeMounts  |
+| cic.rbacRole  | Optional |  false  |  To deploy CIC with RBAC Role set rbacRole=true; by default CIC gets installed with RBAC ClusterRole(rbacRole=false)) |
 
 Alternatively, you can define a YAML file with the values for the parameters and pass the values while installing the chart.
 
