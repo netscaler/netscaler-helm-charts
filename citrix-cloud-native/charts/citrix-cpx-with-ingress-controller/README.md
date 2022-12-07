@@ -461,10 +461,11 @@ The following table lists the configurable parameters of the Citrix ADC CPX with
 | cpx.daemonSet | Optional | False | Set this to true if Citrix ADC CPX needs to be deployed as DaemonSet. |
 | cpx.cic.imageRegistry                   | Mandatory  |  `quay.io`               |  The Citrix ingress controller image registry             |  
 | cpx.cic.imageRepository                 | Mandatory  |  `citrix/citrix-k8s-ingress-controller`              |   The Citrix ingress controller image repository             | 
-| cpx.cic.imageTag                  | Mandatory  |  `1.27.15`               |   The Citrix ingress controller image tag            | 
+| cpx.cic.imageTag                  | Mandatory  |  `1.28.2`               |   The Citrix ingress controller image tag            | 
 | cpx.cic.pullPolicy | Mandatory | IfNotPresent | The Citrix ingress controller image pull policy. |
 | cpx.cic.required | Mandatory | true | CIC to be run as sidecar with Citrix ADC CPX |
 | cpx.cic.resources | Optional | {} |	CPU/Memory resource requests/limits for Citrix Ingress Controller container |
+| cpx.cic.rbacRole  | Optional |  false  |  To deploy CIC with RBAC Role set rbacRole=true; by default CIC gets installed with RBAC ClusterRole(rbacRole=false)) |
 | cpx.imagePullSecrets | Optional | N/A | Provide list of Kubernetes secrets to be used for pulling the images from a private Docker registry or repository. For more information on how to create this secret please see [Pull an Image from a Private Registry](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/). |
 | cpx.nameOverride | Optional | N/A | String to partially override deployment fullname template with a string (will prepend the release name) |
 | cpx.fullNameOverride | Optional | N/A | String to fully override deployment fullname template with a string |

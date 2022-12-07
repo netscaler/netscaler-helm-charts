@@ -5,7 +5,7 @@
 # Citrix Ingress Controller config details
 imageRegistry: quay.io
 imageRepository: citrix/citrix-k8s-ingress-controller
-imageTag: 1.27.15
+imageTag: 1.28.2
 image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
 pullPolicy: IfNotPresent
 imagePullSecrets: []
@@ -48,6 +48,9 @@ defaultSSLCertSecret:
 podIPsforServiceGroupMembers: False
 ignoreNodeExternalIP: False
 ipam: False
+# Enable RBAC role (so called local role), by default CIC deployed with ClusterRole.
+# below variable to deploy CIC with RBAC role, only ingress service supported with this config
+rbacRole: False
 # API server Cert verification can be disabled, while communicating with API Server, if disableAPIServerCertVerify set to True
 disableAPIServerCertVerify: False
 logProxy:

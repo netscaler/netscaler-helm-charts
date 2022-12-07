@@ -5,7 +5,7 @@
 # image contains information needed to fetch CIC image
 imageRegistry: quay.io
 imageRepository: citrix/citrix-k8s-ingress-controller
-imageTag: 1.27.15
+imageTag: 1.28.2
 image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
 pullPolicy: IfNotPresent
 # openshift is set to true if charts are being deployed in OpenShift environment.

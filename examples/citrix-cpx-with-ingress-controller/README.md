@@ -91,7 +91,7 @@ The following table lists the configurable parameters of the Citrix ADC CPX with
 | pullPolicy | Mandatory | IfNotPresent | The Citrix ADC CPX image pull policy. |
 | cic.imageRegistry                   | Mandatory  |  `quay.io`               |  The Citrix ingress controller image registry             |  
 | cic.imageRepository                 | Mandatory  |  `citrix/citrix-k8s-ingress-controller`              |   The Citrix ingress controller image repository             | 
-| cic.imageTag                  | Mandatory  |  `1.27.15`               |   The Citrix ingress controller image tag            | 
+| cic.imageTag                  | Mandatory  |  `1.28.2`               |   The Citrix ingress controller image tag            | 
 | cic.pullPolicy | Mandatory | IfNotPresent | The Citrix ingress controller image pull policy. |
 | cic.required | Mandatory | true | CIC to be run as sidecar with Citrix ADC CPX |
 | cic.resources | Optional | {} |	CPU/Memory resource requests/limits for Citrix Ingress Controller container |
@@ -104,6 +104,7 @@ The following table lists the configurable parameters of the Citrix ADC CPX with
 | nsConfigDnsRec | Optional | false | To enable/disable DNS address Record addition in ADC through Ingress |
 | nsSvcLbDnsRec | Optional | false | To enable/disable DNS address Record addition in ADC through Type Load Balancer Service |
 | nsDnsNameserver | Optional | N/A | To add DNS Nameservers in ADC |
+| rbacRole  | Optional |  false  |  To deploy CIC with RBAC Role set rbacRole=true; by default CIC gets installed with RBAC ClusterRole(rbacRole=false)) |
 | optimizeEndpointBinding | Optional | false | To enable/disable binding of backend endpoints to servicegroup in a single API-call. Recommended when endpoints(pods) per application are large in number. Applicable only for Citrix ADC Version >=13.0-45.7  |
 | defaultSSLCertSecret | Optional | N/A | Provide Kubernetes secret name that needs to be used as a default non-SNI certificate in Citrix ADC. |
 | nsHTTP2ServerSide | Optional | OFF | Set this argument to `ON` for enabling HTTP2 for Citrix ADC service group configurations. |

@@ -172,7 +172,7 @@ The following table lists the mandatory and optional parameters that you can con
 | license.accept | Mandatory | no | Set `yes` to accept the CIC end user license agreement. |
 | imageRegistry                   | Optional  |  `quay.io`               |  The Citrix ingress controller image registry             |  
 | imageRepository                 | Optional  |  `citrix/citrix-k8s-ingress-controller`              |   The Citrix ingress controller image repository             | 
-| imageTag                  | Optional  |  `1.27.15`               |   The Citrix ingress controller image tag            | 
+| imageTag                  | Optional  |  `1.28.2`               |   The Citrix ingress controller image tag            | 
 | pullPolicy | Optional | Always | The CIC image pull policy. |
 | nsPort | Optional | 443 | The port used by CIC to communicate with Citrix ADC. You can use port 80 for HTTP. |
 | nsProtocol | Optional | HTTPS | The protocol used by CIC to communicate with Citrix ADC. You can also use HTTP on port 80. |
