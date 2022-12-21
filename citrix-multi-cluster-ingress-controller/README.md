@@ -8,12 +8,12 @@
    ```
    helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-   helm install multi-cluster citrix/citrix-multi-cluster-ingress-controller --set localRegion=<local-cluster-region>,localCluster=<local-cluster-name>,sitedata[0].siteName=<site1-name>,sitedata[0].siteIp=<site1-ip-address>,sitedata[0].secretName=<site1-login-file>,sitedata[1].siteName=<site2-name>,sitedata[1].siteIp=<site2-ip-address>,sitedata[1].secretName=<site2-login-file>,license.accept=yes
+   helm install multi-cluster citrix/citrix-multi-cluster-ingress-controller --set localRegion=<local-cluster-region>,localCluster=<local-cluster-name>,sitedata[0].siteName=<site1-name>,sitedata[0].siteIp=<site1-ip-address>,sitedata[0].secretName=<site1-login-file>,sitedata[0].siteRegion=<site1-region-name>,sitedata[1].siteName=<site2-name>,sitedata[1].siteIp=<site2-ip-address>,sitedata[1].secretName=<site2-login-file>,sitedata[1].siteRegion=<site2-region-name>,license.accept=yes
    ```
 
    To install Citrix Provided Custom Resource Definition(CRDs) along with Citrix Ingress Controller
    ```
-   helm install multi-cluster citrix/citrix-multi-cluster-ingress-controller --set localRegion=<local-cluster-region>,localCluster=<local-cluster-name>,sitedata[0].siteName=<site1-name>,sitedata[0].siteIp=<site1-ip-address>,sitedata[0].secretName=<site1-login-file>,sitedata[1].siteName=<site2-name>,sitedata[1].siteIp=<site2-ip-address>,sitedata[1].secretName=<site2-login-file>,license.accept=yes,crds.install=true
+   helm install multi-cluster citrix/citrix-multi-cluster-ingress-controller --set localRegion=<local-cluster-region>,localCluster=<local-cluster-name>,sitedata[0].siteName=<site1-name>,sitedata[0].siteIp=<site1-ip-address>,sitedata[0].secretName=<site1-login-file>,sitedata[0].siteRegion=<site1-region-name>,sitedata[1].siteName=<site2-name>,sitedata[1].siteIp=<site2-ip-address>,sitedata[1].secretName=<site2-login-file>,sitedata[1].siteRegion=<site2-region-name>,license.accept=yes,crds.install=true
    ```
 
 ### For OpenShift
@@ -21,12 +21,12 @@
    ```
    helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-   helm install multi-cluster citrix/citrix-multi-cluster-ingress-controller --set localRegion=<local-cluster-region>,localCluster=<local-cluster-name>,sitedata[0].siteName=<site1-name>,sitedata[0].siteIp=<site1-ip-address>,sitedata[0].secretName=<site1-login-file>,sitedata[1].siteName=<site2-name>,sitedata[1].siteIp=<site2-ip-address>,sitedata[1].secretName=<site2-login-file>,license.accept=yes,openshift=true
+   helm install multi-cluster citrix/citrix-multi-cluster-ingress-controller --set localRegion=<local-cluster-region>,localCluster=<local-cluster-name>,sitedata[0].siteName=<site1-name>,sitedata[0].siteIp=<site1-ip-address>,sitedata[0].secretName=<site1-login-file>,sitedata[0].siteRegion=<site1-region-name>,sitedata[1].siteName=<site2-name>,sitedata[1].siteIp=<site2-ip-address>,sitedata[1].secretName=<site2-login-file>,sitedata[1].siteRegion=<site2-region-name>,license.accept=yes,openshift=true
    ```
 
 To install Citrix Provided Custom Resource Definition(CRDs) along with Citrix Ingress Controller
    ```
-   helm install multi-cluster citrix/citrix-multi-cluster-ingress-controller --set localRegion=<local-cluster-region>,localCluster=<local-cluster-name>,sitedata[0].siteName=<site1-name>,sitedata[0].siteIp=<site1-ip-address>,sitedata[0].secretName=<site1-login-file>,sitedata[1].siteName=<site2-name>,sitedata[1].siteIp=<site2-ip-address>,sitedata[1].secretName=<site2-login-file>,license.accept=yes,openshift=true,crds.install=true
+   helm install multi-cluster citrix/citrix-multi-cluster-ingress-controller --set localRegion=<local-cluster-region>,localCluster=<local-cluster-name>,sitedata[0].siteName=<site1-name>,sitedata[0].siteIp=<site1-ip-address>,sitedata[0].secretName=<site1-login-file>,sitedata[0].siteRegion=<site1-region-name>,sitedata[1].siteName=<site2-name>,sitedata[1].siteIp=<site2-ip-address>,sitedata[1].secretName=<site2-login-file>,sitedata[1].siteRegion=<site2-region-name>,license.accept=yes,openshift=true,crds.install=true
    ```
 > **Important:**
 >
@@ -120,7 +120,7 @@ Add the Citrix Multi-Cluster Ingress Controller helm chart repository using comm
 #### 1. Citrix Multi-Cluster Ingress Controller
 To install the chart with the release name, `my-release`, use the following command:
    ```
-   helm install my-release citrix/citrix-multi-cluster-ingress-controller --set localRegion=<local-cluster-region>,localCluster=<local-cluster-name>,sitedata[0].siteName=<site1-name>,sitedata[0].siteIp=<site1-ip-address>,sitedata[0].secretName=<site1-login-file>,sitedata[1].siteName=<site2-name>,sitedata[1].siteIp=<site2-ip-address>,sitedata[1].secretName=<site2-login-file>,license.accept=yes
+   helm install my-release citrix/citrix-multi-cluster-ingress-controller --set localRegion=<local-cluster-region>,localCluster=<local-cluster-name>,sitedata[0].siteName=<site1-name>,sitedata[0].siteIp=<site1-ip-address>,sitedata[0].secretName=<site1-login-file>,sitedata[0].siteRegion=<site1-region-name>,sitedata[1].siteName=<site2-name>,sitedata[1].siteIp=<site2-ip-address>,sitedata[1].secretName=<site2-login-file>,sitedata[1].siteRegion=<site2-region-name>,license.accept=yes
 
    ```
 
@@ -140,7 +140,7 @@ Add the service account named "mcingress-k8s-role" to the privileged Security Co
 
 To install the chart with the release name, `my-release`, use the following command:
    ```
-   helm install my-release citrix/citrix-ingress-controller --set localRegion=<local-cluster-region>,localCluster=<local-cluster-name>,sitedata[0].siteName=<site1-name>,sitedata[0].siteIp=<site1-ip-address>,sitedata[0].secretName=<site1-login-file>,sitedata[1].siteName=<site2-name>,sitedata[1].siteIp=<site2-ip-address>,sitedata[1].secretName=<site2-login-file>,license.accept=yes,openshift=true
+   helm install my-release citrix/citrix-ingress-controller --set localRegion=<local-cluster-region>,localCluster=<local-cluster-name>,sitedata[0].siteName=<site1-name>,sitedata[0].siteIp=<site1-ip-address>,sitedata[0].secretName=<site1-login-file>,sitedata[0].siteRegion=<site1-region-name>,sitedata[1].siteName=<site2-name>,sitedata[1].siteIp=<site2-ip-address>,sitedata[1].secretName=<site2-login-file>,sitedata[1].siteRegion=<site2-region-name>,license.accept=yes,openshift=true
    ```
 
 The command deploys Citrix Multi-Cluster Ingress controller on your Openshift cluster in the default configuration. The [configuration](#configuration) section lists the mandatory and optional parameters that you can configure during installation.
