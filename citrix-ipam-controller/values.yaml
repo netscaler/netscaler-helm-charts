@@ -2,6 +2,7 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+imageRegistry: quay.io
 imageRepository: citrix/citrix-ipam-controller
 imageTag: 1.0.3
 image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"

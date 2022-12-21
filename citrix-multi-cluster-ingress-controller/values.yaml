@@ -27,17 +27,19 @@ disableAPIServerCertVerify: False
 # kubernetesURL is for registering events to kubeapi server
 kubernetesURL:
 # localRegion is the region where K8s cluster is deployed 
-localRegion:
+localRegion: ""
 # localCluster is the clustername of the k8s cluster
-localCluster:
+localCluster: ""
 # sitedata is list of dictionary containing site related information like name,IP, adcCredentialSecret for credentials.
 sitedata:
   - siteName: "site1"
     siteIp: "x.x.x.x"
     secretName: "site1-secret"
+    siteRegion: "xxxxxxxxx"
   - siteName: "site2"
     siteIp: "x.x.x.x"
     secretName: "site2-secret"
+    siteRegion: "xxxxxxxxx"
 crds:
 # If false, CustomResourceDefinitions  will not be installed.
   install: false
