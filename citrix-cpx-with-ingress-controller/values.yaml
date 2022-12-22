@@ -5,7 +5,7 @@
 # Citrix ADC CPX config details
 imageRegistry: quay.io
 imageRepository: citrix/citrix-k8s-cpx-ingress
-imageTag: 13.1-30.52
+imageTag: 13.1-37.38
 image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
 pullPolicy: IfNotPresent
 imagePullSecrets: []
