@@ -67,6 +67,7 @@ optimizeEndpointBinding:
 routeLabels:
 namespaceLabels:
 disableOpenshiftRoutes:
+profileSslFrontend:
 
 # Exporter config details
 exporter:

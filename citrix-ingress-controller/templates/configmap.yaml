@@ -58,3 +58,8 @@ data:
     hashFingers: {{ .Values.nsLbHashAlgo.hashFingers }}
     hashAlgorithm: {{ .Values.nsLbHashAlgo.hashAlgorithm | quote }}
 {{- end }}
+
+{{- if .Values.profileSslFrontend }}
+  FRONTEND_SSL_PROFILE: |
+    preconfigured: {{ .Values.profileSslFrontend }}
+{{- end }}
