@@ -113,7 +113,25 @@ updateIngressStatus: False
 logProxy:
 kubernetesURL:
 disableOpenshiftRoutes:
-
+profileSslFrontend: {}
+  # preconfigured: my_ssl_profile
+  #  OR
+  # config:
+  #   tls13: 'ENABLED'
+  #   hsts: 'ENABLED'
+profileHttpFrontend: {}
+  # preconfigured: my_http_profile
+  #  OR
+  # config:
+  #   dropinvalreqs: 'ENABLED'
+  #   websocket: 'ENABLED'
+profileTcpFrontend: {}
+  # preconfigured: my_tcp_profile
+  #  OR
+  # config:
+  #   sack: 'ENABLED'
+  #   nagle: 'ENABLED'
+  
 # Citrix ADM/License Server config details
 ADMSettings:
   licenseServerIP:
