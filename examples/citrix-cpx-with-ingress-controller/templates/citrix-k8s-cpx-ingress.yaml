@@ -93,7 +93,7 @@ spec:
             value: {{ .Values.ADMSettings.analyticsServerPort | quote }}
 {{- end }}
 #Need to set env var BANDWIDTH in order to provide Bandwidth license to Citrix ADC CPX from ADM or CPX License Aggregator
-{{- if and ( or ( .Values.ADMSettings.licenseServerIP ) .Values.cpxLicenseAggregator ) ) ( eq .Values.ADMSettings.bandWidthLicense true ) }}
+{{- if and ( or ( .Values.ADMSettings.licenseServerIP ) .Values.cpxLicenseAggregator )  ( eq .Values.ADMSettings.bandWidthLicense true ) }}
           - name: "BANDWIDTH"
             value: {{ .Values.ADMSettings.bandWidth | quote }}
 {{- end }}
@@ -129,6 +129,8 @@ spec:
               name: shared-data
             - mountPath: /cpx/
               name: cpx-volume
+            - mountPath: /cpx/conf
+              name: cpx-volume-conf
 {{- if .Values.cic.required }}
         # Add cic as a sidecar
         - name: cic
@@ -300,6 +302,8 @@ spec:
         - name: shared-data
           emptyDir: {}
         - name: cpx-volume
+          emptyDir: {}
+        - name: cpx-volume-conf
           emptyDir: {}
 {{- if and .Values.nodeSelector.key .Values.nodeSelector.value }}
       nodeSelector:
