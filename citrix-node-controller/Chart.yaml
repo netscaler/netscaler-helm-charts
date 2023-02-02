@@ -1,10 +1,10 @@
 apiVersion: v2
 appVersion: "2.2.10"
 description: A Helm chart for Citrix k8s node controller
-home: https://www.citrix.com
+home: https://www.cloud.com
 icon: https://raw.githubusercontent.com/citrix/citrix-helm-charts/gh-pages/icon.png 
 maintainers:
-- email: apoorva.kamath@citrix.com
+- email: apoorva.kamath@cloud.com
   name: apoorva-05
 name: citrix-node-controller
 sources:

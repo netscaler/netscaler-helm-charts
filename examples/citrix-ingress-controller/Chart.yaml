@@ -5,11 +5,11 @@ description: A Helm chart for Citrix Ingress Controller configuring MPX/VPX.
 name: citrix-ingress-controller
 version: 1.29.5
 icon: https://raw.githubusercontent.com/citrix/citrix-helm-charts/gh-pages/icon.png
-home: https://www.citrix.com
+home: https://www.cloud.com
 sources:
 - https://github.com/citrix/citrix-k8s-ingress-controller
 maintainers:
 - name: priyankash-citrix
-  email: priyanka.sharma@citrix.com
+  email: priyanka.sharma@cloud.com
 - name: subashd
-  email: subash.dangol@citrix.com
+  email: subash.dangol@cloud.com
