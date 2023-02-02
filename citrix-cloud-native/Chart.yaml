@@ -4,14 +4,14 @@ description: A Helm chart for deploying all Citrix Cloud Native products
 name: citrix-cloud-native
 version: 1.0.0
 icon: https://raw.githubusercontent.com/citrix/citrix-helm-charts/gh-pages/icon.png
-home: https://www.citrix.com
+home: https://www.cloud.com
 sources:
 - https://github.com/citrix/
 maintainers:
 - name: priyankash-citrix
-  email: priyanka.sharma@citrix.com
+  email: priyanka.sharma@cloud.com
 - name: subashd
-  email: subash.dangol@citrix.com
+  email: subash.dangol@cloud.com
 dependencies:
   - name: citrix-ingress-controller
     version: "1.29.5"

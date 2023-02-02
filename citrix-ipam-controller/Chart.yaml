@@ -5,9 +5,10 @@ version: 1.0.3
 appVersion: "1.0.3"
 type: application
 icon: https://raw.githubusercontent.com/citrix/citrix-helm-charts/gh-pages/icon.png
-home: https://www.citrix.com
+home: https://www.cloud.com
 sources:
 - https://github.com/citrix/citrix-k8s-ingress-controller
 maintainers:
 - name: priyankash-citrix
-  email: priyanka.sharma@citrix.com
+  email: priyanka.sharma@cloud.com
+  

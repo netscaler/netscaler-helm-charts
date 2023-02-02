@@ -5,11 +5,11 @@ description: A Helm chart to deploy resources which install Citrix ADC CPX in Is
 name: citrix-cpx-istio-sidecar-injector
 version: 1.14.1
 icon: https://raw.githubusercontent.com/citrix/citrix-helm-charts/gh-pages/icon.png 
-home: https://www.citrix.com
+home: https://www.cloud.com
 sources:
 - https://github.com/citrix/citrix-xds-adaptor
 maintainers:
 - name: dheerajng
-  email: dhiraj.gedam@citrix.com
+  email: dhiraj.gedam@cloud.com
 - name: subashd
-  email: subash.dangol@citrix.com 
+  email: subash.dangol@cloud.com 

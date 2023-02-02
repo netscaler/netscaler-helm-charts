@@ -5,10 +5,10 @@ kubeVersion: ">=v1.16.0-0"
 description: A Helm chart for Citrix ADC as Egress Gateway installation in Istio Service Mesh on Kubernetes platform
 icon: https://raw.githubusercontent.com/citrix/citrix-helm-charts/gh-pages/icon.png
 type: application
-home: https://www.citrix.com
+home: https://www.cloud.com
 sources:
 - https://github.com/citrix/citrix-xds-adaptor
 version: 1.14.0
 maintainers:
 - name: subashd
-  email: subash.dangol@citrix.com
+  email: subash.dangol@cloud.com

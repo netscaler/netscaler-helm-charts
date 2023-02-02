@@ -77,7 +77,7 @@ spec:
         - name: "EULA"
           value: "{{ .Values.license.accept }}"
         - name: "NS_APPS_NAME_PREFIX"
-          value: {{ .Values.entityPrefix | default "k8s"}}
+          value: {{ .Values.entityPrefix | default "k8s"| quote }}
         args:
         - --config-interface
           gslb-endpoints

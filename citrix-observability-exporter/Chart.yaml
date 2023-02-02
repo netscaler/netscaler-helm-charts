@@ -4,11 +4,9 @@ description: A Helm chart for Citrix Observability Exporter
 name: citrix-observability-exporter
 version: 1.4.001
 icon: https://raw.githubusercontent.com/citrix/citrix-helm-charts/gh-pages/icon.png 
-home: https://www.citrix.com
+home: https://www.cloud.com
 sources:
 - https://github.com/citrix/citrix-observability-exporter
 maintainers:
-- name: SathiyaCV
-  email: sathiya.viswanathan@citrix.com
-- name: NagarajHarikar
-  email: nagarajb.harikar@citrix.com
+- name: ritjaintibco
+  email: Ritik.Jain@cloud.com

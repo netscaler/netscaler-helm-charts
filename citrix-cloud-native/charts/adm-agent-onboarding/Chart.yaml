@@ -4,7 +4,7 @@ description: A Helm chart for ADM agent onboarding
 name: adm-agent-onboarding
 version: 1.0.0
 icon: https://raw.githubusercontent.com/citrix/citrix-helm-charts/gh-pages/icon.png
-home: https://www.citrix.com
+home: https://www.cloud.com
 maintainers:
 - name: subashd
-  email: subash.dangol@citrix.com 
+  email: subash.dangol@cloud.com 

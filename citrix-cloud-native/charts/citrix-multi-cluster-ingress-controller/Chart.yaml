@@ -4,11 +4,11 @@ description: A Helm chart for Citrix Multi-Cluster Ingress Controller configurin
 name: citrix-multi-cluster-ingress-controller
 version: 1.29.5
 icon: https://raw.githubusercontent.com/citrix/citrix-helm-charts/gh-pages/icon.png
-home: https://www.citrix.com
+home: https://www.cloud.com
 maintainers:
 - name: priyankash-citrix
-  email: priyanka.sharma@citrix.com
+  email: priyanka.sharma@cloud.com
 - name: subashd
-  email: subash.dangol@citrix.com
+  email: subash.dangol@cloud.com
 - name: apoorva-05
-  email: apoorva.kamath@citrix.com
+  email: apoorva.kamath@cloud.com
