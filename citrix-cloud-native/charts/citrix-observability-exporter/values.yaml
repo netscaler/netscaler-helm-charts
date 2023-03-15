@@ -4,7 +4,7 @@
 
 imageRegistry: quay.io
 imageRepository: citrix/citrix-observability-exporter
-imageTag: 1.4.001
+imageTag: 1.5.001
 image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
 pullPolicy: IfNotPresent
 replicas: 1
@@ -34,3 +34,8 @@ kafka:
 timeseries:
   enabled: false
   nodePort: 30002
+json_trans_rate_limiting:
+  enabled: false
+  limit: 100
+  queuelimit: 1000
+  window: 5

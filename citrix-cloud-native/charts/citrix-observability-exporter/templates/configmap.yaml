@@ -5,6 +5,12 @@ metadata:
 data:
   lstreamd_default.conf: |
     {
+{{- if .Values.json_trans_rate_limiting.enabled }}
+        "transRateLimitEnabled": "yes",
+        "transRateLimit": {{ .Values.json_trans_rate_limiting.limit | quote }},
+        "transQueueLimit": {{ .Values.json_trans_rate_limiting.queuelimit | quote }},
+        "transRateLimitWindow": {{ .Values.json_trans_rate_limiting.window | quote }},
+{{- end}}
         "Endpoints": {
 {{- if .Values.ns_tracing.enabled }}
           "ZIPKIN": {
