@@ -14,18 +14,12 @@ spec:
        image: "{{ .Values.image}}"
        imagePullPolicy: {{ .Values.pullPolicy | quote }}
        env:
-       - name: "API_ID"
-         value: {{ .Values.apiId | quote }}
-       - name: "API_SECRET"
-         value: {{ .Values.apiSecret | quote }}
        - name: "KUBERNETES_CLUSTER_NAME"
          value: {{ .Values.clusterName | quote }}
        - name: "KUBERNETES_API_URL"
          value: {{ .Values.apiURL | quote }}
-{{- if not .Values.apiId}}
        - name: "ADM_TOKEN"
          value: {{ required "Provide Authentication Token " .Values.token | quote }}
-{{- end }}
        - name: "AGENT_NAME"
          value: {{ .Values.admAgent.name | quote }}
 {{- if .Values.admAgent.loginSecret }}
