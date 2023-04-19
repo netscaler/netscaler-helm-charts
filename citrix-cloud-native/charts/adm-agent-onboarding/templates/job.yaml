@@ -11,9 +11,13 @@ spec:
      serviceAccountName: {{ .Chart.Name }} 
      containers:
      - name: {{ .Chart.Name }}
-       image: "{{ tpl .Values.image . }}"
+       image: "{{ .Values.image}}"
        imagePullPolicy: {{ .Values.pullPolicy | quote }}
        env:
+       - name: "KUBERNETES_CLUSTER_NAME"
+         value: {{ .Values.clusterName | quote }}
+       - name: "KUBERNETES_API_URL"
+         value: {{ .Values.apiURL | quote }}
        - name: "ADM_TOKEN"
          value: {{ required "Provide Authentication Token " .Values.token | quote }}
        - name: "AGENT_NAME"
@@ -26,9 +30,9 @@ spec:
              key: password
 {{- end }}
        - name: "ADM_AGENT_IMAGE"
-         value: {{ tpl .Values.admAgent.image . | quote }}  
+         value: {{ .Values.admAgent.image | quote }}
        - name: "ADM_AGENT_HELPER_IMAGE"
-         value: {{ tpl .Values.admAgent.helperImage . | quote }}
+         value: {{ .Values.admAgent.helperImage | quote }}
 {{- if .Values.adc.IP }}
        - name: "ADC_IP"
          value: {{ .Values.adc.IP | quote }}
