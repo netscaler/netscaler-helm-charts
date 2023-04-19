@@ -50,7 +50,7 @@ dependencies:
     condition: iaEgress.enabled
     alias: iaEgress
   - name: adm-agent-onboarding
-    version: "1.0.0"
+    version: "1.1.0"
     condition: ao.enabled
     alias: ao
   - name: cpx-license-aggregator
