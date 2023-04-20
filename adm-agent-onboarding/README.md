@@ -12,8 +12,8 @@ You can deploy ADM agent onboarding as a Kubernetes Job helps you to deploy cont
 5. [Deploy ADM agent onboarding using Helm chart and register Citrix ADC VPX/MPX in Citrix ADM](#register-adc)
 6. [Manual creating login secret for Citrix ADM Agent](#manual-secret)
 7. [Automatic login secret for Citrix ADM Agent](#automatic-secret)
-6. [Clean Up](#clean-up)
-7. [Configuration Parameters](#configuration-parameters)
+8. [Clean Up](#clean-up)
+9. [Configuration Parameters](#configuration-parameters)
 
 
 # <a name="tldr">TL; DR;</a>

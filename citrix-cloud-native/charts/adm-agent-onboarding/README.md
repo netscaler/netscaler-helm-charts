@@ -194,10 +194,10 @@ The following table provides the configurable parameters and their default value
 |`ao.admAgent.helperImageRegistry`			   | Image registry of Citrix ADM agent helper               | `quay.io`               |
 |`ao.admAgent.helperImageRepository`			   | Image repository of Citrix ADM agent helper               | `citrix/adm-agent-helper`               |
 |`ao.admAgent.helperImageTag`			   | Image tag of Citrix ADM agent helper               | `1.0.0`               |
-|`ao.admAgent.loginSecret`|Login Secret of Citrix ADM Agent| Nil|
-|`ao.adc.IP`| Citrix ADC VPX/MPS management IP | Nil |
-|`ao.adc.mgmtHTTPPort`| Citrix ADC VPX/MPX Management HTTP Port| 80 |
-|`ao.adc.mgmtHTTPSPort`|Citrix ADC VPX/MPX Management HTTPS Port| 443|
-|`ao.adc.loginSecret`| Kubernetes secret containing Citrix ADC VPX/MPX login Credentials | nslogin|
+|`ao.admAgent.loginSecret`|Specifies the login Secret of Citrix ADM agent.| Nil|
+|`ao.adc.IP`| Specifies the Citrix ADC VPX/MPS management IP address.| Nil |
+|`ao.adc.mgmtHTTPPort`| Specifies the Citrix ADC VPX/MPX management HTTP port.| 80 |
+|`ao.adc.mgmtHTTPSPort`|Specifies the Citrix ADC VPX/MPX management HTTPS port.| 443|
+|`ao.adc.loginSecret`| Specifies the the Kubernetes secret containing Citrix ADC VPX/MPX login credentials. | nslogin|
 
 **Note:** You can use the `values.yaml` file packaged in the chart. This file contains the default configuration values for the chart.
