@@ -12,8 +12,8 @@ You can deploy ADM agent onboarding as a Kubernetes Job helps you to deploy cont
 5. [Deploy ADM agent onboarding using Helm chart and register Citrix ADC VPX/MPX in Citrix ADM](#register-adc)
 6. [Manual creating login secret for Citrix ADM Agent](#manual-secret)
 7. [Automatic login secret for Citrix ADM Agent](#automatic-secret)
-6. [Clean Up](#clean-up)
-7. [Configuration Parameters](#configuration-parameters)
+8. [Clean Up](#clean-up)
+9. [Configuration Parameters](#configuration-parameters)
 
 
 # <a name="tldr">TL; DR;</a>
@@ -182,10 +182,12 @@ The following table provides the configurable parameters and their default value
 |--------------------------------|-------------------------------|---------------------------|
 | `ao.imageRegistry`			   | Image registry of the ADM agent onboarding container               | `quay.io`               |
 | `ao.imageRepository`			   | Image repository of the ADM agent onboarding container               | `citrix/adm-agent-onboarding`               |
-| `ao.imageTag`			   | Image tag  of the ADM agent onboarding container               | `1.0.0`               |
-| `ao.pullPolicy`   | Specifies the image pull policy for ADM agent onboarding. | IfNotPresent        |
-| `ao.token`     | Authentication and authorization bearer token generated using access ID and access secret.  | nil |
-|`ao.admAgent.name`| Name for the ADM Agent.| "admagent" |
+| `ao.imageTag`			   | Image tag  of the ADM agent onboarding container               | `1.1.0`               |
+| `ao.pullPolicy`   | Image pull policy for Citrix ADM-adaptor | IfNotPresent        |
+| `ao.token`     | Authentication and authorization bearer token generated using access ID and access secret.  | nil                     |
+| `ao.apiURL`     | Provide Kubernetes API URL in `https://<host>:port` format  | nil |
+| `ao.clusterName`     | Kubernetes cluster name to be registered in ADM Service.  | nil |
+|`ao.admAgent.name`|  Name for the ADM Agent.| "admagent" |
 |`ao.admAgent.imageRegistry`			   | Image registry of the Citrix ADM agent               | `quay.io`               |
 |`ao.admAgent.imageRepository`			   | Image repository of the Citrix ADM agent               | `citrix/adm-agent`               |
 |`ao.admAgent.imageTag`			   | Image tag  of the Citrix ADM agent               | `latest`               |

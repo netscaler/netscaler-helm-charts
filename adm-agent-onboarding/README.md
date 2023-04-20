@@ -12,8 +12,8 @@ You can deploy ADM agent onboarding as a Kubernetes Job helps you to deploy cont
 5. [Deploy ADM agent onboarding using Helm chart and register Citrix ADC VPX/MPX in Citrix ADM](#register-adc)
 6. [Manual creating login secret for Citrix ADM Agent](#manual-secret)
 7. [Automatic login secret for Citrix ADM Agent](#automatic-secret)
-6. [Clean Up](#clean-up)
-7. [Configuration Parameters](#configuration-parameters)
+8. [Clean Up](#clean-up)
+9. [Configuration Parameters](#configuration-parameters)
 
 
 # <a name="tldr">TL; DR;</a>
@@ -181,9 +181,11 @@ The following table provides the configurable parameters and their default value
 |--------------------------------|-------------------------------|---------------------------|
 | `imageRegistry`			   | Image registry of the ADM agent onboarding container               | `quay.io`               |
 | `imageRepository`			   | Image repository of the ADM agent onboarding container               | `citrix/adm-agent-onboarding`               |
-| `imageTag`			   | Image tag  of the ADM agent onboarding container               | `1.0.0`               |
+| `imageTag`			   | Image tag  of the ADM agent onboarding container               | `1.1.0`               |
 | `pullPolicy`   | Specifies the image pull policy for ADM agent onboarding. | IfNotPresent        |
 | `token`     | Authentication and authorization bearer token generated using access ID and access secret.  | nil |
+| `apiURL`     | Provide Kubernetes API URL in `https://<host>:port` format  | nil |
+| `clusterName`     | Kubernetes cluster name to be registered in ADM Service.  | nil |
 |`admAgent.name`| Name for the ADM Agent.| "admagent" |
 |`admAgent.imageRegistry`			   | Image registry of the Citrix ADM agent               | `quay.io`               |
 |`admAgent.imageRepository`			   | Image repository of the Citrix ADM agent               | `citrix/adm-agent`               |

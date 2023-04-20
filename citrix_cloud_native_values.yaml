@@ -689,11 +689,13 @@ ipam:
 ao:
   imageRegistry: quay.io
   imageRepository: citrix/adm-agent-onboarding
-  imageTag: 1.0.0
+  imageTag: 1.1.0
   image: "{{ .Values.ao.imageRegistry }}/{{ .Values.ao.imageRepository }}:{{ .Values.ao.imageTag }}"
   pullPolicy: IfNotPresent
   token:
   cloudUrl: https://adm.cloud.com
+  apiURL:
+  clusterName:
 
   admAgent:
     name: admagent
