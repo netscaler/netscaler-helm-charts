@@ -223,7 +223,10 @@ spec:
                                 type: string
                                 description: "Path to be probed for the health of multi-cluster endpoint in case of http and https"
                               respCode:
-                                type: integer
+                                x-kubernetes-int-or-string: true
+                                anyOf:
+                                  - type: integer
+                                  - type: string  
                                 description: "Response code expected to mark the multi-cluster endpoint healthy in case of http and https"
                             type: object
                           type: array
