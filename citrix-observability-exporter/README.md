@@ -91,6 +91,7 @@ The following table lists the mandatory and optional parameters that you can con
 | kafka.enabled | Optional | false | Set true to enable sending transaction data to kafka server. |
 | kafka.broker | Optional |  | The kafka broker IP details. |
 | kafka.topic | Optional | `HTTP` | The kafka topic details to upload data. |
+| kafka.dataformat | Optional | `AVRO` | The format used for exporting transactions to kafka server. |
 | timeseries.enabled | Optional | false | Set true to enable sending timeseries data to prometheus. |
 | timeseries.nodePort | Optional | 30002 | Specify the port used to expose COE service outside cluster for timeseries endpoint. |
 | json_trans_rate_limiting.enabled | Optional | false | Set true to enable rate-limiting of transactions for JSON-based endpoints: Splunk, ElasticSearch and Zipkin. |
