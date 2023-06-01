@@ -24,8 +24,6 @@ spec:
         - name: coe
           image: {{ tpl .Values.image . }} 
           imagePullPolicy: {{ .Values.pullPolicy }}
-          securityContext:
-            privileged: true
           ports:
             - containerPort: 5557
               name: lstream

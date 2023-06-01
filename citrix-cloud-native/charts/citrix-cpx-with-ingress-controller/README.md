@@ -461,7 +461,7 @@ The following table lists the configurable parameters of the Citrix ADC CPX with
 | cpx.daemonSet | Optional | False | Set this to true if Citrix ADC CPX needs to be deployed as DaemonSet. |
 | cpx.cic.imageRegistry                   | Mandatory  |  `quay.io`               |  The Citrix ingress controller image registry             |  
 | cpx.cic.imageRepository                 | Mandatory  |  `citrix/citrix-k8s-ingress-controller`              |   The Citrix ingress controller image repository             | 
-| cpx.cic.imageTag                  | Mandatory  |  `1.32.7`               |   The Citrix ingress controller image tag            | 
+| cpx.cic.imageTag                  | Mandatory  |  `1.33.4`               |   The Citrix ingress controller image tag            | 
 | cpx.cic.pullPolicy | Mandatory | IfNotPresent | The Citrix ingress controller image pull policy. |
 | cpx.cic.required | Mandatory | true | CIC to be run as sidecar with Citrix ADC CPX |
 | cpx.cic.resources | Optional | {} |	CPU/Memory resource requests/limits for Citrix Ingress Controller container |

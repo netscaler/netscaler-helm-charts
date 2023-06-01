@@ -31,6 +31,7 @@ kafka:
   enabled: false
   broker:
   topic:
+  dataFormat: ""
 timeseries:
   enabled: false
   nodePort: 30002

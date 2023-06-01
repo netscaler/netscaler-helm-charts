@@ -1,8 +1,8 @@
 apiVersion: v2
-appVersion: "1.5.001"
+appVersion: "1.6.001-beta"
 description: A Helm chart for Citrix Observability Exporter
 name: citrix-observability-exporter
-version: 1.5.001
+version: 1.6.001-beta
 icon: https://raw.githubusercontent.com/citrix/citrix-helm-charts/gh-pages/icon.png 
 home: https://www.cloud.com
 sources:
