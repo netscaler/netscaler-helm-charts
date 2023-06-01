@@ -30,9 +30,9 @@ spec:
              key: password
 {{- end }}
        - name: "ADM_AGENT_IMAGE"
-         value: {{ .Values.admAgent.image | quote }}  
+         value: {{ tpl .Values.admAgent.image . | quote }}
        - name: "ADM_AGENT_HELPER_IMAGE"
-         value: {{ .Values.admAgent.helperImage | quote }}
+         value: {{ tpl .Values.admAgent.helperImage . | quote }}
 {{- if .Values.adc.IP }}
        - name: "ADC_IP"
          value: {{ .Values.adc.IP | quote }}
