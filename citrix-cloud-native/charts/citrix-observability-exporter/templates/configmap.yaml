@@ -33,6 +33,7 @@ data:
 {{- end}}
 {{- if .Values.kafka.enabled }}
           "KAFKA": {
+              "DataFormat": {{ .Values.kafka.dataFormat | upper | quote }},
               "ServerUrl": {{ .Values.kafka.broker | quote }},
               "KafkaTopic": {{ .Values.kafka.topic  | default "HTTP" | quote }},
               "RecordType": {

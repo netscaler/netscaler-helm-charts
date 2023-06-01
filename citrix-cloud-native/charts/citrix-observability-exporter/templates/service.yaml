@@ -20,7 +20,7 @@ spec:
 {{- end}}
   selector:
       app: coe
----      
+---
 {{- if eq .Values.nodePortRequired true }}
 apiVersion: v1
 kind: Service
@@ -43,5 +43,5 @@ spec:
 {{- end}}
   selector: 
       app: coe
----      
+---
 {{- end}}
