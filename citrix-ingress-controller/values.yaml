@@ -14,7 +14,7 @@ fullnameOverride: ""
 openshift: false
 adcCredentialSecret: # K8s Secret Name
 # Enable secretStore to implement CSI Secret Provider classes for holding the nslogin credentials
-secretStore: 
+secretStore:
   enabled: false
   username: {}
     #valueFrom:
@@ -115,6 +115,7 @@ exporter:
   #  readOnly: true
   #- name: agent-init-scripts
   #  mountPath: /docker-entrypoint.d/
+  serviceMonitorExtraLabels: {}
 
 # For CRDs supported by Citrix Ingress Controller
 crds:
