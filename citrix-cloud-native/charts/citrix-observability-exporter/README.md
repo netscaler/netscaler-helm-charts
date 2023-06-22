@@ -15,7 +15,7 @@ We can configure Citrix Observability Exporter helm chart to export transactiona
    helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
    For streaming transactions to Kafka, timeseries to Prometheus and tracing to zipkin:   
-     helm install coe citrix/citrix-cloud-native --set coe.enabled=true --set coe.kafka.enabled=true --set coe.kafka.broker="X.X.X.X\,Y.Y.Y.Y" --set coe.kafka.topic=HTTP --set coe.timeseries.enabled=true --set coe.ns_tracing.enabled=true --set coe.ns_tracing.server="zipkin:9411/api/v1/spans"
+     helm install coe citrix/citrix-cloud-native --set coe.enabled=true --set coe.kafka.enabled=true --set coe.kafka.broker="X.X.X.X\,Y.Y.Y.Y" --set coe.kafka.topic=HTTP --set coe.kafka.dataFormat=AVRO --set coe.timeseries.enabled=true --set coe.ns_tracing.enabled=true --set coe.ns_tracing.server="zipkin:9411/api/v1/spans"
 
    For streaming transactions to Elasticsearch, timeseries to Prometheus and tracing to zipkin:
      helm install coe citrix/citrix-cloud-native --set coe.enabled=true --set coe.elasticsearch.enabled=true --set coe.elasticsearch.server=elasticsearch:9200 --set coe.timeseries.enabled=true --set coe.ns_tracing.enabled=true --set coe.ns_tracing.server="zipkin:9411/api/v1/spans"
@@ -43,7 +43,7 @@ This Helm chart deploys Citrix Observability Exporter in the [Kubernetes](https:
 
    - To enable Elasticsearch endpoint for transactions, set coe.elasticsearch.enabled to true and server to the elasticsearch endpoint like `elasticsearch.default.svc.cluster.local:9200`. Default value for Elasticsearch endpoint is `elasticsearch:9200`.
 
-   - To enable Kafka endpoint for transactions, set coe.kafka.enabled to true, coe.kafka.broker to kafka broker IPs and kafka.topic. Default value for kafka topic is `HTTP`.
+   - To enable Kafka endpoint for transactions, set coe.kafka.enabled to true, coe.kafka.broker to kafka broker IPs, kafka.topic, and kafka.dataFormat . Default value for kafka topic is `HTTP`. Default value for kafka.dataFormat is `AVRO`.
 
    - To enable Timeseries data upload in prometheus format, set coe.timeseries.enabled to true. Currently Prometheus is the only timeseries endpoint supported. 
 
@@ -77,7 +77,7 @@ The following table lists the mandatory and optional parameters that you can con
 | coe.license.accept | Mandatory | no | Set `yes` to accept the CIC end user license agreement. |
 | coe.imageRegistry                   | Mandatory  |  `quay.io`               |  The COE image registry             |  
 | coe.imageRepository                 | Mandatory  |  `citrix/citrix-observability-exporter`              |   The COE image repository             | 
-| coe.imageTag                  | Mandatory  |  `1.6.001b`               |   The COE image tag            | 
+| coe.imageTag                  | Mandatory  |  `1.5.001`               |   The COE image tag            | 
 | coe.pullPolicy | Mandatory | IfNotPresent | The COE image pull policy. |
 | coe.nodePortRequired | Optional | false | Set true to create a nodeport COE service. |
 | coe.headless | Optional | false | Set true to create Headless service. |
@@ -93,7 +93,7 @@ The following table lists the mandatory and optional parameters that you can con
 | coe.kafka.enabled | Optional | false | Set true to enable sending transaction data to kafka server. |
 | coe.kafka.broker | Optional |  | The kafka broker IP details. |
 | coe.kafka.topic | Optional | `HTTP` | The kafka topic details to upload data. |
-| coe.kafka.dataFormat | Optional | `AVRO` | The format used for exporting transactions to kafka server. |
+| kafka.dataFormat | Optional | `AVRO` | The format of the data exported to Kafka -- can be either JSON or AVRO, and defaults to AVRO
 | coe.timeseries.enabled | Optional | false | Set true to enable sending timeseries data to prometheus. |
 | coe.timeseries.nodePort | Optional | 30002 | Specify the port used to expose COE service outside cluster for timeseries endpoint. |
 | coe.json_trans_rate_limiting.enabled | Optional | false | Set true to enable rate-limiting of transactions for JSON-based endpoints: Splunk, ElasticSearch and Zipkin. |

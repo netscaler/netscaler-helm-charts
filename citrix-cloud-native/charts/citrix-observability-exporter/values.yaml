@@ -31,7 +31,7 @@ kafka:
   enabled: false
   broker:
   topic:
-  dataFormat: ""
+  dataFormat: "AVRO"
 timeseries:
   enabled: false
   nodePort: 30002
