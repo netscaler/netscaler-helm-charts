@@ -18,6 +18,9 @@ spec:
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/port: "5563"
+{{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+{{- end }}
 {{- end}}
     spec:
       containers:
@@ -31,6 +34,8 @@ spec:
             - containerPort: 5563
               name: rest
 {{- end}}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
             - name: lstreamd-config
               mountPath: /var/logproxy/lstreamd/conf/lstreamd_default.conf
@@ -43,3 +48,10 @@ spec:
             name: coe-config
         - name: core-data
           emptyDir: {}
+{{- if .Values.tolerations }}
+      tolerations: {{ .Values.tolerations | toYaml | nindent 8 }}
+{{- end }}
+{{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+{{- end }}

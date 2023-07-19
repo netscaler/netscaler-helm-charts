@@ -15,7 +15,7 @@ We can configure Citrix Observability Exporter helm chart to export transactiona
    helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
    For streaming transactions to Kafka, timeseries to Prometheus and tracing to zipkin:
-     helm install coe citrix/citrix-observability-exporter --set kafka.enabled=true --set kafka.broker="X.X.X.X\,Y.Y.Y.Y" --set kafka.topic=HTTP --set timeseries.enabled=true --set ns_tracing.enabled=true --set ns_tracing.server="zipkin:9411/api/v1/spans"
+     helm install coe citrix/citrix-observability-exporter --set kafka.enabled=true --set kafka.broker="X.X.X.X\,Y.Y.Y.Y" --set kafka.topic=HTTP --set kafka.dataFormat=AVRO --set timeseries.enabled=true --set ns_tracing.enabled=true --set ns_tracing.server="zipkin:9411/api/v1/spans"
 
    For streaming transactions to Elasticsearch, timeseries to Prometheus and tracing to zipkin:
      helm install coe citrix/citrix-observability-exporter --set elasticsearch.enabled=true --set elasticsearch.server=elasticsearch:9200 --set timeseries.enabled=true --set ns_tracing.enabled=true --set ns_tracing.server="zipkin:9411/api/v1/spans"
@@ -75,7 +75,7 @@ The following table lists the mandatory and optional parameters that you can con
 | license.accept | Mandatory | no | Set `yes` to accept the CIC end user license agreement. |
 | imageRegistry                   | Mandatory  |  `quay.io`               |  The COE image registry             |  
 | imageRepository                 | Mandatory  |  `citrix/citrix-observability-exporter`              |   The COE image repository             | 
-| imageTag                  | Mandatory  |  `1.6.001`               |  The COE image tag            | 
+| imageTag                  | Mandatory  |  `1.7.001`               |  The COE image tag            | 
 | pullPolicy | Mandatory | IfNotPresent | The COE image pull policy. |
 | nodePortRequired | Optional | false | Set true to create a nodeport COE service. |
 | headless | Optional | false | Set true to create Headless service. |
@@ -91,13 +91,17 @@ The following table lists the mandatory and optional parameters that you can con
 | kafka.enabled | Optional | false | Set true to enable sending transaction data to kafka server. |
 | kafka.broker | Optional |  | The kafka broker IP details. |
 | kafka.topic | Optional | `HTTP` | The kafka topic details to upload data. |
-| kafka.dataFormat | Optional | `AVRO` | The format of the data exported to Kafka -- can be either JSON or AVRO, and defaults to AVRO
+| kafka.dataFormat | Optional | `AVRO` | The format of the data exported to Kafka -- can be either JSON or AVRO, and defaults to AVRO. |
 | timeseries.enabled | Optional | false | Set true to enable sending timeseries data to prometheus. |
 | timeseries.nodePort | Optional | 30002 | Specify the port used to expose COE service outside cluster for timeseries endpoint. |
 | json_trans_rate_limiting.enabled | Optional | false | Set true to enable rate-limiting of transactions for JSON-based endpoints: Splunk, ElasticSearch and Zipkin. |
 | json_trans_rate_limiting.limit | Optional | 100 | Specify the rate-limit: 100 means approximately 800 TPS. |
 | json_trans_rate_limiting.queuelimit | Optional | 1000 | The amount of transactional data that can pile up, before COE starts shedding them. For Zipkin, 1000 is approximately 64 MB of data; For Splunk and ElasticSearch, this is approximately 32 MB of data. |
 | json_trans_rate_limiting.window | Optional | 5 | The recalculation window in seconds-  the lower the window size ( must be greater than 0), the more effective will be the rate-limiting but it will have CPU overhead |
+| podAnnotations | Optional | N/A | Map of annotations to add to the pods. |
+| resources | Optional | N/A | CPU/Memory resource requests/limits for COE container. |
+| tolerations | Optional | N/A | Specify the tolerations for the COE deployment. |
+| affinity | Optional | N/A | Affinity labels for pod assignment. |
 
 Alternatively, you can define a YAML file with the values for the parameters and pass the values while installing the chart.
 
