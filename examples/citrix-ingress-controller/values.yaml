@@ -115,7 +115,7 @@ exporter:
   #  readOnly: true
   #- name: agent-init-scripts
   #  mountPath: /docker-entrypoint.d/
-serviceMonitorExtraLabels: {}
+  serviceMonitorExtraLabels: {}
 
 # For CRDs supported by Citrix Ingress Controller
 crds:

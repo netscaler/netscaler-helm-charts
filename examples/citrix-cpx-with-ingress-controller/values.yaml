@@ -166,7 +166,7 @@ exporter:
     # requests:
     #   cpu: 100m
     #   memory: 128Mi
-serviceMonitorExtraLabels: {}
+  serviceMonitorExtraLabels: {}
 
 # For CRDs supported by Citrix Ingress Controller
 crds:

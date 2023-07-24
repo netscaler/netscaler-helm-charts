@@ -364,7 +364,6 @@ The following table lists the mandatory and optional parameters that you can con
 | podAnnotations | Optional | N/A | Map of annotations to add to the pods. |
 | affinity | Optional | N/A | Affinity labels for pod assignment. |
 | exporter.required | Optional | false | Use the argument, if you want to run the [Exporter for Citrix ADC Stats](https://github.com/citrix/citrix-adc-metrics-exporter) along with CIC to pull metrics for the Citrix ADC VPX or MPX|
-| serviceMonitorExtraLabels | Optional |  | Extra labels for service monitor whem Citrix-adc-metrics-exporter is enabled. |
 | exporter.imageRegistry                   | Optional  |  `quay.io`               |  The Exporter for Citrix ADC Stats image registry             |  
 | exporter.imageRepository                 | Optional  |  `citrix/citrix-adc-metrics-exporter`              |   The Exporter for Citrix ADC Stats image repository             | 
 | exporter.imageTag                  | Optional  |  `1.4.9`               |  The Exporter for Citrix ADC Stats image tag            | 
@@ -372,6 +371,7 @@ The following table lists the mandatory and optional parameters that you can con
 | exporter.ports.containerPort | Optional | 8888 | The Exporter container port. |
 | exporter.resources | Optional | {} |	CPU/Memory resource requests/limits for Metrics exporter container |
 | exporter.extraVolumeMounts  |  Optional |  [] |  Specify the Additional VolumeMounts to be mounted in Exporter container. Specify the volumes in `extraVolumes`  |
+| exporter.serviceMonitorExtraLabels | Optional |  | Extra labels for service monitor whem Citrix-adc-metrics-exporter is enabled. |s
 | openshift | Optional | false | Set this argument if OpenShift environment is being used. |
 | disableOpenshiftRoutes | Optional | false | By default Openshift routes are processed in openshift environment, this variable can be used to disable Ingress controller processing the openshift routes. |
 | nodeSelector.key | Optional | N/A | Node label key to be used for nodeSelector option in CIC deployment. |

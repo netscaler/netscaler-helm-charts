@@ -374,11 +374,11 @@ The following table lists the mandatory and optional parameters that you can con
 | cic.exporter.imageRegistry                   | Optional  |  `quay.io`               |  The Exporter for Citrix ADC Stats image registry             |  
 | cic.exporter.imageRepository                 | Optional  |  `citrix/citrix-adc-metrics-exporter`              |   The Exporter for Citrix ADC Stats image repository             | 
 | cic.exporter.imageTag                  | Optional  |  `1.4.9`               |  The Exporter for Citrix ADC Stats image tag            |
-| cic.serviceMonitorExtraLabels | Optional |  | Extra labels for service monitor whem Citrix-adc-metrics-exporter is enabled. |
 | cic.exporter.pullPolicy | Optional | IfNotPresent | The Exporter image pull policy. |
 | cic.exporter.ports.containerPort | Optional | 8888 | The Exporter container port. |
 | cic.exporter.resources | Optional | {} |	CPU/Memory resource requests/limits for Metrics exporter container |
 | cic.exporter.extraVolumeMounts  |  Optional |  [] |  Specify the Additional VolumeMounts to be mounted in Exporter container. Specify the volumes in `cic.extraVolumes`  |
+| cic.exporter.serviceMonitorExtraLabels | Optional |  | Extra labels for service monitor whem Citrix-adc-metrics-exporter is enabled. |
 | cic.openshift | Optional | false | Set this argument if OpenShift environment is being used. |
 | cic.disableOpenshiftRoutes | Optional | false | By default Openshift routes are processed in openshift environment, this variable can be used to disable Ingress controller processing the openshift routes. |
 | cic.nodeSelector.key | Optional | N/A | Node label key to be used for nodeSelector option in CIC deployment. |
