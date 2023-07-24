@@ -3,7 +3,7 @@ cic:
 
   imageRegistry: quay.io
   imageRepository: citrix/citrix-k8s-ingress-controller
-  imageTag: 1.33.4
+  imageTag: 1.34.16
   image: "{{ .Values.cic.imageRegistry }}/{{ .Values.cic.imageRepository }}:{{ .Values.cic.imageTag }}"
   pullPolicy: IfNotPresent
   imagePullSecrets: []
@@ -82,7 +82,7 @@ cic:
   #   sack: 'ENABLED'
   #   nagle: 'ENABLED'
 
-
+  serviceMonitorExtraLabels: {}
   exporter:
     required: false
     
@@ -178,7 +178,7 @@ mcIngress:
 
   imageRegistry: quay.io
   imageRepository: citrix/citrix-k8s-ingress-controller
-  imageTag: 1.33.4
+  imageTag: 1.34.16
   image: "{{ .Values.mcIngress.imageRegistry }}/{{ .Values.mcIngress.imageRepository }}:{{ .Values.mcIngress.imageTag }}"
   pullPolicy: IfNotPresent
   openshift: false
@@ -207,7 +207,7 @@ cpx:
 
   imageRegistry: quay.io
   imageRepository: citrix/citrix-k8s-cpx-ingress
-  imageTag: 13.1-37.38
+  imageTag: 13.1-30.52
   image: "{{ .Values.cpx.imageRegistry }}/{{ .Values.cpx.imageRepository }}:{{ .Values.cpx.imageTag }}"
   
   pullPolicy: IfNotPresent
@@ -266,7 +266,7 @@ cpx:
   cic:
     imageRegistry: quay.io
     imageRepository: citrix/citrix-k8s-ingress-controller
-    imageTag: 1.33.4
+    imageTag: 1.34.16
     image: "{{ .Values.cpx.cic.imageRegistry }}/{{ .Values.cpx.cic.imageRepository }}:{{ .Values.cpx.cic.imageTag }}"
     pullPolicy: IfNotPresent
     required: true
@@ -298,7 +298,7 @@ cpx:
     cpxCores:
     analyticsServerPort: 5557
     licenseEdition: PLATINUM
-
+  serviceMonitorExtraLabels: {}
   exporter:
     required: false
     imageRegistry: quay.io
@@ -570,7 +570,7 @@ iaSidecar:
     netscalerUrl: "http://127.0.0.1"
     imageRegistry: quay.io
     imageRepository: citrix/citrix-k8s-cpx-ingress
-    imageTag: 13.1-30.52
+    imageTag: 13.1-49.13
     image: "{{ .Values.iaSidecar.cpxProxy.imageRegistry }}/{{ .Values.iaSidecar.cpxProxy.imageRepository }}:{{ .Values.iaSidecar.cpxProxy.imageTag }}"
     imagePullPolicy: IfNotPresent
     EULA: NO

@@ -456,12 +456,12 @@ The following table lists the configurable parameters of the Citrix ADC CPX with
 | cpx.license.accept | Mandatory | no | Set `yes` to accept the Citrix ingress controller end user license agreement. |
 | cpx.imageRegistry                   | Mandatory  |  `quay.io`               |  The Citrix ADC CPX image registry             |  
 | cpx.imageRepository                 | Mandatory  |  `citrix/citrix-k8s-cpx-ingress`              |   The Citrix ADC CPX image repository             | 
-| cpx.imageTag                  | Mandatory  |  `13.1-30.52`               |   The Citrix ADC CPX image tag            | 
+| cpx.imageTag                  | Mandatory  |  `13.1-49.13`               |   The Citrix ADC CPX image tag            | 
 | cpx.pullPolicy | Mandatory | IfNotPresent | The Citrix ADC CPX image pull policy. |
 | cpx.daemonSet | Optional | False | Set this to true if Citrix ADC CPX needs to be deployed as DaemonSet. |
 | cpx.cic.imageRegistry                   | Mandatory  |  `quay.io`               |  The Citrix ingress controller image registry             |  
 | cpx.cic.imageRepository                 | Mandatory  |  `citrix/citrix-k8s-ingress-controller`              |   The Citrix ingress controller image repository             | 
-| cpx.cic.imageTag                  | Mandatory  |  `1.33.4`               |   The Citrix ingress controller image tag            | 
+| cpx.cic.imageTag                  | Mandatory  |  `1.34.16`               |   The Citrix ingress controller image tag            | 
 | cpx.cic.pullPolicy | Mandatory | IfNotPresent | The Citrix ingress controller image pull policy. |
 | cpx.cic.required | Mandatory | true | CIC to be run as sidecar with Citrix ADC CPX |
 | cpx.cic.resources | Optional | {} |	CPU/Memory resource requests/limits for Citrix Ingress Controller container |
@@ -526,6 +526,7 @@ The following table lists the configurable parameters of the Citrix ADC CPX with
 | cpx.ADMSettings.cpxCores | Optional | 1 | Desired number of vCPU to be set for Citrix ADC CPX. |
 | cpx.ADMSettings.analyticsServerPort | Optional | 5557 | Port used for Analytics by ADM. Required to plot ServiceGraph. |
 | cpx.ADMSettings.licenseEdition| Optional | PLATINUM | License edition that can be Standard, Platinum and Enterprise . By default, Platinum is selected.|
+| cpx.serviceMonitorExtraLabels | Optional |  | Extra labels for service monitor whem Citrix-adc-metrics-exporter is enabled. |
 | cpx.exporter.required | Optional | false | Use the argument if you want to run the [Exporter for Citrix ADC Stats](https://github.com/citrix/citrix-adc-metrics-exporter) along with Citrix ingress controller to pull metrics for the Citrix ADC CPX|
 | cpx.exporter.imageRegistry                   | Optional  |  `quay.io`               |  The Exporter for Citrix ADC Stats image registry             |  
 | cpx.exporter.imageRepository                 | Optional  |  `citrix/citrix-adc-metrics-exporter`              |   The Exporter for Citrix ADC Stats image repository             | 
