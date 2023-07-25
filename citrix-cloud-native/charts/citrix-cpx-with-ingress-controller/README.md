@@ -456,12 +456,12 @@ The following table lists the configurable parameters of the Citrix ADC CPX with
 | cpx.license.accept | Mandatory | no | Set `yes` to accept the Citrix ingress controller end user license agreement. |
 | cpx.imageRegistry                   | Mandatory  |  `quay.io`               |  The Citrix ADC CPX image registry             |  
 | cpx.imageRepository                 | Mandatory  |  `citrix/citrix-k8s-cpx-ingress`              |   The Citrix ADC CPX image repository             | 
-| cpx.imageTag                  | Mandatory  |  `13.1-30.52`               |   The Citrix ADC CPX image tag            | 
+| cpx.imageTag                  | Mandatory  |  `13.1-49.13`               |   The Citrix ADC CPX image tag            | 
 | cpx.pullPolicy | Mandatory | IfNotPresent | The Citrix ADC CPX image pull policy. |
 | cpx.daemonSet | Optional | False | Set this to true if Citrix ADC CPX needs to be deployed as DaemonSet. |
 | cpx.cic.imageRegistry                   | Mandatory  |  `quay.io`               |  The Citrix ingress controller image registry             |  
 | cpx.cic.imageRepository                 | Mandatory  |  `citrix/citrix-k8s-ingress-controller`              |   The Citrix ingress controller image repository             | 
-| cpx.cic.imageTag                  | Mandatory  |  `1.33.4`               |   The Citrix ingress controller image tag            | 
+| cpx.cic.imageTag                  | Mandatory  |  `1.34.16`               |   The Citrix ingress controller image tag            | 
 | cpx.cic.pullPolicy | Mandatory | IfNotPresent | The Citrix ingress controller image pull policy. |
 | cpx.cic.required | Mandatory | true | CIC to be run as sidecar with Citrix ADC CPX |
 | cpx.cic.resources | Optional | {} |	CPU/Memory resource requests/limits for Citrix Ingress Controller container |
@@ -529,10 +529,11 @@ The following table lists the configurable parameters of the Citrix ADC CPX with
 | cpx.exporter.required | Optional | false | Use the argument if you want to run the [Exporter for Citrix ADC Stats](https://github.com/citrix/citrix-adc-metrics-exporter) along with Citrix ingress controller to pull metrics for the Citrix ADC CPX|
 | cpx.exporter.imageRegistry                   | Optional  |  `quay.io`               |  The Exporter for Citrix ADC Stats image registry             |  
 | cpx.exporter.imageRepository                 | Optional  |  `citrix/citrix-adc-metrics-exporter`              |   The Exporter for Citrix ADC Stats image repository             | 
-| cpx.exporter.imageTag                  | Optional  |  `1.4.9`               |  The Exporter for Citrix ADC Stats image tag            | 
+| cpx.exporter.imageTag                  | Optional  |  `1.4.9`               |  The Exporter for Citrix ADC Stats image tag|
 | cpx.exporter.pullPolicy | Optional | IfNotPresent | The Exporter for Citrix ADC Stats image pull policy. |
 | cpx.exporter.resources | Optional | {} |	CPU/Memory resource requests/limits for Metrics exporter container |
 | cpx.exporter.ports.containerPort | Optional | 8888 | The Exporter for Citrix ADC Stats container port. |
+| cpx.exporter.serviceMonitorExtraLabels | Optional |  | Extra labels for service monitor whem Citrix-adc-metrics-exporter is enabled. | 
 | cpx.analyticsConfig.required | Mandatory | false | Set this to true if you want to configure Citrix ADC to send metrics and transaction records to Analytics service. |
 | cpx.analyticsConfig.distributedTracing.enable | Optional | false | Set this value to true to enable OpenTracing in Citrix ADC. |
 | cpx.analyticsConfig.distributedTracing.samplingrate | Optional | 100 | Specifies the OpenTracing sampling rate in percentage. |

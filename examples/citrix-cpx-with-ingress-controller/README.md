@@ -87,11 +87,11 @@ The following table lists the configurable parameters of the Citrix ADC CPX with
 | license.accept | Mandatory | no | Set `yes` to accept the Citrix ingress controller end user license agreement. |
 | imageRegistry                   | Mandatory  |  `quay.io`               |  The Citrix ADC CPX image registry             |  
 | imageRepository                 | Mandatory  |  `citrix/citrix-k8s-cpx-ingress`              |   The Citrix ADC CPX image repository             | 
-| imageTag                  | Mandatory  |  `13.1-30.52`               |   The Citrix ADC CPX image tag            | 
+| imageTag                  | Mandatory  |  `13.1-49.13`               |   The Citrix ADC CPX image tag            | 
 | pullPolicy | Mandatory | IfNotPresent | The Citrix ADC CPX image pull policy. |
 | cic.imageRegistry                   | Mandatory  |  `quay.io`               |  The Citrix ingress controller image registry             |  
 | cic.imageRepository                 | Mandatory  |  `citrix/citrix-k8s-ingress-controller`              |   The Citrix ingress controller image repository             | 
-| cic.imageTag                  | Mandatory  |  `1.33.4`               |   The Citrix ingress controller image tag            | 
+| cic.imageTag                  | Mandatory  |  `1.34.16`               |   The Citrix ingress controller image tag            | 
 | cic.pullPolicy | Mandatory | IfNotPresent | The Citrix ingress controller image pull policy. |
 | cic.required | Mandatory | true | CIC to be run as sidecar with Citrix ADC CPX |
 | cic.resources | Optional | {} |	CPU/Memory resource requests/limits for Citrix Ingress Controller container |
@@ -161,6 +161,7 @@ bels | Optional | N/A | You can use this parameter to provide the route labels s
 | exporter.pullPolicy | Optional | IfNotPresent | The Exporter for Citrix ADC Stats image pull policy. |
 | exporter.ports.containerPort | Optional | 8888 | The Exporter for Citrix ADC Stats container port. |
 | analyticsConfig.required | Mandatory | false | Set this to true if you want to configure Citrix ADC to send metrics and transaction records to analytics service. |
+| exporter.serviceMonitorExtraLabels | Optional |  | Extra labels for service monitor whem Citrix-adc-metrics-exporter is enabled. |
 | analyticsConfig.distributedTracing.enable | Optional | false | Set this value to true to enable OpenTracing in Citrix ADC. |
 | analyticsConfig.distributedTracing.samplingrate | Optional | 100 | Specifies the OpenTracing sampling rate in percentage. |
 | analyticsConfig.endpoint.server | Optional | N/A | Set this value as the IP address or DNS address of the  analytics server. |

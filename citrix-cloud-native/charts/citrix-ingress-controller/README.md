@@ -323,7 +323,7 @@ The following table lists the mandatory and optional parameters that you can con
 | cic.license.accept | Mandatory | no | Set `yes` to accept the CIC end user license agreement. |
 | cic.imageRegistry                   | Mandatory  |  `quay.io`               |  The Citrix ingress controller image registry             |  
 | cic.imageRepository                 | Mandatory  |  `citrix/citrix-k8s-ingress-controller`              |   The Citrix ingress controller image repository             | 
-| cic.imageTag                  | Mandatory  |  `1.33.4`               |   The Citrix ingress controller image tag            | 
+| cic.imageTag                  | Mandatory  |  `1.34.16`               |   The Citrix ingress controller image tag            | 
 | cic.pullPolicy | Mandatory | IfNotPresent | The CIC image pull policy. |
 | cic.imagePullSecrets | Optional | N/A | Provide list of Kubernetes secrets to be used for pulling the images from a private Docker registry or repository. For more information on how to create this secret please see [Pull an Image from a Private Registry](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/). |
 | cic.nameOverride | Optional | N/A | String to partially override deployment fullname template with a string (will prepend the release name) |
@@ -373,11 +373,12 @@ The following table lists the mandatory and optional parameters that you can con
 | cic.exporter.required | Optional | false | Use the argument, if you want to run the [Exporter for Citrix ADC Stats](https://github.com/citrix/citrix-adc-metrics-exporter) along with CIC to pull metrics for the Citrix ADC VPX or MPX|
 | cic.exporter.imageRegistry                   | Optional  |  `quay.io`               |  The Exporter for Citrix ADC Stats image registry             |  
 | cic.exporter.imageRepository                 | Optional  |  `citrix/citrix-adc-metrics-exporter`              |   The Exporter for Citrix ADC Stats image repository             | 
-| cic.exporter.imageTag                  | Optional  |  `1.4.9`               |  The Exporter for Citrix ADC Stats image tag            | 
+| cic.exporter.imageTag                  | Optional  |  `1.4.9`               |  The Exporter for Citrix ADC Stats image tag            |
 | cic.exporter.pullPolicy | Optional | IfNotPresent | The Exporter image pull policy. |
 | cic.exporter.ports.containerPort | Optional | 8888 | The Exporter container port. |
 | cic.exporter.resources | Optional | {} |	CPU/Memory resource requests/limits for Metrics exporter container |
 | cic.exporter.extraVolumeMounts  |  Optional |  [] |  Specify the Additional VolumeMounts to be mounted in Exporter container. Specify the volumes in `cic.extraVolumes`  |
+| cic.exporter.serviceMonitorExtraLabels | Optional |  | Extra labels for service monitor whem Citrix-adc-metrics-exporter is enabled. |
 | cic.openshift | Optional | false | Set this argument if OpenShift environment is being used. |
 | cic.disableOpenshiftRoutes | Optional | false | By default Openshift routes are processed in openshift environment, this variable can be used to disable Ingress controller processing the openshift routes. |
 | cic.nodeSelector.key | Optional | N/A | Node label key to be used for nodeSelector option in CIC deployment. |
