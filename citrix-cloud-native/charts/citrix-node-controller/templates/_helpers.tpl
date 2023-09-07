@@ -69,6 +69,7 @@ Create the name of the service account to use
 {{- end -}}
 {{- end -}}
 
+
 {{/*
 Create the name of the RBAC/ServiceAccount/ConfigMap/Prefix for router pods
 */}}
@@ -81,11 +82,11 @@ Create the name of the RBAC/ServiceAccount/ConfigMap/Prefix for router pods
 {{- end -}}
 
 {{/*
-Create the name of the ConfigMap that helm deploys and CNC listens to add/delete configurations
+Create the name of the ConfigMap that helm deploys and CNC listens to add/delete configurations 
 */}}
 {{- define "citrix-k8s-node-controller.cncConfigMap" -}}
-{{- if .Values.cncConfigMap -}}
-    {{ .Values.cncConfigMap | trunc 63 }}
+{{- if .Values.cncConfigMap.name -}}
+    {{ .Values.cncConfigMap.name | trunc 63 }}
 {{- else -}}
     {{ include "citrix-k8s-node-controller.fullname" . }}
 {{- end -}}

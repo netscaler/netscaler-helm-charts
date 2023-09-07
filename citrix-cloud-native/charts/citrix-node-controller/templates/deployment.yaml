@@ -16,6 +16,14 @@ spec:
         {{- include "citrix-k8s-node-controller.selectorLabels" . | nindent 8}}
     spec:
       serviceAccountName: {{ include "citrix-k8s-node-controller.serviceAccountName" . }}
+      {{- if .Values.deploymentTolerations }}
+      tolerations:
+      {{- range  .Values.deploymentTolerations }}
+      - key: {{ .key }}
+        operator: {{ .operator }}
+        effect: {{ .effect }}
+      {{- end }}
+      {{- end }}
       containers:
       - name: {{ include "citrix-k8s-node-controller.name" . }}
         image: "{{ tpl .Values.image . }}"
@@ -58,6 +66,6 @@ spec:
           value: {{ .Values.cncRouterImage | quote }}
 {{- end }}
         - name: "CNC_ROUTER_NAME"
-          value: {{ include "citrix-k8s-node-controller.cncRouterName" . }}
+          value: {{ include "citrix-k8s-node-controller.cncRouterName" . }} 
         - name: "CNC_CONFIGMAP"
-          value: {{ include "citrix-k8s-node-controller.cncConfigMap" . }} 
+          value: {{ include "citrix-k8s-node-controller.cncConfigMap" . }}

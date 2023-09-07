@@ -89,8 +89,49 @@ To create the system user account, do the following:
 
 2. To install the chart with the release name, `my-release`, use the following command:
    ```
-     helm install my-release citrix/citrix-node-controller --set license.accept=yes,nsIP=<NSIP>,vtepIP=<Citrix ADC SNIP>,vxlan.id=<VXLAN ID>,vxlan.port=<VXLAN PORT>,network=<IP-address-range-for-VTEP-overlay>,adcCredentialSecret=<Secret-for-ADC-credentials>
+     helm install my-release citrix/citrix-node-controller --set license.accept=yes,nsIP=<NSIP>,vtepIP=<Citrix ADC SNIP>,vxlan.id=<VXLAN ID>,vxlan.port=<VXLAN PORT>,network=<IP-address-range-for-VTEP-overlay-in-CIDR-format>,adcCredentialSecret=<Secret-for-ADC-credentials>
    ```
+
+## Providing Tolerations
+Successful Node controller deployment involves two types of pods:
+
+i) Node controller pod and
+
+ii) kube-cnc-router-pod
+
+Node controller pod might need to be provided with particular tolerations so that it can be scheduled on a tainted node(s). 
+Tolerations of the node-controller pod can be provided with `deploymentTolerations` variable in the values.yaml. 
+Here is an example of helm command to provide **tolerations to the node-controller**:
+```
+   helm install my-release citrix-helm-charts/citrix-node-controller --set license.accept=yes,nsIP=<NSIP>,vtepIP=<NetScaler SNIP>,vxlan.id=<VXLAN ID>,vxlan.port=<VXLAN PORT>,network=<IP-address-range-for-VTEP-overlay-in-CIDR-format>,adcCredentialSecret=<Secret-for-ADC-credentials>,cniType=<CNI> \
+   --set deploymentTolerations[0].key=myCustomKey1,deploymentTolerations[0].operator=Exists,deploymentTolerations[0].effect=NoExecute --set deploymentTolerations[1].key=myCustomKey2,deploymentTolerations[1].operator=Exists,deploymentTolerations[1].effect=NoExecute
+```
+
+This node-controller pod creates the kube-cnc-router-pod on each worker node of the Kubernetes cluster. 
+These kube-cnc-router-pods also might need to be provided with a particular set of tolerations to ensure appropriate effect on the tainted node.
+Tolerations for this kube-cnc-router pod should be provided in the **JSON format** in a CNC configmap using `cncConfigMap.tolerationsInJson` variable. 
+Here is an example  helm command to provide **tolerations for the kube-cnc-router pod**:
+```
+   helm install my-release citrix-helm-charts/citrix-node-controller --set license.accept=yes,nsIP=<NSIP>,vtepIP=<NetScaler SNIP>,vxlan.id=<VXLAN ID>,vxlan.port=<VXLAN PORT>,network=<IP-address-range-for-VTEP-overlay-in-CIDR-format>,adcCredentialSecret=<Secret-for-ADC-credentials>,cniType=<CNI> \
+   --set-json cncConfigMap.tolerationsInJson='[{"key": "myCustomKey1","operator": "Equal","value": "myValue1","effect": "NoExecute"},{"key": "myCustomKey2","operator": "Equal","value": "myValue2","effect": "NoExecute"}]'
+```
+
+### Providing tolerations in values.yaml
+
+These tolerations can also be provided in values.yaml like below:
+
+```
+cncConfigMap:
+  name:
+  tolerationsInJson: [{"key": "myCustomKey1","operator": "Equal","value": "myValue1","effect": "NoExecute"},{"key": "myCustomKey2","operator": "Equal","value": "myValue2","effect": "NoExecute"}]
+deploymentTolerations:
+  - key: myCustomKey1
+    effect: NoExecute
+    operator: Exists
+  - key: myCustomKey2
+    effect: NoExecute
+    operator: Exists
+```
 
 > **Note:**
 >
@@ -126,7 +167,9 @@ The following table lists the mandatory and optional parameters that you can con
 | cniType | Mandatory | N/A | The CNI used in k8s cluster. Valid values: flannel,calico,canal,weave,cilium |
 | dsrIPRange | Optional | N/A | This IP address range is used for DSR Iptable configuration on nodes. Both IP and subnet must be specified in format : "xx.xx.xx.xx/xx"  |
 | clusterName | Optional | N/A | Unique identifier for the kubernetes cluster on which CNC is deployed. If Provided CNC will configure PolicyBasedRoutes instead of static Routes. For details, see [CNC-PBR-SUPPORT](https://github.com/citrix/citrix-k8s-ingress-controller/tree/master/docs/how-to/pbr.md#configure-pbr-using-the-citrix-node-controller) |
-| cncConfigMap | Optional | N/A | ConfigMapName which CNC will watch for to add/delete configurations. If not set, it will be auto-generated |
+| cncConfigMap.name | Optional | N/A | ConfigMapName which CNC will watch for to add/delete configurations. If not set, it will be auto-generated |
+| deploymentTolerations | Optional | N/A | Tolerations to be associated with the Node controller pod. Provide in the format `--set deploymentTolerations[0].key=key1,deploymentTolerations[0].operator=Exists,deploymentTolerations[0].effect=NoSchedule` |
+| cncConfigMap.tolerationsInJson | Optional | N/A | Tolerations to be associated with the Kube-cnc-router pods. Provide in the appropriate JSON format `--set-json cncConfigMap.tolerationsInJson='[{"key": "first","operator": "Equal","value": "one","effect": "NoExecute"},{"key": "second","operator": "Equal","value": "true","effect": "NoExecute"}]'` |
 | cncRouterImage | Optional | N/A | The Internal Repo Image to be used for kube-cnc-router helper pods when internet access is disabled on cluster nodes. For more details, see [running-cnc-without-internet-access](https://github.com/citrix/citrix-k8s-node-controller/blob/master/deploy/README.md#running-citrix-node-controller-without-internet-access) |
 | cncRouterName | Optional | N/A | The name to be used for ServiceAccount/RBAC/ConfigMap and even as prefix for kube-cnc-router helper pods. If not set, it will be auto-generated. |
 Alternatively, you can define a YAML file with the values for the parameters and pass the values while installing the chart.
