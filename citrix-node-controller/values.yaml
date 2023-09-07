@@ -4,7 +4,7 @@
 
 imageRegistry: quay.io
 imageRepository: citrix/citrix-k8s-node-controller
-imageTag: 2.2.10
+imageTag: 2.2.11
 image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
 pullPolicy: IfNotPresent
 nameOverride: ""
@@ -22,6 +22,12 @@ cniType:
 dsrIPRange:
 clusterName:
 cncConfigMap:
+  name:
+  tolerationsInJson:
+deploymentTolerations:
+  - key:
+    effect:
+    operator:
 cncRouterImage:
 cncRouterName:
 

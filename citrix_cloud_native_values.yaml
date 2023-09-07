@@ -613,7 +613,7 @@ cnc:
   enabled: False
   imageRegistry: quay.io
   imageRepository: citrix/citrix-k8s-node-controller
-  imageTag: 2.2.10
+  imageTag: 2.2.11
   image: "{{ .Values.cnc.imageRegistry }}/{{ .Values.cnc.imageRepository }}:{{ .Values.cnc.imageTag }}"
   nameOverride: ""
   fullnameOverride: ""
@@ -631,6 +631,12 @@ cnc:
   dsrIPRange:
   clusterName:
   cncConfigMap:
+    name:
+    tolerationsInJson:
+  deploymentTolerations:
+    - key:
+      effect:
+      operator:
   cncRouterImage:
   cncRouterName:
 
@@ -685,7 +691,7 @@ ipam:
   enabled: False
   imageRegistry: quay.io
   imageRepository: citrix/citrix-ipam-controller
-  imageTag: 1.0.3
+  imageTag: 1.1.3
   image: "{{ .Values.ipam.imageRegistry }}/{{ .Values.ipam.imageRepository }}:{{ .Values.ipam.imageTag }}"
   
   pullPolicy: IfNotPresent

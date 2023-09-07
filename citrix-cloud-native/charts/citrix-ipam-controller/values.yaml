@@ -4,7 +4,7 @@
 
 imageRegistry: quay.io
 imageRepository: citrix/citrix-ipam-controller
-imageTag: 1.0.3
+imageTag: 1.1.3
 image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
 pullPolicy: IfNotPresent
 
