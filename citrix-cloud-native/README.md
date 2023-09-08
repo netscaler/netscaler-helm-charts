@@ -10,7 +10,7 @@ This helm chart can be used to:
 5. [Deploy Observability Exporter](https://github.com/citrix/citrix-helm-charts/tree/master/citrix-cloud-native/charts/citrix-observability-exporter/README.md)
 6. [Deploy Citrix ADC as an Ingress Gateway in Istio environment](https://github.com/citrix/citrix-helm-charts/tree/master/citrix-cloud-native/charts/citrix-adc-istio-ingress-gateway/README.md)
 7. [Deploy Citrix ADC CPX as a sidecar in Istio environment](https://github.com/citrix/citrix-helm-charts/tree/master/citrix-cloud-native/charts/citrix-cpx-istio-sidecar-injector/README.md)
-8. [Deploy Citrix Multi-Cluster Ingress Controller for Citrix VPX/MPX](https://github.com/citrix/citrix-helm-charts/blob/master/citrix-cloud-native/charts/citrix-multi-cluster-ingress-controller/README.md)
+8. [Deploy Citrix GSLB Controller for NetScaler VPX/MPX](https://github.com/citrix/citrix-helm-charts/blob/master/citrix-cloud-native/charts/citrix-gslb-controller/README.md)
 9. [Deploy Citrix ADC as an Egress Gateway in Istio environment](https://github.com/citrix/citrix-helm-charts/tree/master/citrix-cloud-native/charts/citrix-adc-istio-egress-gateway/README.md)
 10. [Deploy ADM agent onboarding as Kubernetes Job](https://github.com/citrix/citrix-helm-charts/tree/master/citrix-cloud-native/charts/adm-agent-onboarding/README.md)
 
