@@ -6,7 +6,7 @@ i) Deploying the multiple applications ([Bookinfo](https://github.com/istio/isti
 
 ii) Deploying Citrix Ingress Controller to expose Citrix ADC CPX Ingress Gateway Service and configuring [Web App Firewall (WAF)](https://docs.citrix.com/en-us/citrix-adc/current-release/application-firewall.html) on Citrix ADC VPX frontending the Kubernetes Cluster.
 
-iii) Deploying Multi-cluster Ingress Controller for continuous availability and proximity based load balancing ([GSLB](https://docs.citrix.com/en-us/citrix-adc/current-release/global-server-load-balancing.html)).
+iii) Deploying GSLB Controller for continuous availability and proximity based load balancing ([GSLB](https://docs.citrix.com/en-us/citrix-adc/current-release/global-server-load-balancing.html)).
 
 # Table of Contents
    [Topology](#topology)
@@ -25,7 +25,7 @@ iii) Deploying Multi-cluster Ingress Controller for continuous availability and 
 
    G. [Deploying Citrix Ingress Controller to expose Citrix ADC CPX as Gateway Service](#deploy-ingress-controller)
 
-   H. [Deploying multi-cluster ingress controller for GSLB](#deploy-multi-cluster)
+   H. [Deploying GSLB controller controller](#deploy-gslb-controller)
 
    I. [Route 53 configuration](#route53)
 
@@ -170,11 +170,11 @@ Deploy two CRDs for WAF in `citrix-system` namespace, using the following comman
     kubectl apply -n citrix-system -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/Servicemesh_with_GSLB_and_WAF/manifest/wafhtmlxsssql.yaml
 
 
-# <a name="deploy-multi-cluster">H) Deploying multi-cluster ingress controller for GSLB</a>
-For disaster recovery and continous availability of services, it is recommended to deploy applications in multiple Kubernetes clusters. Follow steps A to G for configuring GSLB across EKS clusters located in different AWS regions. Citrix Multi-cluster ingress controller is used for configuring GSLB setup across EKS cluster across multiple AWS regions.
+# <a name="deploy-gslb-controller">H) Deploying GSLB controller controller</a>
+For disaster recovery and continous availability of services, it is recommended to deploy applications in multiple Kubernetes clusters. Follow steps A to G for configuring GSLB across EKS clusters located in different AWS regions. Citrix GSLB Controller is used for configuring GSLB setup across EKS cluster across multiple AWS regions.
 
 
-**Manual Configurations need to be added before deploying Citrix multi-cluster ingress controller**
+**Manual Configurations need to be added before deploying Citrix GSLB controller controller**
 
 Add the configuration on both of the Citrix ADC VPX instances
 
@@ -196,7 +196,7 @@ Consider Citrix ADC VPX in region-1 as master node for GLSB. Add the following c
     
     sync gslb config -debug
 
-### H.1) Deploy multi-cluster ingress controller for EKS cluster-1
+### H.1) Deploy GSLB controller controller for EKS cluster-1
 
 For creating Kubernetes Secrets for both Citrix ADC VPX instances in cluster-1 run the following commands:
 
@@ -205,13 +205,13 @@ For creating Kubernetes Secrets for both Citrix ADC VPX instances in cluster-1 r
     kubectl create secret generic gslb-secret-cluster2 --from-literal=username=<username> --from-literal=password=<password> -n citrix-system
 
 
-Download the `multicluster1.yaml` file. 
+Download the `gslbcontroller1.yaml` file. 
 
-    wget https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/Servicemesh_with_GSLB_and_WAF/manifest/multicluster1.yaml
+    wget https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/Servicemesh_with_GSLB_and_WAF/manifest/gslbcontroller1.yaml
 
 Update the `<region-1> and <region-2>` with the proper region names. Also, update the site-1-IP and site-2-IP with the Public SNIP IPs of Citrix ADC VPX instances in region-1 and region-2, respectively. Use the following command:
 
-    helm install cluster1 citrix/citrix-multi-cluster-ingress-controller --namespace citrix-system -f multicluster1.yaml
+    helm install cluster1 citrix/citrix-gslb-controller --namespace citrix-system -f gslbcontroller1.yaml
 
 **Deploy GTP (Global Traffic Policy) and GSE (Global Service Entry) for bookinfo application for cluster-1**
 
@@ -239,7 +239,7 @@ Replace `<region-1> and <region-2>` with the AWS regions and Endpoint in GSE wit
     
     kubectl apply -f GTP_httpbin.yaml -n httpbin
 
-### H.2) Deploy multi-cluster ingress controller for EKS cluster-2
+### H.2) Deploy GSLB controller controller for EKS cluster-2
 
 For creating Kubernetes Secrets for both Citrix ADC VPX instances in cluster-2 run the following commands:
 
@@ -248,13 +248,13 @@ For creating Kubernetes Secrets for both Citrix ADC VPX instances in cluster-2 r
     kubectl create secret generic gslb-secret-cluster2 --from-literal=username=<username> --from-literal=password=<password> -n citrix-system
 
 
-Download the `multicluster2.yaml` file. 
+Download the `gslbcontroller2.yaml` file. 
 
-    wget https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/Servicemesh_with_GSLB_and_WAF/manifest/multicluster2.yaml
+    wget https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/Servicemesh_with_GSLB_and_WAF/manifest/gslbcontroller2.yaml
 
 Update the `<region-1> and <region-2>` with the proper region names. Also, update the site-1-IP and site-2-IP with the Public SNIP IPs of Citrix ADC VPX instances in region-1 and region-2, respectively. Use the following command:
 
-    helm install cluster2 citrix/citrix-multi-cluster-ingress-controlle --namespace citrix-system -f multicluster2.yaml
+    helm install cluster2 citrix/netscaler-gslb-controllere --namespace citrix-system -f gslbcontroller2.yaml
 
 **Deploy GTP (Global Traffic Policy) and GSE (Global Service Entry) for bookinfo application for cluster-2**
 
@@ -282,7 +282,7 @@ Replace `<region-1> and <region-2>` with the AWS regions and Endpoint in GSE wit
     
     kubectl apply -f GTP_httpbin.yaml -n httpbin
 
-Citrix ADC CPX deployed as Ingress Gateway, accepts the packet with SNI. Since, multi-cluster ingress gateway needs an enhancement on creating monitors with [SNI](https://datatracker.ietf.org/doc/html/rfc6066#section-3) enabled, a few manual configurations are required in master.
+Citrix ADC CPX deployed as Ingress Gateway, accepts the packet with SNI. Since,  multi-cluster ingress gateway needs an enhancement on creating monitors with [SNI](https://datatracker.ietf.org/doc/html/rfc6066#section-3) enabled, a few manual configurations are required in master.
 
     add ssl profile gslbsslbookinfo -sslProfileType BackEnd  -SNIEnable ENABLED -commonName monitor.appcluster.example.com
     

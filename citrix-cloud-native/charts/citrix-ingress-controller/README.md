@@ -323,7 +323,7 @@ The following table lists the mandatory and optional parameters that you can con
 | cic.license.accept | Mandatory | no | Set `yes` to accept the CIC end user license agreement. |
 | cic.imageRegistry                   | Mandatory  |  `quay.io`               |  The Citrix ingress controller image registry             |  
 | cic.imageRepository                 | Mandatory  |  `citrix/citrix-k8s-ingress-controller`              |   The Citrix ingress controller image repository             | 
-| cic.imageTag                  | Mandatory  |  `1.34.16`               |   The Citrix ingress controller image tag            | 
+| cic.imageTag                  | Mandatory  |  `1.35.6`               |   The Citrix ingress controller image tag            | 
 | cic.pullPolicy | Mandatory | IfNotPresent | The CIC image pull policy. |
 | cic.imagePullSecrets | Optional | N/A | Provide list of Kubernetes secrets to be used for pulling the images from a private Docker registry or repository. For more information on how to create this secret please see [Pull an Image from a Private Registry](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/). |
 | cic.nameOverride | Optional | N/A | String to partially override deployment fullname template with a string (will prepend the release name) |
@@ -347,7 +347,7 @@ The following table lists the mandatory and optional parameters that you can con
 | cic.nsDnsNameserver | Optional | N/A | To add DNS Nameservers in ADC |
 | cic.optimizeEndpointBinding | Optional | false | To enable/disable binding of backend endpoints to servicegroup in a single API-call. Recommended when endpoints(pods) per application are large in number. Applicable only for Citrix ADC Version >=13.0-45.7  |
 | cic.kubernetesURL | Optional | N/A | The kube-apiserver url that CIC uses to register the events. If the value is not specified, CIC uses the [internal kube-apiserver IP address](https://kubernetes.io/docs/tasks/access-application-cluster/access-cluster/#accessing-the-api-from-a-pod). |
-| cic.clusterName | Optional | N/A | The unique identifier of the kubernetes cluster on which the CIC is deployed. Used in multi-cluster deployments. |
+| cic.clusterName | Optional | N/A | The unique identifier of the kubernetes cluster on which the CIC is deployed. Used in gslb-controller deployments. |
 | cic.ingressClass | Optional | N/A | If multiple ingress load balancers are used to load balance different ingress resources. You can use this parameter to specify CIC to configure Citrix ADC associated with specific ingress class. For more information on Ingress class, see [Ingress class support](https://developer-docs.citrix.com/projects/citrix-k8s-ingress-controller/en/latest/configure/ingress-classes/). For Kubernetes version >= 1.19, this will create an IngressClass object with the name specified here |
 | cic.setAsDefaultIngressClass | Optional | False | Set the IngressClass object as default ingress class. New Ingresses without an "ingressClassName" field specified will be assigned the class specified in ingressClass. Applicable only for kubernetes versions >= 1.19 |
 | cic.serviceClass | Optional | N/A | By Default ingress controller configures all TypeLB Service on the ADC. You can use this parameter to finetune this behavior by specifing CIC to only configure TypeLB Service with specific service class. For more information on Service class, see [Service class support](https://developer-docs.citrix.com/projects/citrix-k8s-ingress-controller/en/latest/configure/service-classes/). |
@@ -403,7 +403,7 @@ The following table lists the mandatory and optional parameters that you can con
 | cic.nsLbHashAlgo.hashAlgorithm | Optional | 'default' | Specifies the supported algorithm. Supported algorithms are "default", "jarh", "prac", Default value is 'default' |
 | cic.extraVolumeMounts  |  Optional |  [] |  Specify the Additional VolumeMounts to be mounted in CIC container  |
 | cic.extraVolumes  |  Optional |  [] |  Specify the Additional Volumes for additional volumeMounts  |
-| cic.rbacRole  | Optional |  false  |  To deploy CIC with RBAC Role set rbacRole=true; by default CIC gets installed with RBAC ClusterRole(rbacRole=false)) |
+| cic.rbacRole  | Optional |  false  |  To deploy CIC with RBAC Role set rbacRole=true; by default CIC gets installed with RBAC ClusterRole(rbacRole=false) |
 
 Alternatively, you can define a YAML file with the values for the parameters and pass the values while installing the chart.
 

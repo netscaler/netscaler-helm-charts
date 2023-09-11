@@ -3,7 +3,7 @@ cic:
 
   imageRegistry: quay.io
   imageRepository: citrix/citrix-k8s-ingress-controller
-  imageTag: 1.34.16
+  imageTag: 1.35.6
   image: "{{ .Values.cic.imageRegistry }}/{{ .Values.cic.imageRepository }}:{{ .Values.cic.imageTag }}"
   pullPolicy: IfNotPresent
   imagePullSecrets: []
@@ -148,7 +148,21 @@ cic:
 
   podAnnotations: {}
 
-  resources: {}
+  resources:
+    requests:
+      cpu: 32m
+      memory: 128Mi
+    # Following values depends on no of ingresses configured by Ingress Controllers, so it is
+    # advised to test with maximum no of ingresses to set these values.
+    # limits:
+    #   cpu: 1000m
+    #   memory: 1000Mi
+    limits: {}
+    # Following values depends on no of ingresses configured by Ingress Controllers, so it is
+    # advised to test with maximum no of ingresses to set these values.
+    # limits:
+    #   cpu: 1000m
+    #   memory: 1000Mi
 
   affinity: {}
 
@@ -173,13 +187,13 @@ cic:
     #    secretName: github-key
     #    defaultMode: 0744
 
-mcIngress:
+gslb:
   enabled: False
 
   imageRegistry: quay.io
   imageRepository: citrix/citrix-k8s-ingress-controller
-  imageTag: 1.34.16
-  image: "{{ .Values.mcIngress.imageRegistry }}/{{ .Values.mcIngress.imageRepository }}:{{ .Values.mcIngress.imageTag }}"
+  imageTag: 1.35.6
+  image: "{{ .Values.gslb.imageRegistry }}/{{ .Values.gslb.imageRepository }}:{{ .Values.gslb.imageTag }}"
   pullPolicy: IfNotPresent
   openshift: false
   localRegion:
@@ -201,13 +215,21 @@ mcIngress:
 
   serviceAccount:
     create: true
+  resources:
+  requests:
+    cpu: 32m
+    memory: 128Mi
+    # limits:
+    #  cpu: 1000m
+    #  memory: 1000Mi
+    limits: {}
 
 cpx:
   enabled: False
 
   imageRegistry: quay.io
   imageRepository: citrix/citrix-k8s-cpx-ingress
-  imageTag: 13.1-49.13
+  imageTag: 13.1-37.38
   image: "{{ .Values.cpx.imageRegistry }}/{{ .Values.cpx.imageRepository }}:{{ .Values.cpx.imageTag }}"
   
   pullPolicy: IfNotPresent
@@ -266,11 +288,25 @@ cpx:
   cic:
     imageRegistry: quay.io
     imageRepository: citrix/citrix-k8s-ingress-controller
-    imageTag: 1.34.16
+    imageTag: 1.35.6
     image: "{{ .Values.cpx.cic.imageRegistry }}/{{ .Values.cpx.cic.imageRepository }}:{{ .Values.cpx.cic.imageTag }}"
     pullPolicy: IfNotPresent
     required: true
-    resources: {}
+    resources:
+    requests:
+      cpu: 32m
+      memory: 128Mi
+    # Following values depends on no of ingresses configured by Ingress Controllers, so it is
+    # advised to test with maximum no of ingresses to set these values.
+    # limits:
+    #   cpu: 1000m
+    #   memory: 1000Mi
+    limits: {}
+    # Following values depends on no of ingresses configured by Ingress Controllers, so it is
+    # advised to test with maximum no of ingresses to set these values.
+    # limits:
+    #   cpu: 1000m
+    #   memory: 1000Mi
     rbacRole: False
   entityPrefix:
   license:
@@ -296,7 +332,6 @@ cpx:
     bandWidth: 1000
     vCPULicense: false
     cpxCores:
-    analyticsServerPort: 5557
     licenseEdition: PLATINUM
   
   exporter:
@@ -359,9 +394,30 @@ cpx:
 
   podAnnotations: {}
 
-  resources: {}
-
+  # This is the resource for CPX container.
+  resources:
+    requests:
+      cpu: 128m
+      memory: 500Mi
+    limits: {}
+    # limits:
+    #   cpu: 500m
+    #   memory: 512Mi
   affinity: {}
+  
+  # cpxCommands: to provide global config to be applied in CPX. The commands will be executed in order. For e.g.
+  # add rewrite action rw_act_x_forwarded_proto insert_http_header X-Forwarded-Proto "\"https\""
+  # add rewrite policy rw_pol_x_forwarded_proto CLIENT.SSL.IS_SSL rw_act_x_forwarded_proto
+  # bind rewrite global rw_pol_x_forwarded_proto 10 -type REQ_OVERRIDE
+  cpxCommands: |
+    
+
+  # cpxShellCommands: to provide commands that need to be executed in shell of CPX. For e.g.
+  # touch /etc/a.txt
+  # echo "this is a" > /etc/a.txt
+  # echo "this is the file" >> /etc/a.txt
+  # ls >> /etc/a.txt
+  cpxShellCommands: |
 
 iaIngress:
   enabled: False
@@ -571,7 +627,7 @@ iaSidecar:
     netscalerUrl: "http://127.0.0.1"
     imageRegistry: quay.io
     imageRepository: citrix/citrix-k8s-cpx-ingress
-    imageTag: 13.1-30.52
+    imageTag: 13.1-49.13
     image: "{{ .Values.iaSidecar.cpxProxy.imageRegistry }}/{{ .Values.iaSidecar.cpxProxy.imageRepository }}:{{ .Values.iaSidecar.cpxProxy.imageTag }}"
     imagePullPolicy: IfNotPresent
     EULA: NO

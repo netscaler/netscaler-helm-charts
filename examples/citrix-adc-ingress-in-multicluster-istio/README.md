@@ -22,7 +22,7 @@ The diagram illustrates the architecture of an Istio multi-cluster service mesh 
 ## <a name="Deploy-Citrix-ADC-as-multi-cluster-Ingress-gateway">Deploy Citrix ADC as multi-cluster Ingress gateway</a>
 
 
-You can deploy Citrix ADC as multi-cluster ingress gateway. Citrix ADC as multi-cluster gateway enables inter-cluster service to service (East-West) communication.
+You can deploy Citrix ADC as multi-cluster ingress. Citrix ADC as multi-cluster gateway enables inter-cluster service to service (East-West) communication.
 
 For information about deploying Citrix ADC CPX, VPX, or MPX as an Ingress gateway in a multi-cluster Istio Service mesh, see [Deploy Citrix ADC as an Ingress Gateway in multi cluster Istio Service mesh](https://github.com/citrix/citrix-helm-charts/tree/master/citrix-adc-istio-ingress-gateway#deploy-citrix-adc-as-a-multicluster-ingress-gateway). 
 
