@@ -75,6 +75,23 @@ And if user wants to enable CIC pod to be scheduled on node `worker1` then the f
 helm install my-release citrix-ingress-controller --set nsIP=<NSIP>,license.accept=yes,adcCredentialSecret=<Secret-for-ADC-credentials>,tolerations[0].key=key1,tolerations[0].value=value1,tolerations[0].operator=Equal,tolerations[0].effect=NoSchedule
 ```
 
+### Resource Quotas
+There are various use-cases when resource quotas are configured on the Kubernetes cluster. If quota is enabled in a namespace for compute resources like cpu and memory, users must specify requests or limits for those values; otherwise, the quota system may reject pod creation. The resource quotas for the CIC containers can be provided explicitly in the helm chart.
+
+To set requests and limits for the CIC container, use the variables `resources.requests` and `resources.limits` respectively.
+
+Below is an example of the helm command that configures
+- For CIC container:
+```
+  CPU request for 500milli CPUs
+  CPU limit at 1000m
+  Memory request for 512M
+  Memory limit at 1000M
+```
+```
+helm install my-release citrix/citrix-ingress-controller --set nsIP=<NSIP>,nsVIP=<NSVIP>,license.accept=yes,adcCredentialSecret=<Secret-of-Citrix-ADC-credentials>,resources.requests.cpu=500m,resources.requests.memory=512Mi --set resources.limits.cpu=1000m,resources.limits.memory=1000Mi
+```
+
 ## Uninstalling the Chart
 To uninstall/delete the ```my-release``` deployment:
 ```
