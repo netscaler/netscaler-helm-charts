@@ -71,6 +71,28 @@ And if user wants to enable CPX with ingress controller pod to be scheduled on n
 ```
 helm install my-release citrix-cpx-with-ingress-controller --set license.accept=yes,tolerations[0].key=key1,tolerations[0].value=value1,tolerations[0].operator=Equal,tolerations[0].effect=NoSchedule
 ```
+### Resource Quotas
+There are various use-cases when resource quotas are configured on the Kubernetes cluster. If quota is enabled in a namespace for compute resources like cpu and memory, users must specify requests or limits for those values; otherwise, the quota system may reject pod creation. The resource quotas for the CIC and CPX containers can be provided explicitly in the helm chart.
+
+To set requests and limits for the CIC container, use the variables `cic.resources.requests` and `cic.resources.limits` respectively.
+Similarly, to set requests and limits for the CPX container, use the variable `resources.requests` and `resources.limits` respectively.
+
+Below is an example of the helm command that configures
+```
+A) For CIC container:
+  CPU request for 500milli CPUs
+  CPU limit at 1000m
+  Memory request for 512M
+  Memory limit at 1000M
+B) For CPX container:
+  CPU request for 250milli CPUs
+  CPU limit at 500m
+  Memory request for 256M
+  Memory limit at 512M
+```
+```
+helm install cpx citrix/citrix-cpx-with-ingress-controller --set license.accept=yes --set cic.resources.requests.cpu=500m,cic.resources.requests.memory=512Mi --set cic.resources.limits.cpu=1000m,cic.resources.limits.memory=1000Mi --set resources.limits.cpu=500m,resources.limits.memory=512Mi --set resources.requests.cpu=250m,resources.requests.memory=256Mi
+```
 
 ## Uninstalling the Chart
 To uninstall/delete the ```my-release``` deployment:

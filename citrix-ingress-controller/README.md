@@ -305,7 +305,22 @@ Here tolerations[0].key, tolerations[0].value and tolerations[0].effect are the 
 Effect represents what should happen to the pod if the pod don't have any matching toleration. It can have values `NoSchedule`, `NoExecute` and `PreferNoSchedule`.
 Operator represents the operation to be used for key and value comparison between taint and tolerations. It can have values `Exists` and `Equal`. The default value for operator is `Equal`.
 
+### Resource Quotas
+There are various use-cases when resource quotas are configured on the Kubernetes cluster. If quota is enabled in a namespace for compute resources like cpu and memory, users must specify requests or limits for those values; otherwise, the quota system may reject pod creation. The resource quotas for the CIC containers can be provided explicitly in the helm chart.
 
+To set requests and limits for the CIC container, use the variables `resources.requests` and `resources.limits` respectively.
+
+Below is an example of the helm command that configures
+- For CIC container:
+```
+  CPU request for 500milli CPUs
+  CPU limit at 1000m
+  Memory request for 512M
+  Memory limit at 1000M
+```
+```
+helm install my-release citrix/citrix-ingress-controller --set nsIP=<NSIP>,nsVIP=<NSVIP>,license.accept=yes,adcCredentialSecret=<Secret-of-Citrix-ADC-credentials>,resources.requests.cpu=500m,resources.requests.memory=512Mi --set resources.limits.cpu=1000m,resources.limits.memory=1000Mi
+```
 
 ### Configuration
 

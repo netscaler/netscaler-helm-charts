@@ -7,13 +7,15 @@
 ### For Kubernetes
    ```
    helm repo add citrix https://citrix.github.io/citrix-helm-charts/
+   
+   helm install gslb-controller citrix/citrix-cloud-native --set gslb.enabled=true,gslb.localRegion=<local-cluster-region>,gslb.localCluster=<local-cluster-name>,gslb.sitedata[0].siteName=<site1-name>,gslb.sitedata[0].siteIp=<site1-ip-address>,gslb.sitedata[0].secretName=<site1-login-file>,gslb.sitedata[0].siteRegion=<site1-region-name>,gslb.sitedata[1].siteName=<site2-name>,gslb.sitedata[1].siteIp=<site2-ip-address>,gslb.sitedata[1].secretName=<site2-login-file>,gslb.sitedata[1].siteRegion=<site2-region-name>,gslb.license.accept=yes
 
-   helm install gslb-controller citrix/citrix-cloud-native --set gslb.localRegion=<local-cluster-region>,gslb.localCluster=<local-cluster-name>,gslb.sitedata[0].siteName=<site1-name>,gslb.sitedata[0].siteIp=<site1-ip-address>,gslb.sitedata[0].secretName=<site1-login-file>,gslb.sitedata[0].siteRegion=<site1-region-name>,gslb.sitedata[1].siteName=<site2-name>,gslb.sitedata[1].siteIp=<site2-ip-address>,gslb.sitedata[1].secretName=<site2-login-file>,gslb.sitedata[1].siteRegion=<site2-region-name>,gslb.license.accept=yes
    ```
 
    To install Citrix Provided Custom Resource Definition(CRDs) along with Citrix Ingress Controller
    ```
-   helm install gslb-controller citrix/citrix-cloud-native --set gslb.localRegion=<local-cluster-region>,gslb.localCluster=<local-cluster-name>,gslb.sitedata[0].siteName=<site1-name>,gslb.sitedata[0].siteIp=<site1-ip-address>,gslb.sitedata[0].secretName=<site1-login-file>,gslb.sitedata[0].siteRegion=<site1-region-name>,gslb.sitedata[1].siteName=<site2-name>,gslb.sitedata[1].siteIp=<site2-ip-address>,gslb.sitedata[1].secretName=<site2-login-file>,gslb.sitedata[1].siteRegion=<site2-region-name>,gslb.license.accept=yes,gslb.crds.install=true
+   helm install gslb-controller citrix/citrix-cloud-native --set gslb.enabled=true,gslb.localRegion=<local-cluster-region>,gslb.localCluster=<local-cluster-name>,gslb.sitedata[0].siteName=<site1-name>,gslb.sitedata[0].siteIp=<site1-ip-address>,gslb.sitedata[0].secretName=<site1-login-file>,gslb.sitedata[0].siteRegion=<site1-region-name>,gslb.sitedata[1].siteName=<site2-name>,gslb.sitedata[1].siteIp=<site2-ip-address>,gslb.sitedata[1].secretName=<site2-login-file>,gslb.sitedata[1].siteRegion=<site2-region-name>,gslb.license.accept=yes,gslb.crds.install=true
+
    ```
 
 ### For OpenShift
@@ -21,12 +23,14 @@
    ```
    helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
-   helm install gslb-controller citrix/citrix-cloud-native --set gslb.localRegion=<local-cluster-region>,gslb.localCluster=<local-cluster-name>,gslb.sitedata[0].siteName=<site1-name>,gslb.sitedata[0].siteIp=<site1-ip-address>,gslb.sitedata[0].secretName=<site1-login-file>,gslb.sitedata[0].siteRegion=<site1-region-name>,gslb.sitedata[1].siteName=<site2-name>,gslb.sitedata[1].siteIp=<site2-ip-address>,gslb.sitedata[1].secretName=<site2-login-file>,gslb.sitedata[1].siteRegion=<site2-region-name>,gslb.license.accept=yes,gslb.openshift=true
+   helm install gslb-controller citrix/citrix-cloud-native --set gslb.enabled=true,gslb.localRegion=<local-cluster-region>,gslb.localCluster=<local-cluster-name>,gslb.sitedata[0].siteName=<site1-name>,gslb.sitedata[0].siteIp=<site1-ip-address>,gslb.sitedata[0].secretName=<site1-login-file>,gslb.sitedata[0].siteRegion=<site1-region-name>,gslb.sitedata[1].siteName=<site2-name>,gslb.sitedata[1].siteIp=<site2-ip-address>,gslb.sitedata[1].secretName=<site2-login-file>,gslb.sitedata[1].siteRegion=<site2-region-name>,gslb.license.accept=yes,gslb.openshift=true
+
    ```
 
   To install Citrix Provided Custom Resource Definition(CRDs) along with Citrix Ingress Controller
   ```
-   helm install gslb-controller citrix/citrix-cloud-native --set gslb.localRegion=<local-cluster-region>,gslb.localCluster=<local-cluster-name>,gslb.sitedata[0].siteName=<site1-name>,gslb.sitedata[0].siteIp=<site1-ip-address>,gslb.sitedata[0].secretName=<site1-login-file>,gslb.sitedata[0].siteRegion=<site1-region-name>,gslb.sitedata[1].siteName=<site2-name>,gslb.sitedata[1].siteIp=<site2-ip-address>,gslb.sitedata[1].secretName=<site2-login-file>,gslb.sitedata[1].siteRegion=<site2-region-name>,gslb.license.accept=yes,gslb.openshift=true,gslb.crds.install=true
+   helm install gslb-controller citrix/citrix-cloud-native --set gslb.enabled=true,gslb.localRegion=<local-cluster-region>,gslb.localCluster=<local-cluster-name>,gslb.sitedata[0].siteName=<site1-name>,gslb.sitedata[0].siteIp=<site1-ip-address>,gslb.sitedata[0].secretName=<site1-login-file>,gslb.sitedata[0].siteRegion=<site1-region-name>,gslb.sitedata[1].siteName=<site2-name>,gslb.sitedata[1].siteIp=<site2-ip-address>,gslb.sitedata[1].secretName=<site2-login-file>,gslb.sitedata[1].siteRegion=<site2-region-name>,gslb.license.accept=yes,gslb.openshift=true,gslb.crds.install=true
+
   ```
 > **Important:**
 >
@@ -120,7 +124,7 @@ Add the Citrix GSLB Controller Controller helm chart repository using command:
 #### 1. Citrix GSLB Controller Controller
 To install the chart with the release name, `my-release`, use the following command:
    ```
-   helm install my-release citrix/citrix-cloud-native --set gslb.localRegion=<local-cluster-region>,gslb.localCluster=<local-cluster-name>,gslb.sitedata[0].siteName=<site1-name>,gslb.sitedata[0].siteIp=<site1-ip-address>,gslb.sitedata[0].secretName=<site1-login-file>,gslb.sitedata[0].siteRegion=<site1-region-name>,gslb.sitedata[1].siteName=<site2-name>,gslb.sitedata[1].siteIp=<site2-ip-address>,gslb.sitedata[1].secretName=<site2-login-file>,gslb.sitedata[1].siteRegion=<site2-region-name>,gslb.license.accept=yes
+   helm install my-release citrix/citrix-cloud-native --set gslb.enabled=true,gslb.localRegion=<local-cluster-region>,gslb.localCluster=<local-cluster-name>,gslb.sitedata[0].siteName=<site1-name>,gslb.sitedata[0].siteIp=<site1-ip-address>,gslb.sitedata[0].secretName=<site1-login-file>,gslb.sitedata[0].siteRegion=<site1-region-name>,gslb.sitedata[1].siteName=<site2-name>,gslb.sitedata[1].siteIp=<site2-ip-address>,gslb.sitedata[1].secretName=<site2-login-file>,gslb.sitedata[1].siteRegion=<site2-region-name>,gslb.license.accept=yes
 
    ```
 
@@ -140,7 +144,7 @@ Add the service account named "mcingress-k8s-role" to the privileged Security Co
 
 To install the chart with the release name, `my-release`, use the following command:
    ```
-   helm install my-release citrix/citrix-cloud-native --set gslb.localRegion=<local-cluster-region>,gslb.localCluster=<local-cluster-name>,gslb.sitedata[0].siteName=<site1-name>,gslb.sitedata[0].siteIp=<site1-ip-address>,gslb.sitedata[0].secretName=<site1-login-file>,gslb.sitedata[0].siteRegion=<site1-region-name>,gslb.sitedata[1].siteName=<site2-name>,gslb.sitedata[1].siteIp=<site2-ip-address>,gslb.sitedata[1].secretName=<site2-login-file>,gslb.sitedata[1].siteRegion=<site2-region-name>,gslb.license.accept=yes,gslb.openshift=true
+   helm install my-release citrix/citrix-cloud-native --set gslb.enabled=true,gslb.localRegion=<local-cluster-region>,gslb.localCluster=<local-cluster-name>,gslb.sitedata[0].siteName=<site1-name>,gslb.sitedata[0].siteIp=<site1-ip-address>,gslb.sitedata[0].secretName=<site1-login-file>,gslb.sitedata[0].siteRegion=<site1-region-name>,gslb.sitedata[1].siteName=<site2-name>,gslb.sitedata[1].siteIp=<site2-ip-address>,gslb.sitedata[1].secretName=<site2-login-file>,gslb.sitedata[1].siteRegion=<site2-region-name>,gslb.license.accept=yes,gslb.openshift=true
    ```
 
 The command deploys Citrix GSLB Controller controller on your Openshift cluster in the default configuration. The [configuration](#configuration) section lists the mandatory and optional parameters that you can configure during installation.
@@ -162,6 +166,23 @@ CRDs can be installed/upgraded automatically when we install/upgrade Citrix GSLB
 There are a few examples of how to use these CRDs, which are placed in the folder: [Example-CRDs](https://github.com/citrix/citrix-helm-charts/tree/master/example-crds). Refer to them and install as needed, using the following command:
 ```kubectl create -f <crd-example.yaml>```
 
+
+### Resource Quotas
+There are various use-cases when resource quotas are configured on the Kubernetes cluster. If quota is enabled in a namespace for compute resources like cpu and memory, users must specify requests or limits for those values; otherwise, the quota system may reject pod creation. The resource quotas for the GSLB controller containers can be provided explicitly in the helm chart.
+
+To set requests and limits for the GSLB controller container, use the variables `gslb.resources.requests` and `gslb.resources.limits` respectively.
+
+Below is an example of the helm command that configures
+- For GSLB Controller container:
+```
+  CPU request for 500milli CPUs
+  CPU limit at 1000m
+  Memory request for 512M
+  Memory limit at 1000M
+```
+```
+helm install my-release citrix/citrix-cloud-native --set gslb.enabled=true,gslb.localRegion=<local-cluster-region>,gslb.localCluster=<local-cluster-name>,gslb.sitedata[0].siteName=<site1-name>,gslb.sitedata[0].siteIp=<site1-ip-address>,gslb.sitedata[0].secretName=<site1-login-file>,gslb.sitedata[0].siteRegion=<site1-region-name>,gslb.sitedata[1].siteName=<site2-name>,gslb.sitedata[1].siteIp=<site2-ip-address>,gslb.sitedata[1].secretName=<site2-login-file>,gslb.sitedata[1].siteRegion=<site2-region-name>,gslb.license.accept=yes --set gslb.resources.requests.cpu=500m,gslb.resources.requests.memory=512Mi --set gslb.resources.limits.cpu=1000m,gslb.resources.limits.memory=1000Mi
+```
 
 ### Configuration
 
