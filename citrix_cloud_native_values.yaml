@@ -216,9 +216,9 @@ gslb:
   serviceAccount:
     create: true
   resources:
-  requests:
-    cpu: 32m
-    memory: 128Mi
+    requests:
+      cpu: 32m
+      memory: 128Mi
     # limits:
     #  cpu: 1000m
     #  memory: 1000Mi

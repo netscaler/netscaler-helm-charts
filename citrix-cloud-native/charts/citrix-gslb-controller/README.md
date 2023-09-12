@@ -7,13 +7,15 @@
 ### For Kubernetes
    ```
    helm repo add citrix https://citrix.github.io/citrix-helm-charts/
-
+   
    helm install gslb-controller citrix/citrix-cloud-native --set gslb.enabled=true,gslb.localRegion=<local-cluster-region>,gslb.localCluster=<local-cluster-name>,gslb.sitedata[0].siteName=<site1-name>,gslb.sitedata[0].siteIp=<site1-ip-address>,gslb.sitedata[0].secretName=<site1-login-file>,gslb.sitedata[0].siteRegion=<site1-region-name>,gslb.sitedata[1].siteName=<site2-name>,gslb.sitedata[1].siteIp=<site2-ip-address>,gslb.sitedata[1].secretName=<site2-login-file>,gslb.sitedata[1].siteRegion=<site2-region-name>,gslb.license.accept=yes
+
    ```
 
    To install Citrix Provided Custom Resource Definition(CRDs) along with Citrix Ingress Controller
    ```
    helm install gslb-controller citrix/citrix-cloud-native --set gslb.enabled=true,gslb.localRegion=<local-cluster-region>,gslb.localCluster=<local-cluster-name>,gslb.sitedata[0].siteName=<site1-name>,gslb.sitedata[0].siteIp=<site1-ip-address>,gslb.sitedata[0].secretName=<site1-login-file>,gslb.sitedata[0].siteRegion=<site1-region-name>,gslb.sitedata[1].siteName=<site2-name>,gslb.sitedata[1].siteIp=<site2-ip-address>,gslb.sitedata[1].secretName=<site2-login-file>,gslb.sitedata[1].siteRegion=<site2-region-name>,gslb.license.accept=yes,gslb.crds.install=true
+
    ```
 
 ### For OpenShift
@@ -22,11 +24,13 @@
    helm repo add citrix https://citrix.github.io/citrix-helm-charts/
 
    helm install gslb-controller citrix/citrix-cloud-native --set gslb.enabled=true,gslb.localRegion=<local-cluster-region>,gslb.localCluster=<local-cluster-name>,gslb.sitedata[0].siteName=<site1-name>,gslb.sitedata[0].siteIp=<site1-ip-address>,gslb.sitedata[0].secretName=<site1-login-file>,gslb.sitedata[0].siteRegion=<site1-region-name>,gslb.sitedata[1].siteName=<site2-name>,gslb.sitedata[1].siteIp=<site2-ip-address>,gslb.sitedata[1].secretName=<site2-login-file>,gslb.sitedata[1].siteRegion=<site2-region-name>,gslb.license.accept=yes,gslb.openshift=true
+
    ```
 
   To install Citrix Provided Custom Resource Definition(CRDs) along with Citrix Ingress Controller
   ```
    helm install gslb-controller citrix/citrix-cloud-native --set gslb.enabled=true,gslb.localRegion=<local-cluster-region>,gslb.localCluster=<local-cluster-name>,gslb.sitedata[0].siteName=<site1-name>,gslb.sitedata[0].siteIp=<site1-ip-address>,gslb.sitedata[0].secretName=<site1-login-file>,gslb.sitedata[0].siteRegion=<site1-region-name>,gslb.sitedata[1].siteName=<site2-name>,gslb.sitedata[1].siteIp=<site2-ip-address>,gslb.sitedata[1].secretName=<site2-login-file>,gslb.sitedata[1].siteRegion=<site2-region-name>,gslb.license.accept=yes,gslb.openshift=true,gslb.crds.install=true
+
   ```
 > **Important:**
 >
