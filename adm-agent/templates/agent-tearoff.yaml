@@ -1,0 +1,59 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: agent-tearoff
+  labels:
+    job-name: agent-tearoff
+  annotations:
+    "helm.sh/hook": pre-delete
+    "helm.sh/hook-delete-policy": "before-hook-creation,hook-succeeded,hook-failed"
+spec:
+  backoffLimit: 4
+  template:
+    metadata:
+      labels:
+        job-name: agent-tearoff
+    spec:
+      restartPolicy: Never
+      serviceAccountName: adm-agent-serviceaccount
+      containers:
+      - name: agent-tearoff
+        image: "{{ tpl .Values.image . }}"
+        imagePullPolicy: {{ .Values.pullPolicy }}
+        securityContext:
+          privileged: true
+        env:
+        - name: DEPL
+          value: "service"
+        - name: ORCH
+          value: "Kubernetes"
+        - name: CONTROLLER
+          value: "operator"
+        - name: CONTAINER_AGENT_MODE
+          value: "adm-agent-tearoff"
+        - name: UNINSTALL_JOB
+          value: "yes"
+        - name: IP
+          value: {{ include "adm-agent.fullname" . }}
+        - name: APP_ID
+          value: {{ include "adm-agent.fullname" . }}
+        - name: API_ID
+          valueFrom:
+            secretKeyRef:
+              name: {{ required "Valid accessSecret is required!" .Values.accessSecret }}
+              key: accessid
+
+        - name: API_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: {{ required "Valid accessSecret is required!" .Values.accessSecret }}
+              key: accesssecret
+        
+        - name: ADM_URL
+          value: "{{ .Values.admURL }}"
+        
+        - name: AGENT_CONFIG_MAP
+          value: {{ include "adm-agent.fullname" . }}-configmap
+        
+        - name: AGENT_SECRET
+          value: {{ include "adm-agent.fullname" . }}-secret

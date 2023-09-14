@@ -1,0 +1,646 @@
+#>>>adm-agent-kad-dep.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "adm-agent.fullname" . }}-kad
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "adm-agent.fullname" . }}-kad
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{ include "adm-agent.fullname" . }}-kad
+        tier: backend
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      serviceAccountName: adm-agent-serviceaccount
+      containers:
+        - name: {{ include "adm-agent.fullname" . }}-helper
+          image: "{{ tpl .Values.helper.image . }}"
+          imagePullPolicy: {{ .Values.helper.pullPolicy }}
+
+          resources:
+            {}
+          securityContext:
+            runAsGroup: 32024
+            runAsNonRoot: true
+            runAsUser: 32024
+
+          env:
+          - name: ADM_AGENT_LOGIN_SECRET
+            value: "{{ required "Valid loginSecret is required!" .Values.loginSecret }}"
+
+        - name: {{ include "adm-agent.fullname" . }}-kad
+          image: "{{ tpl .Values.image . }}"
+          imagePullPolicy: {{ .Values.pullPolicy }}
+
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          securityContext:
+            privileged: true
+
+          env:
+          - name: CONTAINER_AGENT_MODE
+            value: "adm-agent-kad"
+
+          - name: SERVICE_ACCOUNT
+            value: "adm-agent-serviceaccount"
+
+          - name: REDIS_HOST
+            value: "{{ include "adm-agent.fullname" . }}-redis"
+
+          - name: REDIS_PORT
+            value: "6379"
+
+          - name: IP
+            value: {{ include "adm-agent.fullname" . }}
+
+          - name: APP_ID
+            value: {{ include "adm-agent.fullname" . }}
+
+          - name: DEPL
+            value: "service"
+
+          - name: ORCH
+            value: "Kubernetes"
+
+          - name: MICROSERVICE_HAS_INVENTORY_WORKER
+            value: "yes"
+          
+          - name: CONTROLLER
+            value: "operator"
+          
+          - name: DISABLE_AGENT_UPGRADE
+            value: "true"
+          
+          - name: "API_ID"
+            valueFrom:
+              secretKeyRef:
+                name: {{ required "Valid accessSecret is required!" .Values.accessSecret }}
+                key: accessid
+
+          - name: "API_SECRET"
+            valueFrom:
+              secretKeyRef:
+                name: {{ required "Valid accessSecret is required!" .Values.accessSecret }}
+                key: accesssecret
+          
+          - name: ADM_URL
+            value: "{{ .Values.admURL }}"
+
+          - name: MY_NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+
+          - name: MY_POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: MY_POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+
+          volumeMounts:
+            - name: secret-volume
+              mountPath: /etc/adm_agent/secret
+            - name: config-volume
+              mountPath: /etc/adm_agent/config
+
+      volumes:
+        - name: secret-volume
+          secret:
+            secretName: {{ include "adm-agent.fullname" . }}-secret
+        - name: config-volume
+          configMap:
+            name: {{ include "adm-agent.fullname" . }}-configmap
+
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+#<<<adm-agent-kad-dep.yaml
+---
+#>>>admagent-redis-dep.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "adm-agent.fullname" . }}-redis
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "adm-agent.fullname" . }}-redis
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{ include "adm-agent.fullname" . }}-redis
+        tier: backend
+    {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      serviceAccountName: adm-agent-serviceaccount
+      containers:
+        - name: {{ include "adm-agent.fullname" . }}-redis
+          image: "{{ tpl .Values.image . }}"
+          imagePullPolicy: {{ .Values.pullPolicy }}
+
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+
+          env:
+          - name: CONTAINER_AGENT_MODE
+            value: "adm-agent-redis"
+
+          - name: IP
+            value: {{ include "adm-agent.fullname" . }}
+
+          - name: APP_ID
+            value: {{ include "adm-agent.fullname" . }}
+
+          - name: DEPL
+            value: "service"
+
+          - name: ORCH
+            value: "Kubernetes"
+          
+          - name: CONTROLLER
+            value: "operator"
+
+          - name: DISABLE_AGENT_UPGRADE
+            value: "true"
+
+          - name: MY_NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+
+          - name: MY_POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: MY_POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          
+          securityContext:
+            privileged: true
+
+          livenessProbe:
+            exec:
+              command:
+              - redis-cli
+              - ping
+            failureThreshold: 3
+            initialDelaySeconds: 30
+            periodSeconds: 60
+            successThreshold: 1
+            timeoutSeconds: 5
+          readinessProbe:
+            exec:
+              command:
+              - redis-cli
+              - ping
+            failureThreshold: 3
+            initialDelaySeconds: 30
+            periodSeconds: 60
+            successThreshold: 1
+            timeoutSeconds: 5
+
+          ports:
+            - name: redis
+              protocol: TCP
+              containerPort: 6379
+          
+          volumeMounts:
+            - name: secret-volume
+              mountPath: /etc/adm_agent/secret
+            - name: config-volume
+              mountPath: /etc/adm_agent/config
+
+      volumes:
+        - name: secret-volume
+          secret:
+            secretName: {{ include "adm-agent.fullname" . }}-secret
+        - name: config-volume
+          configMap:
+            name: {{ include "adm-agent.fullname" . }}-configmap
+      
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+#<<<admagent-redis-dep.yaml
+---
+#>>>admagent-core-dep.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "adm-agent.fullname" . }}-core
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "adm-agent.fullname" . }}-core
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{ include "adm-agent.fullname" . }}-core
+        tier: backend
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      serviceAccountName: adm-agent-serviceaccount
+      containers:
+        - name: {{ include "adm-agent.fullname" . }}-core
+          image: "{{ tpl .Values.image . }}"
+          imagePullPolicy: {{ .Values.pullPolicy }}
+
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+
+          env:
+          - name: CONTAINER_AGENT_MODE
+            value: "adm-agent-core"
+
+          - name: IP
+            value: {{ include "adm-agent.fullname" . }}
+
+          - name: APP_ID
+            value: {{ include "adm-agent.fullname" . }}
+
+          - name: DEPL
+            value: "service"
+
+          - name: ORCH
+            value: "Kubernetes"
+          
+          - name: MICROSERVICE_HAS_INVENTORY_WORKER
+            value: "yes"
+          
+          - name: CONTROLLER
+            value: "operator"
+          
+          - name: DISABLE_AGENT_UPGRADE
+            value: "true"
+
+          - name: REDIS_HOST
+            value: "{{ include "adm-agent.fullname" . }}-redis"
+
+          - name: REDIS_PORT
+            value: "6379"
+
+          - name: MY_NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+
+          - name: MY_POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+
+          - name: MY_POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+
+          - name: KAD_HOST
+            value: "{{ include "adm-agent.fullname" . }}-kad"
+          
+          securityContext:
+            privileged: true
+
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /mas_health
+              port: 80
+              scheme: HTTP
+            initialDelaySeconds: 60
+            periodSeconds: 60
+            successThreshold: 1
+            timeoutSeconds: 5
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /mas_health
+              port: 80
+              scheme: HTTP
+            initialDelaySeconds: 60
+            periodSeconds: 60
+            successThreshold: 1
+            timeoutSeconds: 5
+
+          ports:
+            - name: http
+              protocol: TCP
+              containerPort: 80
+
+            - name: https
+              protocol: TCP
+              containerPort: 443
+
+            - name: snmp
+              protocol: UDP
+              containerPort: 162
+              
+            - name: syslog
+              protocol: UDP
+              containerPort: 514
+
+            - name: ipfix
+              protocol: UDP
+              containerPort: 4739
+
+            - name: ulfd
+              protocol: TCP
+              containerPort: 5557
+
+          volumeMounts:
+            - name: secret-volume
+              mountPath: /etc/adm_agent/secret
+            - name: config-volume
+              mountPath: /etc/adm_agent/config
+
+      volumes:
+        - name: secret-volume
+          secret:
+            secretName: {{ include "adm-agent.fullname" . }}-secret
+        - name: config-volume
+          configMap:
+            name: {{ include "adm-agent.fullname" . }}-configmap
+      
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+#<<<admagent-core-dep.yaml
+---
+#>>>admagent-lic-dep.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "adm-agent.fullname" . }}-lic
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "adm-agent.fullname" . }}-lic
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{ include "adm-agent.fullname" . }}-lic
+        tier: backend
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      serviceAccountName: adm-agent-serviceaccount
+      containers:
+        - name: {{ include "adm-agent.fullname" . }}-lic
+          image: "{{ tpl .Values.image . }}"
+          imagePullPolicy: {{ .Values.pullPolicy }}
+
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+
+          env:
+          - name: CONTAINER_AGENT_MODE
+            value: "adm-agent-pooled-licensing"
+
+          - name: REDIS_HOST
+            value: "{{ include "adm-agent.fullname" . }}-redis"
+
+          - name: REDIS_PORT
+            value: "6379"
+
+          - name: IP
+            value: {{ include "adm-agent.fullname" . }}
+
+          - name: APP_ID
+            value: {{ include "adm-agent.fullname" . }}
+
+          - name: DEPL
+            value: "service"
+
+          - name: ORCH
+            value: "Kubernetes"
+
+          - name: MICROSERVICE_HAS_INVENTORY_WORKER
+            value: "yes"
+          
+          - name: CONTROLLER
+            value: "operator"
+
+          - name: DISABLE_AGENT_UPGRADE
+            value: "true"
+
+          - name: MY_NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+
+          - name: MY_POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+
+          - name: MY_POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          
+          securityContext:
+            privileged: true
+
+          ports:
+            - name: http
+              protocol: TCP
+              containerPort: 80
+
+            - name: https
+              protocol: TCP
+              containerPort: 443
+
+            - name: licls
+              protocol: TCP
+              containerPort: 27000
+
+            - name: licvd
+              protocol: TCP
+              containerPort: 7279
+
+          volumeMounts:
+            - name: secret-volume
+              mountPath: /etc/adm_agent/secret
+            - name: config-volume
+              mountPath: /etc/adm_agent/config
+
+      volumes:
+        - name: secret-volume
+          secret:
+            secretName: {{ include "adm-agent.fullname" . }}-secret
+        - name: config-volume
+          configMap:
+            name: {{ include "adm-agent.fullname" . }}-configmap
+      
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+#<<<admagent-lic-dep.yaml
+---
+#>>>admagent-sharding-dep.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "adm-agent.fullname" . }}-sharding
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "adm-agent.fullname" . }}-sharding
+      tier: backend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: {{ include "adm-agent.fullname" . }}-sharding
+        tier: backend
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      serviceAccountName: adm-agent-serviceaccount
+      containers:
+        - name: {{ include "adm-agent.fullname" . }}-sharding
+          image: "{{ tpl .Values.image . }}"
+          imagePullPolicy: {{ .Values.pullPolicy }}
+
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+
+          env:
+          - name: CONTAINER_AGENT_MODE
+            value: "adm-agent-sharding"
+
+          - name: REDIS_HOST
+            value: "{{ include "adm-agent.fullname" . }}-redis"
+
+          - name: REDIS_PORT
+            value: "6379"
+
+          - name: IP
+            value: {{ include "adm-agent.fullname" . }}
+
+          - name: APP_ID
+            value: {{ include "adm-agent.fullname" . }}
+
+          - name: DEPL
+            value: "service"
+
+          - name: ORCH
+            value: "Kubernetes"
+
+          - name: MICROSERVICE_HAS_INVENTORY_WORKER
+            value: "yes"
+          
+          - name: CONTROLLER
+            value: "operator"
+
+          - name: DISABLE_AGENT_UPGRADE
+            value: "true"
+
+          - name: MY_NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+
+          - name: MY_POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: MY_POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+
+          securityContext:
+            privileged: true
+
+          volumeMounts:
+            - name: secret-volume
+              mountPath: /etc/adm_agent/secret
+            - name: config-volume
+              mountPath: /etc/adm_agent/config
+
+      volumes:
+        - name: secret-volume
+          secret:
+            secretName: {{ include "adm-agent.fullname" . }}-secret
+        - name: config-volume
+          configMap:
+            name: {{ include "adm-agent.fullname" . }}-configmap
+      
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+#<<<admagent-sharding-dep.yaml

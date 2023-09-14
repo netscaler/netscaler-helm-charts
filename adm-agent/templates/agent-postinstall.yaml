@@ -1,0 +1,59 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: agent-postinstall
+  labels:
+    job-name: agent-postinstall
+  annotations:
+    "helm.sh/hook": post-install
+    "helm.sh/hook-delete-policy": "hook-succeeded,hook-failed"
+spec:
+  backoffLimit: 4
+  template:
+    metadata:
+      labels:
+        job-name: agent-postinstall
+    spec:
+      restartPolicy: Never
+      serviceAccountName: adm-agent-serviceaccount
+      containers:
+      - name: agent-postinstall
+        image: "{{ tpl .Values.image . }}"
+        imagePullPolicy: {{ .Values.pullPolicy }}
+        securityContext:
+          privileged: true
+        env:
+        - name: DEPL
+          value: "service"
+        - name: ORCH
+          value: "Kubernetes"
+        - name: CONTROLLER
+          value: "operator"
+        - name: CONTAINER_AGENT_MODE
+          value: "adm-agent-postinstall"
+        - name: INSTALL_JOB
+          value: "yes"
+        - name: IP
+          value: {{ include "adm-agent.fullname" . }}
+        - name: APP_ID
+          value: {{ include "adm-agent.fullname" . }}
+        - name: API_ID
+          valueFrom:
+            secretKeyRef:
+              name: {{ required "Valid accessSecret is required!" .Values.accessSecret }}
+              key: accessid
+
+        - name: API_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: {{ required "Valid accessSecret is required!" .Values.accessSecret }}
+              key: accesssecret
+        
+        - name: "ADM_AGENT_PASSWORD"
+          valueFrom:
+            secretKeyRef:
+              name: "{{ required "Valid loginSecret is required!" .Values.loginSecret }}"
+              key: password
+        
+        - name: ADM_URL
+          value: "{{ .Values.admURL }}"
