@@ -1,0 +1,13 @@
+apiVersion: v2
+appVersion: 141.10.28
+description: A Helm chart for NetScaler ADM Agent
+home: https://adm.cloud.com
+kubeVersion: '>=v1.16.0-0'
+maintainers:
+- email: pavan.belani@cloud.com
+  name: pavan
+- email: swapnil.khanderaokakade@cloud.com
+  name: swapnil
+name: adm-agent
+type: application
+version: 141.10.28
