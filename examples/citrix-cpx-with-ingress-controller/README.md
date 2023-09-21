@@ -33,7 +33,7 @@ This Chart deploys Citrix ADC CPX with inbuilt Ingress Controller in the [Kubern
 ## Installing the Chart
 
 ### For Kubernetes:
-To install the chart with the release name ``` my-release```:
+To install the chart with the release name ```cpx```:
 
 ```helm install cpx citrix-cpx-with-ingress-controller --set license.accept=yes,serviceType.nodePort.enabled=true,ingressClass[0]=<ingressClassName>```
 
@@ -78,20 +78,101 @@ To set requests and limits for the CIC container, use the variables `cic.resourc
 Similarly, to set requests and limits for the CPX container, use the variable `resources.requests` and `resources.limits` respectively.
 
 Below is an example of the helm command that configures
-```
+
 A) For CIC container:
+
   CPU request for 500milli CPUs
+
   CPU limit at 1000m
+
   Memory request for 512M
+  
   Memory limit at 1000M
+
 B) For CPX container:
+  
   CPU request for 250milli CPUs
+  
   CPU limit at 500m
+  
   Memory request for 256M
+
   Memory limit at 512M
+
 ```
+helm install cpx citrix-cpx-with-ingress-controller --set license.accept=yes --set cic.resources.requests.cpu=500m,cic.resources.requests.memory=512Mi --set cic.resources.limits.cpu=1000m,cic.resources.limits.memory=1000Mi --set resources.limits.cpu=500m,resources.limits.memory=512Mi --set resources.requests.cpu=250m,resources.requests.memory=256Mi
 ```
-helm install cpx citrix/citrix-cpx-with-ingress-controller --set license.accept=yes --set cic.resources.requests.cpu=500m,cic.resources.requests.memory=512Mi --set cic.resources.limits.cpu=1000m,cic.resources.limits.memory=1000Mi --set resources.limits.cpu=500m,resources.limits.memory=512Mi --set resources.requests.cpu=250m,resources.requests.memory=256Mi
+
+### Analytics Configuration
+#### Analytics Configuration required for ADM
+
+If NetScaler CPX needs to send data to the ADM for analytics purpose, then the below steps can be followed to install NetScaler CPX with ingress controller. CIC configures the NetScaler CPX with the configuration required for analytics.
+
+1. Create secret using ADM Agent credentials, which will be used by NetScaler CPX to communicate with ADM Agent:
+
+```
+kubectl create secret generic admlogin --from-literal=username=<adm-agent-username> --from-literal=password=<adm-agent-password>
+```
+
+|Note: If you have installed container based `adm-agent` using [this](https://github.com/citrix/citrix-helm-charts/tree/master/adm-agent) helm chart, above step is not required, you just need to tag the namespace where the CPX is being deployed with `citrix-cpx=enabled`.
+
+2. Deploy NetScaler CPX with CIC using helm command:
+
+```
+helm install cpx citrix-cpx-with-ingress-controller--set license.accept=yes,analyticsConfig.required=true,analyticsConfig.distributedTracing.enable=true,analyticsConfig.endpoint.service=<Namespace/ADM_ServiceName-logstream>,ADMSettings.ADMIP=<ADM-Agent-IP_OR_FQDN>,ADMSettings.loginSecret=<Secret-for-ADM-Agent-credentials>,analyticsConfig.transactions.enable=true,analyticsConfig.transactions.port=5557
+```
+|Note: For container based ADM agent, please provide the logstream service FQDN in `analyticsConfig.endpoint.service`. The `logstream` service will be running on port `5557`.
+
+#### Analytics Configuration required for COE
+
+If NetScaler CPX needs to send data to the COE for observability, then the below steps can be followed to install NetScaler CPX with ingress controller. CIC configures NetScaler CPX with the configuration required.
+
+Deploy NetScaler CPX with CIC using helm command:
+
+```
+helm install cpx citrix-cpx-with-ingress-controller --set license.accept=yes,analyticsConfig.required=true,analyticsConfig.timeseries.metrics.enable=true,analyticsConfig.timeseries.metrics.port=5563,analyticsConfig.timeseries.metrics.mode=prometheus,analyticsConfig.transactions.enable=true,analyticsConfig.transactions.port=5557,analyticsConfig.distributedTracing.enable=true,analyticsConfig.endpoint.server=<COE_SERVICE_IP>,analyticsConfig.endpoint.service=<Namespace/COE_SERVICE_NAME>
+```
+
+### NetScaler CPX License Provisioning
+#### Bandwidth based licensing
+
+By default, CPX runs with 20 Mbps bandwidth called as [CPX Express](https://www.citrix.com/en-in/products/citrix-adc/cpx-express.html). However, for better performance and production deployments, customer needs licensed CPX instances. [NetScaler ADM](https://www.citrix.com/en-in/products/citrix-application-delivery-management/) is used to check out licenses for NetScaler CPX. For more detail on CPX licensing please refer [this](https://docs.netscaler.com/en-us/citrix-adc-cpx/current-release/cpx-licensing.html).
+
+For provisioning licensing on NetScaler CPX, it is mandatory to provide License Server information to CPX. This can be done by setting **ADMSettings.licenseServerIP** as License Server IP. In addition to this, **ADMSettings.bandWidthLicense** needs to be set true and desired bandwidth capacity in Mbps should be set **ADMSettings.bandWidth**.
+For example, to set 2Gbps as bandwidth capacity, below command can be used.
+
+ ```
+helm install cpx citrix-cpx-with-ingress-controller--set license.accept=yes --set ADMSettings.licenseServerIP=<LICENSESERVER_IP_OR_FQDN>,ADMSettings.bandWidthLicense=True --set ADMSettings.bandWidth=2000,ADMSettings.licenseEdition="ENTERPRISE"
+```
+
+#### vCPU based licensing
+
+For vCPU based licensing on NetScaler CPX, set `ADMSettings.vCPULicense` as True and `ADMSettings.cpxCores` with the number of cores that can be allocated for the CPX.
+
+```
+helm install cpx citrix-cpx-with-ingress-controller --set license.accept=yes --set ADMSettings.licenseServerIP=<LICENSESERVER_IP_OR_FQDN>,ADMSettings.vCPULicense=True --set ADMSettings.cpxCores=4,ADMSettings.licenseEdition="ENTERPRISE"
+```
+
+### Bootup Configuration for NetScaler CPX
+To add bootup config on NetScaler CPX, add commands below `cpxCommands` and `cpxShellCommands` in the values.yaml file. The commands will be executed in order.
+
+For e.g. to add `X-FORWARDED-PROTO` header in all request packets processed by the CPX, add below commands under `cpxCommands` in the `values.yaml` file.
+
+```
+cpxCommands: |
+  add rewrite action rw_act_x_forwarded_proto insert_http_header X-Forwarded-Proto "\"https\""
+  add rewrite policy rw_pol_x_forwarded_proto CLIENT.SSL.IS_SSL rw_act_x_forwarded_proto
+  bind rewrite global rw_pol_x_forwarded_proto 10 -type REQ_OVERRIDE
+```
+
+Commands that needs to be executed in shell of CPX should be kept under `cpxShellCommands` in the `values.yaml` file.
+
+```
+cpxShellCommands: |
+  touch /etc/a.txt
+  echo "this is a" > /etc/a.txt
+  echo "this is the file" >> /etc/a.txt
+  ls >> /etc/a.txt
 ```
 
 ## Uninstalling the Chart
