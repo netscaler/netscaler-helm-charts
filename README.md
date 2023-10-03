@@ -1,5 +1,2 @@
-This is a chart repository for [helm](https://helm.sh) charts of Citrix Ingress Controller and Citrix Istio Adaptor.
-
-* For deploying Citrix Ingress Controller on [Kubernetes](https://kubernetes.io/) or [OpenShift](https://www.openshift.com) cluster using helm charts please follow [this](https://github.com/citrix/citrix-k8s-ingress-controller/tree/master/charts).
-* To deploy Citrix ADC as an Ingress/Egress Gateway and/or Sidecar Proxy in [Istio](https://istio.io) Service Mesh please follow [this](https://github.com/citrix/citrix-istio-adaptor/tree/master/charts).
+This repository contains the Helm charts of [NetScaler Ingress Controller](https://github.com/netscaler/netscaler-k8s-ingress-controller), [NetScaler xDS Adaptor](https://github.com/netscaler/netscaler-xds-adaptor), [NetScaler Observability Exporter](https://github.com/netscaler/netscaler-observability-exporter), [NetScaler Node Controller](https://github.com/netscaler/netscaler-k8s-node-controller), [NetScaler IPAM Controller](https://github.com/netscaler/netscaler-helm-charts/tree/master/netscaler-ipam-controller) and [NetScaler GSLB Controller](https://github.com/netscaler/netscaler-helm-charts/tree/master/netscaler-gslb-controller) that are created and tested by NetScaler.
 
