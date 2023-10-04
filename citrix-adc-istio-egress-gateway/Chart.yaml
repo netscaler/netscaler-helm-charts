@@ -2,12 +2,12 @@ apiVersion: v2
 name: citrix-adc-istio-egress-gateway
 appVersion: 1.14.0
 kubeVersion: ">=v1.16.0-0"
-description: A Helm chart for Citrix ADC as Egress Gateway installation in Istio Service Mesh on Kubernetes platform
-icon: https://raw.githubusercontent.com/citrix/citrix-helm-charts/gh-pages/icon.png
+description: A Helm chart for NetScaler as Egress Gateway installation in Istio Service Mesh on Kubernetes platform
+icon: https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/gh-pages/netscaler.png
 type: application
 home: https://www.cloud.com
 sources:
-- https://github.com/citrix/citrix-xds-adaptor
+- https://github.com/netscaler/netscaler-xds-adaptor
 version: 1.14.0
 maintainers:
 - name: subashd
