@@ -1,0 +1,23 @@
+apiVersion: citrix.com/v1
+kind: wildcarddnsentry
+metadata:
+  name: wildcarddns
+spec:
+  zone:
+    domain: configexample
+  dnsaddrec:
+    domain-ip: 1.1.1.1
+    ttl: 3600
+  dnsaaaarec:
+    domain-ip: '2001::.1'
+    ttl: 3600
+  soarec:
+    origin-server: n2.configexample.com
+    contact: admin.configexample.com
+    serial: 100
+    refresh: 3600
+    retry: 3
+    expire: 3600
+  nsrec:
+    nameserver: n1.configexample.com
+    ttl: 3600

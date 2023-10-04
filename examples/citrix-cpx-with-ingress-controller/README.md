@@ -1,34 +1,34 @@
-# Citrix ADC CPX with inbuilt Ingress Controller
+# NetScaler CPX with inbuilt Ingress Controller
 
-[Citrix](https://www.citrix.com) ADC CPX with the Citrix Ingress Controller running in side-car mode will configure the CPX that runs as pod in a [Kubernetes](https://kubernetes.io) Cluster or in an [Openshift](https://www.openshift.com) cluster and does N-S load balancing of Guestbook app.
+[NetScaler](https://www.citrix.com) NetScaler CPX with the NetScaler Ingress Controller running in side-car mode will configure the CPX that runs as pod in a [Kubernetes](https://kubernetes.io) Cluster or in an [Openshift](https://www.openshift.com) cluster and does N-S load balancing of Guestbook app.
 
 
 ## TL;DR;
 
 ### For Kubernetes
 ```
-   git clone https://github.com/citrix/citrix-helm-charts.git
+   git clone https://github.com/netscaler/netscaler-helm-charts.git
    cd citrix-helm-charts/examples/
    helm install cpx citrix-cpx-with-ingress-controller --set license.accept=yes,serviceType.nodePort.enabled=true
 ```
 ### For OpenShift
 ```
-   git clone https://github.com/citrix/citrix-helm-charts.git
+   git clone https://github.com/netscaler/netscaler-helm-charts.git
    cd citrix-helm-charts/examples/
    helm install cpx citrix-cpx-with-ingress-controller --set license.accept=yes,serviceType.nodePort.enabled=true,openshift=true
 ```
 
-> Note: "license.accept" is a mandatory argument and should be set to "yes" to accept the terms of the Citrix license.
+> Note: "license.accept" is a mandatory argument and should be set to "yes" to accept the terms of the NetScaler license.
 
 ## Introduction
-This Chart deploys Citrix ADC CPX with inbuilt Ingress Controller in the [Kubernetes](https://kubernetes.io) Cluster or in the [Openshift](https://www.openshift.com) cluster using [Helm](https://helm.sh) package manager.
+This Chart deploys NetScaler CPX with inbuilt Ingress Controller in the [Kubernetes](https://kubernetes.io) Cluster or in the [Openshift](https://www.openshift.com) cluster using [Helm](https://helm.sh) package manager.
 
 ### Prerequisites
 
 -  The [Kubernetes](https://kubernetes.io/) version is 1.16 or later if using Kubernetes environment.
 -  The [Openshift](https://www.openshift.com) version 4.8 or later if using OpenShift platform.
--  The [Helm](https://helm.sh/) version 3.x or later. You can follow instruction given [here](https://github.com/citrix/citrix-helm-charts/blob/master/Helm_Installation_version_3.md) to install the same.
--  You have installed [Prometheus Operator](https://github.com/coreos/prometheus-operator), if you want to view the metrics of the Citrix ADC CPX collected by the [metrics exporter](https://github.com/citrix/citrix-k8s-ingress-controller/tree/master/metrics-visualizer#visualization-of-metrics).
+-  The [Helm](https://helm.sh/) version 3.x or later. You can follow instruction given [here](https://github.com/netscaler/netscaler-helm-charts/blob/master/Helm_Installation_version_3.md) to install the same.
+-  You have installed [Prometheus Operator](https://github.com/coreos/prometheus-operator), if you want to view the metrics of the NetScaler CPX collected by the [metrics exporter](https://github.com/netscaler/netscaler-k8s-ingress-controller/tree/master/metrics-visualizer#visualization-of-metrics).
 
 ## Installing the Chart
 
@@ -56,7 +56,7 @@ To run the exporter as sidecar with CPX, please install prometheus operator firs
 
 ```helm install cpx citrix-cpx-with-ingress-controller --set license.accept=yes,serviceType.nodePort.enabled=true,ingressClass=<ingressClassName>,exporter.required=true,openshift=true```
 
-The command deploys Citrix ADC CPX with Citrix Ingress Controller running in side-car mode on the Kubernetes cluster in the default configuration. The configuration section lists the parameters that can be configured during installation.
+The command deploys NetScaler CPX with NetScaler Ingress Controller running in side-car mode on the Kubernetes cluster in the default configuration. The configuration section lists the parameters that can be configured during installation.
 
 ## Tolerations
 
@@ -72,14 +72,14 @@ And if user wants to enable CPX with ingress controller pod to be scheduled on n
 helm install my-release citrix-cpx-with-ingress-controller --set license.accept=yes,tolerations[0].key=key1,tolerations[0].value=value1,tolerations[0].operator=Equal,tolerations[0].effect=NoSchedule
 ```
 ### Resource Quotas
-There are various use-cases when resource quotas are configured on the Kubernetes cluster. If quota is enabled in a namespace for compute resources like cpu and memory, users must specify requests or limits for those values; otherwise, the quota system may reject pod creation. The resource quotas for the CIC and CPX containers can be provided explicitly in the helm chart.
+There are various use-cases when resource quotas are configured on the Kubernetes cluster. If quota is enabled in a namespace for compute resources like cpu and memory, users must specify requests or limits for those values; otherwise, the quota system may reject pod creation. The resource quotas for the NSICC and CPX containers can be provided explicitly in the helm chart.
 
-To set requests and limits for the CIC container, use the variables `cic.resources.requests` and `cic.resources.limits` respectively.
+To set requests and limits for the NSIC container, use the variables `cic.resources.requests` and `cic.resources.limits` respectively.
 Similarly, to set requests and limits for the CPX container, use the variable `resources.requests` and `resources.limits` respectively.
 
 Below is an example of the helm command that configures
 
-A) For CIC container:
+A) For NSIC container:
 
   CPU request for 500milli CPUs
 
@@ -106,7 +106,7 @@ helm install cpx citrix-cpx-with-ingress-controller --set license.accept=yes --s
 ### Analytics Configuration
 #### Analytics Configuration required for ADM
 
-If NetScaler CPX needs to send data to the ADM for analytics purpose, then the below steps can be followed to install NetScaler CPX with ingress controller. CIC configures the NetScaler CPX with the configuration required for analytics.
+If NetScaler CPX needs to send data to the ADM for analytics purpose, then the below steps can be followed to install NetScaler CPX with ingress controller. NSIC configures the NetScaler CPX with the configuration required for analytics.
 
 1. Create secret using ADM Agent credentials, which will be used by NetScaler CPX to communicate with ADM Agent:
 
@@ -114,29 +114,29 @@ If NetScaler CPX needs to send data to the ADM for analytics purpose, then the b
 kubectl create secret generic admlogin --from-literal=username=<adm-agent-username> --from-literal=password=<adm-agent-password>
 ```
 
-|Note: If you have installed container based `adm-agent` using [this](https://github.com/citrix/citrix-helm-charts/tree/master/adm-agent) helm chart, above step is not required, you just need to tag the namespace where the CPX is being deployed with `citrix-cpx=enabled`.
+|Note: If you have installed container based `adm-agent` using [this](https://github.com/netscaler/netscaler-helm-charts/tree/master/adm-agent) helm chart, above step is not required, you just need to tag the namespace where the CPX is being deployed with `citrix-cpx=enabled`.
 
-2. Deploy NetScaler CPX with CIC using helm command:
+2. Deploy NetScaler CPX with NSIC using helm command:
 
 ```
 helm install cpx citrix-cpx-with-ingress-controller--set license.accept=yes,analyticsConfig.required=true,analyticsConfig.distributedTracing.enable=true,analyticsConfig.endpoint.service=<Namespace/ADM_ServiceName-logstream>,ADMSettings.ADMIP=<ADM-Agent-IP_OR_FQDN>,ADMSettings.loginSecret=<Secret-for-ADM-Agent-credentials>,analyticsConfig.transactions.enable=true,analyticsConfig.transactions.port=5557
 ```
 |Note: For container based ADM agent, please provide the logstream service FQDN in `analyticsConfig.endpoint.service`. The `logstream` service will be running on port `5557`.
 
-#### Analytics Configuration required for COE
+#### Analytics Configuration required for NSOE
 
-If NetScaler CPX needs to send data to the COE for observability, then the below steps can be followed to install NetScaler CPX with ingress controller. CIC configures NetScaler CPX with the configuration required.
+If NetScaler CPX needs to send data to the NSOE for observability, then the below steps can be followed to install NetScaler CPX with ingress controller. NSIC configures NetScaler CPX with the configuration required.
 
-Deploy NetScaler CPX with CIC using helm command:
+Deploy NetScaler CPX with NSIC using helm command:
 
 ```
-helm install cpx citrix-cpx-with-ingress-controller --set license.accept=yes,analyticsConfig.required=true,analyticsConfig.timeseries.metrics.enable=true,analyticsConfig.timeseries.metrics.port=5563,analyticsConfig.timeseries.metrics.mode=prometheus,analyticsConfig.transactions.enable=true,analyticsConfig.transactions.port=5557,analyticsConfig.distributedTracing.enable=true,analyticsConfig.endpoint.server=<COE_SERVICE_IP>,analyticsConfig.endpoint.service=<Namespace/COE_SERVICE_NAME>
+helm install cpx citrix-cpx-with-ingress-controller --set license.accept=yes,analyticsConfig.required=true,analyticsConfig.timeseries.metrics.enable=true,analyticsConfig.timeseries.metrics.port=5563,analyticsConfig.timeseries.metrics.mode=prometheus,analyticsConfig.transactions.enable=true,analyticsConfig.transactions.port=5557,analyticsConfig.distributedTracing.enable=true,analyticsConfig.endpoint.server=<NSOE_SERVICE_IP>,analyticsConfig.endpoint.service=<Namespace/NSOE_SERVICE_NAME>
 ```
 
 ### NetScaler CPX License Provisioning
 #### Bandwidth based licensing
 
-By default, CPX runs with 20 Mbps bandwidth called as [CPX Express](https://www.citrix.com/en-in/products/citrix-adc/cpx-express.html). However, for better performance and production deployments, customer needs licensed CPX instances. [NetScaler ADM](https://www.citrix.com/en-in/products/citrix-application-delivery-management/) is used to check out licenses for NetScaler CPX. For more detail on CPX licensing please refer [this](https://docs.netscaler.com/en-us/citrix-adc-cpx/current-release/cpx-licensing.html).
+By default, CPX runs with 20 Mbps bandwidth called as [CPX Express](https://www.netscaler.com/platform/cpx-container). However, for better performance and production deployments, customer needs licensed CPX instances. [NetScaler ADM](https://docs.netscaler.com/en-us/citrix-application-delivery-management-service/) is used to check out licenses for NetScaler CPX. For more detail on CPX licensing please refer [this](https://docs.netscaler.com/en-us/citrix-adc-cpx/current-release/cpx-licensing.html).
 
 For provisioning licensing on NetScaler CPX, it is mandatory to provide License Server information to CPX. This can be done by setting **ADMSettings.licenseServerIP** as License Server IP. In addition to this, **ADMSettings.bandWidthLicense** needs to be set true and desired bandwidth capacity in Mbps should be set **ADMSettings.bandWidth**.
 For example, to set 2Gbps as bandwidth capacity, below command can be used.
@@ -183,40 +183,40 @@ helm delete --purge my-release
 The command removes all the Kubernetes components associated with the chart and deletes the release.
 
 ## Configuration
-The following table lists the configurable parameters of the Citrix ADC CPX with Citrix ingress controller as side car chart and their default values.
+The following table lists the configurable parameters of the NetScaler CPX with NetScaler ingress controller as side car chart and their default values.
 
 | Parameters | Mandatory or Optional | Default value | Description |
 | ---------- | --------------------- | ------------- | ----------- |
-| license.accept | Mandatory | no | Set `yes` to accept the Citrix ingress controller end user license agreement. |
-| imageRegistry                   | Mandatory  |  `quay.io`               |  The Citrix ADC CPX image registry             |  
-| imageRepository                 | Mandatory  |  `citrix/citrix-k8s-cpx-ingress`              |   The Citrix ADC CPX image repository             | 
-| imageTag                  | Mandatory  |  `13.1-49.13`               |   The Citrix ADC CPX image tag            | 
-| pullPolicy | Mandatory | IfNotPresent | The Citrix ADC CPX image pull policy. |
-| cic.imageRegistry                   | Mandatory  |  `quay.io`               |  The Citrix ingress controller image registry             |  
-| cic.imageRepository                 | Mandatory  |  `citrix/citrix-k8s-ingress-controller`              |   The Citrix ingress controller image repository             | 
-| cic.imageTag                  | Mandatory  |  `1.35.6`               |   The Citrix ingress controller image tag            | 
-| cic.pullPolicy | Mandatory | IfNotPresent | The Citrix ingress controller image pull policy. |
-| cic.required | Mandatory | true | CIC to be run as sidecar with Citrix ADC CPX |
-| cic.resources | Optional | {} |	CPU/Memory resource requests/limits for Citrix Ingress Controller container |
+| license.accept | Mandatory | no | Set `yes` to accept the NetScaler ingress controller end user license agreement. |
+| imageRegistry                   | Mandatory  |  `quay.io`               |  The NetScaler CPX image registry             |  
+| imageRepository                 | Mandatory  |  `citrix/citrix-k8s-cpx-ingress`              |   The NetScaler CPX image repository             | 
+| imageTag                  | Mandatory  |  `13.1-49.13`               |   The NetScaler CPX image tag            | 
+| pullPolicy | Mandatory | IfNotPresent | The NetScaler CPX image pull policy. |
+| cic.imageRegistry                   | Mandatory  |  `quay.io`               |  The NetScaler ingress controller image registry             |  
+| cic.imageRepository                 | Mandatory  |  `citrix/citrix-k8s-ingress-controller`              |   The NetScaler ingress controller image repository             | 
+| cic.imageTag                  | Mandatory  |  `1.35.6`               |   The NetScaler ingress controller image tag            | 
+| cic.pullPolicy | Mandatory | IfNotPresent | The NetScaler ingress controller image pull policy. |
+| cic.required | Mandatory | true | NSIC to be run as sidecar with NetScaler CPX |
+| cic.resources | Optional | {} |	CPU/Memory resource requests/limits for NetScaler Ingress Controller container |
 | imagePullSecrets | Optional | N/A | Provide list of Kubernetes secrets to be used for pulling the images from a private Docker registry or repository. For more information on how to create this secret please see [Pull an Image from a Private Registry](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/). |
 | nameOverride | Optional | N/A | String to partially override deployment fullname template with a string (will prepend the release name) |
 | fullNameOverride | Optional | N/A | String to fully override deployment fullname template with a string |
-| resources | Optional | {} |	CPU/Memory resource requests/limits for Citrix CPX container |
-| logLevel | Optional | DEBUG | The loglevel to control the logs generated by CIC. The supported loglevels are: CRITICAL, ERROR, WARNING, INFO, DEBUG and TRACE. For more information, see [Logging](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/configure/log-levels.md).|
+| resources | Optional | {} |	CPU/Memory resource requests/limits for NetScaler CPX container |
+| logLevel | Optional | DEBUG | The loglevel to control the logs generated by NSIC. The supported loglevels are: CRITICAL, ERROR, WARNING, INFO, DEBUG and TRACE. For more information, see [Logging](https://github.com/netscaler/netscaler-k8s-ingress-controller/blob/master/docs/configure/log-levels.md).|
 | jsonLog | Optional | false | Set this argument to true if log messages are required in JSON format | 
-| nsConfigDnsRec | Optional | false | To enable/disable DNS address Record addition in ADC through Ingress |
-| nsSvcLbDnsRec | Optional | false | To enable/disable DNS address Record addition in ADC through Type Load Balancer Service |
-| nsDnsNameserver | Optional | N/A | To add DNS Nameservers in ADC |
-| rbacRole  | Optional |  false  |  To deploy CIC with RBAC Role set rbacRole=true; by default CIC gets installed with RBAC ClusterRole(rbacRole=false)) |
-| optimizeEndpointBinding | Optional | false | To enable/disable binding of backend endpoints to servicegroup in a single API-call. Recommended when endpoints(pods) per application are large in number. Applicable only for Citrix ADC Version >=13.0-45.7  |
-| defaultSSLCertSecret | Optional | N/A | Provide Kubernetes secret name that needs to be used as a default non-SNI certificate in Citrix ADC. |
-| nsHTTP2ServerSide | Optional | OFF | Set this argument to `ON` for enabling HTTP2 for Citrix ADC service group configurations. |
+| nsConfigDnsRec | Optional | false | To enable/disable DNS address Record addition in NetScaler through Ingress |
+| nsSvcLbDnsRec | Optional | false | To enable/disable DNS address Record addition in NetScaler through Type Load Balancer Service |
+| nsDnsNameserver | Optional | N/A | To add DNS Nameservers in NetScaler |
+| rbacRole  | Optional |  false  |  To deploy NSIC with RBAC Role set rbacRole=true; by default NSIC gets installed with RBAC ClusterRole(rbacRole=false)) |
+| optimizeEndpointBinding | Optional | false | To enable/disable binding of backend endpoints to servicegroup in a single API-call. Recommended when endpoints(pods) per application are large in number. Applicable only for NetScaler Version >=13.0-45.7  |
+| defaultSSLCertSecret | Optional | N/A | Provide Kubernetes secret name that needs to be used as a default non-SNI certificate in NetScaler. |
+| nsHTTP2ServerSide | Optional | OFF | Set this argument to `ON` for enabling HTTP2 for NetScaler service group configurations. |
 | nsCookieVersion | Optional | 0 | Specify the persistence cookie version (0 or 1). |
-| profileSslFrontend | Optional | N/A | Specify the frontend SSL profile. For Details see [Configuration using FRONTEND_SSL_PROFILE](https://docs.citrix.com/en-us/citrix-k8s-ingress-controller/configure/profiles.html#global-front-end-profile-configuration-using-configmap-variables) |
-| profileTcpFrontend | Optional | N/A | Specify the frontend TCP profile. For Details see [Configuration using FRONTEND_TCP_PROFILE](https://docs.citrix.com/en-us/citrix-k8s-ingress-controller/configure/profiles.html#global-front-end-profile-configuration-using-configmap-variables) |
-| profileHttpFrontend | Optional | N/A | Specify the frontend HTTP profile. For Details see [Configuration using FRONTEND_HTTP_PROFILE](https://docs.citrix.com/en-us/citrix-k8s-ingress-controller/configure/profiles.html#global-front-end-profile-configuration-using-configmap-variables) |
-| logProxy | Optional | N/A | Provide Elasticsearch or Kafka or Zipkin endpoint for Citrix observability exporter. |
-| nsProtocol | Optional | http | Protocol http or https used for the communication between Citrix Ingress Controller and CPX |
+| profileSslFrontend | Optional | N/A | Specify the frontend SSL profile. For Details see [Configuration using FRONTEND_SSL_PROFILE](https://docs.netscaler.com/en-us/citrix-k8s-ingress-controller/configure/profiles.html#global-front-end-profile-configuration-using-configmap-variables) |
+| profileTcpFrontend | Optional | N/A | Specify the frontend TCP profile. For Details see [Configuration using FRONTEND_TCP_PROFILE](https://docs.netscaler.com/en-us/citrix-k8s-ingress-controller/configure/profiles.html#global-front-end-profile-configuration-using-configmap-variables) |
+| profileHttpFrontend | Optional | N/A | Specify the frontend HTTP profile. For Details see [Configuration using FRONTEND_HTTP_PROFILE](https://docs.netscaler.com/en-us/citrix-k8s-ingress-controller/configure/profiles.html#global-front-end-profile-configuration-using-configmap-variables) |
+| logProxy | Optional | N/A | Provide Elasticsearch or Kafka or Zipkin endpoint for NetScaler observability exporter. |
+| nsProtocol | Optional | http | Protocol http or https used for the communication between NetScaler Ingress Controller and CPX |
 | cpxLicenseAggregator | Optional | N/A | IP/FQDN of the CPX License Aggregator if it is being used to license the CPX. |
 | nitroReadTimeout | Optional | 20 | The nitro Read timeout in seconds, defaults to 20 |
 | cpxBgpRouter | Optional | false| If set to true, this CPX is deployed as daemonset in BGP controller mode wherein BGP advertisements are done for attracting external traffic to Kubernetes clusters |
@@ -224,22 +224,22 @@ The following table lists the configurable parameters of the Citrix ADC CPX with
 | nsGateway | Optional | 192.168.1.1 | Gateway used by CPX for internal communication when run in Host mode, i.e when cpxBgpRouter is set to true. If not specified, first IP in the nsIP network is used as gateway. It must be in same network as nsIP |
 | bgpPort | Optional | 179 | BGP port used by CPX for BGP advertisement if cpxBgpRouter is set to true|
 | ingressIP | Optional | N/A | External IP address to be used by ingress resources if not overriden by ingress.com/frontend-ip annotation in Ingress resources. This is also advertised to external routers when pxBgpRouter is set to true|
-| entityPrefix | Optional | k8s | The prefix for the resources on the Citrix ADC CPX. |
-| ingressClass | Optional | Citrix | If multiple ingress load balancers are used to load balance different ingress resources. You can use this parameter to specify Citrix ingress controller to configure Citrix ADC associated with specific ingress class. For more information on Ingress class, see [Ingress class support](https://developer-docs.citrix.com/projects/citrix-k8s-ingress-controller/en/latest/configure/ingress-classes/). For Kubernetes version >= 1.19, this will create an IngressClass object with the name specified here  |
+| entityPrefix | Optional | k8s | The prefix for the resources on the NetScaler CPX. |
+| ingressClass | Optional | NetScaler | If multiple ingress load balancers are used to load balance different ingress resources. You can use this parameter to specify NetScaler ingress controller to configure NetScaler associated with specific ingress class. For more information on Ingress class, see [Ingress class support](https://docs.netscaler.com/en-us/citrix-k8s-ingress-controller/configure/ingress-classes/). For Kubernetes version >= 1.19, this will create an IngressClass object with the name specified here  |
 | setAsDefaultIngressClass | Optional | False | Set the IngressClass object as default. New Ingresses without an "ingressClassName" field specified will be assigned the class specified in ingressClass. Applicable only for kubernetes versions >= 1.19 |
 | updateIngressStatus | Optional | False | Set this argument if you want to update ingress status of the ingress resources exposed via CPX. This is only applicable if servicetype of CPX service is LoadBalancer. |
 | disableAPIServerCertVerify | Optional | False | Set this parameter to True for disabling API Server certificate verification. |
 | openshift | Optional | false | Set this argument if OpenShift environment is being used. |
 | disableOpenshiftRoutes | Optional | false | By default Openshift routes are processed in openshift environment, this variable can be used to disable Ingress controller processing the openshift routes. |
-| crds.retainOnDelete | Optional | false | Set this argument if you want to retain CustomResourceDefinitions even after uninstalling CIC. This will avoid data-loss of Custom Resource Objects created before uninstallation. |
-bels | Optional | N/A | You can use this parameter to provide the route labels selectors to be used by Citrix Ingress Controller for routeSharding in OpenShift cluster. |
-| namespaceLabels | Optional | N/A | You can use this parameter to provide the namespace labels selectors to be used by Citrix Ingress Controller for routeSharding in OpenShift cluster. |
-| sslCertManagedByAWS | Optional | False | Set this argument if SSL certs used is managed by AWS while deploying Citrix ADC CPX in AWS. |
-| nodeSelector.key | Optional | N/A | Node label key to be used for nodeSelector option for CPX-CIC deployment. |
-| nodeSelector.value | Optional | N/A | Node label value to be used for nodeSelector option in CPX-CIC deployment. |
+| crds.retainOnDelete | Optional | false | Set this argument if you want to retain CustomResourceDefinitions even after uninstalling NSIC. This will avoid data-loss of Custom Resource Objects created before uninstallation. |
+bels | Optional | N/A | You can use this parameter to provide the route labels selectors to be used by NetScaler Ingress Controller for routeSharding in OpenShift cluster. |
+| namespaceLabels | Optional | N/A | You can use this parameter to provide the namespace labels selectors to be used by NetScaler Ingress Controller for routeSharding in OpenShift cluster. |
+| sslCertManagedByAWS | Optional | False | Set this argument if SSL certs used is managed by AWS while deploying NetScaler CPX in AWS. |
+| nodeSelector.key | Optional | N/A | Node label key to be used for nodeSelector option for CPX-NSIC deployment. |
+| nodeSelector.value | Optional | N/A | Node label value to be used for nodeSelector option in CPX-NSIC deployment. |
 | podAnnotations | Optional | N/A | Map of annotations to add to the pods. |
 | affinity | Optional | N/A | Affinity labels for pod assignment. |
-| tolerations | Optional | N/A | Specify the tolerations for the CPX-CIC deployment. |
+| tolerations | Optional | N/A | Specify the tolerations for the CPX-NSIC deployment. |
 | serviceType.loadBalancer.enabled | Optional | False | Set this argument if you want servicetype of CPX service to be LoadBalancer. |
 | serviceType.nodePort.enabled | Optional | False | Set this argument if you want servicetype of CPX service to be NodePort. |
 | serviceType.nodePort.httpPort | Optional | N/A | Specify the HTTP nodeport to be used for NodePort CPX service. |
@@ -247,38 +247,38 @@ bels | Optional | N/A | You can use this parameter to provide the route labels s
 | serviceAnnotations | Optional | N/A | Dictionary of annotations to be used in CPX service. Key in this dictionary is the name of the annotation and Value is the required value of that annotation. |
 | serviceSpec.loadBalancerSourceRanges | Optional | N/A | Provide the list of IP Address or range which should be allowed to access the Network Load Balancer. For details, see [Network Load Balancer support on AWS](https://kubernetes.io/docs/concepts/services-networking/service/#aws-nlb-support). |
 | servicePorts | Optional | N/A | List of port. Each element in this list is a dictionary that contains information about the port. |
-| ADMSettings.licenseServerIP | Optional | N/A | Provide the Citrix Application Delivery Management (ADM) IP address to license Citrix ADC CPX. For more information, see [Licensing](https://developer-docs.citrix.com/projects/citrix-k8s-ingress-controller/en/latest/licensing/). |
-| ADMSettings.licenseServerPort | Optional | 27000 | Citrix ADM port if non-default port is used. |
-| ADMSettings.ADMIP | Optional | N/A |  Citrix Application Delivery Management (ADM) IP address. |
+| ADMSettings.licenseServerIP | Optional | N/A | Provide the NetScaler Application Delivery Management (ADM) IP address to license NetScaler CPX. For more information, see [Licensing]( https://docs.netscaler.com/en-us/citrix-k8s-ingress-controller/licensing/). |
+| ADMSettings.licenseServerPort | Optional | 27000 | NetScaler ADM port if non-default port is used. |
+| ADMSettings.ADMIP | Optional | N/A |  NetScaler Application Delivery Management (ADM) IP address. |
 | ADMSettings.loginSecret | Optional | N/A | The secret key to login to the ADM. For information on how to create the secret keys, see [Prerequisites](#prerequistes). |
-| ADMSettings.bandWidthLicense | Optional | False | Set to true if you want to use bandwidth based licensing for Citrix ADC CPX. |
-| ADMSettings.bandWidth | Optional | 1000 | Desired bandwidth capacity to be set for Citrix ADC CPX in Mbps. |
-| ADMSettings.vCPULicense | Optional | N/A | Set to true if you want to use vCPU based licensing for Citrix ADC CPX. |
-| ADMSettings.cpxCores | Optional | 1 | Desired number of vCPU to be set for Citrix ADC CPX. |
+| ADMSettings.bandWidthLicense | Optional | False | Set to true if you want to use bandwidth based licensing for NetScaler CPX. |
+| ADMSettings.bandWidth | Optional | 1000 | Desired bandwidth capacity to be set for NetScaler CPX in Mbps. |
+| ADMSettings.vCPULicense | Optional | N/A | Set to true if you want to use vCPU based licensing for NetScaler CPX. |
+| ADMSettings.cpxCores | Optional | 1 | Desired number of vCPU to be set for NetScaler CPX. |
 | ADMSettings.licenseEdition| Optional | PLATINUM | License edition that can be Standard, Platinum and Enterprise . By default, Platinum is selected.|
-| exporter.required | Optional | false | Use the argument if you want to run the [Exporter for Citrix ADC Stats](https://github.com/citrix/citrix-adc-metrics-exporter) along with Citrix ingress controller to pull metrics for the Citrix ADC CPX|
-| exporter.imageRegistry                   | Optional  |  `quay.io`               |  The Exporter for Citrix ADC Stats image registry             |  
-| exporter.imageRepository                 | Optional  |  `citrix/citrix-adc-metrics-exporter`              |   The Exporter for Citrix ADC Stats image repository             | 
-| exporter.imageTag                  | Optional  |  `1.4.9`               |  The Exporter for Citrix ADC Stats image tag            | 
-| exporter.pullPolicy | Optional | IfNotPresent | The Exporter for Citrix ADC Stats image pull policy. |
-| exporter.ports.containerPort | Optional | 8888 | The Exporter for Citrix ADC Stats container port. |
-| analyticsConfig.required | Mandatory | false | Set this to true if you want to configure Citrix ADC to send metrics and transaction records to analytics service. |
-| exporter.serviceMonitorExtraLabels | Optional |  | Extra labels for service monitor whem Citrix-adc-metrics-exporter is enabled. |
-| analyticsConfig.distributedTracing.enable | Optional | false | Set this value to true to enable OpenTracing in Citrix ADC. |
+| exporter.required | Optional | false | Use the argument if you want to run the [Exporter for NetScaler Stats](https://github.com/netscaler/netscaler-adc-metrics-exporterporter) along with NetScaler ingress controller to pull metrics for the NetScaler CPX|
+| exporter.imageRegistry                   | Optional  |  `quay.io`               |  The Exporter for NetScaler Stats image registry             |  
+| exporter.imageRepository                 | Optional  |  `citrix/citrix-adc-metrics-exporter`              |   The Exporter for NetScaler Stats image repository             | 
+| exporter.imageTag                  | Optional  |  `1.4.9`               |  The Exporter for NetScaler Stats image tag            | 
+| exporter.pullPolicy | Optional | IfNotPresent | The Exporter for NetScaler Stats image pull policy. |
+| exporter.ports.containerPort | Optional | 8888 | The Exporter for NetScaler Stats container port. |
+| analyticsConfig.required | Mandatory | false | Set this to true if you want to configure NetScaler to send metrics and transaction records to analytics service. |
+| exporter.serviceMonitorExtraLabels | Optional |  | Extra labels for service monitor whem NetScaler-adc-metrics-exporter is enabled. |
+| analyticsConfig.distributedTracing.enable | Optional | false | Set this value to true to enable OpenTracing in NetScaler. |
 | analyticsConfig.distributedTracing.samplingrate | Optional | 100 | Specifies the OpenTracing sampling rate in percentage. |
 | analyticsConfig.endpoint.server | Optional | N/A | Set this value as the IP address or DNS address of the  analytics server. |
 | analyticsConfig.endpoint.service | Optional | N/A | Set this value as the IP address or service name with namespace of the analytics service deployed in Kubernetes. Format: namespace/servicename|
 | analyticsConfig.timeseries.port | Optional | 5563 | Specify the port used to expose analytics service for timeseries endpoint. |
-| analyticsConfig.timeseries.metrics.enable | Optional | Set this value to true to enable sending metrics from Citrix ADC. |
+| analyticsConfig.timeseries.metrics.enable | Optional | Set this value to true to enable sending metrics from NetScaler. |
 | analyticsConfig.timeseries.metrics.mode | Optional | avro |  Specifies the mode of metric endpoint. |
-| analyticsConfig.timeseries.auditlogs.enable | Optional | false | Set this value to true to export audit log data from Citrix ADC. |
-| analyticsConfig.timeseries.events.enable | Optional | false | Set this value to true to export events from the Citrix ADC. |
-| analyticsConfig.transactions.enable | Optional | false | Set this value to true to export transactions from Citrix ADC. |
+| analyticsConfig.timeseries.auditlogs.enable | Optional | false | Set this value to true to export audit log data from NetScaler. |
+| analyticsConfig.timeseries.events.enable | Optional | false | Set this value to true to export events from the NetScaler. |
+| analyticsConfig.transactions.enable | Optional | false | Set this value to true to export transactions from NetScaler. |
 | analyticsConfig.transactions.port | Optional | 5557 | Specify the port used to expose analytics service for transaction endpoint. |
-| crds.install | Optional | False | Unset this argument if you don't want to install CustomResourceDefinitions which are consumed by CIC. |
-| crds.retainOnDelete | Optional | false | Set this argument if you want to retain CustomResourceDefinitions even after uninstalling CIC. This will avoid data-loss of Custom Resource Objects created before uninstallation. |
+| crds.install | Optional | False | Unset this argument if you don't want to install CustomResourceDefinitions which are consumed by NSIC. |
+| crds.retainOnDelete | Optional | false | Set this argument if you want to retain CustomResourceDefinitions even after uninstalling NSIC. This will avoid data-loss of Custom Resource Objects created before uninstallation. |
 | bgpSettings.required | Optional | false | Set this argument if you want to enable BGP configurations for exposing service of Type Loadbalancer through BGP fabric|
-| bgpSettings.bgpConfig | Optional| N/A| This represents BGP configurations in YAML format. For the description about individual fields, please refer the [documentation](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/network/cpx-bgp-router.md) |
+| bgpSettings.bgpConfig | Optional| N/A| This represents BGP configurations in YAML format. For the description about individual fields, please refer the [documentation](https://github.com/netscaler/netscaler-k8s-ingress-controller/blob/master/docs/network/bgp-enhancement.md) |
 | nsLbHashAlgo.required | Optional | false | Set this value to set the LB consistent hashing Algorithm |
 | nsLbHashAlgo.hashFingers | Optional | 256 | Specifies the number of fingers to be used for hashing algorithm. Possible values are from 1 to 1024, Default value is 256 |
 | nsLbHashAlgo.hashAlgorithm | Optional | 'default' | Specifies the supported algorithm. Supported algorithms are "default", "jarh", "prac", Default value is 'default' |
@@ -287,16 +287,16 @@ bels | Optional | N/A | You can use this parameter to provide the route labels s
 
 > **Tip:**
 >
-> The [values.yaml](https://github.com/citrix/citrix-helm-charts/blob/master/examples/citrix-cpx-with-ingress-controller/values.yaml) contains the default values of the parameters.
+> The [values.yaml](https://github.com/netscaler/netscaler-helm-charts/blob/master/examples/citrix-cpx-with-ingress-controller/values.yaml) contains the default values of the parameters.
 
 ## RBAC
 By default the chart will install the recommended [RBAC](https://kubernetes.io/docs/admin/authorization/rbac/) roles and rolebindings.
 
 ## Exporter
-[Exporter](https://github.com/citrix/citrix-adc-metrics-exporter) is running as sidecar with the CPX and pulling metrics from the CPX. It exposes the metrics using Kubernetes NodePort.
+[Exporter](https://github.com/netscaler/netscaler-adc-metrics-exporterporter) is running as sidecar with the CPX and pulling metrics from the CPX. It exposes the metrics using Kubernetes NodePort.
 
 ## Ingress Class
-To know more about Ingress Class refer [this](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/configure/ingress-classes.md).
+To know more about Ingress Class refer [this](https://github.com/netscaler/netscaler-k8s-ingress-controller/blob/master/docs/configure/ingress-classes.md).
 
-## For More Info: https://github.com/citrix/citrix-k8s-ingress-controller
+## For More Info: https://github.com/netscaler/netscaler-k8s-ingress-controller
 

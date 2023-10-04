@@ -81,7 +81,7 @@ spec:
         - name: "APPLICATION_NAME"
           value: {{ include "cpx-license-aggregator.fullname" . }}
         - name: "USERNAME"
-          value: {{ required "Please provide the username/clustername that can uniquely identify this license aggregator service with the Citrix ADM License server" .Values.licenseAggregator.username | quote }}
+          value: {{ required "Please provide the username/clustername that can uniquely identify this license aggregator service with the NetScaler ADM License server" .Values.licenseAggregator.username | quote }}
         - name: "POD_NAMESPACE"
           valueFrom:
             fieldRef:

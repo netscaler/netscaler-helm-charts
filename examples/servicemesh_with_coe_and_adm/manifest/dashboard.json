@@ -79,7 +79,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Ingress Gateway Citrix ADC Hits",
+      "title": "Ingress Gateway NetScaler Hits",
       "tooltip": {
         "shared": false,
         "sort": 0,
@@ -229,7 +229,7 @@
       "id": 14,
       "panels": [],
       "repeat": null,
-      "title": "Citrix ADC Health",
+      "title": "NetScaler Health",
       "type": "row"
     },
     {
@@ -286,7 +286,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "ADC CPU use",
+      "title": "NetScaler CPU use",
       "type": "gauge"
     },
     {
@@ -364,7 +364,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "ADC Memory Stats",
+      "title": "NetScaler Memory Stats",
       "transformations": [],
       "type": "stat"
     },
@@ -1266,7 +1266,7 @@
       },
       "id": 16,
       "panels": [],
-      "title": "Citrix Observability Exporter",
+      "title": "NetScaler Observability Exporter",
       "type": "row"
     },
     {
@@ -1328,7 +1328,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "HTTP Request Processed on COE",
+      "title": "HTTP Request Processed on NSOE",
       "type": "stat"
     },
     {
@@ -1492,7 +1492,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "COE errors",
+      "title": "NSOE errors",
       "transformations": [],
       "type": "bargauge"
     },
@@ -3414,7 +3414,7 @@
         "definition": "label_values(cpu_use{Schema=\"netscaler\"},sysId)",
         "hide": 0,
         "includeAll": false,
-        "label": "ADC: ",
+        "label": "NetScaler: ",
         "multi": false,
         "name": "adc_ip",
         "options": [],
@@ -3440,7 +3440,7 @@
         "definition": "label_values(lstreamcpp_counters_lstrmcppd_cur_clients,instance)",
         "hide": 0,
         "includeAll": false,
-        "label": "COE Instance",
+        "label": "NSOE Instance",
         "multi": false,
         "name": "instance",
         "options": [],
@@ -3609,7 +3609,7 @@
     ]
   },
   "timezone": "browser",
-  "title": "ADC Dashboard",
+  "title": "NetScaler Dashboard",
   "uid": "8VkPoGiMz",
   "version": 9
 }

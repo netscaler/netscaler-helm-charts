@@ -1,0 +1,12 @@
+apiVersion: v2
+appVersion: "2.2.11"
+description: A Helm chart for NetScaler k8s node controller
+home: https://www.cloud.com
+icon: https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/gh-pages/netscaler.png 
+maintainers:
+- email: apoorva.kamath@cloud.com
+  name: apoorva-05
+name: netscaler-node-controller
+sources:
+- https://github.com/netscaler/netscaler-k8s-node-controller
+version: 2.2.11

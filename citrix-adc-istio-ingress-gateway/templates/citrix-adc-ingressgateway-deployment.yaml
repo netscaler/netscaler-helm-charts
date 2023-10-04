@@ -297,7 +297,7 @@ spec:
 {{- end }}
           - name: "LOGSTREAM_COLLECTOR_IP"
             value: {{ .Values.ADMSettings.ADMIP | default "" | quote }} 
-#Need to set env var BANDWIDTH in order to provide Bandwidth license to Citrix ADC CPX from ADM or CPX License Aggregator
+#Need to set env var BANDWIDTH in order to provide Bandwidth license to NetScaler CPX from ADM or CPX License Aggregator
 {{- if and ( or ( .Values.ADMSettings.licenseServerIP ) ( .Values.ingressGateway.cpxLicenseAggregator ) ) ( eq .Values.ADMSettings.bandWidthLicense true ) }}
           - name: "BANDWIDTH"
             value: {{ .Values.ADMSettings.bandWidth | quote }}
@@ -455,15 +455,15 @@ spec:
 {{- end }}
         - -ads-secure-connect={{ .Values.xDSAdaptor.secureConnect }}
         - -citrix-adc
-        - {{ required "Mention Citrix ADC IP/URL in https://<ip>[:port] format" .Values.ingressGateway.netscalerUrl }}
+        - {{ required "Mention NetScaler IP/URL in https://<ip>[:port] format" .Values.ingressGateway.netscalerUrl }}
         - -citrix-adc-vip
-        - {{ required "Mention Vserver IP to be configured on Citrix ADC" .Values.ingressGateway.vserverIP }}
+        - {{ required "Mention Vserver IP to be configured on NetScaler" .Values.ingressGateway.vserverIP }}
         - -citrix-adc-user
         - "/etc/nslogin/username"
         - -citrix-adc-password
         - "/etc/nslogin/password"
         # If using VPX/MPX as Ingress gateway, then specify the network profile name 
-        # which was provided to Citrix Node Controller (CNC)
+        # which was provided to NetScaler Node Controller (NSNC)
 {{- if .Values.ingressGateway.netProfile }}
         - -citrix-adc-net-profile
         - {{ .Values.ingressGateway.netProfile }}

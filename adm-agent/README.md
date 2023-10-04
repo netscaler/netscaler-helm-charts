@@ -24,7 +24,7 @@ For Access ID and secret see [this](#generatetoken).
 
 	kubectl create secret generic admlogin --from-literal=username=nsroot --from-literal=password=<adm-agent-password> -n <namespace>
 	
-	helm repo add netscaler https://citrix.github.io/citrix-helm-charts
+	helm repo add netscaler https://netscaler.github.io/netscaler-helm-charts
 	helm install agent netscaler/adm-agent --namespace <namespace>
 	
 **Note:** If you are deploying Netscaler CPX and ADM agent in different namespaces, please label namespace with `citrix-cpx=enabled` in which Netscaler CPX has been deployed and agent will take care of creating admlogin secret in other namespaces. For more information, see [Create Secret automatically](#automatic-secret). 
@@ -40,7 +40,7 @@ NetScaler provides a container based ADM agent to connect NetScaler CPX with ADM
 
 - Ensure that you installed Kubernetes version 1.16 or later. For more information about Kubernetes installation, see [Kubernetes](https://kubernetes.io/).
 
-- Ensure that you have installed Helm version 3.x. For information about Helm chart installation, see [Helm](https://github.com/citrix/citrix-helm-charts/blob/master/Helm_Installation_version_3.md).
+- Ensure that you have installed Helm version 3.x. For information about Helm chart installation, see [Helm](https://github.com/netscaler/netscaler-helm-charts/blob/master/Helm_Installation_version_3.md).
 
 - Ensure that the ports described in the [Ports](https://docs.citrix.com/en-us/citrix-application-delivery-management-service/system-requirements.html#ports) document are open.
 
@@ -71,7 +71,7 @@ Perform the following steps to get access ID and secret for accessing ADM:
 
 Before deploying the ADM agent, you must create a Kubernetes Secret containing the access ID and Secret to access ADM. For information about getting the access ID and secret for accessing  ADM, see [Access ID and Secret to access ADM](#generatetoken). After the Secret has been created, use the following commands to deploy ADM Agent:
 
-	helm repo add netscaler https://citrix.github.io/citrix-helm-charts
+	helm repo add netscaler https://netscaler.github.io/netscaler-helm-charts
 
 	helm install agent netscaler/adm-agent --namespace <namespace>  
 

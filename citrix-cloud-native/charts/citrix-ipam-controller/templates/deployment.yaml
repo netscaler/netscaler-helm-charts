@@ -23,6 +23,6 @@ spec:
         env:
         # This IPAM controller takes environment variable VIP_RANGE. IPs in this range are used to assign values for IP range
         - name: "VIP_RANGE"
-          value: {{ required "Provide IPs or IP range for Citrix IPAM Controller" .Values.vipRange | squote }}
+          value: {{ required "Provide IPs or IP range for NetScaler IPAM Controller" .Values.vipRange | squote }}
         # The IPAM controller can also be configured with name spaces for which it would work through the environment variable
         # VIP_NAMESPACES, This expects a set of namespaces passed as space separated string

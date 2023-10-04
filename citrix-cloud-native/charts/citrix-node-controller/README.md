@@ -1,35 +1,35 @@
-# Citrix Node Controller
+# NetScaler Node Controller
 
-In Kubernetes environments, sometimes the services are exposed for external access through an ingress device. To route the traffic into the cluster from outside via ingress device, proper routes should be configured between Kubernetes cluster and ingress device. [Citrix](https://www.citrix.com/en-in/) provides a Controller for Citrix ADC MPX (hardware) and Citrix ADC VPX (virtualized) to creates network between the Kubernetes cluster and Citirx ADC VPX/MPX device when they are deployed as an ingress device for a Kubernetes cluster.
+In Kubernetes environments, sometimes the services are exposed for external access through an ingress device. To route the traffic into the cluster from outside via ingress device, proper routes should be configured between Kubernetes cluster and ingress device. [NetScaler](https://www.netscaler.com/) provides a Controller for NetScaler MPX (hardware) and NetScaler VPX (virtualized) to creates network between the Kubernetes cluster and Citirx NetScaler VPX/MPX device when they are deployed as an ingress device for a Kubernetes cluster.
 
 ## TL;DR;
 
 ```
-   helm repo add citrix https://citrix.github.io/citrix-helm-charts/
+   helm repo add netscaler https://netscaler.github.io/netscaler-helm-charts/
 
-   helm install cnc citrix/citrix-cloud-native --set cnc.enabled=true,cnc.license.accept=yes,cnc.nsIP=<NSIP>,cnc.vtepIP=<Citrix ADC SNIP>,cnc.vxlan.id=<VXLAN ID>,cnc.vxlan.port=<VXLAN PORT>,cnc.network=<IP-address-range-for-VTEP-overlay>,cnc.adcCredentialSecret=<Secret-for-ADC-credentials>,cnc.cniType=<CNI-overlay-name>
+   helm install cnc netscaler/citrix-cloud-native --set cnc.enabled=true,cnc.license.accept=yes,cnc.nsIP=<NSIP>,cnc.vtepIP=<NetScaler SNIP>,cnc.vxlan.id=<VXLAN ID>,cnc.vxlan.port=<VXLAN PORT>,cnc.network=<IP-address-range-for-VTEP-overlay>,cnc.adcCredentialSecret=<Secret-for-NetScaler-credentials>,cnc.cniType=<CNI-overlay-name>
 ```
 
 > **Important:**
 >
-> The `license.accept` argument is mandatory. Ensure that you set the value as `yes` to accept the terms and conditions of the Citrix license.
+> The `license.accept` argument is mandatory. Ensure that you set the value as `yes` to accept the terms and conditions of the NetScaler license.
 
 ## Introduction
-This Helm chart deploys Citrix node controller in the [Kubernetes](https://kubernetes.io) or in the [Openshift](https://www.openshift.com) cluster using [Helm](https://helm.sh) package manager.
+This Helm chart deploys NetScaler node controller in the [Kubernetes](https://kubernetes.io) or in the [Openshift](https://www.openshift.com) cluster using [Helm](https://helm.sh) package manager.
 
 ### Prerequisites
 
 -  The [Kubernetes](https://kubernetes.io/) version 1.6 or later if using Kubernetes environment.
 -  The [Openshift](https://www.openshift.com) version 4.8 or later if using OpenShift platform.
--  The [Helm](https://helm.sh/) version 2.x or later. You can follow instruction given [here](https://github.com/citrix/citrix-helm-charts/blob/master/Helm_Installation_version_3.md) to install the same.
--  You determine the ingress Citrix ADC IP address needed by the controller to communicate with Citrix ADC. The IP address might be anyone of the following depending on the type of Citrix ADC deployment:
+-  The [Helm](https://helm.sh/) version 2.x or later. You can follow instruction given [here](https://github.com/netscaler/netscaler-helm-charts/blob/master/Helm_Installation_version_3.md) to install the same.
+-  You determine the ingress NetScaler IP address needed by the controller to communicate with NetScaler. The IP address might be anyone of the following depending on the type of NetScaler deployment:
 
-   -  (Standalone appliances) NSIP - The management IP address of a standalone Citrix ADC appliance. For more information, see [IP Addressing in Citrix ADC](https://docs.citrix.com/en-us/citrix-adc/12-1/networking/ip-addressing.html).
+   -  (Standalone appliances) NSIP - The management IP address of a standalone NetScaler appliance. For more information, see [IP Addressing in NetScaler](https://docs.netscaler.com/en-us/citrix-adc/current-release/networking/ip-addressing.html).
 
-    -  (Appliances in High Availability mode) SNIP - The subnet IP address. For more information, see [IP Addressing in Citrix ADC](https://docs.citrix.com/en-us/citrix-adc/12-1/networking/ip-addressing.html).
+    -  (Appliances in High Availability mode) SNIP - The subnet IP address. For more information, see [IP Addressing in NetScaler](https://docs.netscaler.com/en-us/citrix-adc/current-release/networking/ip-addressing.html).
 
--  You determine the ingress Citrix ADC SNIP. This IP address is used to establish an overlay network between the Kubernetes clusters needed by the controller to communicate with Citrix ADC.
--  The user name and password of the Citrix ADC VPX or MPX appliance used as the ingress device. The Citrix ADC appliance needs to have system user account (non-default) with certain privileges so that Citrix Node controller can configure the Citrix ADC VPX or MPX appliance. For instructions to create the system user account on Citrix ADC, see [Create System User Account for CNC in Citrix ADC](#create-system-user-account-for-citrix-node-controller-in-citrix-adc)
+-  You determine the ingress NetScaler SNIP. This IP address is used to establish an overlay network between the Kubernetes clusters needed by the controller to communicate with NetScaler.
+-  The user name and password of the NetScaler VPX or MPX appliance used as the ingress device. The NetScaler appliance needs to have system user account (non-default) with certain privileges so that NetScaler Node controller can configure the NetScaler VPX or MPX appliance. For instructions to create the system user account on NetScaler, see [Create System User Account for NSNC in NetScaler](#create-system-user-account-for-citrix-node-controller-in-citrix-adc)
 
     You have to pass user name and password using Kubernetes secrets. Create a Kubernetes secret for the user name and password using the following command:
 
@@ -37,9 +37,9 @@ This Helm chart deploys Citrix node controller in the [Kubernetes](https://kuber
        kubectl create secret generic nslogin --from-literal=username='cnc' --from-literal=password='mypassword'
     ```
 
-#### Create system User account for Citrix node controller in Citrix ADC
+#### Create system User account for NetScaler node controller in NetScaler
 
-Citrix node controller configures the Citrix ADC using a system user account of the Citrix ADC. The system user account should have certain privileges so that the CNC has permission configure the following on the Citrix ADC:
+NetScaler node controller configures the NetScaler using a system user account of the NetScaler. The system user account should have certain privileges so that the NSNC has permission configure the following on the NetScaler:
 
 - Add, Delete, or View routes
 - Add, Delete, or View arp
@@ -52,8 +52,8 @@ Citrix node controller configures the Citrix ADC using a system user account of 
 
 To create the system user account, do the following:
 
-1.  Log on to the Citrix ADC appliance. Perform the following:
-    1.  Use an SSH client, such as PuTTy, to open an SSH connection to the Citrix ADC appliance.
+1.  Log on to the NetScaler appliance. Perform the following:
+    1.  Use an SSH client, such as PuTTy, to open an SSH connection to the NetScaler appliance.
 
     2.  Log on to the appliance by using the administrator credentials.
 
@@ -82,14 +82,14 @@ To create the system user account, do the following:
     ```
 
 ## Installing the Chart
-1. Add the Citrix Node Controller helm chart repository using command:
+1. Add the NetScaler Node Controller helm chart repository using command:
    ```
-     helm repo add citrix https://citrix.github.io/citrix-helm-charts/
+     helm repo add netscaler https://netscaler.github.io/netscaler-helm-charts/
    ```
 
 2. To install the chart with the release name, `my-release`, use the following command:
    ```
-     helm install my-release citrix/citrix-cloud-native --set cnc.enabled=true,cnc.license.accept=yes,cnc.nsIP=<NSIP>,cnc.vtepIP=<Citrix ADC SNIP>,cnc.vxlan.id=<VXLAN ID>,cnc.vxlan.port=<VXLAN PORT>,cnc.network=<IP-address-range-for-VTEP-overlay-in-CIDR-format>,cnc.adcCredentialSecret=<Secret-for-ADC-credentials>
+     helm install my-release netscaler/citrix-cloud-native --set cnc.enabled=true,cnc.license.accept=yes,cnc.nsIP=<NSIP>,cnc.vtepIP=<NetScaler SNIP>,cnc.vxlan.id=<VXLAN ID>,cnc.vxlan.port=<VXLAN PORT>,cnc.network=<IP-address-range-for-VTEP-overlay-in-CIDR-format>,cnc.adcCredentialSecret=<Secret-for-NetScaler-credentials>
    ```
 
 ## Providing Tolerations
@@ -103,16 +103,16 @@ Node controller pod might need to be provided with particular tolerations so tha
 Tolerations of the node-controller pod can be provided with `deploymentTolerations` variable in the values.yaml. 
 Here is an example of helm command to provide **tolerations to the node-controller**:
 ```
-   helm install my-release citrix-helm-charts/citrix-cloud-native --set cnc.enabled=true --set cnc.license.accept=yescnc.nsIP=<NSIP>,cnc.vtepIP=<NetScaler SNIP>,cnc.vxlan.id=<VXLAN ID>,cnc.vxlan.port=<VXLAN PORT>,cnc.network=<IP-address-range-for-VTEP-overlay-in-CIDR-format>,cnc.adcCredentialSecret=<Secret-for-ADC-credentials>,cnc.cniType=<CNI> \
+   helm install my-release netscaler-helm-charts/citrix-cloud-native --set cnc.enabled=true --set cnc.license.accept=yescnc.nsIP=<NSIP>,cnc.vtepIP=<NetScaler SNIP>,cnc.vxlan.id=<VXLAN ID>,cnc.vxlan.port=<VXLAN PORT>,cnc.network=<IP-address-range-for-VTEP-overlay-in-CIDR-format>,cnc.adcCredentialSecret=<Secret-for-NetScaler-credentials>,cnc.cniType=<CNI> \
    --set cnc.deploymentTolerations[0].key=myCustomKey1,cnc.deploymentTolerations[0].operator=Exists,cnc.deploymentTolerations[0].effect=NoExecute --set cnc.deploymentTolerations[1].key=myCustomKey2,cnc.deploymentTolerations[1].operator=Exists,cnc.deploymentTolerations[1].effect=NoExecute
 ```
 
 This node-controller pod creates the kube-cnc-router-pod on each worker node of the Kubernetes cluster. 
 These kube-cnc-router-pods also might need to be provided with a particular set of tolerations to ensure appropriate effect on the tainted node.
-Tolerations for this kube-cnc-router pod should be provided in the **JSON format** in a CNC configmap using `cncConfigMap.tolerationsInJson` variable. 
+Tolerations for this kube-cnc-router pod should be provided in the **JSON format** in a NSNC configmap using `cncConfigMap.tolerationsInJson` variable. 
 Here is an example  helm command to provide **tolerations for the kube-cnc-router pod**:
 ```
-   helm install my-release citrix-helm-charts/citrix-cloud-native --set cnc.enabled=true --set cnc.license.accept=yes,cnc.nsIP=<NSIP>,cnc.vtepIP=<NetScaler SNIP>,cnc.vxlan.id=<VXLAN ID>,cnc.vxlan.port=<VXLAN PORT>,cnc.network=<IP-address-range-for-VTEP-overlay-in-CIDR-format>,cnc.adcCredentialSecret=<Secret-for-ADC-credentials>,cnc.cniType=<CNI> \
+   helm install my-release netscaler-helm-charts/citrix-cloud-native --set cnc.enabled=true --set cnc.license.accept=yes,cnc.nsIP=<NSIP>,cnc.vtepIP=<NetScaler SNIP>,cnc.vxlan.id=<VXLAN ID>,cnc.vxlan.port=<VXLAN PORT>,cnc.network=<IP-address-range-for-VTEP-overlay-in-CIDR-format>,cnc.adcCredentialSecret=<Secret-for-NetScaler-credentials>,cnc.cniType=<CNI> \
    --set-json cnc.cncConfigMap.tolerationsInJson='[{"key": "myCustomKey1","operator": "Equal","value": "myValue1","effect": "NoExecute"},{"key": "myCustomKey2","operator": "Equal","value": "myValue2","effect": "NoExecute"}]'
 ```
 
@@ -137,13 +137,13 @@ deploymentTolerations:
 >
 > By default the chart installs the recommended [RBAC](https://kubernetes.io/docs/admin/authorization/rbac/) roles and role bindings.
 
-The command deploys Citrix node controller on Kubernetes cluster with the default configuration. The [configuration](#configuration) section lists the mandatory and optional parameters that you can configure during installation.
+The command deploys NetScaler node controller on Kubernetes cluster with the default configuration. The [configuration](#configuration) section lists the mandatory and optional parameters that you can configure during installation.
 
 ### Installed components
 
 The following components are installed:
 
--  [Citrix Node Controller](https://github.com/citrix/citrix-k8s-node-controller)
+-  [NetScaler Node Controller](https://github.com/netscaler/netscaler-k8s-node-controller)
 
 ### Configuration
 
@@ -151,44 +151,44 @@ The following table lists the mandatory and optional parameters that you can con
 
 | Parameters | Mandatory or Optional | Default value | Description |
 | --------- | --------------------- | ------------- | ----------- |
-| cnc.enabled | Mandatory | False | Set to "True" for deploying Citrix Node Controller. |
-| cnc.license.accept | Mandatory | no | Set `yes` to accept the CNC end user license agreement. |
-| cnc.imageRegistry                   | Mandatory  |  `quay.io`               |  The CNC image registry             |  
-| cnc.imageRepository                 | Mandatory  |  `citrix/citrix-k8s-node-controller`              |   The CNC image repository             | 
-| cnc.imageTag                  | Mandatory  |  `2.2.10`               |  The CNC image tag            | 
-| cnc.pullPolicy | Mandatory | IfNotPresent | The CNC image pull policy. |
+| cnc.enabled | Mandatory | False | Set to "True" for deploying NetScaler Node Controller. |
+| cnc.license.accept | Mandatory | no | Set `yes` to accept the NSNC end user license agreement. |
+| cnc.imageRegistry                   | Mandatory  |  `quay.io`               |  The NSNC image registry             |  
+| cnc.imageRepository                 | Mandatory  |  `citrix/citrix-k8s-node-controller`              |   The NSNC image repository             | 
+| cnc.imageTag                  | Mandatory  |  `2.2.10`               |  The NSNC image tag            | 
+| cnc.pullPolicy | Mandatory | IfNotPresent | The NSNC image pull policy. |
 | cnc.nameOverride | Optional | N/A | String to partially override deployment fullname template with a string (will prepend the release name) |
 | cnc.fullNameOverride | Optional | N/A | String to fully override deployment fullname template with a string |
-| cnc.adcCredentialSecret | Mandatory | N/A | The secret key to log on to the Citrix ADC VPX or MPX. For information on how to create the secret keys, see [Prerequisites](#prerequistes). |
-| cnc.nsIP | Mandatory | N/A | The IPaddress or Hostname of the Citrix ADC device. For details, see [Prerequisites](#prerequistes). |
-| cnc.vtepIP | Mandatory | N/A | The Citrix ADC SNIP. |
-| cnc.network | Mandatory | N/A | The IP address range that CNC uses to configure the VTEP overlay end points on the Kubernetes nodes. |
+| cnc.adcCredentialSecret | Mandatory | N/A | The secret key to log on to the NetScaler VPX or MPX. For information on how to create the secret keys, see [Prerequisites](#prerequistes). |
+| cnc.nsIP | Mandatory | N/A | The IPaddress or Hostname of the NetScaler device. For details, see [Prerequisites](#prerequistes). |
+| cnc.vtepIP | Mandatory | N/A | The NetScaler SNIP. |
+| cnc.network | Mandatory | N/A | The IP address range that NSNC uses to configure the VTEP overlay end points on the Kubernetes nodes. |
 | cnc.vxlan.id | Mandatory | N/A | A unique VXLAN VNID to create a VXLAN overlay between Kubernetes cluster and the ingress devices. |
 | cnc.vxlan.port | Mandatory | N/A | The VXLAN port that you want to use for the overlay. |
 | cnc.cniType | Mandatory | N/A | The CNI used in k8s cluster. Valid values: flannel,calico,canal,weave,cilium |
 | cnc.dsrIPRange | Optional | N/A | This IP address range is used for DSR Iptable configuration on nodes. Both IP and subnet must be specified in format : "xx.xx.xx.xx/xx"  |
-| cnc.clusterName | Optional | N/A | Unique identifier for the kubernetes cluster on which CNC is deployed. If Provided CNC will configure PolicyBasedRoutes instead of static Routes. For details, see [CNC-PBR-SUPPORT](https://github.com/citrix/citrix-k8s-ingress-controller/tree/master/docs/how-to/pbr.md#configure-pbr-using-the-citrix-node-controller) |
-| cnc.cncConfigMap.name | Optional | N/A | ConfigMapName which CNC will watch for to add/delete configurations. If not set, it will be auto-generated |
+| cnc.clusterName | Optional | N/A | Unique identifier for the kubernetes cluster on which NSNC is deployed. If Provided NSNC will configure PolicyBasedRoutes instead of static Routes. For details, see [NSNC-PBR-SUPPORT](https://github.com/netscaler/netscaler-k8s-ingress-controller/blob/master/docs/network/pbr.md#configure-pbr-using-the-citrix-node-controller) |
+| cnc.cncConfigMap.name | Optional | N/A | ConfigMapName which NSNC will watch for to add/delete configurations. If not set, it will be auto-generated |
 | cnc.deploymentTolerations | Optional | N/A | Tolerations to be associated with the Node controller pod. Provide in the format `--set deploymentTolerations[0].key=key1,deploymentTolerations[0].operator=Exists,deploymentTolerations[0].effect=NoSchedule` |
 | cnc.cncConfigMap.tolerationsInJson | Optional | N/A | Tolerations to be associated with the Kube-cnc-router pods. Provide in the appropriate JSON format `--set-json cncConfigMap.tolerationsInJson='[{"key": "first","operator": "Equal","value": "one","effect": "NoExecute"},{"key": "second","operator": "Equal","value": "true","effect": "NoExecute"}]'` |
-| cnc.cncRouterImage | Optional | N/A | The Internal Repo Image to be used for kube-cnc-router helper pods when internet access is disabled on cluster nodes. For more details, see [running-cnc-without-internet-access](https://github.com/citrix/citrix-k8s-node-controller/blob/master/deploy/README.md#running-citrix-node-controller-without-internet-access) |
+| cnc.cncRouterImage | Optional | N/A | The Internal Repo Image to be used for kube-cnc-router helper pods when internet access is disabled on cluster nodes. For more details, see [running-cnc-without-internet-access](https://github.com/netscaler/netscaler-k8s-node-controller/blob/master/deploy/README.md#running-citrix-node-controller-without-internet-access) |
 | cnc.cncRouterName | Optional | N/A | The name to be used for ServiceAccount/RBAC/ConfigMap and even as prefix for kube-cnc-router helper pods. If not set, it will be auto-generated. |
 Alternatively, you can define a YAML file with the values for the parameters and pass the values while installing the chart.
 
 > **Note:**
 >
 > 1. Ensure that the subnet that you provide in "network" is different from your Kubernetes cluster
-> 2. Ensure that the VXLAN ID that you use in vxlan.id does not conflict with the Kubernetes cluster or Citrix ADC VXLAN VNID
-> 3. Ensure that the VXLAN PORT that you use in vxlan.port does not conflict with the Kubernetes cluster or Citrix ADC VXLAN PORT.
+> 2. Ensure that the VXLAN ID that you use in vxlan.id does not conflict with the Kubernetes cluster or NetScaler VXLAN VNID
+> 3. Ensure that the VXLAN PORT that you use in vxlan.port does not conflict with the Kubernetes cluster or NetScaler VXLAN PORT.
 
 For example:
 ```
-   helm install my-release citrix/citrix-cloud-native -f values.yaml
+   helm install my-release netscaler/citrix-cloud-native -f values.yaml
 ```
 
 > **Tip:** 
 >
-> The [values.yaml](https://github.com/citrix/citrix-helm-charts/blob/master/citrix_cloud_native_values.yaml) contains the default values of the parameters.
+> The [values.yaml](https://github.com/netscaler/netscaler-helm-charts/blob/master/citrix_cloud_native_values.yaml) contains the default values of the parameters.
 
 ## Uninstalling the Chart
 To uninstall/delete the ```my-release``` deployment:
@@ -200,4 +200,4 @@ The command removes all the Kubernetes components associated with the chart and 
 
 ## Related documentation
 
--  [Citrix node controller Documentation](https://github.com/citrix/citrix-k8s-node-controller)
+-  [NetScaler node controller Documentation](https://github.com/netscaler/netscaler-k8s-node-controller)

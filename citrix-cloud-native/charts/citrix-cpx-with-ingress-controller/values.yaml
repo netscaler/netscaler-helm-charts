@@ -2,7 +2,7 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-# Citrix ADC CPX config details
+# NetScaler CPX config details
 imageRegistry: quay.io
 imageRepository: citrix/citrix-k8s-cpx-ingress
 imageTag: 13.1-49.13
@@ -36,7 +36,7 @@ nsIP: 192.168.1.2
 # If cpxBgpRouter is true, then this is the Gateway used by CPX for internal communication
 nsGateway: 192.168.1.1
 
-# Protocol used for communication between Citrix Ingress Controller sidecar and Citrix CPX
+# Protocol used for communication between NetScaler Ingress Controller sidecar and NetScaler CPX
 nsProtocol: http
 
 # External IP for ingress resource when bgpRouter is set to True
@@ -45,8 +45,8 @@ ingressIP:
 # If IPAM controller is used for auto allocation of the external IP for service of type LoadBalancer, set this option to true
 ipam: False
 
-# Enable RBAC role (so called local role), by default CIC deployed with ClusterRole.
-# below variable to deploy CIC with RBAC role, only ingress service supported with this config
+# Enable RBAC role (so called local role), by default NSIC deployed with ClusterRole.
+# below variable to deploy NSIC with RBAC role, only ingress service supported with this config
 rbacRole: False
 
 # API server Cert verification can be disabled, while communicating with API Server, if disableAPIServerCertVerify set to True
@@ -78,7 +78,7 @@ serviceSpec:
 
 servicePorts: []
 
-# Citrix Ingress Controller config details
+# NetScaler Ingress Controller config details
 cic:
   imageRegistry: quay.io
   imageRepository: citrix/citrix-k8s-ingress-controller
@@ -135,7 +135,7 @@ profileTcpFrontend: {}
   #   sack: 'ENABLED'
   #   nagle: 'ENABLED'
 
-# Citrix ADM/License Server config details
+# NetScaler ADM/License Server config details
 ADMSettings:
   licenseServerIP:
   licenseServerPort: 27000
@@ -170,12 +170,12 @@ exporter:
     #   memory: 128Mi
   serviceMonitorExtraLabels: {}
 
-# For CRDs supported by Citrix Ingress Controller
+# For CRDs supported by NetScaler Ingress Controller
 crds:
   install: false
   retainOnDelete: false
 
-# Config required to be done by Citrix Ingress Controller for sending metrics to Citrix Observability Exporter
+# Config required to be done by NetScaler Ingress Controller for sending metrics to NetScaler Observability Exporter
 analyticsConfig:
   required: false
   distributedTracing:
