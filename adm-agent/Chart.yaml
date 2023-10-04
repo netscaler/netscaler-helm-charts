@@ -3,6 +3,7 @@ appVersion: 141.10.28
 description: A Helm chart for NetScaler ADM Agent
 home: https://adm.cloud.com
 kubeVersion: '>=v1.16.0-0'
+icon: https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/gh-pages/netscaler.png
 maintainers:
 - email: pavan.belani@cloud.com
   name: pavan
