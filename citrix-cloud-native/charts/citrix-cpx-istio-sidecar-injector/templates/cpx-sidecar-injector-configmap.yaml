@@ -191,7 +191,7 @@ data:
         - name: "LOGSTREAM_COLLECTOR_IP"
           value: {{ .Values.ADMSettings.ADMIP | default "" | quote }}
 {{- if and ( or ( .Values.ADMSettings.licenseServerIP ) ( .Values.cpxProxy.cpxLicenseAggregator ) ) ( eq .Values.ADMSettings.bandWidthLicense true ) }}
-        - name: "BANDWIDTH" #Need to set env var BANDWIDTH in order to provide Bandwidth license to Citrix ADC CPX from ADM or CPX License Aggregator
+        - name: "BANDWIDTH" #Need to set env var BANDWIDTH in order to provide Bandwidth license to NetScaler CPX from ADM or CPX License Aggregator
           value: {{ .Values.ADMSettings.bandWidth | quote }}
         - name: "EDITION"
           value: {{ .Values.ADMSettings.licenseEdition | quote }}

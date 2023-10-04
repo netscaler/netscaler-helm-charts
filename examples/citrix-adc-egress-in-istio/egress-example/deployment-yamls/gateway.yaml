@@ -18,6 +18,6 @@ kind: DestinationRule
 metadata:
   name: citrix-egressgateway-for-cnn
 spec:
-  host: citrix-adc-istio-egress-gateway-citrix-egress-svc.citrix-system.svc.cluster.local #Note: Service name (Host) is dependent on the helm-chart release name. Use correct service name here.
+  host: citrix-adc-istio-egress-gateway-citrix-egress-svc.netscaler-system.svc.cluster.local #Note: Service name (Host) is dependent on the helm-chart release name. Use correct service name here.
   subsets:
   - name: cnn

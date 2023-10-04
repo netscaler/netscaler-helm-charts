@@ -30,23 +30,23 @@ spec:
         imagePullPolicy: {{ .Values.pullPolicy }}
         env:
         - name: EULA
-          value: {{ required "Please set license.accept=yes for accepting Citrix License" .Values.license.accept | quote }}
+          value: {{ required "Please set license.accept=yes for accepting NetScaler License" .Values.license.accept | quote }}
         - name: NS_IP
-          value: {{ required "Provide ADC VPX/MPX IP" .Values.nsIP | quote }}
+          value: {{ required "Provide NetScaler VPX/MPX IP" .Values.nsIP | quote }}
         - name: NS_USER
           valueFrom:
             secretKeyRef:
-              name: {{ required "Please provide secret for Citrix ADC credential" .Values.adcCredentialSecret }}
+              name: {{ required "Please provide secret for NetScaler credential" .Values.adcCredentialSecret }}
               key: username
         - name: NS_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: {{ required "Please provide secret for Citrix ADC credential" .Values.adcCredentialSecret }}
+              name: {{ required "Please provide secret for NetScaler credential" .Values.adcCredentialSecret }}
               key: password
         - name: NETWORK
           value: {{ required "Please provide network for VTEP overlay" .Values.network | quote }}
         - name: REMOTE_VTEPIP
-          value: {{ required "Please provide ADC VPX/MPX SNIP" .Values.vtepIP | quote }}
+          value: {{ required "Please provide NetScaler VPX/MPX SNIP" .Values.vtepIP | quote }}
         - name: VNID
           value: {{ required "Pleave provide VXLAN ID" .Values.vxlan.id | quote }}
         - name: VXLAN_PORT

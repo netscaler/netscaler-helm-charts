@@ -86,7 +86,7 @@ spec:
           - name: "NS_HTTPS_PORT"
             value: {{ .Values.mgmtHttpsPort | quote }}
 {{- end }}
-#Need to set env var BANDWIDTH in order to provide Bandwidth license to Citrix ADC CPX from ADM or CPX License Aggregator
+#Need to set env var BANDWIDTH in order to provide Bandwidth license to NetScaler CPX from ADM or CPX License Aggregator
 {{- if and ( or ( .Values.ADMSettings.licenseServerIP ) .Values.cpxLicenseAggregator )  ( eq .Values.ADMSettings.bandWidthLicense true ) }}
           - name: "BANDWIDTH"
             value: {{ .Values.ADMSettings.bandWidth | quote }}

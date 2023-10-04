@@ -1,4 +1,4 @@
-# Default values for Citrix ADC Observability Exporter
+# Default values for NetScaler Observability Exporter
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
@@ -8,7 +8,7 @@ imageTag: 1.7.001
 image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
 pullPolicy: IfNotPresent
 replicas: 1
-# license is used accept the terms of the Citrix license
+# license is used accept the terms of the NetScaler license
 license:
   accept: no
 nodePortRequired: false

@@ -219,9 +219,9 @@ gslb:
     requests:
       cpu: 32m
       memory: 128Mi
-    # limits:
-    #  cpu: 1000m
-    #  memory: 1000Mi
+      # limits:
+      #  cpu: 1000m
+      #  memory: 1000Mi
     limits: {}
 
 cpx:

@@ -1,13 +1,13 @@
 
-# Observability using Citrix ADM and Citrix ADC Observability Exporter in Citrix powered Service mesh
+# Observability using NetScaler ADM and NetScaler Observability Exporter in NetScaler powered Service mesh
 
 This guide provides a comprehensive example for:
 
-i) Deploying the sample [Bookinfo](https://github.com/istio/istio/tree/master/samples/bookinfo) and [Httpbin](https://github.com/istio/istio/blob/master/samples/httpbin/httpbin.yaml) applications with Citrix ADC as North-South and East-West proxies in Istio service mesh.
+i) Deploying the sample [Bookinfo](https://github.com/istio/istio/tree/master/samples/bookinfo) and [Httpbin](https://github.com/istio/istio/blob/master/samples/httpbin/httpbin.yaml) applications with NetScaler as North-South and East-West proxies in Istio service mesh.
 
-ii) Using Citrix ADM service graph and Citrix ADC Observability Exporter as observability tools.
+ii) Using NetScaler ADM service graph and NetScaler Observability Exporter as observability tools.
 
-The objective of this example is to help in visualizing the request flow between different microservices using Citrix ADM and metrics on the Grafana dashboard through Citrix ADC Observability Exporter.
+The objective of this example is to help in visualizing the request flow between different microservices using NetScaler ADM and metrics on the Grafana dashboard through NetScaler Observability Exporter.
 
 # Table of Contents
 
@@ -15,13 +15,13 @@ The objective of this example is to help in visualizing the request flow between
 
    A. [Onboarding of ADM agent](#onboarding)
 
-   B. [Deploying Citrix Observability Exporter](#deploying-coe)
+   B. [Deploying NetScaler Observability Exporter](#deploying-coe)
 
    C. [Generating Certificate and Key for Bookinfo and Httpbin applications](#generating-certificate)
 
-   D. [Deploying Citrix ADC as Ingress Gateway](#citrix-ingress-gateway)
+   D. [Deploying NetScaler as Ingress Gateway](#citrix-ingress-gateway)
 
-   E. [Deploying Citrix ADC Sidecar Injector](#citrix-sidecar-injector)
+   E. [Deploying NetScaler Sidecar Injector](#citrix-sidecar-injector)
 
    F. [Deploying Bookinfo and Httpbin](#deploying-bookinfo-httpbin)
 
@@ -29,7 +29,7 @@ The objective of this example is to help in visualizing the request flow between
 
    H. [Deploy Gateway for Prometheus and Grafana](#deploy-gateway-prom-grafana)
 
-   I. [Visualize Service Graph in Citrix ADM](#servicegraph)
+   I. [Visualize Service Graph in NetScaler ADM](#servicegraph)
 
    J. [Clean Up the deployment](#cleanup)
 
@@ -37,13 +37,13 @@ The objective of this example is to help in visualizing the request flow between
 
 
 # <a name="prerequisite">Prerequisites</a>
- - Ensure that you have a Citrix ADM account. To use Citrix ADM, you must create a [Citrix Cloud account](https://docs.citrix.com/en-us/citrix-cloud/overview/signing-up-for-citrix-cloud/signing-up-for-citrix-cloud).
+ - Ensure that you have a NetScaler ADM account. To use NetScaler ADM, you must create a [NetScaler Cloud account](https://docs.citrix.com/en-us/citrix-cloud/overview/signing-up-for-citrix-cloud/signing-up-for-citrix-cloud).
 
-    To manage Citrix ADM with an Express account, see [Getting Started](https://docs.citrix.com/en-us/citrix-application-delivery-management-service/getting-started.html#install-an-agent-as-a-microservice).
+    To manage NetScaler ADM with an Express account, see [Getting Started](https://docs.citrix.com/en-us/citrix-application-delivery-management-service/getting-started.html#install-an-agent-as-a-microservice).
 
  - Ensure that your cluster [Kubernetes](https://kubernetes.io/) version should be 1.16 onwards.
- - Ensure that you have Citrix ADC VPX version 13.0–76.29 or later.
- - For deploying Citrix ADC VPX or MPX as an ingress gateway, you should establish the connectivity between Citrix ADC VPX or MPX and cluster nodes. This connectivity can be established by configuring routes on Citrix ADC as described in the [Static routing](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/network/staticrouting.md) or by deploying [Citrix Node Controller](https://github.com/citrix/citrix-k8s-node-controller).
+ - Ensure that you have NetScaler VPX version 13.0–76.29 or later.
+ - For deploying NetScaler VPX or MPX as an ingress gateway, you should establish the connectivity between NetScaler VPX or MPX and cluster nodes. This connectivity can be established by configuring routes on NetScaler as described in the [Static routing](https://github.com/netscaler/netscaler-k8s-ingress-controller/blob/master/docs/network/staticrouting.md) or by deploying [NetScaler Node Controller](https://github.com/netscaler/netscaler-k8s-node-controller).
  - Ensure that you installed [Istio](https://istio.io) version 1.9.x or later on the Kubernetes cluster with [Prometheus](https://prometheus.io) and [Grafana](https://grafana.com). For information about installing Prometheus, see [Installation Quick Start](https://istio.io/latest/docs/ops/integrations/prometheus/#option-1-quick-start) and for Grafana, see [Quick Start](https://istio.io/latest/docs/ops/integrations/grafana/#option-1-quick-start).
  - Ensure that the ports, mentioned in the [Ports](https://docs.citrix.com/en-us/citrix-application-delivery-management-service/system-requirements.html#ports) document, are open.
 
@@ -53,14 +53,14 @@ The objective of this example is to help in visualizing the request flow between
 
 # <a name="onboarding">A) Onboarding of ADM agent </a>
 
-You can deploy a Citrix ADM agent as a microservice in the Kubernetes cluster to view service graph in Citrix ADM. [ADM agent onboarding](../../adm-agent-onboarding) as a Kubernetes Job helps you to deploy container-based Citrix ADM agent and also performs all the necessary settings in Citrix ADM for generating service graph. This Job also registers the Tier-1 ADC in the Citrix ADM.
-To deploy ADM agent onboarding, you need to Kubernetes Secret with Access ID and Secret for accssing Citrix ADM.
+You can deploy a NetScaler ADM agent as a microservice in the Kubernetes cluster to view service graph in NetScaler ADM. [ADM agent onboarding](../../adm-agent-onboarding) as a Kubernetes Job helps you to deploy container-based NetScaler ADM agent and also performs all the necessary settings in NetScaler ADM for generating service graph. This Job also registers the Tier-1 NetScaler in the NetScaler ADM.
+To deploy ADM agent onboarding, you need to Kubernetes Secret with Access ID and Secret for accssing NetScaler ADM.
 
-## **Get Access ID and Secret to access Citrix ADM**</a> 
+## **Get Access ID and Secret to access NetScaler ADM**</a> 
 
-Perform the following steps to get access ID and secret for accessing Citrix ADM:
+Perform the following steps to get access ID and secret for accessing NetScaler ADM:
 
-1. Log in to Citrix Cloud account. 
+1. Log in to NetScaler Cloud account. 
 
 2. On the left Menu panel, select **Identity and Access Management**.
 
@@ -87,29 +87,29 @@ Perform the following steps to get access ID and secret for accessing Citrix ADM
 **NOTE**: The bearer token expires in an hour (3600 seconds).
 	  
 ## Deploy ADM agent onboarding as Kubernetes Job
-**NOTE** For deploying Citrix ADC VPX or MPX as an Tier-1 ingress, you should establish the connectivity between Citrix ADC VPX or MPX and cluster nodes. This connectivity can be established by configuring routes on Citrix ADC as described [here](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/network/staticrouting.md) or by deploying [Citrix Node Controller](https://github.com/citrix/citrix-k8s-node-controller).
+**NOTE** For deploying NetScaler VPX or MPX as an Tier-1 ingress, you should establish the connectivity between NetScaler VPX or MPX and cluster nodes. This connectivity can be established by configuring routes on NetScaler as described [here](https://github.com/netscaler/netscaler-k8s-ingress-controller/blob/master/docs/network/staticrouting.md) or by deploying [NetScaler Node Controller](https://github.com/netscaler/netscaler-k8s-node-controller).
 
-To register Tier-1 ADC in Citrix ADM with the agent getting deployed, you need to create Kubernetes Secret containing credentials of Tier-1 ADC VPX/MPX using following command:
+To register Tier-1 NetScaler in NetScaler ADM with the agent getting deployed, you need to create Kubernetes Secret containing credentials of Tier-1 NetScaler VPX/MPX using following command:
 
-      kubectl create secret generic nslogin --from-literal=username=<username> --from-literal=password=<adc-password>
+      kubectl create secret generic nslogin --from-literal=username=<username> --from-literal=password=<netscaler-password>
 
-### To create ADM Agent login Secret automatically and register Tier-1 ADC , use the following command:
+### To create ADM Agent login Secret automatically and register Tier-1 NetScaler , use the following command:
 
-      helm repo add citrix https://citrix.github.io/citrix-helm-charts
+      helm repo add netscaler https://netscaler.github.io/netscaler-helm-charts
 
-      helm install citrix-adm citrix/adm-agent-onboarding --namespace citrix-system --set adc.IP=<ADC ManagementIP>,adc.loginSecret=nslogin --set token=<Token>
+      helm install netscaler-adm netscaler/adm-agent-onboarding --namespace netscaler-system --set adc.IP=<NetScaler ManagementIP>,adc.loginSecret=nslogin --set token=<Token>
 
 You can check the logs of pod deployed as part of Kubernetes Job adm-agent-onboarding.
 
 ![](../servicegraph/images/log-adm-agent-onboarding-job.png)
 
-**Note:** You can label the namespace with `cpx-injection=enabled` in which Citrix ADC CPX.
+**Note:** You can label the namespace with `cpx-injection=enabled` in which NetScaler CPX.
 
-  To auto register Citrix ADC CPX in ADM for obtaining [servicegraph](https://docs.citrix.com/en-us/citrix-application-delivery-management-service/application-analytics-and-management/service-graph.html), a Kubernetes secret `admlogin` will be automatically created when namespace are labelled with `cpx-injection=enabled`. 
+  To auto register NetScaler CPX in ADM for obtaining [servicegraph](https://docs.netscaler.com/en-us/citrix-application-delivery-management-service/application-analytics-and-management/service-graph.html), a Kubernetes secret `admlogin` will be automatically created when namespace are labelled with `cpx-injection=enabled`. 
 
       kubectl create namespace bookinfo
 
-      kubectl create namespace citrix-system
+      kubectl create namespace netscaler-system
 
       kubectl create namespace httpbin
 
@@ -117,27 +117,27 @@ You can check the logs of pod deployed as part of Kubernetes Job adm-agent-onboa
 
       kubectl label namespace httpbin cpx-injection=enabled
 
-# <a name="deploying-coe">B) Deploying Citrix ADC Observability Exporter</a>
+# <a name="deploying-coe">B) Deploying NetScaler Observability Exporter</a>
 
-Citrix ADC Observability Exporter helps in exporting metrics from Citrix ADC instances to Prometheus which can be visualized in the Grafana dashboard.
+NetScaler Observability Exporter helps in exporting metrics from NetScaler instances to Prometheus which can be visualized in the Grafana dashboard.
 
-      helm repo add citrix https://citrix.github.io/citrix-helm-charts/
+      helm repo add netscaler https://netscaler.github.io/netscaler-helm-charts/
    
-      helm install coe citrix/citrix-observability-exporter --namespace citrix-system --set timeseries.enabled=true
+      helm install coe netscaler/netscaler-observability-exporter --namespace netscaler-system --set timeseries.enabled=true
 
-Apply destination rule to disable TLS communication of Citrix ADC with Citrix Observability Exporter and ADM by following command:
+Apply destination rule to disable TLS communication of NetScaler with NetScaler Observability Exporter and ADM by following command:
 
-      kubectl apply -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/servicemesh_with_coe_and_adm/manifest/destinationrule_agent_coe.yaml -n citrix-system
+      kubectl apply -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/servicemesh_with_coe_and_adm/manifest/destinationrule_agent_coe.yaml -n netscaler-system
 
-**NOTE:** Create gateway for Citrix observability exporter when Citrix ADC CPX is used as ingress gateway.
+**NOTE:** Create gateway for NetScaler observability exporter when NetScaler CPX is used as ingress gateway.
 
-      kubectl apply -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/servicemesh_with_coe_and_adm/manifest/coe_gateway.yaml -n citrix-system      
+      kubectl apply -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/servicemesh_with_coe_and_adm/manifest/coe_gateway.yaml -n netscaler-system      
 
 # <a name="generating-certificate">C) Generating Certificate and Key for the `Bookinfo` and `Httpbin` applications</a>
 
 ### C.1) Generate certificate and key for the `Bookinfo` application
 
-There are multiple tools available to generate certificates and keys. You can use your desired tool to generate the same in PEM format. Make sure that the names of key and certificate are *bookinfo_key.pem* and *bookinfo_cert.pem*. These are used to generate a Kubernetes secret *citrix-ingressgateway-certs* which is used by the Citrix ADC that acts as Ingress Gateway.
+There are multiple tools available to generate certificates and keys. You can use your desired tool to generate the same in PEM format. Make sure that the names of key and certificate are *bookinfo_key.pem* and *bookinfo_cert.pem*. These are used to generate a Kubernetes secret *citrix-ingressgateway-certs* which is used by the NetScaler that acts as Ingress Gateway.
 
 Perform the following steps to generate certificate and key using `openssl` utility:
 
@@ -159,11 +159,11 @@ Make sure to provide Common Name(CN/Server FQDN) as `www.bookinfo.com` on CSR in
 
 Create a secret `citrix-ingressgateway-certs` using the certificate and key generated in the earlier step. Make sure that this secret is created in the same namespace where the Ingress Gateway is deployed.
 
-      kubectl create -n citrix-system secret tls citrix-ingressgateway-certs --key bookinfo_key.pem --cert bookinfo_cert.pem
+      kubectl create -n netscaler-system secret tls citrix-ingressgateway-certs --key bookinfo_key.pem --cert bookinfo_cert.pem
 
 ### C.2) Generate certificate and key for `httpbin` application
  
- You can use your desired tool to generate the same in PEM format. Make sure names of key and certificate are *httpbin_key.pem* and *httpbin_cert.pem*. These are used to generate a Kubernetes secret *httpbin-ingressgateway-certs* which is used by the Citrix ADC taht acts as Ingress Gateway.
+ You can use your desired tool to generate the same in PEM format. Make sure names of key and certificate are *httpbin_key.pem* and *httpbin_cert.pem*. These are used to generate a Kubernetes secret *httpbin-ingressgateway-certs* which is used by the NetScaler taht acts as Ingress Gateway.
 
 Perform the following steps to generate certificate and key using `openssl` utility:
 
@@ -185,11 +185,11 @@ Make sure to provide Common Name(CN/Server FQDN) as `www.httpbin.com` on CSR inf
 
 Create a secret `httpbin-ingressgateway-certs` using the certificate and key generated in the earlier step. Make sure that this secret is created in the same namespace in which the Ingress Gateway is deployed.
 
-      kubectl create -n citrix-system secret tls httpbin-ingressgateway-certs --key httpbin_key.pem --cert httpbin_cert.pem
+      kubectl create -n netscaler-system secret tls httpbin-ingressgateway-certs --key httpbin_key.pem --cert httpbin_cert.pem
 
-# <a name="citrix-ingress-gateway">D) Deploying Citrix ADC as Ingress Gateway</a>
+# <a name="citrix-ingress-gateway">D) Deploying NetScaler as Ingress Gateway</a>
 
-Before deploying Citrix ADC VPX as Ingress Gateway, get the pod IP address of the Citrix ADM Agent using the following command:
+Before deploying NetScaler VPX as Ingress Gateway, get the pod IP address of the NetScaler ADM Agent using the following command:
 
       kubectl get endpoints admagent
 
@@ -197,31 +197,31 @@ This ADM Agent pod IP address is required for some manual config on the VPX Ingr
 
 ### Deploy VPX/MPX as Ingress Gateway
 
-You can deploy Citrix ADC CPX or VPX/MPX, as an ingress gateway using helm charts. The sample `bookinfo` deployment works in both of the deployments. 
+You can deploy NetScaler CPX or VPX/MPX, as an ingress gateway using helm charts. The sample `bookinfo` deployment works in both of the deployments. 
 
-- **Important Note:** For deploying Citrix ADC VPX or MPX as ingress gateway, you should establish the connectivity between Citrix ADC VPX or MPX and cluster nodes. This connectivity can be established by configuring routes on Citrix ADC as mentioned in the [Static Routing](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/network/staticrouting.md) document or by deploying [Citrix Node Controller](https://github.com/citrix/citrix-k8s-node-controller).
+- **Important Note:** For deploying NetScaler VPX or MPX as ingress gateway, you should establish the connectivity between NetScaler VPX or MPX and cluster nodes. This connectivity can be established by configuring routes on NetScaler as mentioned in the [Static Routing](https://github.com/netscaler/netscaler-k8s-ingress-controller/blob/master/docs/network/staticrouting.md) document or by deploying [NetScaler Node Controller](https://github.com/netscaler/netscaler-k8s-node-controller).
 
-Create a Kubernetes secret `nslogin` with the login credentials of Citrix ADC VPX/MPX using the following command:
+Create a Kubernetes secret `nslogin` with the login credentials of NetScaler VPX/MPX using the following command:
    
-      kubectl create secret generic nslogin --from-literal=username=<username> --from-literal=password=<password> -n citrix-system
+      kubectl create secret generic nslogin --from-literal=username=<username> --from-literal=password=<password> -n netscaler-system
 
-**Note:** Replace `<username>` and `<password>` with login credentials of Citrix ADC VPX/MPX.
+**Note:** Replace `<username>` and `<password>` with login credentials of NetScaler VPX/MPX.
 
-#### Deploying Citrix ADC VPX/MPX as Ingress Gateway using Helm Chart
+#### Deploying NetScaler VPX/MPX as Ingress Gateway using Helm Chart
 
-      helm repo add citrix https://citrix.github.io/citrix-helm-charts/
+      helm repo add netscaler https://netscaler.github.io/netscaler-helm-charts/
    
-      helm install citrix-adc-istio-ingress-gateway citrix/citrix-adc-istio-ingress-gateway --namespace citrix-system --set ingressGateway.EULA=YES  --set secretName=nslogin --set coe.coeURL=coe.citrix-system --set ingressGateway.secretVolumes[0].name=httpbin-ingressgateway-certs,ingressGateway.secretVolumes[0].secretName=httpbin-ingressgateway-certs,ingressGateway.secretVolumes[0].mountPath=/etc/istio/httpbin-ingressgateway-certs --set ingressGateway.enableLabelsFeature=TRUE --set ingressGateway.netscalerUrl=https://<Management IP> --set ingressGateway.vserverIP=<Virtual Service IP>
+      helm install citrix-adc-istio-ingress-gateway netscaler/citrix-adc-istio-ingress-gateway --namespace netscaler-system --set ingressGateway.EULA=YES  --set secretName=nslogin --set coe.coeURL=coe.netscaler-system --set ingressGateway.secretVolumes[0].name=httpbin-ingressgateway-certs,ingressGateway.secretVolumes[0].secretName=httpbin-ingressgateway-certs,ingressGateway.secretVolumes[0].mountPath=/etc/istio/httpbin-ingressgateway-certs --set ingressGateway.enableLabelsFeature=TRUE --set ingressGateway.netscalerUrl=https://<Management IP> --set ingressGateway.vserverIP=<Virtual Service IP>
 
-**Note:** Replace management IP address with Citrix ADC VPX/MPX management IP address, Virtual Service IP address as IP address to which `Bookinfo` and `Httpbin` applications are exposed.
+**Note:** Replace management IP address with NetScaler VPX/MPX management IP address, Virtual Service IP address as IP address to which `Bookinfo` and `Httpbin` applications are exposed.
 
-**Note:** If Citrix ADC CPX is deployed as Ingress Gateway and `adm-agent-onboarding` job is deployed in other namespace than `citrix-system`, then label the namespace `citrix-system` with `citrix-cpx=enabled`.
+**Note:** If NetScaler CPX is deployed as Ingress Gateway and `adm-agent-onboarding` job is deployed in other namespace than `netscaler-system`, then label the namespace `netscaler-system` with `citrix-cpx=enabled`.
 
-      kubectl label namespace citrix-system citrix-cpx=enabled
+      kubectl label namespace netscaler-system citrix-cpx=enabled
 
-#### Set Analytics Settings on Citrix ADC VPX/MPX
+#### Set Analytics Settings on NetScaler VPX/MPX
 
-Following configurations must be added in Citrix ADC VPX/MPX for sending transaction metrics to Citrix ADM.
+Following configurations must be added in NetScaler VPX/MPX for sending transaction metrics to NetScaler ADM.
 
       en ns mode ulfd
       
@@ -241,13 +241,13 @@ Following configurations must be added in Citrix ADC VPX/MPX for sending transac
 
 **Note:** Replace the `AGENT POD IP` while adding `appflow collector`. 
 
-# <a name="citrix-sidecar-injector">E) Deploying Citrix ADC Sidecar Injector </a>
+# <a name="citrix-sidecar-injector">E) Deploying NetScaler Sidecar Injector </a>
 
-Deploy a Citrix ADC CPX sidecar injector to inject Citrix ADC CPX as a sidecar proxy in an application pod in the Istio service mesh by using the following command:
+Deploy a NetScaler CPX sidecar injector to inject NetScaler CPX as a sidecar proxy in an application pod in the Istio service mesh by using the following command:
 
-      helm repo add citrix https://citrix.github.io/citrix-helm-charts/
+      helm repo add netscaler https://netscaler.github.io/netscaler-helm-charts/
 
-      helm install cpx-sidecar-injector citrix/citrix-cpx-istio-sidecar-injector --namespace citrix-system --set cpxProxy.EULA=YES --set coe.coeURL=coe.citrix-system --set cpxProxy.enableLabelsFeature=TRUE --set ADMSettings.ADMIP=<ADM-AGENT-SERVICE-IP>  
+      helm install cpx-sidecar-injector netscaler/citrix-cpx-istio-sidecar-injector --namespace netscaler-system --set cpxProxy.EULA=YES --set coe.coeURL=coe.netscaler-system --set cpxProxy.enableLabelsFeature=TRUE --set ADMSettings.ADMIP=<ADM-AGENT-SERVICE-IP>  
 
 # <a name="deploying-bookinfo-httpbin">F) Deploying `Bookinfo` and `Httpbin`</a> 
 
@@ -354,15 +354,15 @@ With the browser, you can access Prometheus and Grafana using the following URLs
       http://prometheus.citrixservicemesh.com:9090/graph
       http://grafana.citrixservicemesh.com:3000
 
-## Verify Citrix ADC Observability Exporter as endpoints to Prometheus
+## Verify NetScaler Observability Exporter as endpoints to Prometheus
 
 1. Open **http://prometheus.citrixservicemesh.com:9090/graph** with a browser.
 
-2. Click **Status > Targets** and scroll down. Under `kubernetes-pods`, you can see the Citrix ADC Observability Exporter pod IP address as one of the entries.
+2. Click **Status > Targets** and scroll down. Under `kubernetes-pods`, you can see the NetScaler Observability Exporter pod IP address as one of the entries.
 
 ![](images/prometheus.png)
 
-To get pod IP address of Citrix ADC Observability Exporter deployed in `citrix-system`, run the command `kubectl get pods -o wide -n citrix-system` in the Kubernetes cluster.
+To get pod IP address of NetScaler Observability Exporter deployed in `netscaler-system`, run the command `kubectl get pods -o wide -n netscaler-system` in the Kubernetes cluster.
 
 ![](images/coe.png)
 
@@ -396,13 +396,13 @@ Paste the copied JSON content and click **Load**.
 
 ![](images/grafana-import.png)
 
-8. ADC dashboard displays the stats of the Ingress Gateway and Citrix ADC CPX sidecar proxies.
+8. NetScaler dashboard displays the stats of the Ingress Gateway and NetScaler CPX sidecar proxies.
 
 ![](images/grafana-dashboard.png)
 
-# <a name="servicegraph"> I) Visualize Service Graph in Citrix ADM</a>
+# <a name="servicegraph"> I) Visualize Service Graph in NetScaler ADM</a>
 
-Before visualizing the Service Graph, you can check if the virtual server configured in ADC are properly discovered and licensed. For this, see the section: [Debugging](#debugging).
+Before visualizing the Service Graph, you can check if the virtual server configured in NetScaler are properly discovered and licensed. For this, see the section: [Debugging](#debugging).
 
 In ADM navigate  `Application > Service Graph > MicroServices`.
 
@@ -430,22 +430,22 @@ You can select **See Trace Details** to visualize the entire trace in the form o
 
       kubectl delete namespace bookinfo
       kubectl delete namespace httpbin 
-      kubectl delete namespace citrix-system
+      kubectl delete namespace netscaler-system
       kubectl delete -f destinationrule_agent_coe.yaml
 
-**Note:** You need to remove the cluster and agent from Citrix ADM UI manually.
+**Note:** You need to remove the cluster and agent from NetScaler ADM UI manually.
 
 # <a name="debugging">K) Debugging </a>
 
-Service Graph will not be populated if virtual server configurations of Citrix ADC CPXs are not populated in ADM. Also, the virtual server in the ingress gateway ADC need to be licensed. Following sections provide information on licensing the virtual server in the ingress gateway Citrix ADC VPX and discovering the virtual server configuration on Citrix ADC CPX.
+Service Graph will not be populated if virtual server configurations of NetScaler CPXs are not populated in ADM. Also, the virtual server in the ingress gateway NetScaler need to be licensed. Following sections provide information on licensing the virtual server in the ingress gateway NetScaler VPX and discovering the virtual server configuration on NetScaler CPX.
 
-## Licensing virtual server of Ingress Gateway Citrix ADC VPX
+## Licensing virtual server of Ingress Gateway NetScaler VPX
 
-1. Navigate to `Networks > Instances > Citrix ADC` and choose `VPX` in Citrix ADM.
+1. Navigate to `Networks > Instances > NetScaler` and choose `VPX` in NetScaler ADM.
 
 ![](images/vpx-list.png)
 
-2. Select the `VPX IP` of your ingress gateway ADC and choose `Configure Analytics` under `Select Action`.
+2. Select the `VPX IP` of your ingress gateway NetScaler and choose `Configure Analytics` under `Select Action`.
 
 3. Virtual server configured on the VPX is listed.
 
@@ -453,19 +453,19 @@ Service Graph will not be populated if virtual server configurations of Citrix A
 
 4. License all the virtual server whose IP address is VIP, if it is not licensed. To license, select the `vserver` and click `License`.
 
-#### Discovering virtual server Configuration of Citrix ADC CPX
+#### Discovering virtual server Configuration of NetScaler CPX
 
-1. Navigate to `Networks > Instances > Citrix ADC` and choose a Citrix ADC CPX instance.
+1. Navigate to `Networks > Instances > NetScaler` and choose a NetScaler CPX instance.
 
-2. Select the Citrix ADC CPX instance from the list and choose `Configure Analytics` under `Select Action`.
+2. Select the NetScaler CPX instance from the list and choose `Configure Analytics` under `Select Action`.
 
 ![](images/cpx-list.png)
    
-3. Citrix ADM polls the Citrix ADC CPX in the interval of 10 mins. If the page does not list virtual server, then you can manually poll the Citrix ADC CPX.
+3. NetScaler ADM polls the NetScaler CPX in the interval of 10 mins. If the page does not list virtual server, then you can manually poll the NetScaler CPX.
 
    ![](images/cpx-analytics-blank.png)
 
-4. For manual Polling Citrix ADC CPX:
+4. For manual Polling NetScaler CPX:
 
     a. Navigate to `Networks > Networking Functions` and click `Poll Now`.
    
@@ -473,7 +473,7 @@ Service Graph will not be populated if virtual server configurations of Citrix A
 
     b. Click `Select Instances`. A list of instances is displayed. 
 
-    c. Choose the Citrix ADC CPX instance from the list.
+    c. Choose the NetScaler CPX instance from the list.
 
     ![](images/poll-cpx.png)
 
@@ -485,12 +485,12 @@ Service Graph will not be populated if virtual server configurations of Citrix A
 
     ![](images/polling-cpx-done.png)
 
-     Once polling is completed, navigate to `Networks > Instances > Citrix ADC` and choose Citrix ADC CPX instance. 
+     Once polling is completed, navigate to `Networks > Instances > NetScaler` and choose NetScaler CPX instance. 
      
-     Select the Citrix ADC CPX from the list and choose `Configure Analytics` under `Select Action`. 
+     Select the NetScaler CPX from the list and choose `Configure Analytics` under `Select Action`. 
      
-     Now, the list of virtual server configured on Citrix ADC CPX is displayed.
+     Now, the list of virtual server configured on NetScaler CPX is displayed.
 
     ![](images/cpx-vserver-list.png)
 
-    You can now view the service graph by navigating to `Applications > Service Graph > Microservices ` in Citrix ADM.
+    You can now view the service graph by navigating to `Applications > Service Graph > Microservices ` in NetScaler ADM.

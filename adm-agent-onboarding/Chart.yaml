@@ -3,7 +3,7 @@ appVersion: "1.1.0"
 description: A Helm chart for ADM agent onboarding
 name: adm-agent-onboarding
 version: 1.1.0
-icon: https://raw.githubusercontent.com/citrix/citrix-helm-charts/gh-pages/icon.png
+icon: https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/gh-pages/netscaler.png
 home: https://www.cloud.com
 maintainers:
 - name: subashd

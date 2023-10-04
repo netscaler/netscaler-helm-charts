@@ -14,7 +14,7 @@ spec:
       name: other-secret
       namespace: demo
   - preconfigured: second-secret
-    # preconfigured certkey name in ADC
+    # preconfigured certkey name in NetScaler
   vip: '192.168.0.1' # Virtual IP address to be used, not required when CPX is used as ingress device
   port: 443 
   protocol: https
@@ -39,9 +39,9 @@ spec:
     - HIGH
     # List of SSL ciphers or cipher groups in the priority order
     # refer: https://docs.citrix.com/en-us/citrix-adc/current-release/ssl/ciphers-available-on-the-citrix-adc-appliances.html
-    # for list of ciphers available in the ADC
+    # for list of ciphers available in the NetScaler
     analyticsprofile:
-     # https://developer-docs.citrix.com/projects/citrix-adc-nitro-api-reference/en/latest/configuration/analytics/analyticsprofile/
+     # https://developer-docs.netscaler.com/en-us/adc-nitro-api/current-release/configuration/analytics/analyticsprofile/
       config:
       - type: webinsight
         parameters:

@@ -1,44 +1,44 @@
-# Deploy Citrix ADC as an egress Gateway in Istio environment using Helm charts
+# Deploy NetScaler as an egress Gateway in Istio environment using Helm charts
 
-Citrix Application Delivery Controller (ADC) can be deployed as an Istio egress Gateway to control the egress traffic to Istio service mesh.
+NetScaler can be deployed as an Istio egress Gateway to control the egress traffic to Istio service mesh.
 
 # Table of Contents
 1. [TL; DR;](#tldr)
 2. [Introduction](#introduction)
-3. [Deploy Citrix ADC VPX or MPX as an Egress Gateway](#deploy-citrix-adc-vpx-or-mpx-as-an-egress-gateway)
-4. [Deploy Citrix ADC CPX as an Egress Gateway](#deploy-citrix-adc-cpx-as-an-egress-gateway)
-5. [Visualizing statistics of Citrix ADC Egress Gateway with Metrics Exporter](#visualizing-statistics-of-citrix-adc-Egress-gateway-with-metrics-exporter)
-6. [Citrix ADC CPX License Provisioning](#citrix-adc-cpx-license-provisioning)
+3. [Deploy NetScaler VPX or MPX as an Egress Gateway](#deploy-citrix-adc-vpx-or-mpx-as-an-egress-gateway)
+4. [Deploy NetScaler CPX as an Egress Gateway](#deploy-citrix-adc-cpx-as-an-egress-gateway)
+5. [Visualizing statistics of NetScaler Egress Gateway with Metrics Exporter](#visualizing-statistics-of-citrix-adc-Egress-gateway-with-metrics-exporter)
+6. [NetScaler CPX License Provisioning](#citrix-adc-cpx-license-provisioning)
 7. [Service Graph Configuration](#configuration-for-servicegraph)
 8. [Generate Certificate for Egress Gateway](#generate-certificate-for-egress-gateway)
-9. [Citrix ADC as Egress Gateway: a sample deployment](#citrix-adc-as-egress-gateway-a-sample-deployment)
+9. [NetScaler as Egress Gateway: a sample deployment](#citrix-adc-as-egress-gateway-a-sample-deployment)
 10. [Uninstalling the Helm chart](#uninstalling-the-helm-chart)
 11. [Configuration Parameters](#configuration-parameters)
 
 ## <a name="tldr">TL; DR;</a>
-### To deploy Citrix ADC VPX or MPX as an Egress Gateway:
+### To deploy NetScaler VPX or MPX as an Egress Gateway:
 
-       kubectl create secret generic nsloginegress --from-literal=username=<citrix-adc-user> --from-literal=password=<citrix-adc-password> -n citrix-system
+       kubectl create secret generic nsloginegress --from-literal=username=<netscaler-user> --from-literal=password=<netscaler-password> -n netscaler-system
 
-       helm repo add citrix https://citrix.github.io/citrix-helm-charts/
+       helm repo add netscaler https://netscaler.github.io/netscaler-helm-charts/
 
-       helm install citrix-adc-istio-egress-gateway citrix/citrix-cloud-native --namespace citrix-system --set iaEgress.enabled=true,iaEgress.egressGateway.EULA=YES,iaEgress.egressGateway.netscalerUrl=https://<nsip>[:port],iaEgress.egressGateway.vserverIP=<IPv4 Address> --set iaEgress.secretName=nsloginegress
+       helm install citrix-adc-istio-egress-gateway netscaler/citrix-cloud-native --namespace netscaler-system --set iaEgress.enabled=true,iaEgress.egressGateway.EULA=YES,iaEgress.egressGateway.netscalerUrl=https://<nsip>[:port],iaEgress.egressGateway.vserverIP=<IPv4 Address> --set iaEgress.secretName=nsloginegress
 
-### To deploy Citrix ADC CPX as an Egress Gateway:
+### To deploy NetScaler CPX as an Egress Gateway:
 
-       helm repo add citrix https://citrix.github.io/citrix-helm-charts/
+       helm repo add netscaler https://netscaler.github.io/netscaler-helm-charts/
 
-       helm install citrix-adc-istio-egress-gateway citrix/citrix-cloud-native --namespace citrix-system --set iaEgress.enabled=true --set iaEgress.egressGateway.EULA=true --set iaEgress.citrixCPX=true
+       helm install citrix-adc-istio-egress-gateway netscaler/citrix-cloud-native --namespace netscaler-system --set iaEgress.enabled=true --set iaEgress.egressGateway.EULA=true --set iaEgress.citrixCPX=true
 
 ## <a name="introduction">Introduction</a>
 
-    This chart deploys Citrix CPX as an Egress Gateway. An egress gateway defines the exit point from the mesh. It provides features like load balancing at the edge of the mesh, monitoring, and routing rules to exiting the mesh. 
+    This chart deploys NetScaler CPX as an Egress Gateway. An egress gateway defines the exit point from the mesh. It provides features like load balancing at the edge of the mesh, monitoring, and routing rules to exiting the mesh. 
 
-### Compatibility Matrix between Citrix xDS-adaptor and Istio version
+### Compatibility Matrix between NetScaler xDS-adaptor and Istio version
 
-Below table provides info about recommended Citrix xDS-Adaptor version to be used for various Istio versions.
+Below table provides info about recommended NetScaler xDS-Adaptor version to be used for various Istio versions.
 
-| Citrix xDS-Adaptor version | Istio version |
+| NetScaler xDS-Adaptor version | Istio version |
 |----------------------------|---------------|
 | quay.io/citrix/citrix-xds-adaptor:0.10.3 | Istio v1.14+ |
 | quay.io/citrix/citrix-xds-adaptor:0.10.1 | Istio v1.12 to Istio v1.13 |
@@ -48,10 +48,10 @@ Below table provides info about recommended Citrix xDS-Adaptor version to be use
 
 ### Prerequisites
 
-The following prerequisites are required for deploying Citrix ADC as an Egress Gateway in Istio service mesh:
+The following prerequisites are required for deploying NetScaler as an Egress Gateway in Istio service mesh:
 
 - Ensure that **Istio version 1.8 onwards** is installed
-- Ensure that Helm with version 3.x is installed. Follow this [step](https://github.com/citrix/citrix-helm-charts/blob/master/Helm_Installation_version_3.md) to install the same.
+- Ensure that Helm with version 3.x is installed. Follow this [step](https://github.com/netscaler/netscaler-helm-charts/blob/master/Helm_Installation_version_3.md) to install the same.
 - Ensure that your cluster Kubernetes version should be 1.16 onwards and the `admissionregistration.k8s.io/v1`, `admissionregistration.k8s.io/v1beta1` API is enabled
 
 You can verify the API by using the following command:
@@ -63,15 +63,15 @@ The following output indicates that the API is enabled:
         admissionregistration.k8s.io/v1
         admissionregistration.k8s.io/v1beta1
 
-- **For deploying Citrix ADC VPX or MPX as an Egress gateway:**
+- **For deploying NetScaler VPX or MPX as an Egress gateway:**
 
-  Create a Kubernetes secret for the Citrix ADC user name and password using the following command:
+  Create a Kubernetes secret for the NetScaler user name and password using the following command:
   
-        kubectl create secret generic nsloginegress --from-literal=username=<citrix-adc-user> --from-literal=password=<citrix-adc-password> -n citrix-system
+        kubectl create secret generic nsloginegress --from-literal=username=<netscaler-user> --from-literal=password=<netscaler-password> -n netscaler-system
 
-- **Create system user account for xDS-adaptor in Citrix ADC:**
+- **Create system user account for xDS-adaptor in NetScaler:**
 
-  The Citrix ADC appliance needs to have system user account (non-default) with certain privileges so that `xDS-adaptor` can configure the Citrix ADC VPX or MPX appliance. Follow the instructions to create the system user account on Citrix ADC.
+  The NetScaler appliance needs to have system user account (non-default) with certain privileges so that `xDS-adaptor` can configure the NetScaler VPX or MPX appliance. Follow the instructions to create the system user account on NetScaler.
 
     Create a Kubernetes secret for the user name and password using the following command:
 
@@ -79,7 +79,7 @@ The following output indicates that the API is enabled:
        kubectl create secret generic nslogin --from-literal=username='cxa' --from-literal=password='mypassword'
     ```
 
-  The `xDS-adaptor` configures the Citrix ADC using a system user account of the Citrix ADC. The system user account should have certain privileges so that the xDS-adaptor has permissions configure the following on the Citrix ADC:
+  The `xDS-adaptor` configures the NetScaler using a system user account of the NetScaler. The system user account should have certain privileges so that the xDS-adaptor has permissions configure the following on the NetScaler:
 
   -  Add, Delete, or View Content Switching (CS) virtual server
   -  Configure CS policies and actions
@@ -90,7 +90,7 @@ The following output indicates that the API is enabled:
   -  Configure user monitors
   -  Add system file (for uploading SSL certkeys from Kubernetes)
   -  Configure Virtual IP address (VIP)
-  -  Check the status of the Citrix ADC appliance
+  -  Check the status of the NetScaler appliance
   -  Add, Delete or view authentication virtual server, policy, authaction
   -  Add, Delete or view Policy
   -  Add, Delete or view Responder policy, action, param
@@ -107,8 +107,8 @@ The following output indicates that the API is enabled:
 
  To create the system user account, do the following:
 
- 1.  Log on to the Citrix ADC appliance. Perform the following:
-     1.  Use an SSH client, such as PuTTy, to open an SSH connection to the Citrix ADC appliance.
+ 1.  Log on to the NetScaler appliance. Perform the following:
+     1.  Use an SSH client, such as PuTTy, to open an SSH connection to the NetScaler appliance.
 
      2.  Log on to the appliance by using the administrator credentials.
 
@@ -136,68 +136,68 @@ The following output indicates that the API is enabled:
         bind system user cxa cxa-policy 0
      ```
 
-- **Registration of Citrix ADC CPX in ADM**
+- **Registration of NetScaler CPX in ADM**
 
 Create a secret for ADM username and password
 
-        kubectl create secret generic admloginegress --from-literal=username=<adm-username> --from-literal=password=<adm-password> -n citrix-system
+        kubectl create secret generic admloginegress --from-literal=username=<adm-username> --from-literal=password=<adm-password> -n netscaler-system
         
-- **Important Note:** For deploying Citrix ADC VPX or MPX as egress gateway, you should establish the connectivity between Citrix ADC VPX or MPX and cluster nodes. This connectivity can be established by configuring routes on Citrix ADC as mentioned [here](https://github.com/citrix/citrix-k8s-ingress-controller/blob/master/docs/network/staticrouting.md) or by deploying [Citrix Node Controller](https://github.com/citrix/citrix-k8s-node-controller).
+- **Important Note:** For deploying NetScaler VPX or MPX as egress gateway, you should establish the connectivity between NetScaler VPX or MPX and cluster nodes. This connectivity can be established by configuring routes on NetScaler as mentioned [here](https://github.com/netscaler/netscaler-k8s-ingress-controller/blob/master/docs/network/staticrouting.md) or by deploying [NetScaler Node Controller](https://github.com/netscaler/netscaler-k8s-node-controller).
 
-## <a name="deploy-citrix-adc-vpx-or-mpx-as-an-egress-gateway">Deploy Citrix ADC VPX or MPX as an egress Gateway</a>
+## <a name="deploy-citrix-adc-vpx-or-mpx-as-an-egress-gateway">Deploy NetScaler VPX or MPX as an egress Gateway</a>
 
- To deploy Citrix ADC VPX or MPX as an Egress Gateway in the Istio service mesh, do the following step. In this example, release name is specified as `citrix-adc-istio-egress-gateway` and namespace as `citrix-system`.
+ To deploy NetScaler VPX or MPX as an Egress Gateway in the Istio service mesh, do the following step. In this example, release name is specified as `citrix-adc-istio-egress-gateway` and namespace as `netscaler-system`.
 
-        kubectl create secret generic nsloginegress --from-literal=username=<citrix-adc-user> --from-literal=password=<citrix-adc-password> -n citrix-system
+        kubectl create secret generic nsloginegress --from-literal=username=<netscaler-user> --from-literal=password=<netscaler-password> -n netscaler-system
         
-        helm repo add citrix https://citrix.github.io/citrix-helm-charts/
+        helm repo add netscaler https://netscaler.github.io/netscaler-helm-charts/
 
-        helm install citrix-adc-istio-egress-gateway citrix/citrix-cloud-native --namespace citrix-system --set iaEgress.enabled=true,iaEgress.egressGateway.EULA=YES,iaEgress.secretName=nsloginegress,iaEgress.egressGateway.netscalerUrl=https://<nsip>[:port],iaEgress.egressGateway.vserverIP=<IPv4 Address> 
+        helm install citrix-adc-istio-egress-gateway netscaler/citrix-cloud-native --namespace netscaler-system --set iaEgress.enabled=true,iaEgress.egressGateway.EULA=YES,iaEgress.secretName=nsloginegress,iaEgress.egressGateway.netscalerUrl=https://<nsip>[:port],iaEgress.egressGateway.vserverIP=<IPv4 Address> 
 
-## <a name="deploy-citrix-adc-cpx-as-an-egress-gateway">Deploy Citrix ADC CPX as an Egress Gateway</a>
+## <a name="deploy-citrix-adc-cpx-as-an-egress-gateway">Deploy NetScaler CPX as an Egress Gateway</a>
 
- To deploy Citrix ADC CPX as an egress Gateway, do the following step. In this example, release name is specified as `citrix-adc-istio-egress-gateway` and namespace is used as `citrix-system`.
+ To deploy NetScaler CPX as an egress Gateway, do the following step. In this example, release name is specified as `citrix-adc-istio-egress-gateway` and namespace is used as `netscaler-system`.
 
-        helm repo add citrix https://citrix.github.io/citrix-helm-charts/
+        helm repo add netscaler https://netscaler.github.io/netscaler-helm-charts/
 
-        helm install citrix-adc-istio-egress-gateway citrix/citrix-cloud-native --namespace citrix-system --set iaEgress.enabled=true --set iaEgress.egressGateway.EULA=true --set iaEgress.citrixCPX=true
+        helm install citrix-adc-istio-egress-gateway netscaler/citrix-cloud-native --namespace netscaler-system --set iaEgress.enabled=true --set iaEgress.egressGateway.EULA=true --set iaEgress.citrixCPX=true
 
-## <a name="visualizing-statistics-of-citrix-adc-Egress-gateway-with-metrics-exporter">Visualizing statistics of Citrix ADC Egress Gateway with Metrics Exporter</a>
+## <a name="visualizing-statistics-of-citrix-adc-Egress-gateway-with-metrics-exporter">Visualizing statistics of NetScaler Egress Gateway with Metrics Exporter</a>
 
- By default, [Citrix ADC Metrics Exporter](https://github.com/citrix/citrix-adc-metrics-exporter) is also deployed along with Citrix ADC Egress Gateway    . Citrix ADC Metrics Exporter fetches statistical data from Citrix ADC and exports it to Prometheus running in Istio service mesh. When you add Prometheus as a data source in Grafana, you can visualize this statistical data in the Grafana dashboard.
+ By default, [NetScaler Metrics Exporter](https://github.com/netscaler/netscaler-adc-metrics-exporterporter) is also deployed along with NetScaler Egress Gateway    . NetScaler Metrics Exporter fetches statistical data from NetScaler and exports it to Prometheus running in Istio service mesh. When you add Prometheus as a data source in Grafana, you can visualize this statistical data in the Grafana dashboard.
  
- Metrics Exporter requires the IP address of Citrix ADC CPX as Egress Gateway. It is retrieved from the value specified for `EgressGateway.netscalerUrl`.
+ Metrics Exporter requires the IP address of NetScaler CPX as Egress Gateway. It is retrieved from the value specified for `EgressGateway.netscalerUrl`.
 
- When Citrix ADC CPX is deployed as Egress Gateway, Metrics Exporter runs along with Citrix CPX Egress Gateway in the same pod and specifying IP address is optional.
+ When NetScaler CPX is deployed as Egress Gateway, Metrics Exporter runs along with NetScaler CPX Egress Gateway in the same pod and specifying IP address is optional.
 
-To deploy Citrix ADC as Egress Gateway without Metrics Exporter, set the value of `metricExporter.required` as false.
+To deploy NetScaler as Egress Gateway without Metrics Exporter, set the value of `metricExporter.required` as false.
 
-         helm repo add citrix https://citrix.github.io/citrix-helm-charts/
+         helm repo add netscaler https://netscaler.github.io/netscaler-helm-charts/
 
-         helm install citrix-adc-istio-egress-gateway citrix/citrix-cloud-native --namespace citrix-system --set iaEgress.enabled=true --set iaEgress.egressGateway.EULA=YES  --set iaEgress.citrixCPX=true --set iaEgress.metricExporter.required=false         
+         helm install citrix-adc-istio-egress-gateway netscaler/citrix-cloud-native --namespace netscaler-system --set iaEgress.enabled=true --set iaEgress.egressGateway.EULA=YES  --set iaEgress.citrixCPX=true --set iaEgress.metricExporter.required=false         
 
- To deploy Citrix ADC VPX or MPX as Egress Gateway without Metrics Exporter, set the value of `iaIngress.metricExporter.required` as false.
+ To deploy NetScaler VPX or MPX as Egress Gateway without Metrics Exporter, set the value of `iaIngress.metricExporter.required` as false.
 
 
-        kubectl create secret generic nsloginegress --from-literal=username=<citrix-adc-user> --from-literal=password=<citrix-adc-password> -n citrix-system
+        kubectl create secret generic nsloginegress --from-literal=username=<netscaler-user> --from-literal=password=<netscaler-password> -n netscaler-system
     
-        helm repo add citrix https://citrix.github.io/citrix-helm-charts/
+        helm repo add netscaler https://netscaler.github.io/netscaler-helm-charts/
 
-        helm install citrix-adc-istio-egress-gateway citrix/citrix-cloud-native --namespace citrix-system --set iaEgress.enabled=true,iaEgress.egressGateway.EULA=YES,iaEgress.secretName=nsloginegress,iaEgress.egressGateway.netscalerUrl=https://<nsip>[:port],iaEgress.egressGateway.vserverIP=<IPv4 Address>,iaEgress.metricExporter.required=false                                                                                                                                                                                                                                   
+        helm install citrix-adc-istio-egress-gateway netscaler/citrix-cloud-native --namespace netscaler-system --set iaEgress.enabled=true,iaEgress.egressGateway.EULA=YES,iaEgress.secretName=nsloginegress,iaEgress.egressGateway.netscalerUrl=https://<nsip>[:port],iaEgress.egressGateway.vserverIP=<IPv4 Address>,iaEgress.metricExporter.required=false                                                                                                                                                                                                                                   
      
    **Note:** To remotely access telemetry addons such as Prometheus and Grafana, see [Remotely Accessing Telemetry Addons](https://istio.io/docs/tasks/telemetry/gateways/).
 
 ## <a name="generate-certificate-for-Egress-gateway">Generate Certificate for Egress Gateway </a>
 
-Citrix Egress gateway needs TLS certificate-key pair for establishing secure communication channel with backend applications. Earlier these certificates were issued by Istio Citadel and bundled in Kubernetes secret. Certificate was loaded in the application pod by doing volume mount of secret. Now `xDS-Adaptor` can generate its own certificate and get it signed by the Istio Citadel (Istiod). This eliminates the need of secret and associated [risks](https://kubernetes.io/docs/concepts/configuration/secret/#risks). 
+NetScaler Egress gateway needs TLS certificate-key pair for establishing secure communication channel with backend applications. Earlier these certificates were issued by Istio Citadel and bundled in Kubernetes secret. Certificate was loaded in the application pod by doing volume mount of secret. Now `xDS-Adaptor` can generate its own certificate and get it signed by the Istio Citadel (Istiod). This eliminates the need of secret and associated [risks](https://kubernetes.io/docs/concepts/configuration/secret/#risks). 
 
 xDS-Adaptor needs to be provided with details Certificate Authority (CA) for successful signing of Certificate Signing Request (CSR). By default, CA is `istiod.istio-system.svc` which accepts CSRs on port 15012. 
 To skip this process, don't provide any value (empty string) to `iaEgress.certProvider.caAddr`.
 
 ```
-        helm repo add citrix https://citrix.github.io/citrix-helm-charts/
+        helm repo add netscaler https://netscaler.github.io/netscaler-helm-charts/
 
-        helm install citrix-adc-istio-egress-gateway citrix/citrix-cloud-native --namespace citrix-system --set iaEgress.enabled=true --set iaEgress.egressGateway.EULA=YES --set iaEgress.citrixCPX=true --set iaEgress.certProvider.caAddr=""
+        helm install citrix-adc-istio-egress-gateway netscaler/citrix-cloud-native --namespace netscaler-system --set iaEgress.enabled=true --set iaEgress.egressGateway.EULA=YES --set iaEgress.citrixCPX=true --set iaEgress.certProvider.caAddr=""
 ```
 
 ### <a name="using-third-party-service-account-tokens">Configure Third Party Service Account Tokens</a>
@@ -211,9 +211,9 @@ Kubernetes supports two forms of these tokens:
  If Kubernetes cluster is installed with third party tokens, then the same information needs to be provided for automatic sidecar injection by passing `--set iaEgress.certProvider.jwtPolicy="third-party-jwt"`. By default, it is `first-party-jwt`.
 
 ```
-        helm repo add citrix https://citrix.github.io/citrix-helm-charts/
+        helm repo add netscaler https://netscaler.github.io/netscaler-helm-charts/
 
-        helm install cpx-sidecar-injector citrix/citrix-cpx-istio-sidecar-injector --namespace citrix-system --set iaEgress.cpxProxy.EULA=YES --set iaEgress.certProvider.caAddr="istiod.istio-system.svc" --set iaEgress.certProvider.jwtPolicy="third-party-jwt"
+        helm install cpx-sidecar-injector netscaler/citrix-cpx-istio-sidecar-injector --namespace netscaler-system --set iaEgress.cpxProxy.EULA=YES --set iaEgress.certProvider.caAddr="istiod.istio-system.svc" --set iaEgress.certProvider.jwtPolicy="third-party-jwt"
 
 ```
 
@@ -237,40 +237,40 @@ To determine if your cluster supports third party tokens, look for the TokenRequ
 ```
 
 
-## <a name="citrix-adc-cpx-license-provisioning">**Citrix ADC CPX License Provisioning**</a>
-By default, CPX runs with 20 Mbps bandwidth called as [CPX Express](https://www.citrix.com/en-in/products/citrix-adc/cpx-express.html) however for better performance and production deployment customer needs licensed CPX instances. [Citrix ADM](https://www.citrix.com/en-in/products/citrix-application-delivery-management/) is used to check out licenses for Citrix ADC CPX.
+## <a name="citrix-adc-cpx-license-provisioning">**NetScaler CPX License Provisioning**</a>
+By default, CPX runs with 20 Mbps bandwidth called as [CPX Express](https://www.netscaler.com/platform/cpx-containerter performance and production deployment customer needs licensed CPX instances. [NetScaler ADM](https://docs.netscaler.com/en-us/citrix-application-delivery-management-service/ce/ce/) is used to check out licenses for NetScaler CPX.
 
 **Bandwidth based licensing**
-For provisioning licensing on Citrix ADC CPX, it is mandatory to provide License Server information to CPX. This can be done by setting **ADMSettings.licenseServerIP** as License Server IP. In addition to this, **ADMSettings.bandWidthLicense** needs to be set true and desired bandwidth capacity in Mbps should be set **ADMSettings.bandWidth**.
+For provisioning licensing on NetScaler CPX, it is mandatory to provide License Server information to CPX. This can be done by setting **ADMSettings.licenseServerIP** as License Server IP. In addition to this, **ADMSettings.bandWidthLicense** needs to be set true and desired bandwidth capacity in Mbps should be set **ADMSettings.bandWidth**.
 For example, to set 2Gbps as bandwidth capacity, below command can be used.
 
-    helm repo add citrix https://citrix.github.io/citrix-helm-charts/
+    helm repo add netscaler https://netscaler.github.io/netscaler-helm-charts/
 
-    helm install citrix-adc-istio-egress-gateway citrix/citrix-cloud-native --namespace citrix-system --set iaEgress.enabled=true --set iaEgress.egressGateway.EULA=YES --set iaEgress.ADMSettings.licenseServerIP=<Licenseserver_IP>,iaEgress.ADMSettings.bandWidthLicense=True --set iaEgress.ADMSettings.bandWidth=2000 --set citrixCPX=true
+    helm install citrix-adc-istio-egress-gateway netscaler/citrix-cloud-native --namespace netscaler-system --set iaEgress.enabled=true --set iaEgress.egressGateway.EULA=YES --set iaEgress.ADMSettings.licenseServerIP=<Licenseserver_IP>,iaEgress.ADMSettings.bandWidthLicense=True --set iaEgress.ADMSettings.bandWidth=2000 --set citrixCPX=true
 
 ## <a name="configuration-for-servicegraph">**Configure ServiceGraph**</a>
-   Citrix ADM Service graph is an observability tool that allows user to analyse service to service communication. The service graph is generated by ADM post collection of transactional data from registered Citrix ADC instances. More details about it can be found [here](https://docs.citrix.com/en-us/citrix-application-delivery-management-service/application-analytics-and-management/service-graph.html).
-   Citrix ADC needs to be provided with ADM details for registration and data export. This section lists the steps needed to deploy Citrix ADC and register it with ADM.
+   NetScaler ADM Service graph is an observability tool that allows user to analyse service to service communication. The service graph is generated by ADM post collection of transactional data from registered NetScaler instances. More details about it can be found [here](https://docs.netscaler.com/en-us/citrix-application-delivery-management-service/application-analytics-and-management/service-graph.htmltml).
+   NetScaler needs to be provided with ADM details for registration and data export. This section lists the steps needed to deploy NetScaler and register it with ADM.
 
-**Deploy Citrix ADC CPX as egress gateway**
-   1. Create secret using Citrix ADM Agent credentials, which will be used by Citrix ADC CPX to communicate with Citrix ADM Agent:
+**Deploy NetScaler CPX as egress gateway**
+   1. Create secret using NetScaler ADM Agent credentials, which will be used by NetScaler CPX to communicate with NetScaler ADM Agent:
 
 	kubectl create secret generic admlogin --from-literal=username=<adm-agent-username> --from-literal=password=<adm-agent-password>
 
-   2. Deploy Citrix ADC CPX as egress gateway using helm command with `ADM` details:
+   2. Deploy NetScaler CPX as egress gateway using helm command with `ADM` details:
 
-	helm install citrix-adc-istio-egress-gateway citrix/citrix-cloud-native --namespace citrix-system --set iaEgress.enabled=true --set iaEgress.egressGateway.EULA=true --set iaEgress.citrixCPX=true --set iaEgress.ADMSettings.ADMIP=<ADM-Agent-IP>
+	helm install citrix-adc-istio-egress-gateway netscaler/citrix-cloud-native --namespace netscaler-system --set iaEgress.enabled=true --set iaEgress.egressGateway.EULA=true --set iaEgress.citrixCPX=true --set iaEgress.ADMSettings.ADMIP=<ADM-Agent-IP>
 
 > **Note:**
-> If container agent is being used here for Citrix ADM, specify `serviceIP` of container agent in the `iaEgress.ADMSettings.ADMIP` parameter.
+> If container agent is being used here for NetScaler ADM, specify `serviceIP` of container agent in the `iaEgress.ADMSettings.ADMIP` parameter.
 
-**Deploy Citrix ADC VPX/MPX as egress gateway**
+**Deploy NetScaler VPX/MPX as egress gateway**
 
-   Deploy Citrix ADC VPX/MPX as egress gateway using the following helm command and set analytics settings on Citrix ADC VPX/MPX for sending transaction metrics to Citrix ADM
+   Deploy NetScaler VPX/MPX as egress gateway using the following helm command and set analytics settings on NetScaler VPX/MPX for sending transaction metrics to NetScaler ADM
 
-	helm install citrix-adc-istio-egress-gateway citrix/citrix-cloud-native --namespace citrix-system --set iaEgress.enabled=true,iaEgress.egressGateway.EULA=YES,iaEgress.egressGateway.netscalerUrl=https://<nsip>[:port],iaEgress.egressGateway.vserverIP=<IPv4 Address> --set iaEgress.secretName=nsloginegress
+	helm install citrix-adc-istio-egress-gateway netscaler/citrix-cloud-native --namespace netscaler-system --set iaEgress.enabled=true,iaEgress.egressGateway.EULA=YES,iaEgress.egressGateway.netscalerUrl=https://<nsip>[:port],iaEgress.egressGateway.vserverIP=<IPv4 Address> --set iaEgress.secretName=nsloginegress
 
-   Add the following configurations in Citrix ADC VPX/MPX
+   Add the following configurations in NetScaler VPX/MPX
 
         en ns mode ulfd
 
@@ -290,17 +290,17 @@ For example, to set 2Gbps as bandwidth capacity, below command can be used.
 
 
 > **Note:**
-> If container agent is being used here for Citrix ADM, specify `podIP` of container agent in above manual config.
+> If container agent is being used here for NetScaler ADM, specify `podIP` of container agent in above manual config.
 
 
-## <a name="citrix-adc-as-egress-gateway-a-sample-deployment">Citrix ADC as Egress Gateway: a sample deployment</a>
-A sample deployment of Citrix ADC as an Egress gateway to excess external services is provided [here](https://github.com/citrix/citrix-helm-charts/tree/master/examples/citrix-adc-egress-in-istio).
+## <a name="citrix-adc-as-egress-gateway-a-sample-deployment">NetScaler as Egress Gateway: a sample deployment</a>
+A sample deployment of NetScaler as an Egress gateway to excess external services is provided [here](https://github.com/netscaler/netscaler-helm-charts/tree/master/examples/citrix-adc-egress-in-istio).
 
 ## <a name="uninstalling-the-helm-chart">Uninstalling the Helm chart</a>
  
  To uninstall or delete a chart with release name as `citrix-adc-istio-egress-gateway`, do the following step.
 
-         helm uninstall citrix-adc-istio-egress-gateway -n citrix-system
+         helm uninstall citrix-adc-istio-egress-gateway -n netscaler-system
 
  The command removes all the Kubernetes components associated with the chart and deletes the release.
 
@@ -310,54 +310,54 @@ The following table lists the configurable parameters in the Helm chart and thei
 
 | Parameter                      | Description                   | Default                   | Optional/Mandatory                  |
 |--------------------------------|-------------------------------|---------------------------|---------------------------|
-| `iaEgress.citrixCPX`                    | Citrix ADC CPX                    | FALSE                  | Mandatory for Citrix ADC CPX |
-| `iaEgress.xDSAdaptor.imageRegistry`                | Image registry of the Citrix xDS adaptor container               | `quay.io`               |     Mandatory                  |
-| `iaEgress.xDSAdaptor.imageRepository`              | Image repository of the Citrix xDS adaptor container               | `citrix/citrix-xds-adaptor`               |    Mandatory                  |
-| `iaEgress.xDSAdaptor.imageTag`                     | Image tag of the Citrix xDS adaptor container               | `0.10.3`               |   Mandatory                  |
+| `iaEgress.citrixCPX`                    | NetScaler CPX                    | FALSE                  | Mandatory for NetScaler CPX |
+| `iaEgress.xDSAdaptor.imageRegistry`                | Image registry of the NetScaler xDS adaptor container               | `quay.io`               |     Mandatory                  |
+| `iaEgress.xDSAdaptor.imageRepository`              | Image repository of the NetScaler xDS adaptor container               | `citrix/citrix-xds-adaptor`               |    Mandatory                  |
+| `iaEgress.xDSAdaptor.imageTag`                     | Image tag of the NetScaler xDS adaptor container               | `0.10.3`               |   Mandatory                  |
 | `iaEgress.xDSAdaptor.imagePullPolicy`   | Image pull policy for xDS adaptor | IfNotPresent       | Optional|
 | `iaEgress.xDSAdaptor.secureConnect`     | If this value is set to true, xDS-adaptor establishes secure gRPC channel with Istio Pilot   | TRUE                       | Optional|
 | `iaEgress.xDSAdaptor.logLevel`   | Log level to be set for xDS-adaptor log messages. Possible values: TRACE (most verbose), DEBUG, INFO, WARN, ERROR (least verbose) | DEBUG       | Optional|
 | `iaEgress.xDSAdaptor.jsonLog`   | Set this argument to true if log messages are required in JSON format | false       | Optional|
 | `iaEgress.xDSAdaptor.defaultSSLListenerOn443` | Create SSL vserver by default for LDS resource for 0.0.0.0 and port 443. If set to false, TCP vserver will be created in absence of TLSContext in tcp_proxy filter | true | Optional |
-| `iaEgress.coe.coeURL`          | Name of [Citrix Observability Exporter](https://github.com/citrix/citrix-observability-exporter) Service in the form of "<servicename>.<namespace>"  | null            | Optional|
-| `iaEgress.coe.coeTracing`          | Use COE to send appflow transactions to Zipkin endpoint. If it is set to true, ADM servicegraph (if configured) can be impacted.  | false           | Optional|
-| `iaEgress.ADMSettings.ADMIP`          | Citrix Application Delivery Management (ADM) IP address  | NIL            | Mandatory for Citrix ADC CPX |
-| `iaEgress.ADMSettings.licenseServerIP`          | Citrix License Server IP address  | NIL            | Optional |
-| `iaEgress.ADMSettings.licenseServerPort` | Citrix ADM port if a non-default port is used                                                                                        | 27000                                                                 | Optional|
-| `iaEgress.ADMSettings.bandWidth`          | Desired bandwidth capacity to be set for Citrix ADC CPX in Mbps  | 1000            | Optional |
+| `iaEgress.coe.coeURL`          | Name of [NetScaler Observability Exporter](https://github.com/netscaler/netscaler-observability-exporter) Service in the form of "<servicename>.<namespace>"  | null            | Optional|
+| `iaEgress.coe.coeTracing`          | Use NSOE to send appflow transactions to Zipkin endpoint. If it is set to true, ADM servicegraph (if configured) can be impacted.  | false           | Optional|
+| `iaEgress.ADMSettings.ADMIP`          | NetScaler Application Delivery Management (ADM) IP address  | NIL            | Mandatory for NetScaler CPX |
+| `iaEgress.ADMSettings.licenseServerIP`          | NetScaler License Server IP address  | NIL            | Optional |
+| `iaEgress.ADMSettings.licenseServerPort` | NetScaler ADM port if a non-default port is used                                                                                        | 27000                                                                 | Optional|
+| `iaEgress.ADMSettings.bandWidth`          | Desired bandwidth capacity to be set for NetScaler CPX in Mbps  | 1000            | Optional |
 | `iaEgress.ADMSettings.bandWidthLicense`          | To specify bandwidth based licensing  | false            | Optional |
 | `iaEgress.ADMSettings.licenseEdition`| License edition that can be Standard, Platinum and Enterprise . By default, Platinum is selected | PLATINUM | optional |
 | `iaEgress.ADMSettings.analyticsServerPort` |      Port used for Analytics in ADM. Required to plot ServiceGraph.                                                                                   | 5557                                                                 | Optional|
-| `iaEgress.egressGateway.netscalerUrl`       | URL or IP address of the Citrix ADC which Istio-adaptor configures (Mandatory if citrixCPX=false)| null   |Mandatory for Citrix ADC MPX or VPX|
-| `iaEgress.egressGateway.vserverIP`       | Virtual server IP address on Citrix ADC (Mandatory if citrixCPX=false) | null | Mandatory for Citrix ADC MPX or VPX|
-| `iaEgress.egressGateway.adcServerName`          | Citrix ADC ServerName used in the Citrix ADC certificate  | NIL            | Optional |
-| `iaEgress.egressGateway.imageRegistry`                   | Image registry of Citrix ADC CPX designated to run as egress Gateway              | `quay.io`               |     Mandatory for Citrix ADC CPX                  |
-| `iaEgress.egressGateway.imageRepository`                 | Image repository of Citrix ADC CPX designated to run as egress Gateway              | `citrix/citrix-k8s-cpx-ingress`               |    Mandatory for Citrix ADC CPX                  |
-| `iaEgress.egressGateway.imageTag`                  | Image tag of Citrix ADC CPX designated to run as egress Gateway              | `13.1-30.52`               |   Mandatory for Citrix ADC CPX                  |
+| `iaEgress.egressGateway.netscalerUrl`       | URL or IP address of the NetScaler which Istio-adaptor configures (Mandatory if citrixCPX=false)| null   |Mandatory for NetScaler MPX or VPX|
+| `iaEgress.egressGateway.vserverIP`       | Virtual server IP address on NetScaler (Mandatory if citrixCPX=false) | null | Mandatory for NetScaler MPX or VPX|
+| `iaEgress.egressGateway.adcServerName`          | NetScaler ServerName used in the NetScaler certificate  | NIL            | Optional |
+| `iaEgress.egressGateway.imageRegistry`                   | Image registry of NetScaler CPX designated to run as egress Gateway              | `quay.io`               |     Mandatory for NetScaler CPX                  |
+| `iaEgress.egressGateway.imageRepository`                 | Image repository of NetScaler CPX designated to run as egress Gateway              | `citrix/citrix-k8s-cpx-ingress`               |    Mandatory for NetScaler CPX                  |
+| `iaEgress.egressGateway.imageTag`                  | Image tag of NetScaler CPX designated to run as egress Gateway              | `13.1-30.52`               |   Mandatory for NetScaler CPX                  |
 | `iaEgress.egressGateway.imagePullPolicy`   | Image pull policy                                                                                                                  | IfNotPresent                                                          | Optional|
-| `iaEgress.egressGateway.EULA`             | End User License Agreement(EULA) terms and conditions. If yes, then user agrees to EULA terms and conditions.                                     | false                                                                    | Mandatory for Citrix ADC CPX
-| `iaEgress.egressGateway.mgmtHttpPort`      | Management port of the Citrix ADC CPX                                                                                              | 9080                                                                  | Optional|
-| `iaEgress.egressGateway.mgmtHttpsPort`    | Secure management port of Citrix ADC CPX                                                                                           | 9443                                                                  | Optional|
+| `iaEgress.egressGateway.EULA`             | End User License Agreement(EULA) terms and conditions. If yes, then user agrees to EULA terms and conditions.                                     | false                                                                    | Mandatory for NetScaler CPX
+| `iaEgress.egressGateway.mgmtHttpPort`      | Management port of the NetScaler CPX                                                                                              | 9080                                                                  | Optional|
+| `iaEgress.egressGateway.mgmtHttpsPort`    | Secure management port of NetScaler CPX                                                                                           | 9443                                                                  | Optional|
 | `iaEgress.egressGateway.label` | Custom label for the egress Gateway service                                                                                       | citrix-ingressgateway                                                                 |Optional|
 | `iaEgress.egressGateway.cpxLicenseAggregator` | IP/FQDN of the CPX License Aggregator if it is being used to license the CPX. | null                                                                |Optional|
-| `iaEgress.egressGateway.enableLabelsFeature` | If this variable is true, Istio's [subset](https://istio.io/latest/docs/reference/config/networking/destination-rule/#Subset) of the service and some metadata of the service such as servicename, namespace etc will be stored in the Citrix ADC that might be used for analytics purpose.                                                                                   | FALSE                                                                 |Optional|
+| `iaEgress.egressGateway.enableLabelsFeature` | If this variable is true, Istio's [subset](https://istio.io/latest/docs/reference/config/networking/destination-rule/#Subset) of the service and some metadata of the service such as servicename, namespace etc will be stored in the NetScaler that might be used for analytics purpose.                                                                                   | FALSE                                                                 |Optional|
 | `iaEgress.istioPilot.name`                 | Name of the Istio Pilot (Istiod) service                                                                                                        | istiod                                                           |Optional|
 | `iaEgress.istioPilot.namespace`     | Namespace where Istio Pilot is running                                                                                        | istio-system                                                          |Optional|
 | `iaEgress.istioPilot.secureGrpcPort`       | Secure GRPC port where Istiod (Istio Pilot) is listening (default setting)                                                                  | 15012                                                                 |Optional|
 | `iaEgress.istioPilot.insecureGrpcPort`      | Insecure GRPC port where Istio Pilot is listening                                                                                  | 15010                                                                 |Optional|
 | `iaEgress.istioPilot.SAN`                 | Subject alternative name for Istio Pilot which is the secure production identity framework for everyone (SPIFFE) ID of Istio Pilot                                                        | null |Optional|
-| `iaEgress.metricExporter.required`          | Metrics exporter for Citrix ADC                                                                                                    | TRUE                                                                  |Optional|
-| `iaEgress.metricExporter.imageRegistry`                  | Image registry of the Citrix ADC Metrics Exporter               | `quay.io`               |     Optional                  |
-| `iaEgress.metricExporter.imageRepository`                | Image repository of the Citrix ADC Metrics Exporter               | `citrix/citrix-adc-metrics-exporter`               |    Optional                  |
-| `iaEgress.metricExporter.imageTag`                 | Image tag of the Citrix ADC Metrics Exporter               | `1.4.9`               |   Optional                  |
-| `iaEgress.metricExporter.port`              | Port over which Citrix ADC Metrics Exporter collects metrics of Citrix ADC.                                                      | 8888                                                                  |Optional|
+| `iaEgress.metricExporter.required`          | Metrics exporter for NetScaler                                                                                                    | TRUE                                                                  |Optional|
+| `iaEgress.metricExporter.imageRegistry`                  | Image registry of the NetScaler Metrics Exporter               | `quay.io`               |     Optional                  |
+| `iaEgress.metricExporter.imageRepository`                | Image repository of the NetScaler Metrics Exporter               | `citrix/citrix-adc-metrics-exporter`               |    Optional                  |
+| `iaEgress.metricExporter.imageTag`                 | Image tag of the NetScaler Metrics Exporter               | `1.4.9`               |   Optional                  |
+| `iaEgress.metricExporter.port`              | Port over which NetScaler Metrics Exporter collects metrics of NetScaler.                                                      | 8888                                                                  |Optional|
 | `iaEgress.metricExporter.secure`            | Enables collecting metrics over TLS                                                                                                | YES                                                                    |Optional|
-| `iaEgress.metricExporter.logLevel`          | Level of logging in Citrix ADC Metrics Exporter. Possible values are: DEBUG, INFO, WARNING, ERROR, CRITICAL                                       | ERROR                                                                 |Optional|
-| `iaEgress.metricExporter.imagePullPolicy`   | Image pull policy for Citrix ADC Metrics Exporter                                                                                       | IfNotPresent 
+| `iaEgress.metricExporter.logLevel`          | Level of logging in NetScaler Metrics Exporter. Possible values are: DEBUG, INFO, WARNING, ERROR, CRITICAL                                       | ERROR                                                                 |Optional|
+| `iaEgress.metricExporter.imagePullPolicy`   | Image pull policy for NetScaler Metrics Exporter                                                                                       | IfNotPresent 
 | `iaEgress.certProvider.caAddr`   | Certificate Authority (CA) address issuing certificate to application                           | istiod.istio-system.svc                          | Optional |
 | `iaEgress.certProvider.caPort`   | Certificate Authority (CA) port issuing certificate to application                              | 15012 | Optional |
 | `iaEgress.certProvider.trustDomain`   | SPIFFE Trust Domain                         | cluster.local | Optional |
 | `iaEgress.certProvider.certTTLinHours`   | Validity of certificate generated by xds-adaptor and signed by Istiod (Istio Citadel) in hours. Default is 30 days validity              | 720 | Optional |
 | `iaEgress.certProvider.clusterId`   | clusterId is the ID of the cluster where Istiod CA instance resides (default Kubernetes). It can be different value on some cloud platforms or in multicluster environments. For example, in Anthos servicemesh, it might be of the format of `cn<project-name>-<region>-<cluster_name>`. In multiCluster environments, it is the value of global.multiCluster.clusterName provided during servicemesh control plane installation         | Kubernetes | | Optional |
 | `iaEgress.certProvider.jwtPolicy`   | Service Account token type. Kubernetes platform supports First party tokens and Third party tokens. Usually public cloud based Kubernetes has third-party-jwt | null | Optional |
-| `iaEgress.secretName`   | Name of the Kubernetes secret holding Citrix ADC credentials | nsloginegress | Mandatory for Citrix ADC VPX/MPX |
+| `iaEgress.secretName`   | Name of the Kubernetes secret holding NetScaler credentials | nsloginegress | Mandatory for NetScaler VPX/MPX |

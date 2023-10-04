@@ -82,7 +82,7 @@ Create the name of the RBAC/ServiceAccount/ConfigMap/Prefix for router pods
 {{- end -}}
 
 {{/*
-Create the name of the ConfigMap that helm deploys and CNC listens to add/delete configurations 
+Create the name of the ConfigMap that helm deploys and NSNC listens to add/delete configurations 
 */}}
 {{- define "citrix-k8s-node-controller.cncConfigMap" -}}
 {{- if .Values.cncConfigMap.name -}}

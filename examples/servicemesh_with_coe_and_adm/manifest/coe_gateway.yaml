@@ -11,13 +11,13 @@ spec:
       name: prom
       protocol: HTTP
     hosts:
-    - "coe.citrix-system"
+    - "coe.netscaler-system"
   - port:
       number: 5557
       name: ulf
       protocol: HTTP
     hosts:
-    - "coe.citrix-system"
+    - "coe.netscaler-system"
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -25,13 +25,13 @@ metadata:
   name: coe
 spec:
   hosts:
-  - "coe.citrix-system"
+  - "coe.netscaler-system"
   gateways:
   - coe-gateway
   http:
   - route:
     - destination:
-        host: coe.citrix-system.svc.cluster.local
+        host: coe.netscaler-system.svc.cluster.local
         port:
           number: 5563
 ---

@@ -1,20 +1,20 @@
-# Citrix ADC as Egress Gateways for sample application
+# NetScaler as Egress Gateways for sample application
 
 # Table of Contents
-1. [Deploying Citrix ADC as Egress Gateway](#citrix-Egress-gateway)
-2. [Deploying Citrix ADC Sidecar Injector](#citrix-sidecar-injector)
+1. [Deploying NetScaler as Egress Gateway](#citrix-Egress-gateway)
+2. [Deploying NetScaler Sidecar Injector](#citrix-sidecar-injector)
 3. [Deploying Sample Example](#deploying-sample-example)
 4. [Verification](#verification)
 5. [Clean Up](#cleanup)
 
 
-## <a name="citrix-egress-gateway">A) Deploying Citrix ADC as egress Gateway</a>
+## <a name="citrix-egress-gateway">A) Deploying NetScaler as egress Gateway</a>
 
-Follow the link "Deploy Citrix ADC as an Egress Gateway using Helm charts" in [deployment guide](https://github.com/citrix/citrix-istio-adaptor/tree/master/docs/istio-integration#deployment-options).  
+Follow the link "Deploy NetScaler as an Egress Gateway using Helm charts" in [deployment guide](https://github.com/netscaler/netscaler-xds-adaptor/tree/master/docs/istio-integration#deployment-options).  
 
-## <a name="citrix-sidecar-injector">B) Deploying Citrix ADC Sidecar Injector </a>
+## <a name="citrix-sidecar-injector">B) Deploying NetScaler Sidecar Injector </a>
 
-Follow the link "Deploy Citrix ADC CPX as a sidecar using Helm charts" in [deployment guide](https://github.com/citrix/citrix-istio-adaptor/tree/master/docs/istio-integration#deployment-options).
+Follow the link "Deploy NetScaler CPX as a sidecar using Helm charts" in [deployment guide](https://github.com/netscaler/netscaler-xds-adaptor/tree/master/docs/istio-integration#deployment-options).
 
 ## <a name="deploying-sample-example">C) Deploying Sample Example</a>
 Deploy any sample application. In this example, `sleep` is deployed as sample application.
@@ -26,7 +26,7 @@ Deploy any sample application. In this example, `sleep` is deployed as sample ap
 kubectl create namespace egressgateway-test
 kubectl label ns egressgateway-test cpx-injection=enabled
 ```
-_**NOTE:** To deploy sample application with Citrix ADC CPX as a sidecar automatically, label namespace with cpx-injection-enabled.
+_**NOTE:** To deploy sample application with NetScaler CPX as a sidecar automatically, label namespace with cpx-injection-enabled.
 #### Deploy sleep appplication using yaml:
 ```
 kubectl apply -n egressgateway-test -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-egress-in-istio/egress-example/deployment-yamls/sleep.yaml
@@ -71,7 +71,7 @@ kubectl apply -n egressgateway-test -f https://raw.githubusercontent.com/citrix/
 ```
 kubectl apply -n egressgateway-test -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-egress-in-istio/egress-example/deployment-yamls/virtual_service.yaml
 ```
-*Note*: Aforementioned yaml files refer to _citrix-adc-istio-egress-gateway-citrix-egress-svc.citrix-system.svc.cluster.local_ as the host representating citrix-egressgateway service. The name of service depends on the helm-chart release name. Default name of release name is _citrix-adc-istio-egress-gateway_. In case of different release name, change the name of _host_ field accordingly.
+*Note*: Aforementioned yaml files refer to _citrix-adc-istio-egress-gateway-citrix-egress-svc.netscaler-system.svc.cluster.local_ as the host representating citrix-egressgateway service. The name of service depends on the helm-chart release name. Default name of release name is _citrix-adc-istio-egress-gateway_. In case of different release name, change the name of _host_ field accordingly.
 
     
 ## <a name="verification">D) Verification</a>
@@ -82,7 +82,7 @@ kubectl apply -n egressgateway-test -f https://raw.githubusercontent.com/citrix/
 
 ### Verification for HTTPS traffic
 
-- Verify that service is accessing external services via Citrix ADC CPX Egress Gateway
+- Verify that service is accessing external services via NetScaler CPX Egress Gateway
 
     ``` kubectl exec -it $SOURCE_POD -c sleep -n egressgateway-test -- curl -sL -o /dev/null -D - https://edition.cnn.com/politics ```
 
@@ -99,7 +99,7 @@ kubectl apply -n egressgateway-test -f https://raw.githubusercontent.com/citrix/
     ```
     
 ### Verification for HTTP traffic
-- Verify that service is accessing external services via Citrix ADC CPX Egress Gateway
+- Verify that service is accessing external services via NetScaler CPX Egress Gateway
 
     ``` kubectl exec -it $SOURCE_POD -c sleep -n egressgateway-test -- curl -sL -o /dev/null -D - http://edition.cnn.com/politics ```
 

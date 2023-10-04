@@ -1,0 +1,28 @@
+apiVersion: apps/v1 #  for k8s versions before 1.9.0 use apps/v1beta2  and before 1.8.0 use extensions/v1beta1
+kind: Deployment
+metadata:
+  name:  {{ include "netscaler-ipam-controller.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "netscaler-ipam-controller.labels" . | nindent 4}}
+spec:
+  selector:
+    matchLabels:
+      {{- include "netscaler-ipam-controller.selectorLabels" . | nindent 6}}
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        {{- include "netscaler-ipam-controller.selectorLabels" . | nindent 8}}
+    spec:
+      serviceAccountName: {{ include "netscaler-ipam-controller.serviceAccountName" . }}
+      containers:
+      - name: {{ include "netscaler-ipam-controller.name" . }}
+        image: "{{ tpl .Values.image . }}"
+        imagePullPolicy: {{ .Values.pullPolicy }}
+        env:
+        # This IPAM controller takes environment variable VIP_RANGE. IPs in this range are used to assign values for IP range
+        - name: "VIP_RANGE"
+          value: {{ required "Provide IPs or IP range for NetScaler IPAM Controller" .Values.vipRange | squote }}
+        # The IPAM controller can also be configured with name spaces for which it would work through the environment variable
+        # VIP_NAMESPACES, This expects a set of namespaces passed as space separated string

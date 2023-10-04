@@ -1,34 +1,34 @@
 
 # Table of contents
 
-1. [Citrix ADC in Istio mesh across multiple clusters](#Citrix-ADC-in-Istio-mesh-across-multiple-clusters)
-2. [Deploy Citrix ADC as multi-cluster Ingress gateway](#Deploy-Citrix-ADC-as-multi-cluster-Ingress-gateway)
+1. [NetScaler in Istio mesh across multiple clusters](#NetScalerler-NetScaler-in-Istio-mesh-across-multiple-clusters)
+2. [Deploy NetScaler as multi-cluster Ingress gateway](#Deploy-NetScalerler-NetScaler-as-multi-cluster-Ingress-gateway)
 3. [Configure Ingress gateway for application](#Configure-Ingress-gateway-for-application)
 4. [Verifying the deployments](#Verifying-the-deployments)
 
-## <a name="Citrix-ADC-in-Istio-mesh-across-multiple-clusters">Citrix ADC in Istio mesh across multiple clusters</a>
+## <a name="NetScalerler-NetScaler-in-Istio-mesh-across-multiple-clusters">NetScaler in Istio mesh across multiple clusters</a>
 
-Istio multi-cluster service mesh allows workloads which are running on multiple Kubernetes clusters to discover, dynamically route to, and securely connect with one another. You can deploy Citrix ADC form factors CPX, VPX, and/or MPX on an Istio service mesh spanning across multiple Kubernetes clusters. Citrix ADC CPX, VPX, or MPX acts as proxies to manage cluster to cluster traffic routing and security, and to provide observability for all microservices, which are running in clusters.
+Istio multi-cluster service mesh allows workloads which are running on multiple Kubernetes clusters to discover, dynamically route to, and securely connect with one another. You can deploy NetScaler form factors CPX, VPX, and/or MPX on an Istio service mesh spanning across multiple Kubernetes clusters. NetScaler CPX, VPX, or MPX acts as proxies to manage cluster to cluster traffic routing and security, and to provide observability for all microservices, which are running in clusters.
 
-   ![Citrix ADC in Istio multi-cluster service mesh](media/adc-istio-multicluster-servmesh-architecture.png)
+   ![NetScaler in Istio multi-cluster service mesh](media/adc-istio-multicluster-servmesh-architecture.png)
 
-The diagram illustrates the architecture of an Istio multi-cluster service mesh with the Citrix ADC form factors CPX, VPX, and MPX as Ingress gateways. Istio multi-cluster service mesh with the Citrix ADC form factor enables multi-cluster East-West communication between services running in one cluster to services running in another cluster. Istio provides a multi-cluster service mesh to include microservices running in other clusters. Citrix ADC CPX is deployed in Cluster-1 as an Ingress gateway that routes traffic to the `productpage` pod. This pod, in Cluster-1, requires information from other microservices, named, `details` and `reviews` running in the `bookinfo` namespace of Cluster-2. The `productpage` pod sends a request in a specific format, with the DNS suffix as `.global`, to Citrix ADC VPX/MPX that has been deployed as an ingress gateway for Cluster-2. Citrix ADC VPX/MPX forwards the request to the appropriate Cluster-2 pods such as `details` and `reviews` to get the response.
+The diagram illustrates the architecture of an Istio multi-cluster service mesh with the NetScaler form factors CPX, VPX, and MPX as Ingress gateways. Istio multi-cluster service mesh with the NetScaler form factor enables multi-cluster East-West communication between services running in one cluster to services running in another cluster. Istio provides a multi-cluster service mesh to include microservices running in other clusters. NetScaler CPX is deployed in Cluster-1 as an Ingress gateway that routes traffic to the `productpage` pod. This pod, in Cluster-1, requires information from other microservices, named, `details` and `reviews` running in the `bookinfo` namespace of Cluster-2. The `productpage` pod sends a request in a specific format, with the DNS suffix as `.global`, to NetScaler VPX/MPX that has been deployed as an ingress gateway for Cluster-2. NetScaler VPX/MPX forwards the request to the appropriate Cluster-2 pods such as `details` and `reviews` to get the response.
 
 **Prerequisites**
 
  -  Ensure that you have two or more Kubernetes clusters. For information about deploying multiple clusters, see [Multiple clusters](https://istio.io/v1.6/docs/ops/deployment/deployment-models/#multiple-clusters).
  -  Ensure that the DNS setup is complete. For information about DNS setup, see [Set up DNS](https://istio.io/v1.6/docs/setup/install/multicluster/gateways/#setup-dns).
 
-## <a name="Deploy-Citrix-ADC-as-multi-cluster-Ingress-gateway">Deploy Citrix ADC as multi-cluster Ingress gateway</a>
+## <a name="Deploy-NetScalerler-NetScaler-as-multi-cluster-Ingress-gateway">Deploy NetScaler as multi-cluster Ingress gateway</a>
 
 
-You can deploy Citrix ADC as multi-cluster ingress. Citrix ADC as multi-cluster gateway enables inter-cluster service to service (East-West) communication.
+You can deploy NetScaler as multi-cluster ingress. NetScaler as multi-cluster gateway enables inter-cluster service to service (East-West) communication.
 
-For information about deploying Citrix ADC CPX, VPX, or MPX as an Ingress gateway in a multi-cluster Istio Service mesh, see [Deploy Citrix ADC as an Ingress Gateway in multi cluster Istio Service mesh](https://github.com/citrix/citrix-helm-charts/tree/master/citrix-adc-istio-ingress-gateway#deploy-citrix-adc-as-a-multicluster-ingress-gateway). 
+For information about deploying NetScaler CPX, VPX, or MPX as an Ingress gateway in a multi-cluster Istio Service mesh, see [Deploy NetScaler as an Ingress Gateway in multi cluster Istio Service mesh](https://github.com/netscaler/netscaler-helm-charts/tree/master/citrix-adc-istio-ingress-gateway#deploy-citrix-adc-as-a-multicluster-ingress-gateway). 
 
-To deploy Citrix ADC as multi-cluster Ingress gateway, you can specify certain optional parameters in the Helm chart.
+To deploy NetScaler as multi-cluster Ingress gateway, you can specify certain optional parameters in the Helm chart.
 
-You can set the `ingressGateway.multiClusterIngress` parameter value as `true` if Citrix ADC acts as Ingress gateway to multi-cluster Istio mesh installation. You can also specify the port number for the parameter `ngressGateway.multiClusterListenerPort`. This is the port opened on Citrix ADC that enables inter-cluster service to service (East-West) communication. Specify the NodePort for the parameter  `ingressGateway.multiClusterListenerNodePort` as NodePort for `multiClusterListenerPort` if Citrix ADC CPX acts as Ingress gateway. You can also specify the `ingressGateway.multiClusterSvcDomain` parameter. This is the domain suffix of the remote service (deployed in the other cluster) used in East-West communication. For more information about the parameters, see [Configuration parameters](https://github.com/citrix/citrix-helm-charts/tree/master/citrix-adc-istio-ingress-gateway#configuration-parameters).
+You can set the `ingressGateway.multiClusterIngress` parameter value as `true` if NetScaler acts as Ingress gateway to multi-cluster Istio mesh installation. You can also specify the port number for the parameter `ngressGateway.multiClusterListenerPort`. This is the port opened on NetScaler that enables inter-cluster service to service (East-West) communication. Specify the NodePort for the parameter  `ingressGateway.multiClusterListenerNodePort` as NodePort for `multiClusterListenerPort` if NetScaler CPX acts as Ingress gateway. You can also specify the `ingressGateway.multiClusterSvcDomain` parameter. This is the domain suffix of the remote service (deployed in the other cluster) used in East-West communication. For more information about the parameters, see [Configuration parameters](https://github.com/netscaler/netscaler-helm-charts/tree/master/citrix-adc-istio-ingress-gateway#configuration-parameters).
 
 ## <a name="Configure-Ingress-gateway-for-application">Configure Ingress gateway for application</a>
 
@@ -50,11 +50,11 @@ Perform the following steps in Cluster-1:
 
  4.  Create a Kubernetes secret. Create `citrix-ingressgateway-certs` secret using certificate and key generated earlier. Ensure that the secret is created in the same namespace in which the Ingress gateway is deployed. Use the following command:
 
-          kubectl create -n citrix-system secret tls citrix-ingressgateway-certs --key bookinfo_key.pem --cert bookinfo_cert.pem
+          kubectl create -n netscaler-system secret tls citrix-ingressgateway-certs --key bookinfo_key.pem --cert bookinfo_cert.pem
 
- 5.  Deploy Citrix ADC CPX as Ingress gateway using the Helm chart: [Deploy Citrix ADC CPX as an Ingress Gateway](https://github.com/citrix/citrix-helm-charts/tree/master/citrix-adc-istio-ingress-gateway#to-deploy-citrix-adc-cpx-as-an-ingress-gateway).
+ 5.  Deploy NetScaler CPX as Ingress gateway using the Helm chart: [Deploy NetScaler CPX as an Ingress Gateway](https://github.com/netscaler/netscaler-helm-charts/tree/master/citrix-adc-istio-ingress-gateway#to-deploy-citrix-adc-cpx-as-an-ingress-gateway).
  
- 6.  Deploy `cpx-sidecar-injector` service. Perform the steps provided in the [Deploy Citrix ADC CPX as a sidecar using Helm charts](https://github.com/citrix/citrix-xds-adaptor/tree/master/docs/istio-integration#deployment-options) document to inject Citrix ADC CPX as a sidecar on the labeled namespace.
+ 6.  Deploy `cpx-sidecar-injector` service. Perform the steps provided in the [Deploy NetScaler CPX as a sidecar using Helm charts](https://github.com/netscaler/netscaler-xds-adaptor/tree/master/docs/istio-integration#deployment-options) document to inject NetScaler CPX as a sidecar on the labeled namespace.
 
      Use the following commands to enable namespace for sidecar injection:
 
@@ -83,9 +83,9 @@ Perform the following steps in Cluster-1:
 
   In Cluster 2, perform the following steps:
 
-1.  Deploy Citrix ADC VPX or MPX as multi-cluster Ingress gateway. Follow [Deploy Citrix ADC as an Ingress Gateway in multi cluster Istio Service mesh](https://github.com/citrix/citrix-helm-charts/tree/master/citrix-adc-istio-ingress-gateway#deploy-citrix-adc-as-a-multicluster-ingress-gateway).
+1.  Deploy NetScaler VPX or MPX as multi-cluster Ingress gateway. Follow [Deploy NetScaler as an Ingress Gateway in multi cluster Istio Service mesh](https://github.com/netscaler/netscaler-helm-charts/tree/master/citrix-adc-istio-ingress-gateway#deploy-citrix-adc-as-a-multicluster-ingress-gateway).
 
-2. Deploy `cpx-sidecar-injector` service. Perform the steps provided in the [Deploy Citrix ADC CPX as a sidecar using Helm charts](https://github.com/citrix/citrix-xds-adaptor/tree/master/docs/istio-integration#deployment-options) document to inject Citrix ADC CPX as a sidecar on the labeled namespace.
+2. Deploy `cpx-sidecar-injector` service. Perform the steps provided in the [Deploy NetScaler CPX as a sidecar using Helm charts](https://github.com/netscaler/netscaler-xds-adaptor/tree/master/docs/istio-integration#deployment-options) document to inject NetScaler CPX as a sidecar on the labeled namespace.
 
     Use the following commands to enable namespace for sidecar injection:
 
@@ -112,19 +112,19 @@ Perform the following steps in Cluster-1.
 
     kubectl apply -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-ingress-in-multicluster-istio/multicluster-bookinfo/reviews-ratings-details-serviceentry.yaml -n bookinfo
 
-    **Note**: Replace `<Vserver IP>` with the virtual server IP (VIP) address of Citrix ADC in reviews-ratings-details-serviceentry.yaml
+    **Note**: Replace `<Vserver IP>` with the virtual server IP (VIP) address of NetScaler in reviews-ratings-details-serviceentry.yaml
 
     The configuration results in all traffic in Cluster-1 for `details.bookinfo.global` on any port to be routed to the endpoint VIP: 15443 over a mutual TLS connection.
 
 ## <a name="Verifying-the-deployments">Verifying the deployments</a>
 
-To verify that Citrix ADC CPX is running as an Ingress gateway in Cluster-1:
+To verify that NetScaler CPX is running as an Ingress gateway in Cluster-1:
 
 1.	Determine the Ingress IP address and port.
 
-        export INGRESS_HOST=$(kubectl get pods -l app=citrix-ingressgateway -n citrix-system -o 'jsonpath={.items[0].status.hostIP}')
+        export INGRESS_HOST=$(kubectl get pods -l app=citrix-ingressgateway -n netscaler-system -o 'jsonpath={.items[0].status.hostIP}')
 
-        export SECURE_INGRESS_PORT=$(kubectl -n citrix-system get service citrix-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="https")].nodePort}')
+        export SECURE_INGRESS_PORT=$(kubectl -n netscaler-system get service citrix-ingressgateway -o jsonpath='{.spec.ports[?(@.name=="https")].nodePort}')
 
 2.	Access `Bookinfo`'s front end application using cURL. The `Productpage` service returns the `200 OK` response.
 

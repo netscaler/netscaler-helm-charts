@@ -1,0 +1,19 @@
+# Default values for netscaler-ipam-controller.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+imageRegistry: quay.io
+imageRepository: netscaler/netscaler-ipam-controller
+imageTag: 1.1.3
+image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
+pullPolicy: IfNotPresent
+
+vipRange:
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""

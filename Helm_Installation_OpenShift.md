@@ -37,7 +37,7 @@ In principle this can be done using helm init, but currently the helm client doe
 Get the file.
 ```wget -q https://github.com/openshift/origin/raw/master/examples/helm/tiller-template.yaml```
 
-Add clusterRoleBinding required to deploy Citrix ingress Controller.
+Add clusterRoleBinding required to deploy NetScaler ingress Controller.
 
 ```
 - kind: ClusterRoleBinding

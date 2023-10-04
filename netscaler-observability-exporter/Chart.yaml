@@ -1,0 +1,12 @@
+apiVersion: v2
+appVersion: "1.7.001"
+description: A Helm chart for NetScaler Observability Exporter
+name: netscaler-observability-exporter
+version: 1.7.001
+icon: https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/gh-pages/netscaler.png 
+home: https://www.cloud.com
+sources:
+- https://github.com/netscaler/netscaler-observability-exporter
+maintainers:
+- name: ritjaintibco
+  email: Ritik.Jain@cloud.com

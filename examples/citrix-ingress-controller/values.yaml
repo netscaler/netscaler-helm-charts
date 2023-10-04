@@ -2,7 +2,7 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-# Citrix Ingress Controller config details
+# NetScaler Ingress Controller config details
 imageRegistry: quay.io
 imageRepository: citrix/citrix-k8s-ingress-controller
 imageTag: 1.35.6
@@ -117,16 +117,16 @@ exporter:
   #  mountPath: /docker-entrypoint.d/
   serviceMonitorExtraLabels: {}
 
-# For CRDs supported by Citrix Ingress Controller
+# For CRDs supported by NetScaler Ingress Controller
 crds:
   install: false
   retainOnDelete: false
 
-# Enable RBAC role (so called local role), by default CIC deployed with ClusterRole.
-# below variable to deploy CIC with RBAC role, only ingress service supported with this config
+# Enable RBAC role (so called local role), by default NSIC deployed with ClusterRole.
+# below variable to deploy NSIC with RBAC role, only ingress service supported with this config
 rbacRole: False
 
-# Config required to be done by Citrix Ingress Controller for sending metrics to Citrix Observability Exporter
+# Config required to be done by NetScaler Ingress Controller for sending metrics to NetScaler Observability Exporter
 analyticsConfig:
   required: false
   distributedTracing:

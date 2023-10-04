@@ -3,7 +3,7 @@ kind: DestinationRule
 metadata:
   name: adm-disable-tls
 spec:
-  host: admagent.citrix-system.svc.cluster.local   #change `citrix-system` to namespace name where adm-agent is deployed.
+  host: admagent.netscaler-system.svc.cluster.local   #change `netscaler-system` to namespace name where adm-agent is deployed.
   trafficPolicy:
     tls:
       mode: DISABLE
@@ -15,7 +15,7 @@ kind: DestinationRule
 metadata:
   name: coe-disable-tls
 spec:
-  host: coe.citrix-system.svc.cluster.local   #change `citrix-system` to namespace name where Citrix Observability Exporter is deployed.
+  host: coe.netscaler-system.svc.cluster.local   #change `netscaler-system` to namespace name where NetScaler Observability Exporter is deployed.
   trafficPolicy:
     tls:
       mode: DISABLE

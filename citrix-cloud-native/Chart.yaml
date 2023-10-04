@@ -1,12 +1,12 @@
 apiVersion: v2
 appVersion: "1.0.0"
-description: A Helm chart for deploying all Citrix Cloud Native products 
+description: A Helm chart for deploying all NetScaler Cloud Native products 
 name: citrix-cloud-native
 version: 1.0.0
-icon: https://raw.githubusercontent.com/citrix/citrix-helm-charts/gh-pages/icon.png
+icon: https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/gh-pages/netscaler.png
 home: https://www.cloud.com
 sources:
-- https://github.com/citrix/
+- https://github.com/netscaler/
 maintainers:
 - name: priyankash-citrix
   email: priyanka.sharma@cloud.com

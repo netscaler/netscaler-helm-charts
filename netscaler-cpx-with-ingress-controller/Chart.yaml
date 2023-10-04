@@ -1,0 +1,15 @@
+apiVersion: v2
+appVersion: "1.35.6"
+kubeVersion: ">=v1.16.0-0"
+description: A Helm chart for NetScaler CPX with NetScaler ingress Controller running as sidecar.
+name: netscaler-cpx-with-ingress-controller
+version: 1.35.6
+icon: https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/gh-pages/netscaler.png
+home: https://www.netscaler.com
+sources:
+- https://github.com/netscaler/netscaler-k8s-ingress-controller
+maintainers:
+- name: priyankash-citrix
+  email: priyanka.sharma@cloud.com
+- name: subashd
+  email: subash.dangol@cloud.com

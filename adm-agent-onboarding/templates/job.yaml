@@ -14,12 +14,18 @@ spec:
        image: "{{ tpl .Values.image . }}"
        imagePullPolicy: {{ .Values.pullPolicy | quote }}
        env:
+       - name: "API_ID"
+         value: {{ .Values.apiId | quote }}
+       - name: "API_SECRET"
+         value: {{ .Values.apiSecret | quote }}
        - name: "KUBERNETES_CLUSTER_NAME"
          value: {{ .Values.clusterName | quote }}
        - name: "KUBERNETES_API_URL"
          value: {{ .Values.apiURL | quote }}
+{{- if not .Values.apiId}}
        - name: "ADM_TOKEN"
          value: {{ required "Provide Authentication Token " .Values.token | quote }}
+{{- end }}
        - name: "AGENT_NAME"
          value: {{ .Values.admAgent.name | quote }}
 {{- if .Values.admAgent.loginSecret }}
@@ -30,7 +36,7 @@ spec:
              key: password
 {{- end }}
        - name: "ADM_AGENT_IMAGE"
-         value: {{ tpl .Values.admAgent.image . | quote }}
+         value: {{ tpl .Values.admAgent.image . | quote }}  
        - name: "ADM_AGENT_HELPER_IMAGE"
          value: {{ tpl .Values.admAgent.helperImage . | quote }}
 {{- if .Values.adc.IP }}

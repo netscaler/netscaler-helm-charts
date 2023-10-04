@@ -22,7 +22,7 @@ After installing helm on your machine, initialize Helm on your Kubernetes cluste
 
       ```
       kubectl delete deployment tiller-deploy -n kube-system
-      kubectl create -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/tiller.yaml
+      kubectl create -f https://raw.githubusercontent.com/citrix/netscaler-helm-charts/master/tiller.yaml
       ```
 
    2. Set up a ServiceAccount for use by tiller.
