@@ -45,6 +45,9 @@ data:
       metrics:
         enable: {{ .Values.analyticsConfig.timeseries.metrics.enable | quote }}
         mode: {{ .Values.analyticsConfig.timeseries.metrics.mode | quote }}
+        export_frequency: {{ .Values.analyticsConfig.timeseries.metrics.exportFrequency }}
+        schema_file: {{ .Values.analyticsConfig.timeseries.metrics.schemaFile | quote }}
+        enable_native_scrape: {{ .Values.analyticsConfig.timeseries.metrics.enableNativeScrape | quote }}
       auditlogs:
         enable: {{ .Values.analyticsConfig.timeseries.auditlogs.enable | quote }}
       events:
