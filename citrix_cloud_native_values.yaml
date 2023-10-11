@@ -3,7 +3,7 @@ cic:
 
   imageRegistry: quay.io
   imageRepository: citrix/citrix-k8s-ingress-controller
-  imageTag: 1.35.6
+  imageTag: 1.36.5
   image: "{{ .Values.cic.imageRegistry }}/{{ .Values.cic.imageRepository }}:{{ .Values.cic.imageTag }}"
   pullPolicy: IfNotPresent
   imagePullSecrets: []
@@ -130,6 +130,9 @@ cic:
       metrics:
         enable: false
         mode: 'avro'
+        exportFrequency: 30
+        schemaFile: schema.json
+        enableNativeScrape: false
       auditlogs:
         enable: false
       events:
@@ -192,7 +195,7 @@ gslb:
 
   imageRegistry: quay.io
   imageRepository: citrix/citrix-k8s-ingress-controller
-  imageTag: 1.35.6
+  imageTag: 1.36.5
   image: "{{ .Values.gslb.imageRegistry }}/{{ .Values.gslb.imageRepository }}:{{ .Values.gslb.imageTag }}"
   pullPolicy: IfNotPresent
   openshift: false
@@ -288,7 +291,7 @@ cpx:
   cic:
     imageRegistry: quay.io
     imageRepository: citrix/citrix-k8s-ingress-controller
-    imageTag: 1.35.6
+    imageTag: 1.36.5
     image: "{{ .Values.cpx.cic.imageRegistry }}/{{ .Values.cpx.cic.imageRepository }}:{{ .Values.cpx.cic.imageTag }}"
     pullPolicy: IfNotPresent
     required: true
@@ -308,6 +311,8 @@ cpx:
     #   cpu: 1000m
     #   memory: 1000Mi
     rbacRole: False
+    prometheusCredentialSecret: # K8s Secret Name for read only user creation for native Prometheus support
+
   entityPrefix:
   license:
     accept: no
@@ -363,6 +368,9 @@ cpx:
       metrics:
         enable: false
         mode: 'avro'
+        exportFrequency: 30
+        schemaFile: schema.json
+        enableNativeScrape: false
       auditlogs:
         enable: false
       events:
@@ -627,7 +635,7 @@ iaSidecar:
     netscalerUrl: "http://127.0.0.1"
     imageRegistry: quay.io
     imageRepository: citrix/citrix-k8s-cpx-ingress
-    imageTag: 13.1-49.13
+    imageTag: 13.1-49.15
     image: "{{ .Values.iaSidecar.cpxProxy.imageRegistry }}/{{ .Values.iaSidecar.cpxProxy.imageRepository }}:{{ .Values.iaSidecar.cpxProxy.imageTag }}"
     imagePullPolicy: IfNotPresent
     EULA: NO

@@ -505,8 +505,62 @@ Deploy NetScaler CPX with NSIC using helm command:
 ```
 helm repo add netscaler https://netscaler.github.io/netscaler-helm-charts/
 
-helm install my-release netscaler/netscaler-cpx-with-ingress-controller  --set license.accept=yes,analyticsConfig.required=true,analyticsConfig.timeseries.metrics.enable=true,analyticsConfig.timeseries.metrics.port=5563,analyticsConfig.timeseries.metrics.mode=prometheus,analyticsConfig.transactions.enable=true,analyticsConfig.transactions.port=5557,analyticsConfig.distributedTracing.enable=true,analyticsConfig.endpoint.server=<NSOE_SERVICE_IP>,analyticsConfig.endpoint.service=<Namespace/NSOE_SERVICE_NAME>
+helm install my-release netscaler/netscaler-cpx-with-ingress-controller  --set license.accept=yes,analyticsConfig.required=true,analyticsConfig.timeseries.metrics.enable=true,analyticsConfig.timeseries.port=5563,analyticsConfig.timeseries.metrics.mode=prometheus,analyticsConfig.transactions.enable=true,analyticsConfig.transactions.port=5557,analyticsConfig.distributedTracing.enable=true,analyticsConfig.endpoint.server=<NSOE_SERVICE_IP>,analyticsConfig.endpoint.service=<Namespace/NSOE_SERVICE_NAME>
 ```
+
+#### Analytics Configuration required for export of metrics to Prometheus
+
+If NetScaler CPX needs to send data to Prometheus directly without an exporter resource in between, then the below steps can be followed to install NetScaler CPX with ingress controller. NSIC configures NetScaler CPX with the configuration required.
+
+1. Create secret to enable read-only access for a user, which will be required by NetScaler CPX to export metrics to Prometheus.
+
+```
+kubectl create secret generic prom-user --from-literal=username=<prometheus-username> --from-literal=password=<prometheus-password>
+```
+
+2. Deploy NetScaler CPX with NSIC using helm command:
+
+```
+helm repo add netscaler https://netscaler.github.io/netscaler-helm-charts/
+
+helm install my-release netscaler/netscaler-cpx-with-ingress-controller --set license.accept=yes,nsic.prometheusCredentialSecret=<Secret-for-read-only-user-creation>,analyticsConfig.required=true,analyticsConfig.timeseries.metrics.enable=true,analyticsConfig.timeseries.port=5563,analyticsConfig.timeseries.metrics.mode=prometheus,analyticsConfig.timeseries.metrics.enableNativeScrape=true
+```
+
+3. To setup Prometheus in order to scrape natively from NetScaler CPX pod, a new scrape job is required to be added under scrape_configs in the Prometheus [configuration](https://prometheus.io/docs/prometheus/latest/configuration/configuration/). For more details, check kubernetes_sd_config [here](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#kubernetes_sd_config). A sample of the Prometheus job is given below -
+
+```
+    - job_name: 'kubernetes-cpx'
+      scheme: http
+      metrics_path: /nitro/v1/config/systemfile
+      params:
+        args: ['filename:metrics_prom_ns_analytics_time_series_profile.log,filelocation:/var/nslog']
+        format: ['prometheus']
+      basic_auth:
+        username:  # Prometheus username set in nsic.prometheusCredentialSecret
+        password:  # Prometheus password set in nsic.prometheusCredentialSecret
+      scrape_interval: 30s
+      kubernetes_sd_configs:
+      - role: pod
+      relabel_configs:
+      - source_labels: [__meta_kubernetes_pod_annotation_netscaler_prometheus_scrape]
+        action: keep
+        regex: true
+      - source_labels: [__address__, __meta_kubernetes_pod_annotation_netscaler_prometheus_port]
+        action: replace
+        regex: ([^:]+)(?::\d+)?;(\d+)
+        replacement: $1:$2
+        target_label: __address__
+      - source_labels: [__meta_kubernetes_namespace]
+        action: replace
+        target_label: kubernetes_namespace
+      - source_labels: [__meta_kubernetes_pod_name]
+        action: replace
+        target_label: kubernetes_pod_name
+```
+
+> **Note:**
+>
+> For more details on Prometheus integration, please refer to [this](https://docs.netscaler.com/en-us/citrix-adc/current-release/observability/prometheus-integration)
 
 ### NetScaler CPX License Provisioning
 #### Bandwidth based licensing
@@ -562,22 +616,24 @@ The following table lists the configurable parameters of the NetScaler CPX with 
 | license.accept | Mandatory | no | Set `yes` to accept the NetScaler ingress controller end user license agreement. |
 | imageRegistry                   | Mandatory  |  `quay.io`               |  The NetScaler CPX image registry             |  
 | imageRepository                 | Mandatory  |  `netscaler/netscaler-cpx`              |   The NetScaler CPX image repository             | 
-| imageTag                  | Mandatory  |  `13.1-49.13`               |   The NetScaler CPX image tag            | 
+| imageTag                  | Mandatory  |  `13.1-49.15`               |   The NetScaler CPX image tag            | 
 | pullPolicy | Mandatory | IfNotPresent | The NetScaler CPX image pull policy. |
 | daemonSet | Optional | False | Set this to true if NetScaler CPX needs to be deployed as DaemonSet. |
 | nsic.imageRegistry                   | Mandatory  |  `quay.io`               |  The NetScaler ingress controller image registry             |  
 | nsic.imageRepository                 | Mandatory  |  `netscaler/netscaler-k8s-ingress-controller`              |   The NetScaler ingress controller image repository             | 
-| nsic.imageTag                  | Mandatory  |  `1.35.6`               |   The NetScaler ingress controller image tag            | 
+| nsic.imageTag                  | Mandatory  |  `1.36.5`               |   The NetScaler ingress controller image tag            | 
 | nsic.pullPolicy | Mandatory | IfNotPresent | The NetScaler ingress controller image pull policy. |
 | nsic.required | Mandatory | true | NSIC to be run as sidecar with NetScaler CPX |
 | nsic.resources | Optional | {} |	CPU/Memory resource requests/limits for NetScaler Ingress Controller container |
 | nsic.rbacRole  | Optional |  false  |  To deploy NSIC with RBAC Role set rbacRole=true; by default NSIC gets installed with RBAC ClusterRole(rbacRole=false)) |
+| nsic.prometheusCredentialSecret  | Optional |  N/A  |  The secret key required to create read only user for nat
+ive export of metrics using Prometheus. |
 | imagePullSecrets | Optional | N/A | Provide list of Kubernetes secrets to be used for pulling the images from a private Docker registry or repository. For more information on how to create this secret please see [Pull an Image from a Private Registry](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/). |
 | nameOverride | Optional | N/A | String to partially override deployment fullname template with a string (will prepend the release name) |
 | fullNameOverride | Optional | N/A | String to fully override deployment fullname template with a string |
 | resources | Optional | {} |	CPU/Memory resource requests/limits for NetScaler CPX container |
 | nitroReadTimeout | Optional | 20 | The nitro Read timeout in seconds, defaults to 20 | 
-| logLevel | Optional | DEBUG | The loglevel to control the logs generated by NSIC. The supported loglevels are: CRITICAL, ERROR, WARNING, INFO, DEBUG and TRACE. For more information, see [Logging](https://github.com/netscaler/netscaler-k8s-ingress-controller/blob/master/docs/configure/log-levels.md).|
+| logLevel | Optional | INFO | The loglevel to control the logs generated by NSIC. The supported loglevels are: CRITICAL, ERROR, WARNING, INFO, DEBUG and TRACE. For more information, see [Logging](https://github.com/netscaler/netscaler-k8s-ingress-controller/blob/master/docs/configure/log-levels.md).|
 | jsonLog | Optional | false | Set this argument to true if log messages are required in JSON format | 
 | nsConfigDnsRec | Optional | false | To enable/disable DNS address Record addition in NetScaler through Ingress |
 | nsSvcLbDnsRec | Optional | false | To enable/disable DNS address Record addition in NetScaler through Type Load Balancer Service |
@@ -647,6 +703,9 @@ The following table lists the configurable parameters of the NetScaler CPX with 
 | analyticsConfig.timeseries.port | Optional | 5563 | Specify the port used to expose analytics service for timeseries endpoint. |
 | analyticsConfig.timeseries.metrics.enable | Optional | Set this value to true to enable sending metrics from NetScaler. |
 | analyticsConfig.timeseries.metrics.mode | Optional | avro |  Specifies the mode of metric endpoint. |
+| analyticsConfig.timeseries.metrics.exportFrequency | Optional | 30 |  Specifies the time interval for exporting time-series data. Possible values range from 30 to 300 seconds. |
+| analyticsConfig.timeseries.metrics.schemaFile | Optional | schema.json |  Specifies the name of a schema file with the required Netscaler counters to be added and configured for metricscollector to export. A reference schema file reference_schema.json with all the supported counters is also available under the path /var/metrics_conf/. This schema file can be used as a reference to build a custom list of counters. |
+| analyticsConfig.timeseries.metrics.enableNativeScrape | Optional | false |  Set this value to true for native export of metrics. |
 | analyticsConfig.timeseries.auditlogs.enable | Optional | false | Set this value to true to export audit log data from NetScaler. |
 | analyticsConfig.timeseries.events.enable | Optional | false | Set this value to true to export events from the NetScaler. |
 | analyticsConfig.transactions.enable | Optional | false | Set this value to true to export transactions from NetScaler. |
