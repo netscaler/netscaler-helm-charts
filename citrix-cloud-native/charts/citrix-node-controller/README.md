@@ -155,7 +155,7 @@ The following table lists the mandatory and optional parameters that you can con
 | cnc.license.accept | Mandatory | no | Set `yes` to accept the NSNC end user license agreement. |
 | cnc.imageRegistry                   | Mandatory  |  `quay.io`               |  The NSNC image registry             |  
 | cnc.imageRepository                 | Mandatory  |  `citrix/citrix-k8s-node-controller`              |   The NSNC image repository             | 
-| cnc.imageTag                  | Mandatory  |  `2.2.10`               |  The NSNC image tag            | 
+| cnc.imageTag                  | Mandatory  |  `2.2.12`               |  The NSNC image tag            | 
 | cnc.pullPolicy | Mandatory | IfNotPresent | The NSNC image pull policy. |
 | cnc.nameOverride | Optional | N/A | String to partially override deployment fullname template with a string (will prepend the release name) |
 | cnc.fullNameOverride | Optional | N/A | String to fully override deployment fullname template with a string |
