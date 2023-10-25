@@ -113,7 +113,7 @@ The following table lists the mandatory and optional parameters that you can con
 | license.accept | Mandatory | no | Set `yes` to accept the NSNC end user license agreement. |
 | imageRegistry                   | Mandatory  |  `quay.io`               |  The NSNC image registry             |  
 | imageRepository                 | Mandatory  |  `netscaler/netscaler-k8s-node-controller`              |   The NSNC image repository             | 
-| imageTag                  | Mandatory  |  `2.2.11`               |  The NSNC image tag            | 
+| imageTag                  | Mandatory  |  `2.2.12`               |  The NSNC image tag            | 
 | pullPolicy | Mandatory | IfNotPresent | The NSNC image pull policy. |
 | nameOverride | Optional | N/A | String to partially override deployment fullname template with a string (will prepend the release name) |
 | fullNameOverride | Optional | N/A | String to fully override deployment fullname template with a string |
