@@ -94,6 +94,9 @@ spec:
           - name: ADM_URL
             value: "{{ .Values.admURL }}"
 
+          - name: CLUSTER_PREFIX
+            value: "{{ .Values.clusterPrefix }}"
+
           - name: MY_NODE_NAME
             valueFrom:
               fieldRef:

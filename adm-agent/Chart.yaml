@@ -1,5 +1,5 @@
 apiVersion: v2
-appVersion: 141.10.28
+appVersion: 141.13.22
 description: A Helm chart for NetScaler ADM Agent
 home: https://adm.cloud.com
 kubeVersion: '>=v1.16.0-0'
@@ -11,4 +11,4 @@ maintainers:
   name: swapnil
 name: adm-agent
 type: application
-version: 141.10.28
+version: 141.13.22
