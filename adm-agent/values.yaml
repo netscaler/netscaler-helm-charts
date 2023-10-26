@@ -4,7 +4,7 @@
 
 imageRegistry: quay.io
 imageRepository: citrix/adm-agent
-imageTag: 14.1-10.28
+imageTag: 14.1-13.22
 image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
 pullPolicy: Always
 
@@ -15,6 +15,7 @@ fullnameOverride: ""
 accessSecret: ""
 admURL: "adm.cloud.com"
 loginSecret: ""
+clusterPrefix: ""
 
 helper:
   imageRegistry: quay.io

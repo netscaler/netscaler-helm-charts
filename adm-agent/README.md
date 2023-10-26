@@ -121,6 +121,7 @@ The following table provides the configurable parameters and their default value
 | `pullPolicy`   | Specifies the image pull policy for ADM agent. | IfNotPresent        |
 | `accessSecret`| Specifies the ID and Secret to access ADM Service.| Nil|
 | `loginSecret`| Specifies the login Secret of NetScaler ADM agent.| Nil|
+| `clusterPrefix`| Kubernetes/Openshift Cluster Prefix. This will be used while registering cluster to ADM.| Nil|
 | `helper.helperImageRegistry`			   | Image registry of NetScaler ADM agent helper               | `quay.io`               |
 | `helper.helperImageRepository`			   | Image repository of NetScaler ADM agent helper               | `citrix/adm-agent-helper`               |
 | `helper.helperImageTag`			   | Image tag of NetScaler ADM agent helper               | `1.0.0`               |
