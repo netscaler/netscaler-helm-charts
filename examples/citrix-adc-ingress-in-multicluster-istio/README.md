@@ -63,23 +63,23 @@ Perform the following steps in Cluster-1:
 
  7.  Deploy the `productpage` microservice in the `bookinfo` namespace using the following command:
 
-          kubectl apply -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-ingress-in-multicluster-istio/multicluster-bookinfo/productpage-deployment.yaml -n bookinfo
+          kubectl apply -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/citrix-adc-ingress-in-multicluster-istio/multicluster-bookinfo/productpage-deployment.yaml -n bookinfo
 
 8.  Configure the Ingress gateway for `bookinfo`. Configure Ingress gateway using the Istio Gateway resource for the `https` traffic.
 
     Configure the HTTPS gateway using the following command:
 
-        kubectl apply -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/bookinfo_https_gateway.yaml
+        kubectl apply -n bookinfo -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/bookinfo_https_gateway.yaml
 
 9.  Set up traffic management using `VirtualService` and `DestinationRule`.
 
     Create `VirtualService` for the `productpage` service that is a front end microservice of the `bookinfo` application. Use the following command:
 
-        kubectl apply -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/productpage_vs.yaml
+        kubectl apply -n bookinfo -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/productpage_vs.yaml
 
     Create `DestinationRule` for `productpage` using the following command:
 
-        kubectl apply -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/productpage_dr.yaml
+        kubectl apply -n bookinfo -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/productpage_dr.yaml
 
   In Cluster 2, perform the following steps:
 
@@ -94,7 +94,7 @@ Perform the following steps in Cluster-1:
 
 3.  Deploy `ratings`, `reviews`, and `details` microservices using the following command:
 
-        kubectl apply -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-ingress-in-multicluster-istio/multicluster-bookinfo/reviews-ratings-details-deployment.yaml -n bookinfo
+        kubectl apply -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/citrix-adc-ingress-in-multicluster-istio/multicluster-bookinfo/reviews-ratings-details-deployment.yaml -n bookinfo
 
 Perform the following steps in Cluster-1.
 
@@ -110,7 +110,7 @@ Perform the following steps in Cluster-1.
 
 3.  Create `ServiceEntry` for details, reviews, and ratings microservices in Cluster-1 using the following command:
 
-    kubectl apply -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-ingress-in-multicluster-istio/multicluster-bookinfo/reviews-ratings-details-serviceentry.yaml -n bookinfo
+    kubectl apply -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/citrix-adc-ingress-in-multicluster-istio/multicluster-bookinfo/reviews-ratings-details-serviceentry.yaml -n bookinfo
 
     **Note**: Replace `<Vserver IP>` with the virtual server IP (VIP) address of NetScaler in reviews-ratings-details-serviceentry.yaml
 

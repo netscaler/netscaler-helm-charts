@@ -102,7 +102,7 @@ Perform the following steps to get access ID and secret for accessing NetScaler 
 
  Now, you can generate `authorization bearer token` using access ID and access secret using below script: 
 
-	wget  https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/generate_token.py
+	wget  https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/generate_token.py
 	
 	python3 generate_token.py --accessID=<accessID> --accessSecret=<accessSecret>
 

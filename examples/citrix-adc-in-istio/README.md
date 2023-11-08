@@ -97,7 +97,7 @@ kubectl label namespace bookinfo cpx-injection=enabled
 ## Deploy the `Bookinfo` Application
 
 ```
-kubectl apply -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/bookinfo.yaml  
+kubectl apply -n bookinfo -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/bookinfo.yaml  
 
 ```
 
@@ -108,14 +108,14 @@ Ingress Gateway can be configured using Istio Gateway resource for secure (https
 ### Configure HTTPS Gateway
 
 ```
-kubectl apply -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/bookinfo_https_gateway.yaml
+kubectl apply -n bookinfo -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/bookinfo_https_gateway.yaml
 
 ```
 
 ### Configure HTTP Gateway
 
 ```
-kubectl apply -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/bookinfo_http_gateway.yaml
+kubectl apply -n bookinfo -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/bookinfo_http_gateway.yaml
 ```
 
 ## Traffic Management using VirtualService 
@@ -123,7 +123,7 @@ kubectl apply -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-hel
 Create [VirtualService](https://istio.io/docs/reference/config/istio.networking.v1alpha3/#VirtualService) for productpage service which is a frontend microservice of bookinfo app.
 
 ```
-kubectl apply -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/productpage_vs.yaml
+kubectl apply -n bookinfo -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/productpage_vs.yaml
 
 ```
 
@@ -166,15 +166,15 @@ export INGRESS_HOST=$(kubectl get pods -l app=citrix-ingressgateway -n netscaler
 Delete the Gateway configuration, VirtualService and the secret, and shutdown the bookinfo application.
 
 ```
-kubectl delete -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/bookinfo_http_gateway.yaml
+kubectl delete -n bookinfo -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/bookinfo_http_gateway.yaml
 
-kubectl delete -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/bookinfo_https_gateway.yaml
+kubectl delete -n bookinfo -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/bookinfo_https_gateway.yaml
 
-kubectl delete -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/productpage_vs.yaml
+kubectl delete -n bookinfo -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/productpage_vs.yaml
 
 kubectl delete secret -n netscaler-system citrix-ingressgateway-certs
 
-kubectl delete -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/bookinfo.yaml
+kubectl delete -n bookinfo -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/bookinfo.yaml
 
 kubectl delete namespace bookinfo
 ```

@@ -80,7 +80,7 @@ Perform the following steps to get access ID and secret for accessing NetScaler 
 
  Now, you can generate `authorization bearer token` using access ID and access secret using below script: 
 
-	wget  https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/generate_token.py
+	wget  https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/generate_token.py
       
 	python3 generate_token.py --accessID=<accessID> --accessSecret=<accessSecret>
 
@@ -127,11 +127,11 @@ NetScaler Observability Exporter helps in exporting metrics from NetScaler insta
 
 Apply destination rule to disable TLS communication of NetScaler with NetScaler Observability Exporter and ADM by following command:
 
-      kubectl apply -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/servicemesh_with_coe_and_adm/manifest/destinationrule_agent_coe.yaml -n netscaler-system
+      kubectl apply -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/servicemesh_with_coe_and_adm/manifest/destinationrule_agent_coe.yaml -n netscaler-system
 
 **NOTE:** Create gateway for NetScaler observability exporter when NetScaler CPX is used as ingress gateway.
 
-      kubectl apply -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/servicemesh_with_coe_and_adm/manifest/coe_gateway.yaml -n netscaler-system      
+      kubectl apply -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/servicemesh_with_coe_and_adm/manifest/coe_gateway.yaml -n netscaler-system      
 
 # <a name="generating-certificate">C) Generating Certificate and Key for the `Bookinfo` and `Httpbin` applications</a>
 
@@ -258,30 +258,30 @@ When a namespace is labelled with `cpx-injection=enabled`, CPX as sidecar proxy 
 
 ### F.2) Deploy the `Bookinfo` Application
 
-      kubectl apply -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/servicemesh_with_coe_and_adm/manifest/bookinfo.yaml  
+      kubectl apply -n bookinfo -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/servicemesh_with_coe_and_adm/manifest/bookinfo.yaml  
 
 ### F.3) Deploy the `Httpbin` Application
 
-      kubectl apply -n httpbin -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/servicemesh_with_coe_and_adm/manifest/httpbin.yaml
+      kubectl apply -n httpbin -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/servicemesh_with_coe_and_adm/manifest/httpbin.yaml
 
 ### F.4) Configure Ingress Gateway for `Bookinfo` and `Httpbin`
 
-      kubectl apply -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/bookinfo_https_gateway.yaml
+      kubectl apply -n bookinfo -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/bookinfo_https_gateway.yaml
 
-      kubectl apply -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/bookinfo_http_gateway.yaml
+      kubectl apply -n bookinfo -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/bookinfo_http_gateway.yaml
 
-      kubectl apply -n httpbin -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/servicemesh_with_coe_and_adm/manifest/httpbin_secure_gateway.yaml
+      kubectl apply -n httpbin -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/servicemesh_with_coe_and_adm/manifest/httpbin_secure_gateway.yaml
                                   
 ### F.5) Configure Virtual Service for `productpage` service for `bookinfo`
 
-      kubectl apply -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/productpage_vs.yaml
+      kubectl apply -n bookinfo -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/citrix-adc-in-istio/bookinfo/deployment-yaml/productpage_vs.yaml
 
 
 # <a name="send-traffic"> G) Generate application traffic</a>
    
   Send traffic using the helper script
 
-      wget https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/servicemesh_with_coe_and_adm/manifest/traffic.sh
+      wget https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/servicemesh_with_coe_and_adm/manifest/traffic.sh
 
 Provide VIP which has been used to expose the `bookinfo` and `httpbin` applications in `traffic.sh` and start traffic.
 
@@ -341,8 +341,8 @@ Now, access the `bookinfo` application using `www.bookinfo.com/productpage` and 
 
 Expose Prometheus and Grafana using gateway CRD through VPX.
 
-      kubectl apply -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/servicemesh_with_coe_and_adm/manifest/prometheus_gateway.yaml
-      kubectl apply -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/servicemesh_with_coe_and_adm/manifest/grafana_gateway.yaml
+      kubectl apply -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/servicemesh_with_coe_and_adm/manifest/prometheus_gateway.yaml
+      kubectl apply -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/servicemesh_with_coe_and_adm/manifest/grafana_gateway.yaml
 
 Add entries in `/etc/hosts` for Prometheus and Grafana.
 
@@ -382,7 +382,7 @@ To get pod IP address of NetScaler Observability Exporter deployed in `netscaler
 
 ![](images/edit-prometheus.png)
 
-5. Open **[this](https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/servicemesh_with_coe_and_adm/manifest/dashboard.json)** in another tab and copy the JSON content.
+5. Open **[this](https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/servicemesh_with_coe_and_adm/manifest/dashboard.json)** in another tab and copy the JSON content.
 
 6. Click **+** and select **Import**. 
 

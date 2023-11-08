@@ -117,14 +117,14 @@ The following table provides the configurable parameters and their default value
 |--------------------------------|-------------------------------|---------------------------|
 | `imageRegistry`			   | Image registry of the ADM agent onboarding container               | `quay.io`               |
 | `imageRepository`			   | Image repository of the ADM agent onboarding container               | `citrix/adm-agent`               |
-| `imageTag`			   | Image tag  of the ADM agent container               | `141.10.28`               |
+| `imageTag`			   | Image tag  of the ADM agent container               | `141.13.23`               |
 | `pullPolicy`   | Specifies the image pull policy for ADM agent. | IfNotPresent        |
 | `accessSecret`| Specifies the ID and Secret to access ADM Service.| Nil|
 | `loginSecret`| Specifies the login Secret of NetScaler ADM agent.| Nil|
 | `clusterPrefix`| Kubernetes/Openshift Cluster Prefix. This will be used while registering cluster to ADM.| Nil|
 | `helper.helperImageRegistry`			   | Image registry of NetScaler ADM agent helper               | `quay.io`               |
 | `helper.helperImageRepository`			   | Image repository of NetScaler ADM agent helper               | `citrix/adm-agent-helper`               |
-| `helper.helperImageTag`			   | Image tag of NetScaler ADM agent helper               | `1.0.0`               |
+| `helper.helperImageTag`			   | Image tag of NetScaler ADM agent helper               | `2.0.0`               |
 | `helper.pullPolicy`   | Specifies the image pull policy for ADM agent Helper. | IfNotPresent        |
 
 **Note:** You can use the `values.yaml` file packaged in the chart. This file contains the default configuration values for the chart.

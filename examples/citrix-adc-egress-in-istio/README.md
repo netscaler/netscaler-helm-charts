@@ -29,14 +29,14 @@ kubectl label ns egressgateway-test cpx-injection=enabled
 _**NOTE:** To deploy sample application with NetScaler CPX as a sidecar automatically, label namespace with cpx-injection-enabled.
 #### Deploy sleep appplication using yaml:
 ```
-kubectl apply -n egressgateway-test -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-egress-in-istio/egress-example/deployment-yamls/sleep.yaml
+kubectl apply -n egressgateway-test -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/citrix-adc-egress-in-istio/egress-example/deployment-yamls/sleep.yaml
 ```
 
 ### Egress gateway for HTTPS traffic
 
 #### Configure ServiceEntry to allow direct traffic to external service.
 ```
-kubectl apply -n egressgateway-test -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-egress-in-istio/egress-example/deployment-yamls/serviceentry_tls.yaml
+kubectl apply -n egressgateway-test -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/citrix-adc-egress-in-istio/egress-example/deployment-yamls/serviceentry_tls.yaml
 ```
 
 
@@ -44,14 +44,14 @@ kubectl apply -n egressgateway-test -f https://raw.githubusercontent.com/citrix/
 Create egress gateways for _edition.cnn.com_, port 443, and a destination rule for traffic directed to the egress gateway.
 
 ```
-kubectl apply -n egressgateway-test -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-egress-in-istio/egress-example/deployment-yamls/gateway_tls.yaml
+kubectl apply -n egressgateway-test -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/citrix-adc-egress-in-istio/egress-example/deployment-yamls/gateway_tls.yaml
 ```     
 
 #### Traffic Management using VirtualService and DestinationRule
 Deploy virtual service to direct traffic from the sidecars to the egress gateway and from egress gateway to the external service. 
 
 ```
-kubectl apply -n egressgateway-test -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-egress-in-istio/egress-example/deployment-yamls/virtual_service_tls.yaml
+kubectl apply -n egressgateway-test -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/citrix-adc-egress-in-istio/egress-example/deployment-yamls/virtual_service_tls.yaml
 ```
 
 
@@ -59,17 +59,17 @@ kubectl apply -n egressgateway-test -f https://raw.githubusercontent.com/citrix/
 
 #### Configure ServiceEntry for HTTP
 ```
-kubectl apply -n egressgateway-test -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-egress-in-istio/egress-example/deployment-yamls/serviceentry.yaml
+kubectl apply -n egressgateway-test -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/citrix-adc-egress-in-istio/egress-example/deployment-yamls/serviceentry.yaml
 ```
     
 #### Configure HTTP Gateway
 ```
-kubectl apply -n egressgateway-test -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-egress-in-istio/egress-example/deployment-yamls/gateway.yaml
+kubectl apply -n egressgateway-test -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/citrix-adc-egress-in-istio/egress-example/deployment-yamls/gateway.yaml
 ```
 
 #### Configure VirtualService and DestinationRule
 ```
-kubectl apply -n egressgateway-test -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-egress-in-istio/egress-example/deployment-yamls/virtual_service.yaml
+kubectl apply -n egressgateway-test -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/citrix-adc-egress-in-istio/egress-example/deployment-yamls/virtual_service.yaml
 ```
 *Note*: Aforementioned yaml files refer to _citrix-adc-istio-egress-gateway-citrix-egress-svc.netscaler-system.svc.cluster.local_ as the host representating citrix-egressgateway service. The name of service depends on the helm-chart release name. Default name of release name is _citrix-adc-istio-egress-gateway_. In case of different release name, change the name of _host_ field accordingly.
 
@@ -127,13 +127,13 @@ Delete the Gateway configuration, VirtualService, DestinationRule and the secret
 #### Cleanup HTTPS Gateway
 
 ```
-kubectl delete -n egressgateway-test -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-egress-in-istio/egress-example/deployment-yamls/sleep.yaml
+kubectl delete -n egressgateway-test -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/citrix-adc-egress-in-istio/egress-example/deployment-yamls/sleep.yaml
 
-kubectl delete -n egressgateway-test -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-egress-in-istio/egress-example/deployment-yamls/serviceentry_tls.yaml
+kubectl delete -n egressgateway-test -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/citrix-adc-egress-in-istio/egress-example/deployment-yamls/serviceentry_tls.yaml
 
-kubectl delete -n egressgateway-test -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-egress-in-istio/egress-example/deployment-yamls/gateway_tls.yaml
+kubectl delete -n egressgateway-test -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/citrix-adc-egress-in-istio/egress-example/deployment-yamls/gateway_tls.yaml
 
-kubectl delete -n egressgateway-test -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-egress-in-istio/egress-example/deployment-yamls/virtual_service_tls.yaml
+kubectl delete -n egressgateway-test -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/citrix-adc-egress-in-istio/egress-example/deployment-yamls/virtual_service_tls.yaml
 
 kubectl delete ns egressgateway-test
 
@@ -142,13 +142,13 @@ kubectl delete ns egressgateway-test
 #### Cleanup HTTP Gateway
 
 ```
-kubectl delete -n egressgateway-test -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-egress-in-istio/egress-example/deployment-yamls/sleep.yaml
+kubectl delete -n egressgateway-test -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/citrix-adc-egress-in-istio/egress-example/deployment-yamls/sleep.yaml
 
-kubectl delete -n egressgateway-test -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-egress-in-istio/egress-example/deployment-yamls/serviceentry.yaml
+kubectl delete -n egressgateway-test -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/citrix-adc-egress-in-istio/egress-example/deployment-yamls/serviceentry.yaml
 
-kubectl delete -n egressgateway-test -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-egress-in-istio/egress-example/deployment-yamls/gateway.yaml
+kubectl delete -n egressgateway-test -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/citrix-adc-egress-in-istio/egress-example/deployment-yamls/gateway.yaml
 
-kubectl delete -n egressgateway-test -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/citrix-adc-egress-in-istio/egress-example/deployment-yamls/virtual_service.yaml
+kubectl delete -n egressgateway-test -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/citrix-adc-egress-in-istio/egress-example/deployment-yamls/virtual_service.yaml
 
 kubectl delete ns egressgateway-test
 

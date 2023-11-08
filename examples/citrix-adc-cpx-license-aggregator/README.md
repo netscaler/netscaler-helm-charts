@@ -117,7 +117,7 @@ For more details about the NetScaler CPX sidecar injector, follow [this](https:/
 
 2. Deploy Httpbin application.
     ```
-    kubectl apply -n httpbin -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/servicemesh_with_coe_and_adm/manifest/httpbin.yaml
+    kubectl apply -n httpbin -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/servicemesh_with_coe_and_adm/manifest/httpbin.yaml
     ```
     
 
@@ -211,7 +211,7 @@ The output of "show ns licenseserver" command.
 
 1. Uninstall httpbin application 
     ```
-    kubectl delete -n httpbin -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/servicemesh_with_coe_and_adm/manifest/httpbin.yaml
+    kubectl delete -n httpbin -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/servicemesh_with_coe_and_adm/manifest/httpbin.yaml
     ```
     Or delete the namespace altogether.
     ```
