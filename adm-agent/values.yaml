@@ -4,9 +4,9 @@
 
 imageRegistry: quay.io
 imageRepository: citrix/adm-agent
-imageTag: 14.1-13.22
+imageTag: 14.1-13.23
 image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
-pullPolicy: Always
+pullPolicy: IfNotPresent
 
 imagePullSecrets: []
 nameOverride: ""
@@ -20,9 +20,9 @@ clusterPrefix: ""
 helper:
   imageRegistry: quay.io
   imageRepository: citrix/adm-agent-helper
-  imageTag: 1.0.0
+  imageTag: 2.0.0
   image: "{{ .Values.helper.imageRegistry }}/{{ .Values.helper.imageRepository }}:{{ .Values.helper.imageTag }}"
-  pullPolicy: Always
+  pullPolicy: IfNotPresent
 
 serviceAccount:
   # Specifies whether a service account should be created

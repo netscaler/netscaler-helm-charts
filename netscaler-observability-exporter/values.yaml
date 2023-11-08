@@ -4,7 +4,7 @@
 
 imageRegistry: quay.io
 imageRepository: netscaler/netscaler-observability-exporter
-imageTag: 1.7.001
+imageTag: 1.8.001
 image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
 pullPolicy: IfNotPresent
 replicas: 1
@@ -40,6 +40,7 @@ json_trans_rate_limiting:
   limit: 100
   queuelimit: 1000
   window: 5
+nsoeLogLevel: "INFO"
 
 podAnnotations: {}
 resources: {}

@@ -4,7 +4,7 @@ This guide provides a comprehensive example for:
 
 i) Deploying the multiple applications ([Bookinfo](https://github.com/istio/istio/tree/master/samples/bookinfo) and [Httpbin](https://github.com/istio/istio/blob/master/samples/httpbin/httpbin.yaml))in Istio service mesh that has NetScalers deployed as data plane proxies.
 
-ii) Deploying NetScaler Ingress Controller to expose NetScaler CPX Ingress Gateway Service and configuring [Web App Firewall (WAF)](https://docs.citrix.com/en-us/citrix-adc/current-release/application-firewall.html) on NetScaler VPX frontending the Kubernetes Cluster.
+ii) Deploying NetScaler Ingress Controller to expose NetScaler CPX Ingress Gateway Service and configuring [Web App Firewall (WAF)](https://docs.netscaler.com/en-us/citrix-adc/current-release/application-firewall.html) on NetScaler VPX frontending the Kubernetes Cluster.
 
 iii) Deploying GSLB Controller for continuous availability and proximity based load balancing ([GSLB](https://docs.citrix.com/en-us/citrix-adc/current-release/global-server-load-balancing.html)).
 
@@ -112,19 +112,19 @@ When a namespace is labelled with `cpx-injection=enabled`, NetScaler CPX is depl
 ### F.2) Deploy the `Bookinfo` Application
 To deploy the 'Bookinfo' application, use the following command:
 
-    kubectl apply -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/servicemesh_with_coe_and_adm/manifest/bookinfo.yaml  
+    kubectl apply -n bookinfo -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/servicemesh_with_coe_and_adm/manifest/bookinfo.yaml  
 
 ### F.3) Deploy the `Httpbin` Application
 To deploy the 'Httpbin' application, use the following command:
 
-    kubectl apply -n httpbin -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/servicemesh_with_coe_and_adm/manifest/httpbin.yaml
+    kubectl apply -n httpbin -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/servicemesh_with_coe_and_adm/manifest/httpbin.yaml
 
 ### F.4) Configure Ingress Gateway and Virtual Service  for `Httpbin` and frontend `productpage` service of `Bookinfo` application
 Run the following commands:
 
-    kubectl apply -n bookinfo -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/Servicemesh_with_GSLB_and_WAF/manifest/bookinfo-gateway-wildcard.yaml
+    kubectl apply -n bookinfo -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/Servicemesh_with_GSLB_and_WAF/manifest/bookinfo-gateway-wildcard.yaml
 
-    kubectl apply -n httpbin -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/Servicemesh_with_GSLB_and_WAF/manifest/httpbin-gateway-wildcard.yaml
+    kubectl apply -n httpbin -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/Servicemesh_with_GSLB_and_WAF/manifest/httpbin-gateway-wildcard.yaml
 
 # <a name="deploy-ingress-controller">G)Deploying NetScaler Ingress Controller to expose NetScaler CPX as Gateway Service </a>
 
@@ -148,7 +148,7 @@ Replace `<NSIP>` with NetScaler VPX private NSIP.
 
 To expose the CPX gateway service using Ingress resource, download the `vpx-ingress.yaml` file and update the annotation `ingress.citrix.com/frontend-ip` with the private VIP IP. After that, execute the kubectl apply command.
 
-    wget https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/Servicemesh_with_GSLB_and_WAF/manifest/vpx-ingress.yaml
+    wget https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/Servicemesh_with_GSLB_and_WAF/manifest/vpx-ingress.yaml
 
     kubectl apply -f vpx-ingress.yaml -n netscaler-system
 
@@ -161,13 +161,13 @@ ii) [SQL Injection Prevention](https://docs.citrix.com/en-us/citrix-adc/current-
 
 Download the `error.html` file and copy to the `/var/tmp` folder in NetScaler VPX. This `error.html` will be displayed on the browser whenever field format check fails or SQL injection attack is detected.
 
-    wget https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/Servicemesh_with_GSLB_and_WAF/manifest/error.html
+    wget https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/Servicemesh_with_GSLB_and_WAF/manifest/error.html
 
 Deploy two CRDs for WAF in `netscaler-system` namespace, using the following commands
 
-    kubectl apply -n netscaler-system -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/Servicemesh_with_GSLB_and_WAF/manifest/waffieldformat.yaml
+    kubectl apply -n netscaler-system -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/Servicemesh_with_GSLB_and_WAF/manifest/waffieldformat.yaml
 
-    kubectl apply -n netscaler-system -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/Servicemesh_with_GSLB_and_WAF/manifest/wafhtmlxsssql.yaml
+    kubectl apply -n netscaler-system -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/Servicemesh_with_GSLB_and_WAF/manifest/wafhtmlxsssql.yaml
 
 
 # <a name="deploy-gslb-controller">H) Deploying GSLB controller controller</a>
@@ -207,7 +207,7 @@ For creating Kubernetes Secrets for both NetScaler VPX instances in cluster-1 ru
 
 Download the `gslbcontroller1.yaml` file. 
 
-    wget https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/Servicemesh_with_GSLB_and_WAF/manifest/gslbcontroller1.yaml
+    wget https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/Servicemesh_with_GSLB_and_WAF/manifest/gslbcontroller1.yaml
 
 Update the `<region-1> and <region-2>` with the proper region names. Also, update the site-1-IP and site-2-IP with the Public SNIP IPs of NetScaler VPX instances in region-1 and region-2, respectively. Use the following command:
 
@@ -215,9 +215,9 @@ Update the `<region-1> and <region-2>` with the proper region names. Also, updat
 
 **Deploy GTP (Global Traffic Policy) and GSE (Global Service Entry) for bookinfo application for cluster-1**
 
-    wget https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/Servicemesh_with_GSLB_and_WAF/manifest/GSE_bookinfo_cluster1.yaml
+    wget https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/Servicemesh_with_GSLB_and_WAF/manifest/GSE_bookinfo_cluster1.yaml
 
-    wget https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/Servicemesh_with_GSLB_and_WAF/manifest/GTP_bookinfo.yaml
+    wget https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/Servicemesh_with_GSLB_and_WAF/manifest/GTP_bookinfo.yaml
 
 **NOTE**
 Replace `<region-1> and <region-2>` with the AWS regions and Endpoint in GSE with Public IP for VIP of NetScaler in region-1.
@@ -228,9 +228,9 @@ Replace `<region-1> and <region-2>` with the AWS regions and Endpoint in GSE wit
 
 **Deploy GTP (Global Traffic Policy) and GSE (Global Service Entry) for httpbin application for cluster-1**
 
-    wget https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/Servicemesh_with_GSLB_and_WAF/manifest/GSE_httpbin_cluster1.yaml 
+    wget https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/Servicemesh_with_GSLB_and_WAF/manifest/GSE_httpbin_cluster1.yaml 
 
-    wget https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/Servicemesh_with_GSLB_and_WAF/manifest/GTP_httpbin.yaml
+    wget https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/Servicemesh_with_GSLB_and_WAF/manifest/GTP_httpbin.yaml
 
 **NOTE**
 Replace `<region-1> and <region-2>` with the AWS regions and Endpoint in GSE with Public IP for VIP of NetScaler in region-1.
@@ -250,7 +250,7 @@ For creating Kubernetes Secrets for both NetScaler VPX instances in cluster-2 ru
 
 Download the `gslbcontroller2.yaml` file. 
 
-    wget https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/Servicemesh_with_GSLB_and_WAF/manifest/gslbcontroller2.yaml
+    wget https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/Servicemesh_with_GSLB_and_WAF/manifest/gslbcontroller2.yaml
 
 Update the `<region-1> and <region-2>` with the proper region names. Also, update the site-1-IP and site-2-IP with the Public SNIP IPs of NetScaler VPX instances in region-1 and region-2, respectively. Use the following command:
 
@@ -258,9 +258,9 @@ Update the `<region-1> and <region-2>` with the proper region names. Also, updat
 
 **Deploy GTP (Global Traffic Policy) and GSE (Global Service Entry) for bookinfo application for cluster-2**
 
-    wget https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/Servicemesh_with_GSLB_and_WAF/manifest/GSE_bookinfo_cluster2.yaml
+    wget https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/Servicemesh_with_GSLB_and_WAF/manifest/GSE_bookinfo_cluster2.yaml
 
-    wget https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/Servicemesh_with_GSLB_and_WAF/manifest/GTP_bookinfo.yaml
+    wget https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/Servicemesh_with_GSLB_and_WAF/manifest/GTP_bookinfo.yaml
 
 **NOTE**
 Replace `<region-1> and <region-2>` with the AWS regions and Endpoint in GSE with Public IP for VIP of NetScaler in region-2.
@@ -271,9 +271,9 @@ Replace `<region-1> and <region-2>` with the AWS regions and Endpoint in GSE wit
 
 **Deploy GTP (Global Traffic Policy) and GSE (Global Service Entry) for httpbin application for cluster-2**
 
-    wget https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/Servicemesh_with_GSLB_and_WAF/manifest/GSE_httpbin_cluster2.yaml 
+    wget https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/Servicemesh_with_GSLB_and_WAF/manifest/GSE_httpbin_cluster2.yaml 
 
-    wget https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/Servicemesh_with_GSLB_and_WAF/manifest/GTP_httpbin.yaml
+    wget https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/Servicemesh_with_GSLB_and_WAF/manifest/GTP_httpbin.yaml
 
 **NOTE**
 Replace `<region-1> and <region-2>` with the AWS regions and Endpoint in GSE with Public IP for VIP of NetScaler in region-2.

@@ -75,7 +75,7 @@ The following table lists the mandatory and optional parameters that you can con
 | license.accept | Mandatory | no | Set `yes` to accept the NetScaler end user license agreement. |
 | imageRegistry                   | Mandatory  |  `quay.io`               |  The NSOE image registry             |  
 | imageRepository                 | Mandatory  |  `netscaler/netscaler-observability-exporter`              |   The NSOE image repository             | 
-| imageTag                  | Mandatory  |  `1.7.001`               |  The NSOE image tag            |
+| imageTag                  | Mandatory  |  `1.8.001`               |  The NSOE image tag            |
 | pullPolicy | Mandatory | IfNotPresent | The NSOE image pull policy. |
 | nodePortRequired | Optional | false | Set true to create a nodeport NSOE service. |
 | headless | Optional | false | Set true to create Headless service. |
@@ -102,6 +102,7 @@ The following table lists the mandatory and optional parameters that you can con
 | resources | Optional | N/A | CPU/Memory resource requests/limits for NetScaler observability exporter container. |
 | tolerations | Optional | N/A | Specify the tolerations for the NSOE deployment. |
 | affinity | Optional | N/A | Affinity labels for pod assignment. |
+| nsoeLogLevel | Optional | INFO | Logging severity for NSOE can be one of- INFO, ERROR, FATAL or NONE. |
 
 Alternatively, you can define a YAML file with the values for the parameters and pass the values while installing the chart.
 

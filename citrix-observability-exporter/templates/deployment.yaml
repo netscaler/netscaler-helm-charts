@@ -42,6 +42,9 @@ spec:
               subPath: lstreamd_default.conf
             - name: core-data
               mountPath: /var/crash/
+          env:
+            - name: NSOE_LOG_LEVEL
+              value: {{ .Values.nsoeLogLevel }}
       volumes:
         - name: lstreamd-config
           configMap:

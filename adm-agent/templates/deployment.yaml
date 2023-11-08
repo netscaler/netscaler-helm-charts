@@ -26,7 +26,7 @@ spec:
           imagePullPolicy: {{ .Values.helper.pullPolicy }}
 
           resources:
-            {}
+            {{- toYaml .Values.resources | nindent 12 }}
           securityContext:
             runAsGroup: 32024
             runAsNonRoot: true
@@ -35,6 +35,9 @@ spec:
           env:
           - name: ADM_AGENT_LOGIN_SECRET
             value: "{{ required "Valid loginSecret is required!" .Values.loginSecret }}"
+          
+          - name: LOGLEVEL
+            value: "INFO"
 
         - name: {{ include "adm-agent.fullname" . }}-kad
           image: "{{ tpl .Values.image . }}"

@@ -86,7 +86,7 @@ Perform the following steps to get access ID and secret for accessing NetScaler 
 
  Now, you can generate `authorization bearer token` using access ID and access secret using below script: 
 
-	wget  https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/generate_token.py
+	wget  https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/generate_token.py
     
 	python3 generate_token.py --accessID=<accessID> --accessSecret=<accessSecret>
 
@@ -115,7 +115,7 @@ You can check the logs of pod deployed as part of Kubernetes Job adm-agent-onboa
 
 Use the following command to deploy Netflix application on your Kubernetes cluster:
 
-    kubectl create -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/servicegraph/manifest/netflix.yaml
+    kubectl create -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/servicegraph/manifest/netflix.yaml
 
 # <a name="deploy-citrix-cloud-native-stack"> D) NetScaler Cloud Native Dual Tier Topology </a>
 
@@ -129,7 +129,7 @@ Create a Kubernetes secret for the user name and password using the following co
 
 Download the consolidated YAML file which can deploy NetScaler ingress controller to configure Tier-1 NetScaler and Tier 2 CPX.
 
-    wget https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/servicegraph/manifest/values.yaml
+    wget https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/servicegraph/manifest/values.yaml
 
 Update `cic.nsIP` with the NetScaler device/management IP address in `values.yaml`.
 
@@ -152,13 +152,13 @@ After updating the `values.yaml`, deploy NetScaler dual Tier deployment using th
 
 ## Create Ingress and Services for Netflix application
 
-    wget https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/servicegraph/manifest/vpx_ingress.yaml
+    wget https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/servicegraph/manifest/vpx_ingress.yaml
 
   **Update**  `ingress.citrix.com/frontend-ip` in `vpx_ingress.yaml` with the virtual IP address with which you want to expose Netflix application.
 
     kubectl apply -f vpx_ingress.yaml
-    kubectl create -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/servicegraph/manifest/cpx_ingress.yaml
-    kubectl create -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/servicegraph/manifest/smlite_services.yaml
+    kubectl create -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/servicegraph/manifest/cpx_ingress.yaml
+    kubectl create -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/servicegraph/manifest/smlite_services.yaml
 
 # <a name="send-traffic"> E) Send Traffic </a>
 
@@ -193,9 +193,9 @@ A user can select **See Trace Details** to visualize the entire trace in the for
 
 # <a name="clean-up">H) Clean up the deployment </a>
 
-    kubectl delete -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/servicegraph/manifest/cpx_ingress.yaml
-    kubectl delete -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/servicegraph/manifest/smlite_services.yaml
-    kubectl delete -f https://raw.githubusercontent.com/citrix/citrix-helm-charts/master/examples/servicegraph/manifest/netflix.yaml
+    kubectl delete -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/servicegraph/manifest/cpx_ingress.yaml
+    kubectl delete -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/servicegraph/manifest/smlite_services.yaml
+    kubectl delete -f https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/master/examples/servicegraph/manifest/netflix.yaml
     kubectl delete -f vpx_ingress.yaml
     helm uninstall adc-netflix
     helm uninstall netscaler-adm
