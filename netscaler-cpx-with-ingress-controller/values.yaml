@@ -82,7 +82,7 @@ servicePorts: []
 nsic:
   imageRegistry: quay.io
   imageRepository: netscaler/netscaler-k8s-ingress-controller
-  imageTag: 1.36.5
+  imageTag: 1.37.5
   image: "{{ .Values.nsic.imageRegistry }}/{{ .Values.nsic.imageRepository }}:{{ .Values.nsic.imageTag }}"
   pullPolicy: IfNotPresent
   required: true

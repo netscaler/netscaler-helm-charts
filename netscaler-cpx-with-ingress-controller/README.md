@@ -621,7 +621,7 @@ The following table lists the configurable parameters of the NetScaler CPX with 
 | daemonSet | Optional | False | Set this to true if NetScaler CPX needs to be deployed as DaemonSet. |
 | nsic.imageRegistry                   | Mandatory  |  `quay.io`               |  The NetScaler ingress controller image registry             |  
 | nsic.imageRepository                 | Mandatory  |  `netscaler/netscaler-k8s-ingress-controller`              |   The NetScaler ingress controller image repository             | 
-| nsic.imageTag                  | Mandatory  |  `1.36.5`               |   The NetScaler ingress controller image tag            | 
+| nsic.imageTag                  | Mandatory  |  `1.37.5`               |   The NetScaler ingress controller image tag            | 
 | nsic.pullPolicy | Mandatory | IfNotPresent | The NetScaler ingress controller image pull policy. |
 | nsic.required | Mandatory | true | NSIC to be run as sidecar with NetScaler CPX |
 | nsic.resources | Optional | {} |	CPU/Memory resource requests/limits for NetScaler Ingress Controller container |
