@@ -38,6 +38,20 @@ Create keyname for siteregion. Prefixed with sitename and postfixed with "_regio
 {{ printf "%s_%s" .siteName "region"}}
 {{- end -}}
 
+{{/*
+Create keyname for sitePublicip. Prefixed with sitename and postfixed with "_publicip"
+*/}}
+{{- define "netscaler-gslb-controller.sitePublicip" -}}
+{{ printf "%s_%s" .siteName "publicip"}}
+{{- end -}}
+
+{{/*
+Create keyname for siteMask. Prefixed with sitename and postfixed with "_mask"
+*/}}
+{{- define "netscaler-gslb-controller.siteMask" -}}
+{{ printf "%s_%s" .siteName "mask"}}
+{{- end -}}
+
 {{/* vim: set filetype=mustache: */}}
 {{/*
 Expand the name of the chart.

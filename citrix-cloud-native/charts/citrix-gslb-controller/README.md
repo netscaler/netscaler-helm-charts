@@ -50,7 +50,7 @@ This Helm chart deploys NetScaler GSLB controller in the [Kubernetes](https://ku
     ```
     - The secrets with credentials needs to be created for all the NetScaler Nodes.
 
-- Following configurations needs to be done on the NetScaler's
+- Following configurations needs to be done on the NetScaler's for manually provisioning GSLB sites
   - Add a SNIP (The subnet IP address). For more information, see [IP Addressing in NetScaler](https://docs.netscaler.com/en-us/citrix-adc/current-release/networking/ip-addressing.html).
     ```
     add ip <snip> <netmask>
@@ -62,10 +62,27 @@ This Helm chart deploys NetScaler GSLB controller in the [Kubernetes](https://ku
   - Features like content switching(CS),Load Balancing(LB), SSL, GSLB should be enabled on all the NetScaler Nodes
     ```
     en feature lb,cs,ssl,gslb
+
+- Above configurations can be automated by the controller by supplying additional parameters
+  - Use the following additional parameters:
+     ```
+      --set nsIP=<NSIP>,gslb.adcCredentialSecret=<Secret-for-NetScaler-credentials>
+     ```
+     Example:
+     ```
+     helm install gslb-controller netscaler/citrix-cloud-native --set gslb.enabled=true,gslb.localRegion=<local-cluster-region>,gslb.localCluster=<local-cluster-name>,gslb.sitedata[0].siteName=<site1-name>,gslb.sitedata[0].siteIp=<site1-ip-address>,gslb.sitedata[0].secretName=<site1-login-file>,gslb.sitedata[0].siteRegion=<site1-region-name>,gslb.sitedata[1].siteName=<site2-name>,gslb.sitedata[1].siteIp=<site2-ip-address>,gslb.sitedata[1].secretName=<site2-login-file>,gslb.sitedata[1].siteRegion=<site2-region-name>,gslb.license.accept=yes,gslb.crds.install=true,gslb.adcCredentialSecret=<Secret-for-NetScaler-credentials> --set nsIP=<NSIP>
+     ```
+  -  You determine the NS_IP IP address needed by the controller to communicate with NetScaler. The IP address might be anyone of the following depending on the type of NetScaler deployment:
+
+   -  (Standalone appliances) NSIP - The management IP address of a standalone NetScaler appliance. For more information, see [IP Addressing in NetScaler](https://docs.netscaler.com/en-us/citrix-adc/current-release/networking/ip-addressing.html).
+
+    -  (Appliances in High Availability mode) SNIP - The subnet IP address. For more information, see [IP Addressing in NetScaler](https://docs.netscaler.com/en-us/citrix-adc/current-release/networking/ip-addressing.htmlddressing.htmlddressing.htmlddressing.htmlddressing.html).
+
+    -  (Appliances in Clustered mode) CLIP - The cluster management IP (CLIP) address for a clustered NetScaler deployment. For more information, see [IP addressing for a cluster](https://docs.netscaler.com/en-us/citrix-adc/current-release/clustering/cluster-overview/ip-addressing.html).
+
+- For static proximity, the location database has to be applied externally
     ```
-  - For static proximity, the location database has to be applied externally
-    ```
-    add locationfile /var/netscaler/inbuilt_db/NetScaler_Netscaler_InBuilt_GeoIP_DB_IPv4
+    add locationfile /var/netscaler/inbuilt_db/Citrix_Netscaler_InBuilt_GeoIP_DB_IPv4
     ```
 #### Create system User account for NetScaler ingress controller in NetScaler
 
@@ -189,8 +206,13 @@ The following table lists the mandatory and optional parameters that you can con
 | gslb.license.accept | Mandatory | no | Set `yes` to accept the NSIC end user license agreement. |
 | gslb.imageRegistry                   | Optional  |  `quay.io`               |  The NetScaler ingress controller image registry             |  
 | gslb.imageRepository                 | Optional  |  `citrix/citrix-k8s-ingress-controller`              |   The NetScaler ingress controller image repository             | 
-| gslb.imageTag                  | Optional  |  `1.36.5`               |   The NetScaler ingress controller image tag            | 
+| gslb.imageTag                  | Optional  |  `1.37.5`               |   The NetScaler ingress controller image tag            | 
 | gslb.pullPolicy | Optional | Always | The NSIC image pull policy. |
+| gslb.adcCredentialSecret | Optional | N/A | The kubernetes secret containing login credentials for the NetScaler VPX or MPX. For information on how to create the secret keys, see [Prerequisites](#prerequistes). |
+| gslb.secretStore.enabled | Optional | False | Set to "True" for deploying other Secret Provider classes  |
+| gslb.secretStore.username | Optional | N/A | if `gslb.secretStore.enabled`, `username` of NetScaler will be fetched from the Secret Provider  |
+| gslb.secretStore.password | Optional | N/A | if `gslb.secretStore.enabled`, `password` of NetScaler will be fetched from the Secret Provider  |
+| gslb.nsIP | Optional | N/A | The IP address of the NetScaler device. For details, see [Prerequisites](#prerequistes). |
 | gslb.nsPort | Optional | 443 | The port used by NSIC to communicate with NetScaler. You can use port 80 for HTTP. |
 | gslb.nsProtocol | Optional | HTTPS | The protocol used by NSIC to communicate with NetScaler. You can also use HTTP on port 80. |
 | gslb.nitroReadTimeout | Optional | 20 | The nitro Read timeout in seconds, defaults to 20 |
@@ -204,8 +226,10 @@ The following table lists the mandatory and optional parameters that you can con
 | gslb.sitedata | Mandatory | N/A | The list containing NetScaler Site details like IP, Name, Region, Secret |
 | gslb.sitedata[0].siteName | Mandatory | N/A | The siteName of the first GSLB site |
 | gslb.sitedata[0].siteIp | Mandatory | N/A | The siteIp of the first GSLB Site |
+| gslb.sitedata[0].siteMask | Optional | "255.255.255.0" | The netmask of the first GSLB Site IP|
 | gslb.sitedata[0].secretName | Mandatory | N/A | The secret containing login credentials of first site |
 | gslb.sitedata[0].siteRegion | Mandatory | N/A | The SiteRegion of the first site |
+| gslb.sitedata[0].sitePublicip | Optional | siteIp | The site public IP of the first GSLB Site |
 | gslb.crds.install | Optional | False | Unset this argument if you don't want to install CustomResourceDefinitions which are consumed by NSIC. |
 | gslb.crds.retainOnDelete | Optional | false | Set this argument if you want to retain CustomResourceDefinitions even after uninstalling NSIC. This will avoid data-loss of Custom Resource Objects created before uninstallation. |
 

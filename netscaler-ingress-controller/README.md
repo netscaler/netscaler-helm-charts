@@ -47,7 +47,7 @@ This Helm chart deploys NetScaler ingress controller in the [Kubernetes](https:/
 
     -  (Appliances in High Availability mode) SNIP - The subnet IP address. For more information, see [IP Addressing in NetScaler](https://docs.netscaler.com/en-us/citrix-adc/current-release/networking/ip-addressing.html).
 
-    -  (Appliances in Clustered mode) CLIP - The cluster management IP (CLIP) address for a clustered NetScaler deployment. For more information, see [IP addressing for a cluster](https://docs.citrix.com/en-us/citrix-adc/12-1/clustering/cluster-overview/ip-addressing.html).
+    -  (Appliances in Clustered mode) CLIP - The cluster management IP (CLIP) address for a clustered NetScaler deployment. For more information, see [IP addressing for a cluster](https://docs.netscaler.com/en-us/citrix-adc/current-release/clustering/cluster-overview/ip-addressing.html).
 
 -  You have installed [Prometheus Operator](https://github.com/coreos/prometheus-operator), if you want to view the metrics of the NetScaler CPX collected by the [metrics exporter](https://github.com/netscaler/netscaler-k8s-ingress-controller/tree/master/metrics-visualizer#visualization-of-metrics).
 
@@ -351,7 +351,7 @@ The following table lists the mandatory and optional parameters that you can con
 | license.accept | Mandatory | no | Set `yes` to accept the NSIC end user license agreement. |
 | imageRegistry                   | Mandatory  |  `quay.io`               |  The NetScaler ingress controller image registry             |  
 | imageRepository                 | Mandatory  |  `netscaler/netscaler-k8s-ingress-controller`              |   The NetScaler ingress controller image repository             | 
-| imageTag                  | Mandatory  |  `1.36.5`               |   The NetScaler ingress controller image tag            | 
+| imageTag                  | Mandatory  |  `1.37.5`               |   The NetScaler ingress controller image tag            | 
 | pullPolicy | Mandatory | IfNotPresent | The NSIC image pull policy. |
 | imagePullSecrets | Optional | N/A | Provide list of Kubernetes secrets to be used for pulling the images from a private Docker registry or repository. For more information on how to create this secret please see [Pull an Image from a Private Registry](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/). |
 | nameOverride | Optional | N/A | String to partially override deployment fullname template with a string (will prepend the release name) |

@@ -44,6 +44,32 @@ spec:
         image: "{{ tpl .Values.image . }}"
         imagePullPolicy: {{ .Values.pullPolicy }}
         env:
+{{- if .Values.nsIP }}
+        - name: "NS_IP"
+          value: "{{ .Values.nsIP }}"
+        - name: "NS_USER"
+{{- if and .Values.secretStore.enabled .Values.secretStore.username}}
+        {{- toYaml .Values.secretStore.username | nindent 10 }}
+{{- else }}
+          valueFrom:
+            secretKeyRef:
+              name: {{ required "Please provide ADC user name" .Values.adcCredentialSecret }}
+              key: username
+{{- end }}
+        - name: "NS_PASSWORD"
+{{- if and .Values.secretStore.enabled .Values.secretStore.password}}
+        {{- toYaml .Values.secretStore.password | nindent 10 }}
+{{- else }}
+          valueFrom:
+            secretKeyRef:
+              name: {{ required "Please provide ADC password" .Values.adcCredentialSecret }}
+              key: password
+{{- end }}
+{{- end }}
+        - name: "CLEANUP_GSLB_SITE_CONFIG"
+          value: {{ .Values.cleanup_gslb_site_config | default "false" | quote }}
+        - name: "LOGLEVEL"
+          value: {{ .Values.logLevel | default "INFO" | quote }}
         - name: "NS_PROTOCOL"
           value: "{{ .Values.nsProtocol }}"
         - name: "NS_PORT"
@@ -58,7 +84,7 @@ spec:
           value: {{ required "Please provide localCluster name" .Values.localCluster }}
         - name: "SITENAMES"
           value: {{ include "netscaler-gslb-controller.sites" .}}
-        {{- range .Values.sitedata }}
+{{- range .Values.sitedata }}
         - name: {{ include "netscaler-gslb-controller.siteip" .}}
           value: {{ .siteIp }}
         - name: {{ include "netscaler-gslb-controller.siteusername" .}}
@@ -73,7 +99,15 @@ spec:
               key: password
         - name: {{ include "netscaler-gslb-controller.siteregion" .}}
           value: {{ .siteRegion }}
-        {{- end }}
+{{- if .sitePublicip }}
+        - name: {{ include "netscaler-gslb-controller.sitePublicip" .}}
+          value: {{ .sitePublicip }}
+{{- end }}
+{{- if .siteMask }}
+        - name: {{ include "netscaler-gslb-controller.siteMask" .}}
+          value: {{ .siteMask }}
+{{- end }}
+{{- end }}
         - name: "EULA"
           value: "{{ .Values.license.accept }}"
         - name: "NS_APPS_NAME_PREFIX"

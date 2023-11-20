@@ -38,6 +38,20 @@ Create keyname for siteregion. Prefixed with sitename and postfixed with "_regio
 {{ printf "%s_%s" .siteName "region"}}
 {{- end -}}
 
+{{/*
+Create keyname for sitePublicip. Prefixed with sitename and postfixed with "_publicip"
+*/}}
+{{- define "citrix-gslb-controller.sitePublicip" -}}
+{{ printf "%s_%s" .siteName "publicip"}}
+{{- end -}}
+
+{{/*
+Create keyname for siteMask. Prefixed with sitename and postfixed with "_mask"
+*/}}
+{{- define "citrix-gslb-controller.siteMask" -}}
+{{ printf "%s_%s" .siteName "mask"}}
+{{- end -}}
+
 {{/* vim: set filetype=mustache: */}}
 {{/*
 Expand the name of the chart.
@@ -82,4 +96,3 @@ Create the name of the service account to use
     {{ default "default" .Values.serviceAccount.name }}
 {{- end -}}
 {{- end -}}
-

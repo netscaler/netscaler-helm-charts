@@ -5,11 +5,26 @@
 # image contains information needed to fetch NSIC image
 imageRegistry: quay.io
 imageRepository: netscaler/netscaler-k8s-ingress-controller
-imageTag: 1.36.5
+imageTag: 1.37.5
 image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
 pullPolicy: IfNotPresent
 # openshift is set to true if charts are being deployed in OpenShift environment.
 openshift: false
+adcCredentialSecret: # K8s Secret Name
+# Enable secretStore to implement CSI Secret Provider classes for holding the nslogin credentials
+secretStore:
+  enabled: false
+  username: {}
+    #valueFrom:
+    #  configMapKeyRef:
+    #    name: test1
+    #    key: username
+  password: {}
+    #valueFrom:
+    #  configMapKeyRef:
+    #    name: test1
+    #    key: password
+nsIP:
 license:
    accept: no
 # nsPort is port for NetScaler NITRO
@@ -34,10 +49,14 @@ localCluster: ""
 sitedata:
   - siteName: "site1"
     siteIp: "x.x.x.x"
+    siteMask:
+    sitePublicip:
     secretName: "site1-secret"
     siteRegion: "xxxxxxxxx"
   - siteName: "site2"
     siteIp: "x.x.x.x"
+    siteMask:
+    sitePublicip:
     secretName: "site2-secret"
     siteRegion: "xxxxxxxxx"
 crds:
@@ -61,4 +80,3 @@ resources:
   #   cpu: 1000m
   #   memory: 1000Mi
   limits: {}
-  
