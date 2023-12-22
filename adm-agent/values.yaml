@@ -4,7 +4,7 @@
 
 imageRegistry: quay.io
 imageRepository: citrix/adm-agent
-imageTag: 14.1-13.23
+imageTag: 14.1-16.37
 image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
 pullPolicy: IfNotPresent
 
