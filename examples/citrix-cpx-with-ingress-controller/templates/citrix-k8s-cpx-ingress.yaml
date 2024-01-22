@@ -282,12 +282,12 @@ spec:
             - --cpx-service
               {{ .Release.Namespace }}/{{ include "cpxservice.fullname" . }}
 {{- end }}
-{{- end }}
           volumeMounts:
             - mountPath: /var/deviceinfo
               name: shared-data
           resources:
             {{- toYaml .Values.cic.resources | nindent 12 }}
+{{- end }}
 {{- if .Values.exporter.required }}
         - name: exporter
           image: "{{ tpl .Values.exporter.image . }}"
