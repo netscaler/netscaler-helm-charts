@@ -715,7 +715,7 @@ spec:
                                   type: string
                                   maxLength: 63
                                   description: |+
-                                               'Preconfigured SSL certkey name on NetScalerScalerScaler with the
+                                               'Preconfigured SSL certkey name on NetScaler with the
                                                 certificate and key already added on NetScaler'
                             oneOf:
                             - properties:
@@ -1404,7 +1404,7 @@ spec:
                                 additionalProperties:
                                   type: string
                               servicegroupConfig:
-                                description: "NetScaler service group configurations for the backend; Refer: https://developer-docs.netscaler.com/en-us/adc-nitro-api/current-release/configuration/basic/servicegroup.html  for all configurations"
+                                description: "NetScaler service group configurations for the backend; Refer: https://developer-docs.netscaler.com/en-us/adc-nitro-api/current-release/configuration/basic/servicegroup.html for all configurations"
                                 type: object
                                 additionalProperties:
                                   type: string

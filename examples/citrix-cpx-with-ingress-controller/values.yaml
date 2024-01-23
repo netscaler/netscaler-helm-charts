@@ -5,10 +5,11 @@
 # NetScaler CPX config details
 imageRegistry: quay.io
 imageRepository: citrix/citrix-k8s-cpx-ingress
-imageTag: 13.1-49.15
+imageTag: 13.1-51.15
 image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
 pullPolicy: IfNotPresent
 imagePullSecrets: []
+daemonSet: False
 nameOverride: ""
 replicaCount: 1
 fullnameOverride: ""
@@ -37,9 +38,6 @@ nsGateway: 192.168.1.1
 
 # Protocol used for communication between NetScaler Ingress Controller sidecar and NetScaler CPX
 nsProtocol: http
-
-# nitroReadTimeout is timeout value in seconds for nitro api read timeout(default is 20)
-nitroReadTimeout:
 
 # External IP for ingress resource when bgpRouter is set to True
 ingressIP:
@@ -110,6 +108,8 @@ license:
   accept: no
 ingressClass: ["citrix"]
 setAsDefaultIngressClass: False
+# nitroReadTimeout is timeout value in seconds for nitro api read timeout(default is 20)
+nitroReadTimeout:
 logLevel: INFO
 jsonLog: false 
 defaultSSLCertSecret:
@@ -136,6 +136,7 @@ profileTcpFrontend: {}
   #   sack: 'ENABLED'
   #   nagle: 'ENABLED'
 
+
 # NetScaler ADM/License Server config details
 ADMSettings:
   licenseServerIP:
@@ -143,7 +144,7 @@ ADMSettings:
   ADMIP:
   loginSecret:
   bandWidthLicense: false
-  bandWidth: 1000
+  bandWidth: 1000 #bandwidth value shoule be in Mbps
   vCPULicense: false
   cpxCores:
   licenseEdition: PLATINUM
@@ -232,7 +233,6 @@ serviceAccount:
   # name:
 
 podAnnotations: {}
-
 # This is the resource for CPX container.
 resources:
   requests:

@@ -96,7 +96,7 @@ spec:
 {{- if .Values.nitroReadTimeout }}
         - name: "NS_NITRO_READ_TIMEOUT"
           value: "{{ .Values.nitroReadTimeout }}"
-{{- end }}  
+{{- end }}
         - name: "NS_USER"
         {{- if and .Values.secretStore.enabled .Values.secretStore.username}}
         {{- toYaml .Values.secretStore.username | nindent 10 }}
@@ -126,7 +126,7 @@ spec:
           value: {{ .Values.namespaceLabels | quote }}
 {{- end }}
         - name: "NS_APPS_NAME_PREFIX"
-          value: {{ .Values.entityPrefix | default "k8s" | quote }}
+          value: {{ .Values.entityPrefix | default "k8s"| quote }}
 {{- if .Values.kubernetesURL }}
         - name: "kubernetes_url"
           value: "{{ .Values.kubernetesURL }}"
@@ -154,7 +154,7 @@ spec:
 {{- if .Values.optimizeEndpointBinding }}
         - name: "OPTIMIZE_ENDPOINT_BINDING"
           value: "{{ .Values.optimizeEndpointBinding }}"
-{{- end }}  
+{{- end }}
         resources:
             {{- toYaml .Values.resources | nindent 12 }}
         {{- if ne (len .Values.extraVolumeMounts) 0 }}
@@ -191,16 +191,16 @@ spec:
         volumeMounts:
         {{- toYaml .Values.exporter.extraVolumeMounts | nindent 8 }}
         {{- end }}
-        resources:
-            {{- toYaml .Values.exporter.resources | nindent 12 }}
         securityContext:
           readOnlyRootFilesystem: true
+        resources:
+{{- toYaml .Values.exporter.resources | nindent 12 }}
+{{- end }}
 {{- if or (and .Values.extraVolumeMounts .Values.extraVolumes) (and .Values.exporter.extraVolumeMounts .Values.extraVolumes) }}
       volumes:
 {{- end }}
 {{- if ne (len .Values.extraVolumes) 0 }}
 {{ toYaml .Values.extraVolumes | indent 6 }}
-{{- end }}
 {{- end }}
 {{- if and .Values.nodeSelector.key .Values.nodeSelector.value }}
       nodeSelector:

@@ -5,7 +5,7 @@
 # NetScaler CPX config details
 imageRegistry: quay.io
 imageRepository: netscaler/netscaler-cpx
-imageTag: 13.1-49.15
+imageTag: 13.1-51.15
 image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
 pullPolicy: IfNotPresent
 imagePullSecrets: []
@@ -87,20 +87,20 @@ nsic:
   pullPolicy: IfNotPresent
   required: true
   resources:
-      requests:
-        cpu: 32m
-        memory: 128Mi
-      # Following values depends on no of ingresses configured by Ingress Controllers, so it is
-      # advised to test with maximum no of ingresses to set these values.
-      # limits:
-      #   cpu: 1000m
-      #   memory: 1000Mi
-      limits: {}
-      # Following values depends on no of ingresses configured by Ingress Controllers, so it is
-      # advised to test with maximum no of ingresses to set these values.
-      # limits:
-      #   cpu: 1000m
-      #   memory: 1000Mi
+    requests:
+      cpu: 32m
+      memory: 128Mi
+    # Following values depends on no of ingresses configured by Ingress Controllers, so it is
+    # advised to test with maximum no of ingresses to set these values.
+    # limits:
+    #   cpu: 1000m
+    #   memory: 1000Mi
+    limits: {}
+    # Following values depends on no of ingresses configured by Ingress Controllers, so it is
+    # advised to test with maximum no of ingresses to set these values.
+    # limits:
+    #   cpu: 1000m
+    #   memory: 1000Mi
   prometheusCredentialSecret: # K8s Secret Name for read only user creation for native Prometheus support
 
 entityPrefix:
