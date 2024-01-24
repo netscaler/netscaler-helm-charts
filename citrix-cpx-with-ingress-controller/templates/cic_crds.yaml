@@ -1008,7 +1008,7 @@ spec:
                                 type: string
                                 maxLength: 127
                             issuer_name:
-                                description: 'The name to be used in requests sent from SP to IDP to identify NetScaler
+                                description: 'The name to be used in requests sent from SP to IDP to identify NetScaler'
                                 type: string
                                 maxLength: 63
                             binding:
@@ -1404,7 +1404,7 @@ spec:
                                 additionalProperties:
                                   type: string
                               servicegroupConfig:
-                                description: "NetScaler service group configurations for the backend; Refer: https://developer-docs.netscaler.com/en-us/adc-nitro-api/current-release/configuration/basic/servicegroup.html  for all configurations"
+                                description: "NetScaler service group configurations for the backend; Refer: https://developer-docs.netscaler.com/en-us/adc-nitro-api/current-release/configuration/basic/servicegroup.html for all configurations"
                                 type: object
                                 additionalProperties:
                                   type: string
@@ -1667,12 +1667,12 @@ spec:
                                       description: "Use Secure communications to the backends"
                                       type: boolean
                                     lbConfig:
-                                      description: "NetScaler LB vserver configurations for the backend. Refer: https://developer-docs.netscaler.com/en-us/adc-nitro-api/current-release/configuration/lb/lbvserver.htmlrations"
+                                      description: "NetScaler LB vserver configurations for the backend. Refer: https://developer-docs.netscaler.com/en-us/adc-nitro-api/current-release/configuration/lb/lbvserver.html for all configurations"
                                       type: object
                                       additionalProperties:
                                         type: string
                                     servicegroupConfig:
-                                      description: "NetScaler service group configurations for the backend; Refer: https://developer-docs.netscaler.com/en-us/adc-nitro-api/current-release/configuration/basic/servicegroup.html  for all configurations"
+                                      description: "NetScaler service group configurations for the backend; Refer: https://developer-docs.netscaler.com/en-us/adc-nitro-api/current-release/configuration/basic/servicegroup.html for all configurations"
                                       type: object
                                       additionalProperties:
                                         type: string

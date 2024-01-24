@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-{{- if .Values.cpxBgpRouter }}
+{{- if or .Values.cpxBgpRouter .Values.daemonSet }}
 kind: DaemonSet
 {{- else }}
 kind: Deployment
@@ -11,7 +11,7 @@ spec:
   selector:
     matchLabels:
       app: {{ include "citrix-cpx-ingress-controller.fullname" . }}
-{{- if not .Values.cpxBgpRouter }}
+{{- if not ( or .Values.cpxBgpRouter .Values.daemonSet ) }}
   replicas: {{ .Values.replicaCount }}
 {{- end }}
   template:
@@ -91,8 +91,8 @@ spec:
           - name: "NS_HTTPS_PORT"
             value: {{ .Values.mgmtHttpsPort | quote }}
 {{- end }}
-#Need to set env var BANDWIDTH in order to provide Bandwidth license to NetScaler CPX from ADM or CPX License Aggregator
-{{- if and ( or ( .Values.ADMSettings.licenseServerIP ) .Values.cpxLicenseAggregator )  ( eq .Values.ADMSettings.bandWidthLicense true ) }}
+##Need to set env var BANDWIDTH in order to provide Bandwidth license to NetScaler CPX from ADM or CPX License Aggregator
+{{- if and ( or ( .Values.ADMSettings.licenseServerIP ) ( .Values.cpxLicenseAggregator ) ) ( eq .Values.ADMSettings.bandWidthLicense true ) }}
           - name: "BANDWIDTH"
             value: {{ .Values.ADMSettings.bandWidth | quote }}
 {{- end }}
@@ -240,7 +240,7 @@ spec:
 {{- if .Values.optimizeEndpointBinding }}
           - name: "OPTIMIZE_ENDPOINT_BINDING"
             value: "{{ .Values.optimizeEndpointBinding }}"
-{{- end }}  
+{{- end }}
 {{- if .Values.cpxBgpRouter }}
           securityContext:
             runAsUser: 0
@@ -273,7 +273,6 @@ spec:
             - --default-ssl-certificate
               {{ .Release.Namespace }}/{{ .Values.defaultSSLCertSecret }}
 {{- end }}
-{{- end }}
 {{- if .Values.updateIngressStatus }}
 {{- if .Values.cpxBgpRouter }}
             - --update-ingress-status
@@ -288,6 +287,7 @@ spec:
               name: shared-data
           resources:
             {{- toYaml .Values.cic.resources | nindent 12 }}
+{{- end }}
 {{- if .Values.exporter.required }}
         - name: exporter
           image: "{{ tpl .Values.exporter.image . }}"

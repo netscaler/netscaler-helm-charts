@@ -42,7 +42,17 @@ spec:
           securityContext:
              privileged: true
           env:
-{{- if .Values.cpxLicenseAggregator}}
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+{{- if .Values.cpxLicenseAggregator }}
           - name: "CLA"
             value: {{ .Values.cpxLicenseAggregator | quote }}
 {{- else if .Values.ADMSettings.licenseServerIP }}
@@ -81,13 +91,13 @@ spec:
           - name: "NS_HTTPS_PORT"
             value: {{ .Values.mgmtHttpsPort | quote }}
 {{- end }}
-#Need to set env var BANDWIDTH in order to provide Bandwidth license to NetScaler CPX from ADM or CPX License Aggregator
-{{- if and ( or ( .Values.ADMSettings.licenseServerIP )  ( .Values.cpxLicenseAggregator ) ) ( eq .Values.ADMSettings.bandWidthLicense true ) }}
+##Need to set env var BANDWIDTH in order to provide Bandwidth license to NetScaler CPX from ADM or CPX License Aggregator
+{{- if and ( or ( .Values.ADMSettings.licenseServerIP ) ( .Values.cpxLicenseAggregator ) ) ( eq .Values.ADMSettings.bandWidthLicense true ) }}
           - name: "BANDWIDTH"
             value: {{ .Values.ADMSettings.bandWidth | quote }}
 {{- end }}
 #for multiple-PE support, need to set CPX_CORES
-{{- if or .Values.ADMSettings.licenseServerIP  .Values.cpxLicenseAggregator }}
+{{- if or .Values.ADMSettings.licenseServerIP .Values.cpxLicenseAggregator }}
 {{- if or ( eq .Values.ADMSettings.vCPULicense true ) ( eq .Values.ADMSettings.bandWidthLicense true ) }}
           - name: "CPX_CORES"
             value: {{ .Values.ADMSettings.cpxCores | default 1 | quote }}
@@ -148,10 +158,10 @@ spec:
 {{- else }}
           - name: "NS_IP"
             value: "127.0.0.1"
+{{- end }}
 {{- if .Values.rbacRole }}
           - name: "SCOPE"
             value: "local"
-{{- end }}
 {{- end }}
           - name: "NS_APPS_NAME_PREFIX"
             value: {{ .Values.entityPrefix | default "k8s"| quote }}
@@ -263,7 +273,6 @@ spec:
             - --default-ssl-certificate
               {{ .Release.Namespace }}/{{ .Values.defaultSSLCertSecret }}
 {{- end }}
-{{- end }}
 {{- if .Values.updateIngressStatus }}
 {{- if .Values.cpxBgpRouter }}
             - --update-ingress-status
@@ -278,6 +287,7 @@ spec:
               name: shared-data
           resources:
             {{- toYaml .Values.cic.resources | nindent 12 }}
+{{- end }}
 {{- if .Values.exporter.required }}
         - name: exporter
           image: "{{ tpl .Values.exporter.image . }}"

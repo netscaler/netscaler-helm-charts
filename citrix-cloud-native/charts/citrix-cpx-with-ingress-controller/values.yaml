@@ -5,7 +5,7 @@
 # NetScaler CPX config details
 imageRegistry: quay.io
 imageRepository: citrix/citrix-k8s-cpx-ingress
-imageTag: 13.1-49.15
+imageTag: 13.1-51.15
 image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
 pullPolicy: IfNotPresent
 imagePullSecrets: []
@@ -52,7 +52,7 @@ rbacRole: False
 # API server Cert verification can be disabled, while communicating with API Server, if disableAPIServerCertVerify set to True
 disableAPIServerCertVerify: False
 
-cpxLicenseAggregator:
+cpxLicenseAggregator: 
 
 sslCertManagedByAWS: False
 
@@ -136,6 +136,7 @@ profileTcpFrontend: {}
   #   sack: 'ENABLED'
   #   nagle: 'ENABLED'
 
+
 # NetScaler ADM/License Server config details
 ADMSettings:
   licenseServerIP:
@@ -143,7 +144,7 @@ ADMSettings:
   ADMIP:
   loginSecret:
   bandWidthLicense: false
-  bandWidth: 1000
+  bandWidth: 1000 #bandwidth value shoule be in Mbps
   vCPULicense: false
   cpxCores:
   licenseEdition: PLATINUM
@@ -232,7 +233,6 @@ serviceAccount:
   # name:
 
 podAnnotations: {}
-
 # This is the resource for CPX container.
 resources:
   requests:

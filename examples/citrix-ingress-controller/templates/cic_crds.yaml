@@ -1404,7 +1404,7 @@ spec:
                                 additionalProperties:
                                   type: string
                               servicegroupConfig:
-                                description: "NetScaler service group configurations for the backend; Refer: https://developer-docs.netscaler.com/en-us/adc-nitro-api/current-release/configuration/basic/servicegroup.html  for all configurations"
+                                description: "NetScaler service group configurations for the backend; Refer: https://developer-docs.netscaler.com/en-us/adc-nitro-api/current-release/configuration/basic/servicegroup.html for all configurations"
                                 type: object
                                 additionalProperties:
                                   type: string

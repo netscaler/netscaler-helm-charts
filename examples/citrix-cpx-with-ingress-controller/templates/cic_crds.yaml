@@ -45,7 +45,7 @@ spec:
             properties:
               ingressclass:
                 type: string
-                description: "Ingress class, if not specified then all NetScaler ingress controllerlerlerlers in the cluster will process the resource otherwise only the controller with that ingress class will process this resource"
+                description: "Ingress class, if not specified then all NetScaler ingress controllers in the cluster will process the resource otherwise only the controller with that ingress class will process this resource"
               rewrite-policies:
                 type: array
                 items:
@@ -1399,12 +1399,12 @@ spec:
                                 description: "Use Secure communications to the backends"
                                 type: boolean
                               lbConfig:
-                                description: "NetScaler LB vserver configurations for the backend. Refer: https://developer-docs.netscaler.com/en-us/adc-nitro-api/current-release/configuration/lb/lbvserver.htmlrations"
+                                description: "NetScaler LB vserver configurations for the backend. Refer: https://developer-docs.netscaler.com/en-us/adc-nitro-api/current-release/configuration/lb/lbvserver.html for all configurations"
                                 type: object
                                 additionalProperties:
                                   type: string
                               servicegroupConfig:
-                                description: "NetScaler service group configurations for the backend; Refer: https://developer-docs.netscaler.com/en-us/adc-nitro-api/current-release/configuration/basic/servicegroup.html  for all configurations"
+                                description: "NetScaler service group configurations for the backend; Refer: https://developer-docs.netscaler.com/en-us/adc-nitro-api/current-release/configuration/basic/servicegroup.html for all configurations"
                                 type: object
                                 additionalProperties:
                                   type: string
@@ -1672,7 +1672,7 @@ spec:
                                       additionalProperties:
                                         type: string
                                     servicegroupConfig:
-                                      description: "NetScaler service group configurations for the backend; Refer: https://developer-docs.netscaler.com/en-us/adc-nitro-api/current-release/configuration/basic/servicegroup.html  for all configurations"
+                                      description: "NetScaler service group configurations for the backend; Refer: https://developer-docs.netscaler.com/en-us/adc-nitro-api/current-release/configuration/basic/servicegroup.html for all configurations"
                                       type: object
                                       additionalProperties:
                                         type: string
