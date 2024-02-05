@@ -206,7 +206,7 @@ The following table lists the mandatory and optional parameters that you can con
 | gslb.license.accept | Mandatory | no | Set `yes` to accept the NSIC end user license agreement. |
 | gslb.imageRegistry                   | Optional  |  `quay.io`               |  The NetScaler ingress controller image registry             |  
 | gslb.imageRepository                 | Optional  |  `citrix/citrix-k8s-ingress-controller`              |   The NetScaler ingress controller image repository             | 
-| gslb.imageTag                  | Optional  |  `1.37.5`               |   The NetScaler ingress controller image tag            | 
+| gslb.imageTag                  | Optional  |  `1.38.27`               |   The NetScaler ingress controller image tag            | 
 | gslb.pullPolicy | Optional | Always | The NSIC image pull policy. |
 | gslb.adcCredentialSecret | Optional | N/A | The kubernetes secret containing login credentials for the NetScaler VPX or MPX. For information on how to create the secret keys, see [Prerequisites](#prerequistes). |
 | gslb.secretStore.enabled | Optional | False | Set to "True" for deploying other Secret Provider classes  |

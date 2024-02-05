@@ -1,8 +1,8 @@
 apiVersion: v1
-appVersion: "1.37.5"
+appVersion: "1.38.27"
 description: A Helm chart for NetScaler GSLB Controller configuring MPX/VPX.
 name: netscaler-gslb-controller
-version: 1.37.5
+version: 1.38.27
 icon: https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/gh-pages/netscaler.png
 home: https://www.cloud.com
 maintainers:

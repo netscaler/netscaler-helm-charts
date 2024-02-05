@@ -246,7 +246,7 @@ The following table lists the configurable parameters of the NetScaler CPX with 
 | pullPolicy | Mandatory | IfNotPresent | The NetScaler CPX image pull policy. |
 | cic.imageRegistry                   | Mandatory  |  `quay.io`               |  The NetScaler ingress controller image registry             |  
 | cic.imageRepository                 | Mandatory  |  `citrix/citrix-k8s-ingress-controller`              |   The NetScaler ingress controller image repository             | 
-| cic.imageTag                  | Mandatory  |  `1.37.5`               |   The NetScaler ingress controller image tag            | 
+| cic.imageTag                  | Mandatory  |  `1.38.27`               |   The NetScaler ingress controller image tag            | 
 | cic.pullPolicy | Mandatory | IfNotPresent | The NetScaler ingress controller image pull policy. |
 | cic.required | Mandatory | true | NSIC to be run as sidecar with NetScaler CPX |
 | cic.resources | Optional | {} |	CPU/Memory resource requests/limits for NetScaler Ingress Controller container |
