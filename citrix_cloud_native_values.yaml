@@ -3,7 +3,7 @@ cic:
 
   imageRegistry: quay.io
   imageRepository: citrix/citrix-k8s-ingress-controller
-  imageTag: 1.37.5
+  imageTag: 1.38.27
   image: "{{ .Values.cic.imageRegistry }}/{{ .Values.cic.imageRepository }}:{{ .Values.cic.imageTag }}"
   pullPolicy: IfNotPresent
   imagePullSecrets: []
@@ -195,7 +195,7 @@ gslb:
 
   imageRegistry: quay.io
   imageRepository: citrix/citrix-k8s-ingress-controller
-  imageTag: 1.37.5
+  imageTag: 1.38.27
   image: "{{ .Values.gslb.imageRegistry }}/{{ .Values.gslb.imageRepository }}:{{ .Values.gslb.imageTag }}"
   pullPolicy: IfNotPresent
   openshift: false
@@ -303,7 +303,7 @@ cpx:
   cic:
     imageRegistry: quay.io
     imageRepository: citrix/citrix-k8s-ingress-controller
-    imageTag: 1.37.5
+    imageTag: 1.38.27
     image: "{{ .Values.cpx.cic.imageRegistry }}/{{ .Values.cpx.cic.imageRepository }}:{{ .Values.cpx.cic.imageTag }}"
     pullPolicy: IfNotPresent
     required: true
@@ -723,7 +723,7 @@ coe:
   enabled: False
   imageRegistry: quay.io
   imageRepository: citrix/citrix-observability-exporter
-  imageTag: 1.8.001
+  imageTag: 1.9.001
   image: "{{ .Values.coe.imageRegistry }}/{{ .Values.coe.imageRepository }}:{{ .Values.coe.imageTag }}"
   pullPolicy: IfNotPresent
   replicas: 1
@@ -750,6 +750,8 @@ coe:
     broker:
     topic:
     dataFormat: "AVRO"
+    events: "no"
+    auditlogs: "no"
   timeseries:
     enabled: false
     nodePort: 30002

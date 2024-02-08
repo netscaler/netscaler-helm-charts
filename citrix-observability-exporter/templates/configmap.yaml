@@ -50,6 +50,10 @@ data:
                   "SLA": "none",
                   "MONGO": "none"
               },
+              "TimeSeries": {
+                  "EVENTS": {{ .Values.kafka.events | default "no" | quote }},
+                  "AUDITLOGS": {{ .Values.kafka.auditlogs | default "no" | quote }}
+              },
               "ProcessAlways": "yes",
               "FileSizeMax": "40",
               "ProcessYieldTimeOut": "500",
