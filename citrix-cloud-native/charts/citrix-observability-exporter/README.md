@@ -14,7 +14,7 @@ We can configure NetScaler Observability Exporter helm chart to export transacti
 ```
    helm repo add netscaler https://netscaler.github.io/netscaler-helm-charts/
 
-   For streaming transactions to Kafka, timeseries to Prometheus and tracing to zipkin:   
+   For streaming transactions to Kafka, timeseries to Prometheus and tracing to zipkin:
      helm install coe netscaler/citrix-cloud-native --set coe.enabled=true --set coe.kafka.enabled=true --set coe.kafka.broker="X.X.X.X\,Y.Y.Y.Y" --set coe.kafka.topic=HTTP --set coe.kafka.dataFormat=AVRO --set coe.timeseries.enabled=true --set coe.ns_tracing.enabled=true --set coe.ns_tracing.server="zipkin:9411/api/v1/spans"
 
    For streaming transactions to Elasticsearch, timeseries to Prometheus and tracing to zipkin:
@@ -28,7 +28,10 @@ We can configure NetScaler Observability Exporter helm chart to export transacti
 
    For streaming tracing data to Zipkin:
      helm install coe netscaler/citrix-cloud-native --set coe.enabled=true --set coe.ns_tracing.enabled=true --set coe.ns_tracing.server="zipkin:9411/api/v1/spans"
-   
+
+   For streaming transactions, auditlogs and events to Kafka in JSON format, and metrics to Prometheus in Prometheus line format:
+     helm install coe netscaler/citrix-cloud-native --set coe.enabled=true --set coe.kafka.enabled=true --set coe.kafka.broker="X.X.X.X\,Y.Y.Y.Y" --set coe.kafka.topic=HTTP --set coe.kafka.dataFormat=JSON --set coe.timeseries.enabled=true --set coe.kafka.events=yes --set coe.kafka.auditlogs=yes
+
 ```
 
 ## Introduction
@@ -43,7 +46,7 @@ This Helm chart deploys NetScaler Observability Exporter in the [Kubernetes](htt
 
    - To enable Elasticsearch endpoint for transactions, set coe.elasticsearch.enabled to true and server to the elasticsearch endpoint like `elasticsearch.default.svc.cluster.local:9200`. Default value for Elasticsearch endpoint is `elasticsearch:9200`.
 
-   - To enable Kafka endpoint for transactions, set coe.kafka.enabled to true, coe.kafka.broker to kafka broker IPs, kafka.topic, and kafka.dataFormat . Default value for kafka topic is `HTTP`. Default value for kafka.dataFormat is `AVRO`.
+   - To enable Kafka endpoint for transactions, set coe.kafka.enabled to true, coe.kafka.broker to kafka broker IPs, kafka.topic, and kafka.dataFormat . Default value for kafka topic is `HTTP`. Default value for kafka.dataFormat is `AVRO`. To further enable auditlogs and events, set coe.kafka.events to `yes` and coe.kafka.auditlogs to `yes` (note that coe.timeseries.enabled should be `true` for this to work, and currently coe.kafka.dataFormat should be `JSON` for this to work). 
 
    - To enable Timeseries data upload in prometheus format, set coe.timeseries.enabled to true. Currently Prometheus is the only timeseries endpoint supported. 
 
@@ -77,7 +80,7 @@ The following table lists the mandatory and optional parameters that you can con
 | coe.license.accept | Mandatory | no | Set `yes` to accept the NSIC end user license agreement. |
 | coe.imageRegistry                   | Mandatory  |  `quay.io`               |  The NSOE image registry             |  
 | coe.imageRepository                 | Mandatory  |  `citrix/citrix-observability-exporter`              |   The NSOE image repository             | 
-| coe.imageTag                  | Mandatory  |  `1.8.001`               |   The NSOE image tag            | 
+| coe.imageTag                  | Mandatory  |  `1.9.001`               |   The NSOE image tag            |
 | coe.pullPolicy | Mandatory | IfNotPresent | The NSOE image pull policy. |
 | coe.nodePortRequired | Optional | false | Set true to create a nodeport NSOE service. |
 | coe.headless | Optional | false | Set true to create Headless service. |
@@ -93,8 +96,10 @@ The following table lists the mandatory and optional parameters that you can con
 | coe.kafka.enabled | Optional | false | Set true to enable sending transaction data to kafka server. |
 | coe.kafka.broker | Optional |  | The kafka broker IP details. |
 | coe.kafka.topic | Optional | `HTTP` | The kafka topic details to upload data. |
-| kafka.dataFormat | Optional | `AVRO` | The format of the data exported to Kafka -- can be either JSON or AVRO, and defaults to AVRO |
-| coe.timeseries.enabled | Optional | false | Set true to enable sending timeseries data to prometheus. |
+| coe.kafka.dataFormat | Optional | `AVRO` | The format of the data exported to Kafka -- can be either JSON or AVRO, and defaults to AVRO |
+| coe.kafka.events | Optional | `no` | Whether events should be exported to Kafka (JSON) -- can be either yes or no and defaults to no |
+| coe.kafka.auditlogs | Optional | `no` | Whether auditlogs should be exported to Kafka (JSON) -- can be either yes or no and defaults to no |
+| coe.timeseries.enabled | Optional | false | Set true to enable sending timeseries data to Prometheus or Kafka. |
 | coe.timeseries.nodePort | Optional | 30002 | Specify the port used to expose NSOE service outside cluster for timeseries endpoint. |
 | coe.json_trans_rate_limiting.enabled | Optional | false | Set true to enable rate-limiting of transactions for JSON-based endpoints: Splunk, ElasticSearch and Zipkin. |
 | coe.json_trans_rate_limiting.limit | Optional | 100 | Specify the rate-limit: 100 means approximately 800 TPS. |
@@ -104,7 +109,7 @@ The following table lists the mandatory and optional parameters that you can con
 | coe.resources | Optional | N/A | CPU/Memory resource requests/limits for NSOE container. |
 | tolerations | Optional | N/A | Specify the tolerations for the NSOE deployment. |
 | affinity | Optional | N/A | Affinity labels for pod assignment. |
-| coe.nsoeLogLevel | Optional | INFO | Logging severity for NSOE can be one of- INFO, ERROR, FATAL or NONE. |
+| coe.nsoeLogLevel | Optional | INFO | Logging severity for NSOE can be one of- DEBUG, INFO, ERROR, FATAL or NONE. |
 
 Alternatively, you can define a YAML file with the values for the parameters and pass the values while installing the chart.
 

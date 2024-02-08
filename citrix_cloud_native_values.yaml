@@ -723,7 +723,7 @@ coe:
   enabled: False
   imageRegistry: quay.io
   imageRepository: citrix/citrix-observability-exporter
-  imageTag: 1.8.001
+  imageTag: 1.9.001
   image: "{{ .Values.coe.imageRegistry }}/{{ .Values.coe.imageRepository }}:{{ .Values.coe.imageTag }}"
   pullPolicy: IfNotPresent
   replicas: 1
@@ -750,6 +750,8 @@ coe:
     broker:
     topic:
     dataFormat: "AVRO"
+    events: "no"
+    auditlogs: "no"
   timeseries:
     enabled: false
     nodePort: 30002
