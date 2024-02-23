@@ -206,7 +206,7 @@ The following table lists the mandatory and optional parameters that you can con
 | license.accept | Mandatory | no | Set `yes` to accept the NSIC end user license agreement. |
 | imageRegistry                   | Optional  |  `quay.io`               |  The NetScaler ingress controller image registry             |  
 | imageRepository                 | Optional  |  `netscaler/netscaler-k8s-ingress-controller`              |   The NetScaler ingress controller image repository             | 
-| imageTag                  | Optional  |  `1.38.27`               |   The NetScaler ingress controller image tag            | 
+| imageTag                  | Optional  |  `1.39.6`               |   The NetScaler ingress controller image tag            | 
 | pullPolicy | Optional | Always | The NSIC image pull policy. |
 | nsIP | Optional | N/A | The IP address of the NetScaler device. For details, see [Prerequisites](#prerequistes). |
 | nsPort | Optional | 443 | The port used by NSIC to communicate with NetScaler. You can use port 80 for HTTP. |

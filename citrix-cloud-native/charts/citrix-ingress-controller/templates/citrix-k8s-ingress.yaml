@@ -120,6 +120,9 @@ spec:
 {{- if and .Values.openshift .Values.routeLabels }}
         - name: "ROUTE_LABELS"
           value: {{ .Values.routeLabels | quote}}
+{{- else if .Values.openshift }}
+        - name: "ROUTE_LABELS"
+          value: {{ include "citrix-ingress-controller.route_label" . | quote }}
 {{- end }}
 {{- if and .Values.openshift .Values.namespaceLabels }}
         - name: "NAMESPACE_LABELS"

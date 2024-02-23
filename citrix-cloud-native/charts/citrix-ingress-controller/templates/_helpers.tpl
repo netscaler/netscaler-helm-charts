@@ -39,6 +39,13 @@ If release name contains chart name it will be used as a full name.
 {{- end -}}
 {{- end -}}
 
+{{/*
+Add Route Label if not provided by default
+*/}}
+{{- define "citrix-ingress-controller.route_label" -}}
+{{- printf "proxy in (%s)" .Release.Name -}}
+{{- end -}}
+
 {{- define "exporter.fullname" -}}
 {{- $name := default .Chart.Name "exporter" .Values.nameOverride -}}
 {{- if contains $name .Release.Name -}}

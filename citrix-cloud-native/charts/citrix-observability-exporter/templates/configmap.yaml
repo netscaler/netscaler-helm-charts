@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: coe-config
+  name: {{ include "coe.fullname" . }}-config
 data:
   lstreamd_default.conf: |
     {

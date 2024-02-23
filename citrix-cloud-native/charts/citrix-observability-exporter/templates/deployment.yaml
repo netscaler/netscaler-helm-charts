@@ -1,19 +1,19 @@
 apiVersion: apps/v1 
 kind: Deployment
 metadata:
-  name: coe
+  name: {{ include "coe.fullname" . }}
   labels: 
-    app: coe
+    app: {{ include "coe.fullname" . }}
 spec:
   replicas: {{ .Values.replicas }} 
   selector:
     matchLabels:
-      app: coe
+      app: {{ include "coe.fullname" . }}
   template:
     metadata:
-      name: coe
+      name: {{ include "coe.fullname" . }}
       labels:
-        app: coe
+        app: {{ include "coe.fullname" . }}
 {{- if .Values.timeseries.enabled }}
       annotations:
         prometheus.io/scrape: "true"
@@ -50,7 +50,7 @@ spec:
       volumes:
         - name: lstreamd-config
           configMap:
-            name: coe-config
+            name: {{ include "coe.fullname" . }}-config
         - name: core-data
           emptyDir: {}
 {{- if .Values.tolerations }}

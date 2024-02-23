@@ -110,6 +110,8 @@ The following table lists the mandatory and optional parameters that you can con
 | tolerations | Optional | N/A | Specify the tolerations for the NSOE deployment. |
 | affinity | Optional | N/A | Affinity labels for pod assignment. |
 | coe.nsoeLogLevel | Optional | INFO | Logging severity for NSOE can be one of- DEBUG, INFO, ERROR, FATAL or NONE. |
+| coe.nameOverride | Optional | N/A | String to partially override deployment fullname template with a string (will prepend the release name)
+| coe.fullNameOverride | Optional | N/A | String to fully override deployment fullname template with a string | 
 
 Alternatively, you can define a YAML file with the values for the parameters and pass the values while installing the chart.
 
