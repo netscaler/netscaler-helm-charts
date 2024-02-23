@@ -1,19 +1,19 @@
 apiVersion: apps/v1 
 kind: Deployment
 metadata:
-  name: nsoe
+  name: {{ include "nsoe.fullname" . }}
   labels: 
-    app: nsoe
+    app: {{ include "nsoe.fullname" . }}
 spec:
   replicas: {{ .Values.replicas }} 
   selector:
     matchLabels:
-      app: nsoe
+      app: {{ include "nsoe.fullname" . }}
   template:
     metadata:
-      name: nsoe
+      name: {{ include "nsoe.fullname" . }}
       labels:
-        app: nsoe
+        app: {{ include "nsoe.fullname" . }}
 {{- if .Values.timeseries.enabled }}
       annotations:
         prometheus.io/scrape: "true"
@@ -48,7 +48,7 @@ spec:
       volumes:
         - name: lstreamd-config
           configMap:
-            name: nsoe-config
+            name: {{ include "nsoe.fullname" . }}-config
         - name: core-data
           emptyDir: {}
 {{- if .Values.tolerations }}

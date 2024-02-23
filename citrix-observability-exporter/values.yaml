@@ -7,6 +7,8 @@ imageRepository: citrix/citrix-observability-exporter
 imageTag: 1.9.001
 image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
 pullPolicy: IfNotPresent
+fullnameOverride: ""
+nameOverride: ""
 replicas: 1
 # license is used accept the terms of the NetScaler license
 license:

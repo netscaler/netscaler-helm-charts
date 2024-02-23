@@ -2,9 +2,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: nsoe
+  name: {{ include "nsoe.fullname" . }}
   labels:
-    app: nsoe
+    app: {{ include "nsoe.fullname" . }}
 spec:
 {{- if eq .Values.headless true }}
   clusterIP: None
@@ -19,15 +19,15 @@ spec:
       name: rest
 {{- end}}
   selector:
-      app: nsoe
+      app: {{ include "nsoe.fullname" . }}
 ---
 {{- if eq .Values.nodePortRequired true }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: nsoe-nodeport
+  name: {{ include "nsoe.fullname" . }}-nodeport
   labels:
-    app: nsoe
+    app: {{ include "nsoe.fullname" . }}
 spec:
   type: NodePort
   ports:
@@ -42,6 +42,6 @@ spec:
       nodePort: {{ .Values.timeseries.nodePort }}
 {{- end}}
   selector: 
-      app: nsoe
+      app: {{ include "nsoe.fullname" . }}
 ---
 {{- end}}

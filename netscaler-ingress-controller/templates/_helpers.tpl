@@ -11,8 +11,6 @@ Analytics Server IP or DNS
 {{- end -}}
 {{- end -}}
 
-
-
 {{/* vim: set filetype=mustache: */}}
 {{/*
 Expand the name of the chart.
@@ -37,6 +35,13 @@ If release name contains chart name it will be used as a full name.
 {{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 {{- end -}}
+{{- end -}}
+
+{{/*
+Add Route Label if not provided by default
+*/}}
+{{- define "netscaler-ingress-controller.route_label" -}}
+{{- printf "proxy in (%s)" .Release.Name -}}
 {{- end -}}
 
 {{- define "exporter.fullname" -}}

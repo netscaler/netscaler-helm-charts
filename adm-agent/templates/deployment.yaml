@@ -21,6 +21,7 @@ spec:
     spec:
       serviceAccountName: adm-agent-serviceaccount
       containers:
+{{- if .Values.helper.required }}
         - name: {{ include "adm-agent.fullname" . }}-helper
           image: "{{ tpl .Values.helper.image . }}"
           imagePullPolicy: {{ .Values.helper.pullPolicy }}
@@ -38,6 +39,7 @@ spec:
           
           - name: LOGLEVEL
             value: "INFO"
+{{- end }}
 
         - name: {{ include "adm-agent.fullname" . }}-kad
           image: "{{ tpl .Values.image . }}"

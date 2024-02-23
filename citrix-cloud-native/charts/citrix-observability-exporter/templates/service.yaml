@@ -2,9 +2,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: coe
+  name: {{ include "coe.fullname" . }}
   labels:
-    app: coe
+    app: {{ include "coe.fullname" . }}
 spec:
 {{- if eq .Values.headless true }}
   clusterIP: None
@@ -19,15 +19,15 @@ spec:
       name: rest
 {{- end}}
   selector:
-      app: coe
+      app: {{ include "coe.fullname" . }}
 ---
 {{- if eq .Values.nodePortRequired true }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: coe-nodeport
+  name: {{ include "coe.fullname" . }}-nodeport
   labels:
-    app: coe
+    app: {{ include "coe.fullname" . }}
 spec:
   type: NodePort
   ports:
@@ -42,6 +42,6 @@ spec:
       nodePort: {{ .Values.timeseries.nodePort }}
 {{- end}}
   selector: 
-      app: coe
+      app: {{ include "coe.fullname" . }}
 ---
 {{- end}}
