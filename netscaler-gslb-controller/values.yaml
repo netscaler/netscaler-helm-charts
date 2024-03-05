@@ -7,6 +7,7 @@ imageRegistry: quay.io
 imageRepository: netscaler/netscaler-k8s-ingress-controller
 imageTag: 1.39.6
 image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
+imagePullSecrets: []
 pullPolicy: IfNotPresent
 # openshift is set to true if charts are being deployed in OpenShift environment.
 openshift: false
