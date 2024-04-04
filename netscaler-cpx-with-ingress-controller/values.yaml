@@ -115,8 +115,6 @@ logLevel: INFO
 jsonLog: false 
 defaultSSLCertSecret: ""
 defaultSSLSNICertSecret: ""
-defaultSSLCertSecret: ""
-defaultSSLSNICertSecret: ""
 updateIngressStatus: False
 logProxy: ""
 kubernetesURL: ""

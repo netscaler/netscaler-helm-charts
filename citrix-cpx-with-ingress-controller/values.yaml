@@ -21,6 +21,7 @@ nsCookieVersion: "0"
 nsConfigDnsRec: false
 nsSvcLbDnsRec: false
 nsDnsNameserver: ""
+nsEnableLabel: true
 optimizeEndpointBinding: false
 routeLabels: ""
 namespaceLabels: ""
