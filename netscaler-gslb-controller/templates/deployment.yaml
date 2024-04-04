@@ -1,0 +1,128 @@
+{{- if .Values.openshift }}
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+{{- else }}
+apiVersion: apps/v1
+kind: Deployment
+{{- end}}
+metadata:
+  name: {{ include "netscaler-gslb-controller.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+{{- if .Values.openshift }}
+     router: {{ include "netscaler-gslb-controller.fullname" . }}
+{{- else }}
+    matchLabels:
+      app: {{ include "netscaler-gslb-controller.fullname" . }}
+{{- end }}
+  replicas: 1
+{{- if .Values.openshift }}
+  strategy:
+    resources: {}
+    rollingParams:
+      intervalSeconds: 1
+      maxSurge: 0
+      maxUnavailable: 25%
+      timeoutSeconds: 600
+      updatePeriodSeconds: 1
+    type: Rolling
+{{- end}}
+  template:
+    metadata:
+      name: {{ include "netscaler-gslb-controller.name" . }}
+      labels:
+{{- if .Values.openshift }}
+        router: {{ include "netscaler-gslb-controller.fullname" . }}
+{{- else }}
+        app: {{ include "netscaler-gslb-controller.fullname" . }}
+{{- end }}
+    spec:
+      serviceAccountName: {{ include "netscaler-gslb-controller.serviceAccountName" . }}
+      containers:
+      - name: {{ include "netscaler-gslb-controller.name" . }}
+        image: "{{ tpl .Values.image . }}"
+        imagePullPolicy: {{ .Values.pullPolicy }}
+        env:
+{{- if .Values.nsIP }}
+        - name: "NS_IP"
+          value: "{{ .Values.nsIP }}"
+        - name: "NS_USER"
+{{- if and .Values.secretStore.enabled .Values.secretStore.username}}
+        {{- toYaml .Values.secretStore.username | nindent 10 }}
+{{- else }}
+          valueFrom:
+            secretKeyRef:
+              name: {{ required "Please provide ADC user name" .Values.adcCredentialSecret }}
+              key: username
+{{- end }}
+        - name: "NS_PASSWORD"
+{{- if and .Values.secretStore.enabled .Values.secretStore.password}}
+        {{- toYaml .Values.secretStore.password | nindent 10 }}
+{{- else }}
+          valueFrom:
+            secretKeyRef:
+              name: {{ required "Please provide ADC password" .Values.adcCredentialSecret }}
+              key: password
+{{- end }}
+{{- end }}
+        - name: "CLEANUP_GSLB_SITE_CONFIG"
+          value: {{ .Values.cleanup_gslb_site_config | default "false" | quote }}
+        - name: "LOGLEVEL"
+          value: {{ .Values.logLevel | default "INFO" | quote }}
+        - name: "NS_PROTOCOL"
+          value: "{{ .Values.nsProtocol }}"
+        - name: "NS_PORT"
+          value: "{{ .Values.nsPort }}"
+{{- if .Values.nitroReadTimeout }}
+        - name: "NS_NITRO_READ_TIMEOUT"
+          value: "{{ .Values.nitroReadTimeout }}"
+{{- end }} 
+        - name: "LOCAL_REGION"
+          value: {{ required "Please provide localRegion name" .Values.localRegion }}
+        - name: "LOCAL_CLUSTER"
+          value: {{ required "Please provide localCluster name" .Values.localCluster }}
+        - name: "SITENAMES"
+          value: {{ include "netscaler-gslb-controller.sites" .}}
+{{- range .Values.sitedata }}
+        - name: {{ include "netscaler-gslb-controller.siteip" .}}
+          value: {{ .siteIp }}
+        - name: {{ include "netscaler-gslb-controller.siteusername" .}}
+          valueFrom:
+            secretKeyRef:
+              name: {{ .secretName }}
+              key: username
+        - name: {{ include "netscaler-gslb-controller.sitepassword" .}}
+          valueFrom:
+            secretKeyRef:
+              name: {{ .secretName }}
+              key: password
+        - name: {{ include "netscaler-gslb-controller.siteregion" .}}
+          value: {{ .siteRegion }}
+{{- if .sitePublicip }}
+        - name: {{ include "netscaler-gslb-controller.sitePublicip" .}}
+          value: {{ .sitePublicip }}
+{{- end }}
+{{- if .siteMask }}
+        - name: {{ include "netscaler-gslb-controller.siteMask" .}}
+          value: {{ .siteMask }}
+{{- end }}
+{{- end }}
+        - name: "EULA"
+          value: "{{ .Values.license.accept }}"
+        - name: "NS_APPS_NAME_PREFIX"
+          value: {{ .Values.entityPrefix | default "k8s"| quote }}
+        args:
+        - --config-interface
+          gslb-endpoints
+{{- if .Values.disableAPIServerCertVerify }}
+        - --disable-apiserver-cert-verify
+          {{ .Values.disableAPIServerCertVerify }}
+{{- end }}
+{{- if .Values.kubernetesURL }}
+        - name: "kubernetes_url"
+          value: "{{ .Values.kubernetesURL }}"
+{{- end}}
+        resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+

@@ -21,7 +21,9 @@ data:
   NS_PORT: "80"
 {{- end }}
 {{- end }}
-
+{{- if .Values.analyticsConfig.required }}
+  NS_ENABLE_LABELS: {{ .Values.nsEnableLabel | quote }}
+{{- end }}
 {{- if ne (upper .Values.nsHTTP2ServerSide) "OFF" }}
   NS_HTTP2_SERVER_SIDE: {{ .Values.nsHTTP2ServerSide | quote }}
 {{- end }}
