@@ -91,20 +91,24 @@ spec:
           - name: "NS_HTTPS_PORT"
             value: {{ .Values.mgmtHttpsPort | quote }}
 {{- end }}
-##Need to set env var BANDWIDTH in order to provide Bandwidth license to NetScaler NetScaler CPX from ADM or CPX License Aggregator
-{{- if and ( or ( .Values.ADMSettings.licenseServerIP ) ( .Values.cpxLicenseAggregator ) ) ( eq .Values.ADMSettings.bandWidthLicense true ) }}
+##Need to set env var BANDWIDTH in order to provide Bandwidth license to NetScaler CPX from ADM or CPX License Aggregator
+{{- if or .Values.ADMSettings.licenseServerIP .Values.cpxLicenseAggregator }}
+{{- if .Values.ADMSettings.bandWidthLicense }}
           - name: "BANDWIDTH"
             value: {{ .Values.ADMSettings.bandWidth | quote }}
 {{- end }}
-#for multiple-PE support, need to set CPX_CORES
-{{- if or .Values.ADMSettings.licenseServerIP .Values.cpxLicenseAggregator }}
-{{- if or ( eq .Values.ADMSettings.vCPULicense true ) ( eq .Values.ADMSettings.bandWidthLicense true ) }}
+##for multiple-PE support, need to set CPX_CORES
+{{- if or .Values.ADMSettings.vCPULicense .Values.ADMSettings.bandWidthLicense }}
           - name: "CPX_CORES"
             value: {{ .Values.ADMSettings.cpxCores | default 1 | quote }}
-{{- end }}
-{{- end }}
           - name: "EDITION"
             value: {{ .Values.ADMSettings.licenseEdition }}
+{{- end }}
+{{- if .Values.ADMSettings.platform }}
+          - name: "PLATFORM"
+            value: "CP1000"
+{{- end }}
+{{- end }}
 {{- if or (.Values.ADMSettings.ADMIP) (.Values.ADMSettings.licenseServerIP) }}
           - name: NS_MGMT_USER
             valueFrom:
@@ -275,6 +279,10 @@ spec:
 {{- if .Values.defaultSSLCertSecret }}
             - --default-ssl-certificate
               {{ .Release.Namespace }}/{{ .Values.defaultSSLCertSecret }}
+{{- end }}
+{{- if .Values.defaultSSLSNICertSecret }}
+            - --default-ssl-sni-certificate
+              {{ .Release.Namespace }}/{{ .Values.defaultSSLSNICertSecret }}
 {{- end }}
 {{- if .Values.updateIngressStatus }}
 {{- if .Values.cpxBgpRouter }}

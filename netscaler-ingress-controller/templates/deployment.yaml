@@ -54,6 +54,10 @@ spec:
           - --default-ssl-certificate
             {{ .Release.Namespace }}/{{ .Values.defaultSSLCertSecret }}
 {{- end }}
+{{- if .Values.defaultSSLSNICertSecret }}
+          - --default-ssl-sni-certificate
+            {{ .Release.Namespace }}/{{ .Values.defaultSSLSNICertSecret }}
+{{- end }}
 {{- if .Values.ingressClass }}
           - --ingress-classes
 {{- range .Values.ingressClass}}

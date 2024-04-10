@@ -5,9 +5,10 @@
 # image contains information needed to fetch NSIC image
 imageRegistry: quay.io
 imageRepository: netscaler/netscaler-k8s-ingress-controller
-imageTag: 1.39.6
+imageTag: 1.40.12
 image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
 pullPolicy: IfNotPresent
+imagePullSecrets: []
 # openshift is set to true if charts are being deployed in OpenShift environment.
 openshift: false
 adcCredentialSecret: # K8s Secret Name
@@ -24,7 +25,7 @@ secretStore:
     #  configMapKeyRef:
     #    name: test1
     #    key: password
-nsIP:
+nsIP: ""
 license:
    accept: no
 # nsPort is port for NetScaler NITRO
@@ -32,15 +33,15 @@ nsPort: 443
 # nsProtocol is protocol for NetScaler NITRO
 nsProtocol: HTTPS
 # nitroReadTimeout is timeout value in seconds for nitro api read timeout(default is 20)
-nitroReadTimeout:
+nitroReadTimeout: 20
 # logLevel is to set level of NSIC Logs
 logLevel: INFO
 # entityPrefix is the prefix for the resources on the NetScaler
-entityPrefix:
+entityPrefix: ""
 # API server Cert verification can be disabled, while communicating with API Server, if disableAPIServerCertVerify set to True
 disableAPIServerCertVerify: False
 # kubernetesURL is for registering events to kubeapi server
-kubernetesURL:
+kubernetesURL: ""
 # localRegion is the region where K8s cluster is deployed 
 localRegion: ""
 # localCluster is the clustername of the k8s cluster
@@ -49,14 +50,14 @@ localCluster: ""
 sitedata:
   - siteName: "site1"
     siteIp: "x.x.x.x"
-    siteMask:
-    sitePublicip:
+    siteMask: ""
+    sitePublicip: ""
     secretName: "site1-secret"
     siteRegion: "xxxxxxxxx"
   - siteName: "site2"
     siteIp: "x.x.x.x"
-    siteMask:
-    sitePublicip:
+    siteMask: ""
+    sitePublicip: ""
     secretName: "site2-secret"
     siteRegion: "xxxxxxxxx"
 crds:

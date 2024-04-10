@@ -5,14 +5,14 @@
 # NetScaler Ingress Controller config details
 imageRegistry: quay.io
 imageRepository: citrix/citrix-k8s-ingress-controller
-imageTag: 1.39.6
+imageTag: 1.40.12
 image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
 pullPolicy: IfNotPresent
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 openshift: false
-adcCredentialSecret: # K8s Secret Name
+adcCredentialSecret: "" # K8s Secret Name
 # Enable secretStore to implement CSI Secret Provider classes for holding the nslogin credentials
 secretStore:
   enabled: false
@@ -26,47 +26,48 @@ secretStore:
     #  configMapKeyRef:
     #    name: test1
     #    key: password
-nsIP: x.x.x.x
-nsVIP:
-nsSNIPS:
+nsIP: ""
+nsVIP: ""
+nsSNIPS: []
 license:
    accept: no
 nsPort: 443
 nsProtocol: HTTPS
 nsEnableLabel: true
 # nitroReadTimeout is timeout value in seconds for nitro api read timeout(default is 20)
-nitroReadTimeout:
+nitroReadTimeout: 20
 logLevel: INFO
 jsonLog: false
-entityPrefix:
-kubernetesURL:
-clusterName:
-ingressClass:
+entityPrefix: ""
+kubernetesURL: ""
+clusterName: ""
+ingressClass: []
 setAsDefaultIngressClass: False
-serviceClass:
-defaultSSLCertSecret:
+serviceClass: []
+defaultSSLCertSecret: ""
+defaultSSLSNICertSecret: ""
 podIPsforServiceGroupMembers: False
 ignoreNodeExternalIP: False
 ipam: False
 # API server Cert verification can be disabled, while communicating with API Server, if disableAPIServerCertVerify set to True
 disableAPIServerCertVerify: False
-logProxy:
+logProxy: ""
 nodeWatch: false
 cncPbr: False
 nodeSelector:
-  key:
-  value:
+  key: ""
+  value: ""
 tolerations: []
 updateIngressStatus: True
 nsHTTP2ServerSide: "OFF"
 nsCookieVersion: "0"
-nsConfigDnsRec:
-nsSvcLbDnsRec:
-nsDnsNameserver:
-optimizeEndpointBinding:
-routeLabels:
-namespaceLabels:
-disableOpenshiftRoutes:
+nsConfigDnsRec: False
+nsSvcLbDnsRec: False
+nsDnsNameserver: ""
+optimizeEndpointBinding: False
+routeLabels: ""
+namespaceLabels: ""
+disableOpenshiftRoutes: False
 profileSslFrontend: {}
   # preconfigured: my_ssl_profile
   #  OR
@@ -115,6 +116,7 @@ exporter:
   #  readOnly: true
   #- name: agent-init-scripts
   #  mountPath: /docker-entrypoint.d/
+
   serviceMonitorExtraLabels: {}
 
 # For CRDs supported by NetScaler Ingress Controller
@@ -133,8 +135,8 @@ analyticsConfig:
     enable: false
     samplingrate: 100
   endpoint:
-    server:
-    service:
+    server: ""
+    service: ""
   timeseries:
     port: 30002
     metrics:
