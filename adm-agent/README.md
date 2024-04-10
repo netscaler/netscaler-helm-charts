@@ -25,7 +25,7 @@ For Access ID and secret see [this](#generatetoken).
 	kubectl create secret generic admlogin --from-literal=username=nsroot --from-literal=password=<adm-agent-password> -n <namespace>
 	
 	helm repo add netscaler https://netscaler.github.io/netscaler-helm-charts
-	helm install agent netscaler/adm-agent --namespace <namespace>
+	helm install agent netscaler/adm-agent --namespace <namespace> --set accessSecret=<Access-Seret-Name>,loginSecret=<ADM-Login-Secret-Name>
 	
 **Note:** By default, `helper.required=false` and the customer is advised to create `admlogin` secret in every namespace where CPX is deployed if the namespace of CPX and ADM agent is different.
 
@@ -71,13 +71,17 @@ Perform the following steps to get access ID and secret for accessing ADM:
 
     ![](images/downloads-secret.png)
 
+6. You have to create Kubernetes secret using `access-id` and `access-secret` generated in previous step. These credentials are required for the agent to connect with NetScaler Console service.
+
+	kubectl create secret generic accesssecret --from-literal=accessid=<ID> --from-literal=accesssecret=<Secret> -n namespace
+
 # <a name="deploy-adm-agent-using-helm-chart">Deploy ADM agent using the Helm chart</a>
 
 Before deploying the ADM agent, you must create a Kubernetes Secret containing the access ID and Secret to access ADM. For information about getting the access ID and secret for accessing  ADM, see [Access ID and Secret to access ADM](#generatetoken). After the Secret has been created, use the following commands to deploy ADM Agent:
 
 	helm repo add netscaler https://netscaler.github.io/netscaler-helm-charts
 
-	helm install agent netscaler/adm-agent --namespace <namespace>  
+	helm install agent netscaler/adm-agent --namespace <namespace> --set accessSecret=<Access-Seret-Name>,loginSecret=<ADM-Login-Secret-Name>
 
 It deploys ADM Agent and registers with ADM service. It also deploys a sidecar along with ADM Agent which can create a Kubernetes Secret containing login credentials of ADM Agent automatically when namespace is labelled with `citrix-cpx=enabled`, more detail [here](#automatic-secret). By default, `helper.required=false` and the customer is advised to create `admlogin` secret in every namespace where CPX is deployed if the namespace of CPX and ADM agent is different.
 
@@ -93,7 +97,7 @@ ADM agent login credentials are required by NetScaler CPX while registering itse
 
 After the Secret has been created, you can deploy the ADM agent using the following command:
 
-	helm install agent netscaler/adm-agent --namespace <namespace>
+	helm install agent netscaler/adm-agent --namespace <namespace> --set accessSecret=<Access-Seret-Name>,loginSecret=<ADM-Login-Secret-Name>
 
 # <a name="automatic-secret"> Automatic login secret for NetScaler ADM agent</a>
 
@@ -125,7 +129,7 @@ The following table provides the configurable parameters and their default value
 |--------------------------------|-------------------------------|---------------------------|
 | `imageRegistry`			   | Image registry of the ADM agent onboarding container               | `quay.io`               |
 | `imageRepository`			   | Image repository of the ADM agent onboarding container               | `citrix/adm-agent`               |
-| `imageTag`			   | Image tag  of the ADM agent container               | `141.20.34`               |
+| `imageTag`			   | Image tag  of the ADM agent container               | `141.23.31`               |
 | `pullPolicy`   | Specifies the image pull policy for ADM agent. | IfNotPresent        |
 | `accessSecret`| Specifies the ID and Secret to access ADM Service.| Nil|
 | `loginSecret`| Specifies the login Secret of NetScaler ADM agent.| Nil|
