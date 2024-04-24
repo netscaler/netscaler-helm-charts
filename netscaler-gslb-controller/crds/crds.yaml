@@ -1,13 +1,8 @@
-{{- if .Values.crds.install }}
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   # name must match the spec fields below, and be in the form: <plural>.<group>
   name: globalserviceentries.citrix.com
-{{- if .Values.crds.retainOnDelete }}
-  annotations:
-    "helm.sh/resource-policy": keep
-{{- end }}
 spec:
   # group name to use for REST API: /apis/<group>/<version>
   group: citrix.com
@@ -79,10 +74,6 @@ kind: CustomResourceDefinition
 metadata:
   # name must match the spec fields below, and be in the form: <plural>.<group>
   name: globaltrafficpolicies.citrix.com
-{{- if .Values.crds.retainOnDelete }}
-  annotations:
-    "helm.sh/resource-policy": keep
-{{- end }}
 spec:
   group: citrix.com
   scope: Namespaced
@@ -152,14 +143,14 @@ spec:
                 - TCP
                 - UDP
                 - ANY
-                description: "Protocol supported in gslb-controller deployment"
+                description: "Protocol supported in GSLB deployment"
               hosts:
                 items:
                   required: ["host","policy"]
                   properties:
                     host:
                       type: string
-                      description: "Domain for which gslb-controller support will be applied"
+                      description: "Domain for which GSLB support will be applied"
                     policy:
                       required: ["targets","trafficPolicy"]
                       properties:
@@ -172,7 +163,7 @@ spec:
                           - RTT
                           - ROUNDROBIN
                           - STATICPROXIMITY
-                          description: "The traffic distribution policy supported in gslb-controller deployment"
+                          description: "The traffic distribution policy supported in GSLB deployment"
                         sourceIpPersistenceId:
                           type: integer
                           minimum: 0
@@ -218,16 +209,19 @@ spec:
                                 - tcp
                                 - http
                                 - https
-                                description: "Type of probe to determine the health of gslb-controller endpoint"
+                                description: "Type of probe to determine the health of GSLB endpoint"
+                              customHeader:
+                                type: string
+                                description: "Custom header for monitoring"
                               uri:
                                 type: string
-                                description: "Path to be probed for the health of gslb-controller endpoint in case of http and https"
+                                description: "Path to be probed for the health of GSLB endpoint in case of http and https"
                               respCode:
                                 x-kubernetes-int-or-string: true
                                 anyOf:
                                   - type: integer
                                   - type: string  
-                                description: "Response code expected to mark the gslb-controller endpoint healthy in case of http and https"
+                                description: "Response code expected to mark the GSLB endpoint healthy in case of http and https"
                             type: object
                           type: array
                       type: object
@@ -237,4 +231,3 @@ spec:
                 type: object
             type: object
 ---
-{{- end }}

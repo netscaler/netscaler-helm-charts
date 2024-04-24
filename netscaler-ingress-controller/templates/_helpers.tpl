@@ -6,8 +6,14 @@ Analytics Server IP or DNS
 {{- if .Values.analyticsConfig.endpoint.server -}}
 {{- printf .Values.analyticsConfig.endpoint.server -}}
 {{- else -}}
-{{- $addresses := first (first (lookup "v1" "Node" "" "").items).status.addresses -}}
+{{- $nodeList := (lookup "v1" "Node" "" "").items }}
+{{- if $nodeList }}
+{{- $nodeIPs := (first $nodeList).status.addresses }}
+{{- if $nodeIPs }}
+{{- $addresses := first $nodeIPs }}
 {{- printf "%s" ($addresses).address -}}
+{{- end -}}
+{{- end -}}
 {{- end -}}
 {{- end -}}
 
@@ -35,13 +41,6 @@ If release name contains chart name it will be used as a full name.
 {{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 {{- end -}}
-{{- end -}}
-
-{{/*
-Add Route Label if not provided by default
-*/}}
-{{- define "netscaler-ingress-controller.route_label" -}}
-{{- printf "proxy in (%s)" .Release.Name -}}
 {{- end -}}
 
 {{- define "exporter.fullname" -}}

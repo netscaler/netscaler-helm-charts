@@ -129,7 +129,7 @@ The following table provides the configurable parameters and their default value
 |--------------------------------|-------------------------------|---------------------------|
 | `imageRegistry`			   | Image registry of the ADM agent onboarding container               | `quay.io`               |
 | `imageRepository`			   | Image repository of the ADM agent onboarding container               | `citrix/adm-agent`               |
-| `imageTag`			   | Image tag  of the ADM agent container               | `141.23.31`               |
+| `imageTag`			   | Image tag  of the ADM agent container               | `141.24.36`               |
 | `pullPolicy`   | Specifies the image pull policy for ADM agent. | IfNotPresent        |
 | `accessSecret`| Specifies the ID and Secret to access ADM Service.| Nil|
 | `loginSecret`| Specifies the login Secret of NetScaler ADM agent.| Nil|
@@ -139,6 +139,8 @@ The following table provides the configurable parameters and their default value
 | `helper.helperImageTag`			   | Image tag of NetScaler ADM agent helper               | `2.0.1`               |
 | `helper.pullPolicy`   | Specifies the image pull policy for ADM agent Helper. | IfNotPresent        |
 | `helper.required`   | Set this to true, to create admlogin secret in all namespaces where CPX is deployed, in case the namespace of CPX and adm-agent is different. | false        |
-
+| `hpa.required`		| Set this to true, to run hpa which scales CORE POD when memory and cpu threshold breaches               | true               |
+| `hpa.targetCPUUtilization`			   | CPU Utilization threshold value to scale up CORE POD            | 1000m            |
+| `hpa.targetMemoryUtilization`			   | Memory Utilization threshold value to scale up CORE POD            | 4000Mi            |
 
 **Note:** You can use the `values.yaml` file packaged in the chart. This file contains the default configuration values for the chart.

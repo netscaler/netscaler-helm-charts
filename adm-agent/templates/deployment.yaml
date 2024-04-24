@@ -349,26 +349,30 @@ spec:
           securityContext:
             privileged: true
 
+          {{- if .Values.core.livenessProbe.required }}
           livenessProbe:
-            failureThreshold: 3
+            failureThreshold: {{ .Values.core.livenessProbe.failureThreshold }}
             httpGet:
               path: /mas_health
               port: 80
               scheme: HTTP
-            initialDelaySeconds: 60
-            periodSeconds: 60
-            successThreshold: 1
-            timeoutSeconds: 5
+            initialDelaySeconds: {{ .Values.core.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.core.livenessProbe.periodSeconds }}
+            successThreshold: {{ .Values.core.livenessProbe.successThreshold }}
+            timeoutSeconds: {{ .Values.core.livenessProbe.timeoutSeconds }}
+          {{- end }}
+          {{- if .Values.core.readinessProbe.required }}
           readinessProbe:
-            failureThreshold: 3
+            failureThreshold: {{ .Values.core.readinessProbe.failureThreshold }}
             httpGet:
               path: /mas_health
               port: 80
               scheme: HTTP
-            initialDelaySeconds: 60
-            periodSeconds: 60
-            successThreshold: 1
-            timeoutSeconds: 5
+            initialDelaySeconds: {{ .Values.core.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.core.readinessProbe.periodSeconds }}
+            successThreshold: {{ .Values.core.readinessProbe.successThreshold }}
+            timeoutSeconds: {{ .Values.core.readinessProbe.timeoutSeconds }}
+          {{- end }}
 
           ports:
             - name: http
@@ -501,6 +505,19 @@ spec:
           
           securityContext:
             privileged: true
+
+          {{- if .Values.lic.livenessProbe.required }}
+          livenessProbe:
+            exec:
+              command:
+              - pgrep
+              - mas_cloudagent
+            initialDelaySeconds: {{ .Values.lic.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.lic.livenessProbe.periodSeconds }}
+            successThreshold: {{ .Values.lic.livenessProbe.successThreshold }}
+            timeoutSeconds: {{ .Values.lic.livenessProbe.timeoutSeconds }}
+            failureThreshold: {{ .Values.lic.livenessProbe.failureThreshold }}
+          {{- end }}
 
           ports:
             - name: http

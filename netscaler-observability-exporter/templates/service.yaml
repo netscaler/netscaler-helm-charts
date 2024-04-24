@@ -34,14 +34,18 @@ spec:
     - port: 5557
       protocol: TCP
       name: lstreamd
+{{- if .Values.transaction.nodePort }}
       nodePort: {{ .Values.transaction.nodePort }}
+{{- end }}
 {{- if .Values.timeseries.enabled }}
     - port: 5563
       protocol: TCP
       name: rest
+{{- if .Values.timeseries.nodePort }}
       nodePort: {{ .Values.timeseries.nodePort }}
-{{- end}}
+{{- end }}
+{{- end }}
   selector: 
       app: {{ include "nsoe.fullname" . }}
 ---
-{{- end}}
+{{- end }}

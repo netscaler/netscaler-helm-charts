@@ -4,7 +4,7 @@
 
 imageRegistry: quay.io
 imageRepository: citrix/adm-agent
-imageTag: 14.1-23.31
+imageTag: 14.1-24.36
 image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
 pullPolicy: IfNotPresent
 
@@ -16,6 +16,38 @@ accessSecret: ""
 admURL: "adm.cloud.com"
 loginSecret: ""
 clusterPrefix: ""
+
+hpa:
+  required: true
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilization: 1000m
+  targetMemoryUtilization: 4000Mi
+
+core:
+  livenessProbe:
+    required: true
+    initialDelaySeconds: 600
+    periodSeconds: 60
+    timeoutSeconds: 5
+    failureThreshold: 5
+    successThreshold: 1
+  readinessProbe:
+    required: true
+    initialDelaySeconds: 180
+    periodSeconds: 30
+    timeoutSeconds: 5
+    failureThreshold: 30
+    successThreshold: 1
+
+lic:
+  livenessProbe:
+    required: true
+    initialDelaySeconds: 600
+    periodSeconds: 20
+    timeoutSeconds: 5
+    failureThreshold: 20
+    successThreshold: 1
 
 helper:
   required: false
