@@ -11,10 +11,6 @@
    helm install gslb-controller netscaler/citrix-cloud-native --set gslb.enabled=true,gslb.localRegion=<local-cluster-region>,gslb.localCluster=<local-cluster-name>,gslb.sitedata[0].siteName=<site1-name>,gslb.sitedata[0].siteIp=<site1-ip-address>,gslb.sitedata[0].secretName=<site1-login-file>,gslb.sitedata[0].siteRegion=<site1-region-name>,gslb.sitedata[1].siteName=<site2-name>,gslb.sitedata[1].siteIp=<site2-ip-address>,gslb.sitedata[1].secretName=<site2-login-file>,gslb.sitedata[1].siteRegion=<site2-region-name>,gslb.license.accept=yes
    ```
 
-   To install NetScaler Provided Custom Resource Definition(CRDs) along with NetScaler Ingress Controller
-   ```
-   helm install gslb-controller netscaler/citrix-cloud-native --set gslb.enabled=true,gslb.localRegion=<local-cluster-region>,gslb.localCluster=<local-cluster-name>,gslb.sitedata[0].siteName=<site1-name>,gslb.sitedata[0].siteIp=<site1-ip-address>,gslb.sitedata[0].secretName=<site1-login-file>,gslb.sitedata[0].siteRegion=<site1-region-name>,gslb.sitedata[1].siteName=<site2-name>,gslb.sitedata[1].siteIp=<site2-ip-address>,gslb.sitedata[1].secretName=<site2-login-file>,gslb.sitedata[1].siteRegion=<site2-region-name>,gslb.license.accept=yes,gslb.crds.install=true
-   ```
 
 ### For OpenShift
 
@@ -24,13 +20,13 @@
    helm install gslb-controller netscaler/citrix-cloud-native --set gslb.enabled=true,gslb.localRegion=<local-cluster-region>,gslb.localCluster=<local-cluster-name>,gslb.sitedata[0].siteName=<site1-name>,gslb.sitedata[0].siteIp=<site1-ip-address>,gslb.sitedata[0].secretName=<site1-login-file>,gslb.sitedata[0].siteRegion=<site1-region-name>,gslb.sitedata[1].siteName=<site2-name>,gslb.sitedata[1].siteIp=<site2-ip-address>,gslb.sitedata[1].secretName=<site2-login-file>,gslb.sitedata[1].siteRegion=<site2-region-name>,gslb.license.accept=yes,gslb.openshift=true
    ```
 
-  To install NetScaler Provided Custom Resource Definition(CRDs) along with NetScaler Ingress Controller
-  ```
-   helm install gslb-controller netscaler/citrix-cloud-native --set gslb.enabled=true,gslb.localRegion=<local-cluster-region>,gslb.localCluster=<local-cluster-name>,gslb.sitedata[0].siteName=<site1-name>,gslb.sitedata[0].siteIp=<site1-ip-address>,gslb.sitedata[0].secretName=<site1-login-file>,gslb.sitedata[0].siteRegion=<site1-region-name>,gslb.sitedata[1].siteName=<site2-name>,gslb.sitedata[1].siteIp=<site2-ip-address>,gslb.sitedata[1].secretName=<site2-login-file>,gslb.sitedata[1].siteRegion=<site2-region-name>,gslb.license.accept=yes,gslb.openshift=true,gslb.crds.install=true
-  ```
 > **Important:**
 >
 > The `license.accept` argument is mandatory. Ensure that you set the value as `yes` to accept the terms and conditions of the NetScaler license.
+
+> **NOTE:**
+>
+> The CRDs supported by NetScaler will be installed automatically with the installation of the Helm Charts if CRDs are not already available in the cluster.
 
 ## Introduction
 This Helm chart deploys NetScaler GSLB controller in the [Kubernetes](https://kubernetes.io) or in the [Openshift](https://www.openshift.com) cluster using [Helm](https://helm.sh) package manager.
@@ -70,7 +66,7 @@ This Helm chart deploys NetScaler GSLB controller in the [Kubernetes](https://ku
      ```
      Example:
      ```
-     helm install gslb-controller netscaler/citrix-cloud-native --set gslb.enabled=true,gslb.localRegion=<local-cluster-region>,gslb.localCluster=<local-cluster-name>,gslb.sitedata[0].siteName=<site1-name>,gslb.sitedata[0].siteIp=<site1-ip-address>,gslb.sitedata[0].secretName=<site1-login-file>,gslb.sitedata[0].siteRegion=<site1-region-name>,gslb.sitedata[1].siteName=<site2-name>,gslb.sitedata[1].siteIp=<site2-ip-address>,gslb.sitedata[1].secretName=<site2-login-file>,gslb.sitedata[1].siteRegion=<site2-region-name>,gslb.license.accept=yes,gslb.crds.install=true,gslb.adcCredentialSecret=<Secret-for-NetScaler-credentials> --set nsIP=<NSIP>
+     helm install gslb-controller netscaler/citrix-cloud-native --set gslb.enabled=true,gslb.localRegion=<local-cluster-region>,gslb.localCluster=<local-cluster-name>,gslb.sitedata[0].siteName=<site1-name>,gslb.sitedata[0].siteIp=<site1-ip-address>,gslb.sitedata[0].secretName=<site1-login-file>,gslb.sitedata[0].siteRegion=<site1-region-name>,gslb.sitedata[1].siteName=<site2-name>,gslb.sitedata[1].siteIp=<site2-ip-address>,gslb.sitedata[1].secretName=<site2-login-file>,gslb.sitedata[1].siteRegion=<site2-region-name>,gslb.license.accept=yes,gslb.adcCredentialSecret=<Secret-for-NetScaler-credentials> --set nsIP=<NSIP>
      ```
   -  You determine the NS_IP IP address needed by the controller to communicate with NetScaler. The IP address might be anyone of the following depending on the type of NetScaler deployment:
 
@@ -171,10 +167,7 @@ The following components are installed:
 
 ## CRDs configuration
 
-CRDs can be installed/upgraded automatically when we install/upgrade NetScaler GSLB Controller controller using parameter `crds.install=true` in Helm. If you do not want to install CRDs, then set the option `crds.install` to `false`. By default, CRDs too get deleted if you uninstall through Helm. This means, even the CustomResource objects created by the customer will get deleted. If you want to avoid this data loss set `crds.retainOnDelete` to `true`.
-
-> **Note:**
-> Installing again may fail due to the presence of CRDs. Make sure that you back up all CustomResource objects and clean up CRDs before re-installing NetScaler GSLB Controller Controller.
+CRDs will be installed when we install NetScaler GSLB controller via Helm automatically if CRDs are not installed in cluster already. If you wish to skip the CRD installation step, you can pass the --skip-crds flag. For more information about this option in Helm please see [this](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/).
 
 There are a few examples of how to use these CRDs, which are placed in the folder: [Example-CRDs](https://github.com/netscaler/netscaler-helm-charts/tree/master/example-crds). Refer to them and install as needed, using the following command:
 ```kubectl create -f <crd-example.yaml>```
@@ -231,8 +224,6 @@ The following table lists the mandatory and optional parameters that you can con
 | gslb.sitedata[0].secretName | Mandatory | N/A | The secret containing login credentials of first site |
 | gslb.sitedata[0].siteRegion | Mandatory | N/A | The SiteRegion of the first site |
 | gslb.sitedata[0].sitePublicip | Optional | siteIp | The site public IP of the first GSLB Site |
-| gslb.crds.install | Optional | False | Unset this argument if you don't want to install CustomResourceDefinitions which are consumed by NSIC. |
-| gslb.crds.retainOnDelete | Optional | false | Set this argument if you want to retain CustomResourceDefinitions even after uninstalling NSIC. This will avoid data-loss of Custom Resource Objects created before uninstallation. |
 
 Alternatively, you can define a YAML file with the values for the parameters and pass the values while installing the chart.
 

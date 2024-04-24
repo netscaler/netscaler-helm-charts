@@ -404,8 +404,6 @@ The following table lists the mandatory and optional parameters that you can con
 | nodeSelector.key | Optional | N/A | Node label key to be used for nodeSelector option in NSIC deployment. |
 | nodeSelector.value | Optional | N/A | Node label value to be used for nodeSelector option in NSIC deployment. |
 | tolerations | Optional | N/A | Specify the tolerations for the NSIC deployment. |
-| crds.install | Optional | False | Unset this argument if you don't want to install CustomResourceDefinitions which are consumed by NSIC. |
-| crds.retainOnDelete | Optional | false | Set this argument if you want to retain CustomResourceDefinitions even after uninstalling NSIC. This will avoid data-loss of Custom Resource Objects created before uninstallation. |
 | analyticsConfig.required | Mandatory | false | Set this to true if you want to configure NetScaler to send metrics and transaction records to analytics . |
 | analyticsConfig.distributedTracing.enable | Optional | false | Set this value to true to enable OpenTracing in NetScaler. |
 | analyticsConfig.distributedTracing.samplingrate | Optional | 100 | Specifies the OpenTracing sampling rate in percentage. |
