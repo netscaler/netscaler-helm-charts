@@ -139,7 +139,7 @@ Create a Kubernetes secret `nslogin` with the login credentials of NetScaler VPX
 
 To deploy NetScaler Ingress Controller for configuring NetScaler VPX, run the following command:
 
-    helm install cic netscaler/citrix-ingress-controller --namespace netscaler-system --set nsIP=<NSIP>,license.accept=yes,adcCredentialSecret=nslogin,ingressClass[0]=citrix-vpx,crds.install=true,ignoreNodeExternalIP=true
+    helm install cic netscaler/citrix-ingress-controller --namespace netscaler-system --set nsIP=<NSIP>,license.accept=yes,adcCredentialSecret=nslogin,ingressClass[0]=citrix-vpx,ignoreNodeExternalIP=true
 
 **NOTE**
 Replace `<NSIP>` with NetScaler VPX private NSIP.

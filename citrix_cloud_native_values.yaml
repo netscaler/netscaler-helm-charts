@@ -3,7 +3,7 @@ cic:
 
   imageRegistry: quay.io
   imageRepository: citrix/citrix-k8s-ingress-controller
-  imageTag: 1.40.12
+  imageTag: 1.41.5
   image: "{{ .Values.cic.imageRegistry }}/{{ .Values.cic.imageRepository }}:{{ .Values.cic.imageTag }}"
   pullPolicy: IfNotPresent
   imagePullSecrets: []
@@ -114,10 +114,6 @@ cic:
     #  mountPath: /docker-entrypoint.d/
     serviceMonitorExtraLabels: {}
 
-  crds:
-    install: false
-    retainOnDelete: false
-
   analyticsConfig:
     required: false
     distributedTracing:
@@ -196,7 +192,7 @@ gslb:
 
   imageRegistry: quay.io
   imageRepository: citrix/citrix-k8s-ingress-controller
-  imageTag: 1.40.12
+  imageTag: 1.41.5
   image: "{{ .Values.gslb.imageRegistry }}/{{ .Values.gslb.imageRepository }}:{{ .Values.gslb.imageTag }}"
   pullPolicy: IfNotPresent
   openshift: false
@@ -225,10 +221,6 @@ gslb:
       secretName: "site2-secret"
       siteRegion: "xxxxxxxxx"
 
-  crds:
-    install: false
-    retainOnDelete: false
-
   serviceAccount:
     create: true
   resources:
@@ -245,7 +237,7 @@ cpx:
 
   imageRegistry: quay.io
   imageRepository: citrix/citrix-k8s-cpx-ingress
-  imageTag: 14.1-17.38
+  imageTag: 14.1-17.101
   image: "{{ .Values.cpx.imageRegistry }}/{{ .Values.cpx.imageRepository }}:{{ .Values.cpx.imageTag }}"
   
   pullPolicy: IfNotPresent
@@ -305,7 +297,7 @@ cpx:
   cic:
     imageRegistry: quay.io
     imageRepository: citrix/citrix-k8s-ingress-controller
-    imageTag: 1.40.12
+    imageTag: 1.41.5
     image: "{{ .Values.cpx.cic.imageRegistry }}/{{ .Values.cpx.cic.imageRepository }}:{{ .Values.cpx.cic.imageTag }}"
     pullPolicy: IfNotPresent
     required: true
@@ -366,10 +358,6 @@ cpx:
       containerPort: 8888
     resources: {}
     serviceMonitorExtraLabels: {}
-
-  crds:
-    install: false
-    retainOnDelete: false
 
   analyticsConfig:
     required: false
@@ -651,7 +639,7 @@ iaSidecar:
     netscalerUrl: "http://127.0.0.1"
     imageRegistry: quay.io
     imageRepository: citrix/citrix-k8s-cpx-ingress
-    imageTag: 14.1-17.38
+    imageTag: 14.1-17.101
     image: "{{ .Values.iaSidecar.cpxProxy.imageRegistry }}/{{ .Values.iaSidecar.cpxProxy.imageRepository }}:{{ .Values.iaSidecar.cpxProxy.imageTag }}"
     imagePullPolicy: IfNotPresent
     EULA: NO
@@ -738,7 +726,7 @@ coe:
   nodePortRequired: false
   headless: false
   transaction:
-    nodePort: 30001
+    nodePort:
   ns_tracing:
     enabled: false
     server: "zipkin:9411/api/v1/spans"
@@ -760,7 +748,7 @@ coe:
     auditlogs: "no"
   timeseries:
     enabled: false
-    nodePort: 30002
+    nodePort:
   json_trans_rate_limiting:
     enabled: false
     limit: 100

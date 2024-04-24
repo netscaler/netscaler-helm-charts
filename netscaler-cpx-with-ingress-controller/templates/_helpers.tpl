@@ -33,13 +33,6 @@ If release name contains chart name it will be used as a full name.
 {{- end -}}
 {{- end -}}
 
-{{/*
-Add Route Label if not provided by default
-*/}}
-{{- define "netscaler-cpx-ingress-controller.route_label" -}}
-{{- printf "proxy in (%s)" .Release.Name -}}
-{{- end -}}
-
 {{- define "cpxservice.fullname" -}}
 {{- $name := default .Chart.Name "cpx-service" .Values.nameOverride -}}
 {{- if contains $name .Release.Name -}}

@@ -5,7 +5,7 @@
 # NetScaler Ingress Controller config details
 imageRegistry: quay.io
 imageRepository: netscaler/netscaler-k8s-ingress-controller
-imageTag: 1.40.12
+imageTag: 1.41.5
 image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
 pullPolicy: IfNotPresent
 imagePullSecrets: []
@@ -118,11 +118,6 @@ exporter:
   #  mountPath: /docker-entrypoint.d/
 
   serviceMonitorExtraLabels: {}
-
-# For CRDs supported by NetScaler Ingress Controller
-crds:
-  install: false
-  retainOnDelete: false
 
 # Enable RBAC role (so called local role), by default NSIC deployed with ClusterRole.
 # below variable to deploy NSIC with RBAC role, only ingress service supported with this config

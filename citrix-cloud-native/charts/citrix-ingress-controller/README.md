@@ -12,10 +12,6 @@
   helm install cic netscaler/citrix-cloud-native --set cic.enabled=true,cic.nsIP=<NSIP>,cic.adcCredentialSecret=<Secret-of-NetScaler-credentials>,cic.license.accept=yes
   ```
 
-  To install NetScaler Provided Custom Resource Definition(CRDs) along with NetScaler Ingress Controller
-  ```
-  helm install cic netscaler/citrix-cloud-native --set cic.enabled=true,cic.nsIP=<NSIP>,cic.adcCredentialSecret=<Secret-of-NetScaler-credentials>,cic.license.accept=yes,cic.crds.install=true
-  ```
 
 ### For OpenShift
 
@@ -25,14 +21,13 @@
   helm install cic netscaler/citrix-cloud-native --set cic.enabled=true,cic.nsIP=<NSIP>,cic.adcCredentialSecret=<Secret-of-NetScaler-credentials>,cic.license.accept=yes,cic.openshift=true
   ```
 
-  To install NetScaler Provided Custom Resource Definition(CRDs) along with NetScaler Ingress Controller
-  ```
-  helm install cic netscaler/citrix-cloud-native --set cic.enabled=true,cic.nsIP=<NSIP>,cic.adcCredentialSecret=<Secret-of-NetScaler-credentials>,cic.license.accept=yes,cic.openshift=true,cic.crds.install=true
-  ```
-
 > **Important:**
 >
 > The `cic.license.accept` argument is mandatory. Ensure that you set the value as `yes` to accept the terms and conditions of the NetScaler license.
+
+> **NOTE:**
+>
+> The CRDs supported by NetScaler will be installed automatically with the installation of the Helm Charts if CRDs are not already available in the cluster.
 
 ## Introduction
 This Helm chart deploys NetScaler ingress controller in the [Kubernetes](https://kubernetes.io) or in the [Openshift](https://www.openshift.com) cluster using [Helm](https://helm.sh) package manager.
@@ -207,10 +202,7 @@ The following components are installed:
 
 ## CRDs configuration
 
-CRDs can be installed/upgraded when we install/upgrade NetScaler ingress controller using `crds.install=true` parameter in Helm. If you do not want to install CRDs, then set the option `crds.install` to `false`. By default, CRDs too get deleted if you uninstall through Helm. This means, even the CustomResource objects created by the customer will get deleted. If you want to avoid this data loss set `crds.retainOnDelete` to `true`.
-
-> **Note:**
-> Installing again may fail due to the presence of CRDs. Make sure that you back up all CustomResource objects and clean up CRDs before re-installing NetScaler Ingress Controller.
+CRDs will be installed when we install NetScaler ingress controller via Helm automatically if CRDs are not installed in cluster already. If you wish to skip the CRD installation step, you can pass the --skip-crds flag. For more information about this option in Helm please see [this](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/).
 
 There are a few examples of how to use these CRDs, which are placed in the folder: [Example-CRDs](https://github.com/netscaler/netscaler-helm-charts/tree/master/example-crds). Refer to them and install as needed, using the following command:
 ```kubectl create -f <crd-example.yaml>```
@@ -360,7 +352,7 @@ The following table lists the mandatory and optional parameters that you can con
 | cic.license.accept | Mandatory | no | Set `yes` to accept the NSIC end user license agreement. |
 | cic.imageRegistry                   | Mandatory  |  `quay.io`               |  The NetScaler ingress controller image registry             |  
 | cic.imageRepository                 | Mandatory  |  `citrix/citrix-k8s-ingress-controller`              |   The NetScaler ingress controller image repository             | 
-| cic.imageTag                  | Mandatory  |  `1.40.12`               |   The NetScaler ingress controller image tag            | 
+| cic.imageTag                  | Mandatory  |  `1.41.5`               |   The NetScaler ingress controller image tag            | 
 | cic.pullPolicy | Mandatory | IfNotPresent | The NSIC image pull policy. |
 | cic.imagePullSecrets | Optional | N/A | Provide list of Kubernetes secrets to be used for pulling the images from a private Docker registry or repository. For more information on how to create this secret please see [Pull an Image from a Private Registry](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/). |
 | cic.nameOverride | Optional | N/A | String to partially override deployment fullname template with a string (will prepend the release name) |
@@ -422,8 +414,6 @@ The following table lists the mandatory and optional parameters that you can con
 | cic.nodeSelector.key | Optional | N/A | Node label key to be used for nodeSelector option in NSIC deployment. |
 | cic.nodeSelector.value | Optional | N/A | Node label value to be used for nodeSelector option in NSIC deployment. |
 | cic.tolerations | Optional | N/A | Specify the tolerations for the NSIC deployment. |
-| cic.crds.install | Optional | False | Unset this argument if you don't want to install CustomResourceDefinitions which are consumed by NSIC. |
-| cic.crds.retainOnDelete | Optional | false | Set this argument if you want to retain CustomResourceDefinitions even after uninstalling NSIC. This will avoid data-loss of Custom Resource Objects created before uninstallation. |
 | cic.analyticsConfig.required | Mandatory | false | Set this to true if you want to configure NetScaler to send metrics and transaction records to analytics service. |
 | cic.analyticsConfig.distributedTracing.enable | Optional | false | Set this value to true to enable OpenTracing in NetScaler. |
 | cic.analyticsConfig.distributedTracing.samplingrate | Optional | 100 | Specifies the OpenTracing sampling rate in percentage. |

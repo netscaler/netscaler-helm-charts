@@ -66,10 +66,6 @@ To install the chart with the release name, `my-release`, use the following comm
    helm install my-release netscaler/citrix-cloud-native --set coe.enabled=true
    ```
 
-> **Important:**
->
-> NetScaler Observability Exporter is exposed using Nodeport 30001 and 30002 by default. Please make sure these ports are available for use in your cluster before deploying this helm chart.
-
 ### Configuration
 
 The following table lists the mandatory and optional parameters that you can configure during installation:
@@ -84,7 +80,7 @@ The following table lists the mandatory and optional parameters that you can con
 | coe.pullPolicy | Mandatory | IfNotPresent | The NSOE image pull policy. |
 | coe.nodePortRequired | Optional | false | Set true to create a nodeport NSOE service. |
 | coe.headless | Optional | false | Set true to create Headless service. |
-| coe.transaction.nodePort | Optional | 30001 | Specify the port used to expose NSOE service outside cluster for transaction endpoint. |
+| coe.transaction.nodePort | Optional | N/A | Specify the port used to expose NSOE service outside cluster for transaction endpoint. |
 | coe.ns_tracing.enabled | Optional | false | Set true to enable sending trace data to tracing server. |
 | coe.ns_tracing.server | Optional | `zipkin:9411/api/v1/spans` | The tracing server api endpoint. |
 | coe.elasticsearch.enabled | Optional | false | Set true to enable sending transaction data to elasticsearch server. |
@@ -100,7 +96,7 @@ The following table lists the mandatory and optional parameters that you can con
 | coe.kafka.events | Optional | `no` | Whether events should be exported to Kafka (JSON) -- can be either yes or no and defaults to no |
 | coe.kafka.auditlogs | Optional | `no` | Whether auditlogs should be exported to Kafka (JSON) -- can be either yes or no and defaults to no |
 | coe.timeseries.enabled | Optional | false | Set true to enable sending timeseries data to Prometheus or Kafka. |
-| coe.timeseries.nodePort | Optional | 30002 | Specify the port used to expose NSOE service outside cluster for timeseries endpoint. |
+| coe.timeseries.nodePort | Optional | N/A | Specify the port used to expose NSOE service outside cluster for timeseries endpoint. |
 | coe.json_trans_rate_limiting.enabled | Optional | false | Set true to enable rate-limiting of transactions for JSON-based endpoints: Splunk, ElasticSearch and Zipkin. |
 | coe.json_trans_rate_limiting.limit | Optional | 100 | Specify the rate-limit: 100 means approximately 800 TPS. |
 | coe.json_trans_rate_limiting.queuelimit | Optional | 1000 | The amount of transactional data that can pile up, before NSOE starts shedding them. For Zipkin, 1000 is approximately 64 MB of data; For Splunk and ElasticSearch, this is approximately 32 MB of data. |
