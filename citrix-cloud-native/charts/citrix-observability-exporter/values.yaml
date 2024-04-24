@@ -16,7 +16,7 @@ license:
 nodePortRequired: false
 headless: false
 transaction:
-  nodePort: 30001
+  nodePort:
 ns_tracing:
   enabled: false
   server: "zipkin:9411/api/v1/spans" 
@@ -38,7 +38,7 @@ kafka:
   auditlogs: "no"
 timeseries:
   enabled: false
-  nodePort: 30002
+  nodePort:
 json_trans_rate_limiting:
   enabled: false
   limit: 100

@@ -5,7 +5,7 @@
 # image contains information needed to fetch NSIC image
 imageRegistry: quay.io
 imageRepository: netscaler/netscaler-k8s-ingress-controller
-imageTag: 1.40.12
+imageTag: 1.41.5
 image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
 pullPolicy: IfNotPresent
 imagePullSecrets: []
@@ -60,11 +60,6 @@ sitedata:
     sitePublicip: ""
     secretName: "site2-secret"
     siteRegion: "xxxxxxxxx"
-crds:
-# If false, CustomResourceDefinitions  will not be installed.
-  install: false
-# if set to true, then CustomResourceDefinitions will not be deleted during helm delete. This way, CustomResourceObjects will not be deleted from the database.
-  retainOnDelete: false
 
 # Specifies whether a ServiceAccount should be created
 serviceAccount:

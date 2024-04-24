@@ -242,11 +242,11 @@ The following table lists the configurable parameters of the NetScaler CPX with 
 | license.accept | Mandatory | no | Set `yes` to accept the NetScaler ingress controller end user license agreement. |
 | imageRegistry                   | Mandatory  |  `quay.io`               |  The NetScaler CPX image registry             |  
 | imageRepository                 | Mandatory  |  `citrix/citrix-k8s-cpx-ingress`              |   The NetScaler CPX image repository             | 
-| imageTag                  | Mandatory  |  `14.1-17.38`               |   The NetScaler CPX image tag            | 
+| imageTag                  | Mandatory  |  `14.1-17.101`               |   The NetScaler CPX image tag            | 
 | pullPolicy | Mandatory | IfNotPresent | The NetScaler CPX image pull policy. |
 | cic.imageRegistry                   | Mandatory  |  `quay.io`               |  The NetScaler ingress controller image registry             |  
 | cic.imageRepository                 | Mandatory  |  `citrix/citrix-k8s-ingress-controller`              |   The NetScaler ingress controller image repository             | 
-| cic.imageTag                  | Mandatory  |  `1.40.12`               |   The NetScaler ingress controller image tag            | 
+| cic.imageTag                  | Mandatory  |  `1.41.5`               |   The NetScaler ingress controller image tag            | 
 | cic.pullPolicy | Mandatory | IfNotPresent | The NetScaler ingress controller image pull policy. |
 | cic.required | Mandatory | true | NSIC to be run as sidecar with NetScaler CPX |
 | cic.resources | Optional | {} |	CPU/Memory resource requests/limits for NetScaler Ingress Controller container |

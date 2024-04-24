@@ -1,12 +1,7 @@
-{{- if .Values.crds.install }}
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   name: rewritepolicies.citrix.com
-{{- if .Values.crds.retainOnDelete }}
-  annotations:
-    "helm.sh/resource-policy": keep
-{{- end }}
 spec:
   group: citrix.com
   names:
@@ -458,10 +453,6 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   name: ratelimits.citrix.com
-{{- if .Values.crds.retainOnDelete }}
-  annotations:
-    "helm.sh/resource-policy": keep
-{{- end }}
 spec:
   group: citrix.com
   names:
@@ -581,10 +572,6 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   name: vips.citrix.com
-{{- if .Values.crds.retainOnDelete }}
-  annotations:
-    "helm.sh/resource-policy": keep
-{{- end }}
 spec:
   group: citrix.com
   names:
@@ -626,10 +613,6 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   name: authpolicies.citrix.com
-{{- if .Values.crds.retainOnDelete }}
-  annotations:
-    "helm.sh/resource-policy": keep
-{{- end }}
 spec:
   group: citrix.com
   names:
@@ -1164,10 +1147,6 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   name: listeners.citrix.com
-{{- if .Values.crds.retainOnDelete }}
-  annotations:
-    "helm.sh/resource-policy": keep
-{{- end }}
 spec:
   group: citrix.com
   names:
@@ -1440,10 +1419,6 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   name: httproutes.citrix.com
-{{- if .Values.crds.retainOnDelete }}
-  annotations:
-    "helm.sh/resource-policy": keep
-{{- end }}
 spec:
   group: citrix.com
   names:
@@ -1710,10 +1685,6 @@ kind: CustomResourceDefinition
 metadata:
   # name must match the spec fields below, and be in the form: <plural>.<group>
   name: continuousdeployments.citrix.com
-{{- if .Values.crds.retainOnDelete }}
-  annotations:
-    "helm.sh/resource-policy": keep
-{{- end }}
 spec:
   group: citrix.com
   names:
@@ -1741,10 +1712,6 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   name: wafs.citrix.com
-{{- if .Values.crds.retainOnDelete }}
-  annotations:
-    "helm.sh/resource-policy": keep
-{{- end }}
 spec:
   group: citrix.com
   names:
@@ -1907,10 +1874,6 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   name: bots.citrix.com
-{{- if .Values.crds.retainOnDelete }}
-  annotations:
-    "helm.sh/resource-policy": keep
-{{- end }}
 spec:
   group: citrix.com
   names:
@@ -2122,10 +2085,6 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   name: apigatewaypolicies.citrix.com
-{{- if .Values.crds.retainOnDelete }}
-  annotations:
-    "helm.sh/resource-policy": keep
-{{- end }}
 spec:
   group: citrix.com
   names:
@@ -2262,10 +2221,6 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   name: corspolicies.citrix.com
-{{- if .Values.crds.retainOnDelete }}
-  annotations:
-    "helm.sh/resource-policy": keep
-{{- end }}
 spec:
   group: citrix.com
   names:
@@ -2343,10 +2298,6 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   name: appqoepolicies.citrix.com
-{{- if .Values.crds.retainOnDelete }}
-  annotations:
-    "helm.sh/resource-policy": keep
-{{- end }}
 spec:
   group: citrix.com
   names:
@@ -2546,4 +2497,3 @@ spec:
                             resource records that are of the same record type
                             and belong to the specified domain name
 ---
-{{- end }}

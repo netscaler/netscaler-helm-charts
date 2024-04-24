@@ -37,7 +37,9 @@ data:
       enable: {{ .Values.analyticsConfig.distributedTracing.enable | quote }}
       samplingrate: {{ .Values.analyticsConfig.distributedTracing.samplingrate }}
     endpoint:
+    {{- if not .Values.analyticsConfig.timeseries.metrics.enableNativeScrape }}
       server: {{ include "analytics.server" . | quote }}
+    {{- end }}
       service: {{ .Values.analyticsConfig.endpoint.service | quote }}
     timeseries:
       port: {{ .Values.analyticsConfig.timeseries.port }}

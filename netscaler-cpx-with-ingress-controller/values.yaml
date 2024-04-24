@@ -5,7 +5,7 @@
 # NetScaler CPX config details
 imageRegistry: quay.io
 imageRepository: netscaler/netscaler-cpx
-imageTag: 14.1-17.38
+imageTag: 14.1-17.101
 image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
 pullPolicy: IfNotPresent
 imagePullSecrets: []
@@ -83,7 +83,7 @@ servicePorts: []
 nsic:
   imageRegistry: quay.io
   imageRepository: netscaler/netscaler-k8s-ingress-controller
-  imageTag: 1.40.12
+  imageTag: 1.41.5
   image: "{{ .Values.nsic.imageRegistry }}/{{ .Values.nsic.imageRepository }}:{{ .Values.nsic.imageTag }}"
   pullPolicy: IfNotPresent
   required: true
@@ -174,11 +174,6 @@ exporter:
     #   cpu: 100m
     #   memory: 128Mi
   serviceMonitorExtraLabels: {}
-
-# For CRDs supported by NetScaler Ingress Controller
-crds:
-  install: false
-  retainOnDelete: false
 
 # Config required to be done by NetScaler Ingress Controller for sending metrics to NetScaler Observability Exporter
 analyticsConfig:

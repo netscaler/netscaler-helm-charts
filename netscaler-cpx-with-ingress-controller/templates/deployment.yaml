@@ -22,9 +22,8 @@ spec:
         adc: "citrix"
 {{- if .Values.analyticsConfig.timeseries.metrics.enableNativeScrape }}
       annotations:
-        netscaler.prometheus/path: nitro/v1/config/systemfile?args=filename%3Ametrics_prom_ns_analytics_time_series_profile.log%2Cfilelocation%3A%2Fvar%2Fnslog&format=prometheus
         netscaler.prometheus/scrape: "true"
-        netscaler.prometheus/port: "9080"
+        netscaler.prometheus/port: {{ .Values.mgmtHttpPort | quote }}
 {{- end }}
 {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
@@ -105,6 +104,8 @@ spec:
             value: {{ .Values.ADMSettings.licenseEdition }}
 {{- end }}
 {{- if .Values.ADMSettings.platform }}
+          - name: "CPX_CORES"
+            value: {{ .Values.ADMSettings.cpxCores | default 1 | quote }}
           - name: "PLATFORM"
             value: "CP1000"
 {{- end }}
@@ -174,9 +175,6 @@ spec:
 {{- if and .Values.openshift .Values.routeLabels }}
           - name: "ROUTE_LABELS"
             value: {{ .Values.routeLabels | quote}}
-{{- else if .Values.openshift }}
-          - name: "ROUTE_LABELS"
-            value: {{ include "netscaler-cpx-ingress-controller.route_label" . | quote }}
 {{- end }}
 {{- if and .Values.openshift .Values.namespaceLabels }}
           - name: "NAMESPACE_LABELS"

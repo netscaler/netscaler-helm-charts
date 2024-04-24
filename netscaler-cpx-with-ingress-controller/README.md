@@ -11,11 +11,6 @@ In a [Kubernetes](https://kubernetes.io/) or [OpenShift](https://www.openshift.c
    helm install netscaler-cpx-with-ingress-controller netscaler/netscaler-cpx-with-ingress-controller --set license.accept=yes
    ```
 
-   To install NetScaler Provided Custom Resource Definition(CRDs) along with NetScaler Ingress Controller
-   ```
-   helm install netscaler-cpx-with-ingress-controller netscaler/netscaler-cpx-with-ingress-controller --set license.accept=yes,crds.install=true
-   ```
-
 ### For OpenShift
 
    ```
@@ -24,15 +19,13 @@ In a [Kubernetes](https://kubernetes.io/) or [OpenShift](https://www.openshift.c
    helm install netscaler-cpx-with-ingress-controller netscaler/netscaler-cpx-with-ingress-controller --set license.accept=yes,openshift=true
    ```
 
-   To install NetScaler Provided Custom Resource Definition(CRDs) along with NetScaler Ingress Controller
-   ```
-   helm install netscaler-cpx-with-ingress-controller netscaler/netscaler-cpx-with-ingress-controller --set license.accept=yes,openshift=true,crds.install=true
-   ```
-
 > **Important:**
 >
 > The "license.accept" is a mandatory argument and should be set to "yes" to accept the terms of the NetScaler license.
 
+> **NOTE:**
+>
+> The CRDs supported by NetScaler will be installed automatically with the installation of the Helm Charts if CRDs are not already available in the cluster.
 
 ## Introduction
 This Helm chart deploys a NetScaler CPX with NetScaler ingress controller as a sidecar in the [Kubernetes](https://kubernetes.io/) or in the [Openshift](https://www.openshift.com) cluster using the [Helm](https://helm.sh/) package manager.
@@ -334,10 +327,7 @@ If you are using ingress or Route resources, you must set the `ingressIP` to a v
 
 ## CRDs configuration
 
-CRDs can be installed/upgraded when we install/upgrade NetScaler CPX with NetScaler ingress controller using `crds.install=true` parameter in Helm. If you do not want to install CRDs, then set the option `crds.install` to `false`. By default, CRDs too get deleted if you uninstall through Helm. This means, even the CustomResource objects created by the customer will get deleted. If you want to avoid this data loss set `crds.retainOnDelete` to `true`.
-
-> **Note:**
-> Installing again may fail due to the presence of CRDs. Make sure that you back up all CustomResource objects and clean up CRDs before re-installing NetScaler CPX with NetScaler ingress controller.
+CRDs will be installed when we install NetScaler ingress controller via Helm automatically if CRDs are not installed in cluster already. If you wish to skip the CRD installation step, you can pass the --skip-crds flag. For more information about this option in Helm please see [this](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/).
 
 There are a few examples of how to use these CRDs, which are placed in the folder: [Example-CRDs](https://github.com/netscaler/netscaler-helm-charts/tree/master/example-crds). Refer to them and install as needed, using the following command:
 ```kubectl create -f <crd-example.yaml>```
@@ -616,12 +606,12 @@ The following table lists the configurable parameters of the NetScaler CPX with 
 | license.accept | Mandatory | no | Set `yes` to accept the NetScaler ingress controller end user license agreement. |
 | imageRegistry                   | Mandatory  |  `quay.io`               |  The NetScaler CPX image registry             |  
 | imageRepository                 | Mandatory  |  `netscaler/netscaler-cpx`              |   The NetScaler CPX image repository             | 
-| imageTag                  | Mandatory  |  `14.1-17.38`               |   The NetScaler CPX image tag            | 
+| imageTag                  | Mandatory  |  `14.1-17.101`               |   The NetScaler CPX image tag            | 
 | pullPolicy | Mandatory | IfNotPresent | The NetScaler CPX image pull policy. |
 | daemonSet | Optional | False | Set this to true if NetScaler CPX needs to be deployed as DaemonSet. |
 | nsic.imageRegistry                   | Mandatory  |  `quay.io`               |  The NetScaler ingress controller image registry             |  
 | nsic.imageRepository                 | Mandatory  |  `netscaler/netscaler-k8s-ingress-controller`              |   The NetScaler ingress controller image repository             | 
-| nsic.imageTag                  | Mandatory  |  `1.40.12`               |   The NetScaler ingress controller image tag            | 
+| nsic.imageTag                  | Mandatory  |  `1.41.5`               |   The NetScaler ingress controller image tag            | 
 | nsic.pullPolicy | Mandatory | IfNotPresent | The NetScaler ingress controller image pull policy. |
 | nsic.required | Mandatory | true | NSIC to be run as sidecar with NetScaler CPX |
 | nsic.resources | Optional | {} |	CPU/Memory resource requests/limits for NetScaler Ingress Controller container |
