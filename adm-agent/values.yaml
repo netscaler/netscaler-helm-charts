@@ -4,7 +4,7 @@
 
 imageRegistry: quay.io
 imageRepository: citrix/adm-agent
-imageTag: 14.1-23.31
+imageTag: 14.1-25.33
 image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
 pullPolicy: IfNotPresent
 
@@ -17,6 +17,83 @@ admURL: "adm.cloud.com"
 loginSecret: ""
 clusterPrefix: ""
 
+hpa:
+  required: true
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilization: 1000m
+  targetMemoryUtilization: 4000Mi
+
+core:
+  livenessProbe:
+    required: true
+    initialDelaySeconds: 600
+    periodSeconds: 60
+    timeoutSeconds: 5
+    failureThreshold: 5
+    successThreshold: 1
+  readinessProbe:
+    required: true
+    initialDelaySeconds: 60
+    periodSeconds: 30
+    timeoutSeconds: 5
+    failureThreshold: 30
+    successThreshold: 1
+  resources:
+    limits: {}
+    requests:
+      cpu: 100m
+      memory: 2000Mi
+
+lic:
+  livenessProbe:
+    required: true
+    initialDelaySeconds: 600
+    periodSeconds: 20
+    timeoutSeconds: 5
+    failureThreshold: 20
+    successThreshold: 1
+  resources:
+    limits: {}
+    requests:
+      cpu: 100m
+      memory: 1000Mi
+
+kad:
+  resources:
+    limits: {}
+    requests:
+      cpu: 50m
+      memory: 1000Mi
+
+redis:
+  livenessProbe:
+    required: true
+    failureThreshold: 5
+    initialDelaySeconds: 30
+    periodSeconds: 60
+    successThreshold: 1
+    timeoutSeconds: 5
+  readinessProbe:
+    required: true
+    failureThreshold: 20
+    initialDelaySeconds: 20
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 5
+  resources:
+    limits: {}
+    requests:
+      cpu: 10m
+      memory: 1000Mi
+
+sharding:
+  resources:
+    limits: {}
+    requests:
+      cpu: 10m
+      memory: 500Mi
+
 helper:
   required: false
   imageRegistry: quay.io
@@ -24,6 +101,11 @@ helper:
   imageTag: 2.0.1
   image: "{{ .Values.helper.imageRegistry }}/{{ .Values.helper.imageRepository }}:{{ .Values.helper.imageTag }}"
   pullPolicy: IfNotPresent
+  resources:
+    limits: {}
+    requests:
+      cpu: 10m
+      memory: 200Mi
 
 serviceAccount:
   # Specifies whether a service account should be created
@@ -32,18 +114,6 @@ serviceAccount:
   annotations: {}
 
 podAnnotations: {}
-
-resources: {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
 
 nodeSelector: {}
 

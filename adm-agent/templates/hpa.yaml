@@ -1,4 +1,5 @@
 #>>>adm-agent-hpa.yaml
+{{- if .Values.hpa.required }}
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
@@ -8,17 +9,20 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: {{ include "adm-agent.fullname" . }}-core
-  minReplicas: 1
-  maxReplicas: 100
+  minReplicas: {{ .Values.hpa.minReplicas }}
+  maxReplicas: {{ .Values.hpa.maxReplicas }}
   metrics:
   - type: Resource
     resource:
       name: memory
       target:
         type: Utilization
-        averageValue: 4000Mi
+        averageValue: {{ .Values.hpa.targetMemoryUtilization }}
+  - type: Resource
+    resource:
       name: cpu
       target:
         type: Utilization
-        averageValue: 1000m
+        averageValue: {{ .Values.hpa.targetCPUUtilization }}
+{{- end }}
 #<<<adm-agent-hpa.yaml

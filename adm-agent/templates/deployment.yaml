@@ -27,7 +27,7 @@ spec:
           imagePullPolicy: {{ .Values.helper.pullPolicy }}
 
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+            {{- toYaml .Values.helper.resources | nindent 12 }}
           securityContext:
             runAsGroup: 32024
             runAsNonRoot: true
@@ -46,7 +46,7 @@ spec:
           imagePullPolicy: {{ .Values.pullPolicy }}
 
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+            {{- toYaml .Values.kad.resources | nindent 12 }}
           securityContext:
             privileged: true
 
@@ -172,7 +172,7 @@ spec:
           imagePullPolicy: {{ .Values.pullPolicy }}
 
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+            {{- toYaml .Values.redis.resources | nindent 12 }}
 
           env:
           - name: CONTAINER_AGENT_MODE
@@ -213,26 +213,30 @@ spec:
           securityContext:
             privileged: true
 
+          {{- if .Values.redis.livenessProbe.required }}
           livenessProbe:
             exec:
               command:
               - redis-cli
               - ping
-            failureThreshold: 3
-            initialDelaySeconds: 30
-            periodSeconds: 60
-            successThreshold: 1
-            timeoutSeconds: 5
+            failureThreshold: {{ .Values.redis.livenessProbe.failureThreshold }}
+            initialDelaySeconds: {{ .Values.redis.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.redis.livenessProbe.periodSeconds }}
+            successThreshold: {{ .Values.redis.livenessProbe.successThreshold }}
+            timeoutSeconds: {{ .Values.redis.livenessProbe.timeoutSeconds }}
+          {{- end }}
+          {{- if .Values.redis.readinessProbe.required }}
           readinessProbe:
             exec:
               command:
               - redis-cli
               - ping
-            failureThreshold: 3
-            initialDelaySeconds: 30
-            periodSeconds: 60
-            successThreshold: 1
-            timeoutSeconds: 5
+            failureThreshold: {{ .Values.redis.readinessProbe.failureThreshold }}
+            initialDelaySeconds: {{ .Values.redis.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.redis.readinessProbe.periodSeconds }}
+            successThreshold: {{ .Values.redis.readinessProbe.successThreshold }}
+            timeoutSeconds: {{ .Values.redis.readinessProbe.timeoutSeconds }}
+          {{- end }}
 
           ports:
             - name: redis
@@ -295,7 +299,7 @@ spec:
           imagePullPolicy: {{ .Values.pullPolicy }}
 
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+            {{- toYaml .Values.core.resources | nindent 12 }}
 
           env:
           - name: CONTAINER_AGENT_MODE
@@ -349,26 +353,30 @@ spec:
           securityContext:
             privileged: true
 
+          {{- if .Values.core.livenessProbe.required }}
           livenessProbe:
-            failureThreshold: 3
+            failureThreshold: {{ .Values.core.livenessProbe.failureThreshold }}
             httpGet:
               path: /mas_health
               port: 80
               scheme: HTTP
-            initialDelaySeconds: 60
-            periodSeconds: 60
-            successThreshold: 1
-            timeoutSeconds: 5
+            initialDelaySeconds: {{ .Values.core.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.core.livenessProbe.periodSeconds }}
+            successThreshold: {{ .Values.core.livenessProbe.successThreshold }}
+            timeoutSeconds: {{ .Values.core.livenessProbe.timeoutSeconds }}
+          {{- end }}
+          {{- if .Values.core.readinessProbe.required }}
           readinessProbe:
-            failureThreshold: 3
+            failureThreshold: {{ .Values.core.readinessProbe.failureThreshold }}
             httpGet:
               path: /mas_health
               port: 80
               scheme: HTTP
-            initialDelaySeconds: 60
-            periodSeconds: 60
-            successThreshold: 1
-            timeoutSeconds: 5
+            initialDelaySeconds: {{ .Values.core.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.core.readinessProbe.periodSeconds }}
+            successThreshold: {{ .Values.core.readinessProbe.successThreshold }}
+            timeoutSeconds: {{ .Values.core.readinessProbe.timeoutSeconds }}
+          {{- end }}
 
           ports:
             - name: http
@@ -451,7 +459,7 @@ spec:
           imagePullPolicy: {{ .Values.pullPolicy }}
 
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+            {{- toYaml .Values.lic.resources | nindent 12 }}
 
           env:
           - name: CONTAINER_AGENT_MODE
@@ -501,6 +509,19 @@ spec:
           
           securityContext:
             privileged: true
+
+          {{- if .Values.lic.livenessProbe.required }}
+          livenessProbe:
+            exec:
+              command:
+              - pgrep
+              - mas_cloudagent
+            initialDelaySeconds: {{ .Values.lic.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.lic.livenessProbe.periodSeconds }}
+            successThreshold: {{ .Values.lic.livenessProbe.successThreshold }}
+            timeoutSeconds: {{ .Values.lic.livenessProbe.timeoutSeconds }}
+            failureThreshold: {{ .Values.lic.livenessProbe.failureThreshold }}
+          {{- end }}
 
           ports:
             - name: http
@@ -575,7 +596,7 @@ spec:
           imagePullPolicy: {{ .Values.pullPolicy }}
 
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+            {{- toYaml .Values.sharding.resources | nindent 12 }}
 
           env:
           - name: CONTAINER_AGENT_MODE
