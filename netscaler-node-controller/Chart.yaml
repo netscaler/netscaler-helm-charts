@@ -9,4 +9,4 @@ maintainers:
 name: netscaler-node-controller
 sources:
 - https://github.com/netscaler/netscaler-k8s-node-controller
-version: 2.2.13
+version: 2.2.14

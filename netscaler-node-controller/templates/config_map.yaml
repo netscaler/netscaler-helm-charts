@@ -3,8 +3,8 @@ kind: ConfigMap
 metadata:
   name: {{ include "netscaler-k8s-node-controller.nsncConfigMap" . }}
   labels:
-    {{- include "netscaler-k8s-node-controller.labels" . | nindent 4 }}
+   {{- include "netscaler-k8s-node-controller.labels" . | nindent 4 }}
   namespace: {{ .Release.Namespace }}
-  data:
+data:
   tolerations.json: |-
     {{ .Values.nsncConfigMap.tolerationsInJson | toJson }}

@@ -85,8 +85,8 @@ Create the name of the RBAC/ServiceAccount/ConfigMap/Prefix for router pods
 Create the name of the ConfigMap that helm deploys and NSNC listens to add/delete configurations 
 */}}
 {{- define "netscaler-k8s-node-controller.nsncConfigMap" -}}
-{{- if .Values.nsncConfigMap -}}
-    {{ .Values.nsncConfigMap | trunc 63 }}
+{{- if .Values.nsncConfigMap.name -}}
+    {{ .Values.nsncConfigMap.name | trunc 63 }}
 {{- else -}}
     {{ include "netscaler-k8s-node-controller.fullname" . }}
 {{- end -}}
