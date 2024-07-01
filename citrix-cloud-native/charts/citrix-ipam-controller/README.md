@@ -13,6 +13,9 @@ NetScaler provides a controller called IPAM controller for IP address management
 ## Introduction
 This Helm chart deploys a NetScaler IPAM controller in the [Kubernetes](https://kubernetes.io/) or in the [Openshift](https://www.openshift.com) cluster using the [Helm](https://helm.sh/) package manager.
 
+IPAM controller has the ability to either allocate the same IP for all ingresses (default behaviour) or it can allocate unique IP until the IP range is exhausted. This behaviour can be controlled using the `reuseIngressVip` parameter of the helm chart.
+Please note that for services of type LoadBalancer, distinct IPs are allocated from the specified IP range until all available addresses are exhausted.
+
 ### Prerequisites
 
 -  The [Kubernetes](https://kubernetes.io/) version is 1.6 or later if using Kubernetes environment.
@@ -49,9 +52,10 @@ The following table lists the configurable parameters of the NetScaler CPX with 
 | ---------- | --------------------- | ------------- | ----------- |
 | ipam.imageRegistry                   | Mandatory  |  `quay.io`               |  The NetScaler IPAM Contoller image registry             |  
 | ipam.imageRepository                 | Mandatory  |  `citrix/citrix-ipam-controller`              |   The NetScaler IPAM Contoller image repository             | 
-| ipam.imageTag                  | Mandatory  |  `1.1.3`               |  The NetScaler IPAM Contoller image tag            |
+| ipam.imageTag                  | Mandatory  |  `1.2.0`               |  The NetScaler IPAM Contoller image tag            |
 | ipam.pullPolicy | Mandatory | `IfNotPresent` | The NetScaler IPAM Contoller image pull policy. |
 | ipam.vipRange | Mandatory | N/A | This variable allows you to define the IP address range. You can either define IP address range or an IP address range associated with a unique name. NetScaler IPAM controller assigns the IP address from this IP address range to the service of type LoadBalancer. |
+| reuseIngressVip| Optional | True | This variable allows you to use same IP for all ingresses using the same vipRange. |
 
 Alternatively, you can define a YAML file with the values for the parameters and pass the values while installing the chart.
 

@@ -25,6 +25,7 @@ nsEnableLabel: true
 optimizeEndpointBinding: false
 routeLabels: ""
 namespaceLabels: ""
+hostName: ""
 
 # Service Type LoadBalancer and ingress support with CPX through BGP advertisement
 # If you enable this, CPX is run as DaemonSet. Please edit the bgpSettings for configuring
@@ -83,7 +84,7 @@ servicePorts: []
 nsic:
   imageRegistry: quay.io
   imageRepository: netscaler/netscaler-k8s-ingress-controller
-  imageTag: 1.41.5
+  imageTag: 1.42.12
   image: "{{ .Values.nsic.imageRegistry }}/{{ .Values.nsic.imageRepository }}:{{ .Values.nsic.imageTag }}"
   pullPolicy: IfNotPresent
   required: true

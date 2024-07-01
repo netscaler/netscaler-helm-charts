@@ -20,8 +20,8 @@ spec:
       labels:
         app: {{ include "netscaler-cpx-ingress-controller.fullname" . }}
         adc: "citrix"
-{{- if .Values.analyticsConfig.timeseries.metrics.enableNativeScrape }}
       annotations:
+{{- if .Values.analyticsConfig.timeseries.metrics.enableNativeScrape }}
         netscaler.prometheus/scrape: "true"
         netscaler.prometheus/port: {{ .Values.mgmtHttpPort | quote }}
 {{- end }}
@@ -32,6 +32,9 @@ spec:
       serviceAccountName: {{ include "netscaler-cpx-ingress-controller.serviceAccountName" . }}
 {{- if .Values.cpxBgpRouter }}
       hostNetwork: true
+{{- end }}
+{{- if .Values.hostName }}
+      hostname: {{ .Values.hostName }}-{{ .Release.Namespace }}
 {{- end }}
       containers:
         - name: cpx-ingress
