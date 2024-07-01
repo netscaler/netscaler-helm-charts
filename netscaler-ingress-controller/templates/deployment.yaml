@@ -37,8 +37,8 @@ spec:
 {{- else }}
         app: {{ include "netscaler-ingress-controller.fullname" . }}
 {{- end }}
-{{- with .Values.podAnnotations }}
       annotations:
+{{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
 {{- end }}
     spec:

@@ -26,3 +26,7 @@ spec:
           value: {{ required "Provide IPs or IP range for NetScaler IPAM Controller" .Values.vipRange | squote }}
         # The IPAM controller can also be configured with name spaces for which it would work through the environment variable
         # VIP_NAMESPACES, This expects a set of namespaces passed as space separated string
+{{- if .Values.reuseIngressVip | squote }}
+        - name: "REUSE_INGRESS_VIP"
+          value: {{ .Values.reuseIngressVip | squote }}
+{{- end }}
