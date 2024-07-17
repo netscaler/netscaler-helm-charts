@@ -1,33 +1,18 @@
-{{- if .Values.openshift }}
-apiVersion: apps.openshift.io/v1
-kind: DeploymentConfig
-{{- else }}
 apiVersion: apps/v1
 kind: Deployment
-{{- end }}
 metadata:
   name: {{ include "citrix-ingress-controller.fullname" . }}
   namespace: {{ .Release.Namespace }}
 spec:
   selector:
-{{- if .Values.openshift }}
-     router: {{ include "citrix-ingress-controller.fullname" . }}
-{{- else }}
     matchLabels:
-      app: {{ include "citrix-ingress-controller.fullname" . }}
+{{- if .Values.openshift }}
+      router: {{ include "citrix-ingress-controller.fullname" . }}
+{{- else }}
+      app: {{ include "citrix-ingress-controller.
+      fullname" . }}
 {{- end }}
   replicas: 1
-{{- if .Values.openshift }}
-  strategy:
-    resources: {}
-    rollingParams:
-      intervalSeconds: 1
-      maxSurge: 0
-      maxUnavailable: 25%
-      timeoutSeconds: 600
-      updatePeriodSeconds: 1
-    type: Rolling
-{{- end }}
   template:
     metadata:
       name: cic
@@ -47,6 +32,14 @@ spec:
       - name: cic
         image: "{{ tpl .Values.image . }}"
         imagePullPolicy: {{ .Values.pullPolicy }}
+{{- if .Values.enableReadinessProbe }}
+        readinessProbe:
+        {{- toYaml .Values.readinessProbe | nindent 10 }}
+{{- end }}
+{{- if .Values.enableLivenessProbe }}
+        livenessProbe:
+        {{- toYaml .Values.livenessProbe | nindent 10 }}
+{{- end }}
         args:
           - --configmap
             {{ .Release.Namespace }}/{{ include "cicconfigmap.fullname" . }}
@@ -100,6 +93,10 @@ spec:
 {{- if .Values.nitroReadTimeout }}
         - name: "NS_NITRO_READ_TIMEOUT"
           value: "{{ .Values.nitroReadTimeout }}"
+{{- end }}
+{{-f if .Values.enableLivenessProbe }}
+        - name: "LIVENESS_FILE_PATH"
+          value: '/tmp/liveness_path.log'
 {{- end }}
         - name: "NS_USER"
         {{- if and .Values.secretStore.enabled .Values.secretStore.username}}
@@ -159,6 +156,12 @@ spec:
         - name: "OPTIMIZE_ENDPOINT_BINDING"
           value: "{{ .Values.optimizeEndpointBinding }}"
 {{- end }}
+{{- if .Values.nodeLabels }}
+        - name: "NODE_LABELS"
+          value: "{{ .Values.nodeLabels }}"
+{{- end  }}
+        - name: "BGP_ADVERTISEMENT"
+          value: {{ .Values.bgpAdvertisement | quote }}
         resources:
             {{- toYaml .Values.resources | nindent 12 }}
         {{- if ne (len .Values.extraVolumeMounts) 0 }}

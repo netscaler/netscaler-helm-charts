@@ -140,12 +140,24 @@ spec:
               name: cpx-volume-conf
             - mountPath: /cpx/bootup_conf
               name: bootupconfig-volume
+{{- if .Values.enableStartupProbe }}
+          startupProbe:
+          {{- toYaml .Values.startupProbe | nindent 12 }}
+{{- end }}
+{{- if .Values.enableLivenessProbe}}
+          livenessProbe:
+          {{- toYaml .Values.livenessProbe | nindent 12 }}
+{{- end }}
 {{- if .Values.cic.required }}
         # Add cic as a sidecar
         - name: cic
           image: "{{ tpl .Values.cic.image . }}"
           imagePullPolicy: {{ .Values.cic.pullPolicy }}
           env:
+{{- if .Values.cic.enableLivenessProbe  }}
+          - name: "LIVENESS_FILE_PATH"
+            value: '/tmp/liveness_path.log'
+{{- end }}
 {{- if .Values.analyticsConfig.timeseries.metrics.enableNativeScrape }}
           - name: "PROM_USER"
             valueFrom:
@@ -320,6 +332,14 @@ spec:
           volumeMounts:
             - mountPath: /var/deviceinfo
               name: shared-data
+{{- if .Values.cic.enableReadinessProbe }}
+          readinessProbe:
+          {{- toYaml .Values.cic.readinessProbe | nindent 12 }}
+{{- end }}
+{{- if .Values.cic.enableLivenessProbe}}
+          livenessProbe:
+          {{- toYaml .Values.cic.livenessProbe | nindent 12 }}
+{{- end }}
           resources:
             {{- toYaml .Values.exporter.resources | nindent 12 }}
 {{- end }}

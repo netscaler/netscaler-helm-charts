@@ -242,14 +242,18 @@ The following table lists the configurable parameters of the NetScaler CPX with 
 | license.accept | Mandatory | no | Set `yes` to accept the NetScaler ingress controller end user license agreement. |
 | imageRegistry                   | Mandatory  |  `quay.io`               |  The NetScaler CPX image registry             |  
 | imageRepository                 | Mandatory  |  `citrix/citrix-k8s-cpx-ingress`              |   The NetScaler CPX image repository             | 
-| imageTag                  | Mandatory  |  `14.1-17.101`               |   The NetScaler CPX image tag            |
+| imageTag                  | Mandatory  |  `14.1-25.109`               |   The NetScaler CPX image tag            |
 | pullPolicy | Mandatory | IfNotPresent | The NetScaler CPX image pull policy. |
 | hostName | Optional | N/A | This entity will be used to set Hostname of the CPX |
 | cic.imageRegistry                   | Mandatory  |  `quay.io`               |  The NetScaler ingress controller image registry             |  
 | cic.imageRepository                 | Mandatory  |  `citrix/citrix-k8s-ingress-controller`              |   The NetScaler ingress controller image repository             | 
-| cic.imageTag                  | Mandatory  |  `1.42.12`               |   The NetScaler ingress controller image tag            |
+| cic.imageTag                  | Mandatory  |  `1.43.7               |   The NetScaler ingress controller image tag            |
 | cic.pullPolicy | Mandatory | IfNotPresent | The NetScaler ingress controller image pull policy. |
 | cic.required | Mandatory | true | NSIC to be run as sidecar with NetScaler CPX |
+| cic.enableLivenessProbe | Optional | True | Enable livenessProbe settings for NSIC |
+| cic.enableReadinessProbe | Optional | True | Enable readinessProbe settings |
+| cic.livenessProbe | Optional | N/A | Set livenessProbe settings for NSIC |
+| cic.readinessProbe | Optional | N/A | Set readinessProbe settings |
 | cic.resources | Optional | {} |	CPU/Memory resource requests/limits for NetScaler Ingress Controller container |
 | cic.prometheusCredentialSecret  | Optional |  N/A  |  The secret key required to create read only user for native export of metrics using Prometheus. |
 | imagePullSecrets | Optional | N/A | Provide list of Kubernetes secrets to be used for pulling the images from a private Docker registry or repository. For more information on how to create this secret please see [Pull an Image from a Private Registry](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/). |
@@ -341,6 +345,10 @@ bels | Optional | N/A | You can use this parameter to provide the route labels s
 | nsLbHashAlgo.hashAlgorithm | Optional | 'default' | Specifies the supported algorithm. Supported algorithms are "default", "jarh", "prac", Default value is 'default' |
 | cpxCommands| Optional | N/A | This argument accepts user-provided bootup NetScaler config that is applied as soon as the CPX is instantiated. Please note that this is not a dynamic config, and any subsequent changes to the configmap don't reflect in the CPX config unless the pod is restarted. For more info, please refer the [documentation](https://docs.netscaler.com/en-us/citrix-adc-cpx/current-release/configure-cpx-kubernetes-using-configmaps.html).  |
 | cpxShellCommands| Optional | N/A | This argument accepts user-provided bootup config that is applied as soon as the CPX is instantiated. Please note that this is not a dynamic config, and any subsequent changes to the configmap don't reflect in the CPX config unless the pod is restarted. For more info, please refer the [documentation](https://docs.netscaler.com/en-us/citrix-adc-cpx/current-release/configure-cpx-kubernetes-using-configmaps.html). |
+| enableStartupProbe | Optional | True | Enable startupProbe settings for CPX |
+| enableLivenessProbe | Optional | True | Enable livenessProbe settings for CPX |
+| startupProbe | Optional | N/A | Set startupProbe settings for CPX |
+| livenessProbe | Optional | N/A | Set livenessProbe settings for CPX |
 
 > **Tip:**
 >

@@ -352,7 +352,7 @@ The following table lists the mandatory and optional parameters that you can con
 | cic.license.accept | Mandatory | no | Set `yes` to accept the NSIC end user license agreement. |
 | cic.imageRegistry                   | Mandatory  |  `quay.io`               |  The NetScaler ingress controller image registry             |  
 | cic.imageRepository                 | Mandatory  |  `citrix/citrix-k8s-ingress-controller`              |   The NetScaler ingress controller image repository             | 
-| cic.imageTag                  | Mandatory  |  `1.42.12`               |   The NetScaler ingress controller image tag            | 
+| cic.imageTag                  | Mandatory  |  `1.43.7               |   The NetScaler ingress controller image tag            | 
 | cic.pullPolicy | Mandatory | IfNotPresent | The NSIC image pull policy. |
 | cic.imagePullSecrets | Optional | N/A | Provide list of Kubernetes secrets to be used for pulling the images from a private Docker registry or repository. For more information on how to create this secret please see [Pull an Image from a Private Registry](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/). |
 | cic.nameOverride | Optional | N/A | String to partially override deployment fullname template with a string (will prepend the release name) |
@@ -435,6 +435,11 @@ The following table lists the mandatory and optional parameters that you can con
 | cic.extraVolumeMounts  |  Optional |  [] |  Specify the Additional VolumeMounts to be mounted in NSIC container  |
 | cic.extraVolumes  |  Optional |  [] |  Specify the Additional Volumes for additional volumeMounts  |
 | cic.rbacRole  | Optional |  false  |  To deploy NSIC with RBAC Role set rbacRole=true; by default NSIC gets installed with RBAC ClusterRole(rbacRole=false) |
+| cic.bgpAdvertisement | Optional | false  | To advertise VIP using BGP from NetScaler |
+| cic.enableReadinessProbe | Optional | True | Enable readinessProbe settings Citrix Ingress Controller  |
+| cic.enableLivenessProbe| Optional | True | Enable livenessPorbe settings for Citrix Ingress Controller |
+| cic.readinessProbe | Optional | N/A | Set readinessProbe settings Citrix Ingress Controller  |
+| cic.livenessProbe| Optional | N/A | Set livenessPorbe settings for Citrix Ingress Controller |
 
 Alternatively, you can define a YAML file with the values for the parameters and pass the values while installing the chart.
 

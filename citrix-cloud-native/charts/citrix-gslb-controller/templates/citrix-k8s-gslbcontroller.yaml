@@ -1,33 +1,17 @@
-{{- if .Values.openshift }}
-apiVersion: apps.openshift.io/v1
-kind: DeploymentConfig
-{{- else }}
 apiVersion: apps/v1
 kind: Deployment
-{{- end}}
 metadata:
   name: {{ include "citrix-gslb-controller.fullname" . }}
   namespace: {{ .Release.Namespace }}
 spec:
   selector:
-{{- if .Values.openshift }}
-     router: {{ include "citrix-gslb-controller.fullname" . }}
-{{- else }}
     matchLabels:
+{{- if .Values.openshift }}
+      router: {{ include "citrix-gslb-controller.fullname" . }}
+{{- else }}
       app: {{ include "citrix-gslb-controller.fullname" . }}
 {{- end }}
   replicas: 1
-{{- if .Values.openshift }}
-  strategy:
-    resources: {}
-    rollingParams:
-      intervalSeconds: 1
-      maxSurge: 0
-      maxUnavailable: 25%
-      timeoutSeconds: 600
-      updatePeriodSeconds: 1
-    type: Rolling
-{{- end}}
   template:
     metadata:
       name: {{ include "citrix-gslb-controller.name" . }}
