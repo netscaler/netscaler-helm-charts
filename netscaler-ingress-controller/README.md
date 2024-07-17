@@ -342,7 +342,7 @@ The following table lists the mandatory and optional parameters that you can con
 | license.accept | Mandatory | no | Set `yes` to accept the NSIC end user license agreement. |
 | imageRegistry                   | Mandatory  |  `quay.io`               |  The NetScaler ingress controller image registry             |  
 | imageRepository                 | Mandatory  |  `netscaler/netscaler-k8s-ingress-controller`              |   The NetScaler ingress controller image repository             | 
-| imageTag                  | Mandatory  |  `1.42.12`               |   The NetScaler ingress controller image tag            | 
+| imageTag                  | Mandatory  |  `1.43.7`               |   The NetScaler ingress controller image tag            | 
 | pullPolicy | Mandatory | IfNotPresent | The NSIC image pull policy. |
 | imagePullSecrets | Optional | N/A | Provide list of Kubernetes secrets to be used for pulling the images from a private Docker registry or repository. For more information on how to create this secret please see [Pull an Image from a Private Registry](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/). |
 | nameOverride | Optional | N/A | String to partially override deployment fullname template with a string (will prepend the release name) |
@@ -425,6 +425,13 @@ The following table lists the mandatory and optional parameters that you can con
 | extraVolumeMounts  |  Optional |  [] |  Specify the Additional VolumeMounts to be mounted in NSIC container  |
 | extraVolumes  |  Optional |  [] |  Specify the Additional Volumes for additional volumeMounts  |
 | rbacRole  | Optional |  false  |  To deploy NSIC with RBAC Role set rbacRole=true; by default NSIC gets installed with RBAC ClusterRole(rbacRole=false)) |
+| nodeLabels | Optional | "" |  If there are pods on nodes in the nodes with this nodeLabels, NSIC will configure NetScaler to advertises the VIP using BGP |
+| bgpAdvertisement | Optional | False  | To advertise VIP using BGP from NetScaler |
+| enableLivenessProbe | Optional | True | Enable LivenessProbes settings for NetScaler Ingress Controller |
+| enableReadinessProbe | Optional | True | Enable LivenessProbes settings for NetScaler Ingress Controller |
+| readinessProbe | Optional | N/A | Set readinessProbe settings NetScaler Ingress Controller  |
+| livenessProbe| Optional | N/A | Set livenessPorbe settings for NetScaler Ingress Controller |
+
 
 Alternatively, you can define a YAML file with the values for the parameters and pass the values while installing the chart.
 

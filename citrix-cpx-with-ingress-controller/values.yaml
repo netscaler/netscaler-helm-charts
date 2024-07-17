@@ -5,7 +5,7 @@
 # NetScaler CPX config details
 imageRegistry: quay.io
 imageRepository: citrix/citrix-k8s-cpx-ingress
-imageTag: 14.1-17.101
+imageTag: 14.1-25.109
 image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
 pullPolicy: IfNotPresent
 imagePullSecrets: []
@@ -84,7 +84,7 @@ servicePorts: []
 cic:
   imageRegistry: quay.io
   imageRepository: citrix/citrix-k8s-ingress-controller
-  imageTag: 1.42.12
+  imageTag: 1.43.7
   image: "{{ .Values.cic.imageRegistry }}/{{ .Values.cic.imageRepository }}:{{ .Values.cic.imageTag }}"
   pullPolicy: IfNotPresent
   required: true
@@ -104,6 +104,28 @@ cic:
     #   cpu: 1000m
     #   memory: 1000Mi
   prometheusCredentialSecret: "" # K8s Secret Name for read only user creation for native Prometheus support
+  enableLivenessProbe: True
+  livenessProbe:
+    exec:
+      command:
+      - /bin/sh
+      - -c
+      - |
+        FILE_PATH="$LIVENESS_FILE_PATH"
+        [ -f "$FILE_PATH" ] && [ $(( $(date +%s) - $(stat -c %Y "$FILE_PATH") )) -lt 60 ] && exit 0 || exit 1
+    initialDelaySeconds: 30
+    periodSeconds: 60
+  
+  enableReadinessProbe: True
+  readinessProbe:
+    exec:
+      command:
+      - cat
+      - /tmp/readiness
+    initialDelaySeconds: 50
+    periodSeconds: 60
+    failureThreshold: 3
+    successThreshold: 1
 
 entityPrefix: ""
 license:
@@ -243,6 +265,30 @@ resources:
   #   memory: 512Mi
 
 affinity: {}
+
+enableStartupProbe: True
+startupProbe:
+  initialDelaySeconds: 30
+  periodSeconds: 5
+  failureThreshold: 20
+  successThreshold: 1
+  exec:
+    command:
+    - /bin/ping
+    - -c 1
+    - 192.0.0.1
+
+enableLivenessProbe: True
+livenessProbe:
+  exec:
+    command:
+    - ls
+    - /tmp/cpx_started
+  periodSeconds:  5
+  failureThreshold: 3
+  successThreshold: 1
+
+
 
 # cpxCommands: to provide global config to be applied in CPX. The commands will be executed in order. For e.g.
 # add rewrite action rw_act_x_forwarded_proto insert_http_header X-Forwarded-Proto "\"https\""

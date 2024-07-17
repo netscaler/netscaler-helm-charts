@@ -614,15 +614,19 @@ The following table lists the configurable parameters of the NetScaler CPX with 
 | cpx.license.accept | Mandatory | no | Set `yes` to accept the NetScaler ingress controller end user license agreement. |
 | cpx.imageRegistry                   | Mandatory  |  `quay.io`               |  The NetScaler CPX image registry             |  
 | cpx.imageRepository                 | Mandatory  |  `citrix/citrix-k8s-cpx-ingress`              |   The NetScaler CPX image repository             | 
-| cpx.imageTag                  | Mandatory  |  `14.1-17.101`               |   The NetScaler CPX image tag            | 
+| cpx.imageTag                  | Mandatory  |  `14.1-25.109`               |   The NetScaler CPX image tag            | 
 | cpx.pullPolicy | Mandatory | IfNotPresent | The NetScaler CPX image pull policy. |
 | cpx.hostName | Optional | N/A | This entity will be used to set Hostname of the CPX |
 | cpx.daemonSet | Optional | False | Set this to true if NetScaler CPX needs to be deployed as DaemonSet. |
 | cpx.cic.imageRegistry                   | Mandatory  |  `quay.io`               |  The NetScaler ingress controller image registry             |  
 | cpx.cic.imageRepository                 | Mandatory  |  `citrix/citrix-k8s-ingress-controller`              |   The NetScaler ingress controller image repository             | 
-| cpx.cic.imageTag                  | Mandatory  |  `1.42.12`               |   The NetScaler ingress controller image tag            | 
+| cpx.cic.imageTag                  | Mandatory  |  `1.43.7`               |   The NetScaler ingress controller image tag            | 
 | cpx.cic.pullPolicy | Mandatory | IfNotPresent | The NetScaler ingress controller image pull policy. |
 | cpx.cic.required | Mandatory | true | NSIC to be run as sidecar with NetScaler CPX |
+| cpx.cic.enableLivenessProbe | Optional | True | Enable livenessProbe settings for Citrix Ingress Controller |
+| cpx.cic.enableReadinessProbe | Optional | True | Enable readinessProbe settings |
+| cpx.cic.livenessProbe | Optional | N/A | Set livenessProbe settings for Citrix Ingress Controller |
+| cpx.cic.readinessProbe | Optional | N/A | Set readinessProbe settings |
 | cpx.cic.resources | Optional | {} |	CPU/Memory resource requests/limits for NetScaler Ingress Controller container |
 | cpx.cic.rbacRole  | Optional |  false  |  To deploy NSIC with RBAC Role set rbacRole=true; by default NSIC gets installed with RBAC ClusterRole(rbacRole=false)) |
 | cpx.cic.prometheusCredentialSecret  | Optional |  N/A  |  The secret key required to create read only user for native export of metrics using Prometheus. |
@@ -717,6 +721,11 @@ The following table lists the configurable parameters of the NetScaler CPX with 
 | cpx.nsLbHashAlgo.hashAlgorithm | Optional | 'default' | Specifies the supported algorithm. Supported algorithms are "default", "jarh", "prac", Default value is 'default' |
 | cpx.cpxCommands| Optional | N/A | This argument accepts user-provided bootup NetScaler config that is applied as soon as the CPX is instantiated. Please note that this is not a dynamic config, and any subsequent changes to the configmap don't reflect in the CPX config unless the pod is restarted. For more info, please refer the [documentation](https://docs.netscaler.com/en-us/citrix-adc-cpx/current-release/configure-cpx-kubernetes-using-configmaps.html).  |
 | cpx.cpxShellCommands| Optional | N/A | This argument accepts user-provided bootup config that is applied as soon as the CPX is instantiated. Please note that this is not a dynamic config, and any subsequent changes to the configmap don't reflect in the CPX config unless the pod is restarted. For more info, please refer the [documentation](https://docs.netscaler.com/en-us/citrix-adc-cpx/current-release/configure-cpx-kubernetes-using-configmaps.html). |
+| cpx.enableStartupProbe | Optional | True | Enable startupProbe settings for CPX |
+| cpx.enableLivenessProbe | Optional | True | Enable livenessProbe settings for CPX |
+| cpx.startupProbe | Optional | N/A | Set startupProbe settings for CPX |
+| cpx.livenessProbe | Optional | N/A | Set livenessProbe settings for CPX |
+
 
 > **Note:**
 >
