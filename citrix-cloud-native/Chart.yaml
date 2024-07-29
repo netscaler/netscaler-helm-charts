@@ -22,7 +22,7 @@ dependencies:
     condition: cpx.enabled
     alias: cpx
   - name: citrix-gslb-controller
-    version: "1.43.7"
+    version: "1.43.8"
     condition: gslb.enabled
     alias: gslb
   - name: citrix-node-controller
