@@ -4,7 +4,7 @@
 
 imageRegistry: quay.io
 imageRepository: citrix/adm-agent
-imageTag: 14.1-25.33
+imageTag: 14.1-31.38
 image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
 pullPolicy: IfNotPresent
 
@@ -18,7 +18,7 @@ loginSecret: ""
 clusterPrefix: ""
 
 hpa:
-  required: true
+  required: false
   minReplicas: 1
   maxReplicas: 10
   targetCPUUtilization: 1000m
