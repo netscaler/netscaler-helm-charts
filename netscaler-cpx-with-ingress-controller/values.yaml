@@ -5,7 +5,7 @@
 # NetScaler CPX config details
 imageRegistry: quay.io
 imageRepository: netscaler/netscaler-cpx
-imageTag: 14.1-25.109
+imageTag: 14.1-25.111
 image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
 pullPolicy: IfNotPresent
 imagePullSecrets: []

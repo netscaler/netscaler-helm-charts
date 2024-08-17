@@ -614,13 +614,13 @@ The following table lists the configurable parameters of the NetScaler CPX with 
 | cpx.license.accept | Mandatory | no | Set `yes` to accept the NetScaler ingress controller end user license agreement. |
 | cpx.imageRegistry                   | Mandatory  |  `quay.io`               |  The NetScaler CPX image registry             |  
 | cpx.imageRepository                 | Mandatory  |  `citrix/citrix-k8s-cpx-ingress`              |   The NetScaler CPX image repository             | 
-| cpx.imageTag                  | Mandatory  |  `14.1-25.109`               |   The NetScaler CPX image tag            | 
+| cpx.imageTag                  | Mandatory  |  `14.1-25.111`               |   The NetScaler CPX image tag            |
 | cpx.pullPolicy | Mandatory | IfNotPresent | The NetScaler CPX image pull policy. |
 | cpx.hostName | Optional | N/A | This entity will be used to set Hostname of the CPX |
 | cpx.daemonSet | Optional | False | Set this to true if NetScaler CPX needs to be deployed as DaemonSet. |
 | cpx.cic.imageRegistry                   | Mandatory  |  `quay.io`               |  The NetScaler ingress controller image registry             |  
 | cpx.cic.imageRepository                 | Mandatory  |  `citrix/citrix-k8s-ingress-controller`              |   The NetScaler ingress controller image repository             | 
-| cpx.cic.imageTag                  | Mandatory  |  `1.43.7`               |   The NetScaler ingress controller image tag            | 
+| cpx.cic.imageTag                  | Mandatory  |  `1.43.7`               |   The NetScaler ingress controller image tag            |
 | cpx.cic.pullPolicy | Mandatory | IfNotPresent | The NetScaler ingress controller image pull policy. |
 | cpx.cic.required | Mandatory | true | NSIC to be run as sidecar with NetScaler CPX |
 | cpx.cic.enableLivenessProbe | Optional | True | Enable livenessProbe settings for Citrix Ingress Controller |
