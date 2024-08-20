@@ -41,9 +41,11 @@ data:
       samplingrate: {{ .Values.analyticsConfig.distributedTracing.samplingrate }}
     endpoint:
     {{- if not .Values.analyticsConfig.timeseries.metrics.enableNativeScrape }}
-      server: {{ include "analytics.server" . | quote }}
+      metrics:
+        service: {{ .Values.analyticsConfig.endpoint.metrics.service | quote }}
     {{- end }}
-      service: {{ .Values.analyticsConfig.endpoint.service | quote }}
+      transactions:
+        service: {{ .Values.analyticsConfig.endpoint.transactions.service | quote }}
     timeseries:
       port: {{ .Values.analyticsConfig.timeseries.port }}
       metrics:

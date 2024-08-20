@@ -94,6 +94,13 @@ spec:
 {{- end }}
         - name: "EULA"
           value: "{{ .Values.license.accept }}"
+{{- if .Values.openshift }}
+        - name: "PLATFORM"
+          value: "OPENSHIFT"
+{{- else }}
+        - name: "PLATFORM"
+          value: "KUBERNETES"
+{{- end  }}
         - name: "NS_APPS_NAME_PREFIX"
           value: {{ .Values.entityPrefix | default "k8s"| quote }}
         args:

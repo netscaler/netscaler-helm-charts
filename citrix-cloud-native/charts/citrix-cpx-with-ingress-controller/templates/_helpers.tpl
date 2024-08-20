@@ -1,16 +1,3 @@
-{{/* vim: set filetype=mustache: */}}
-{{/*
-Analytics Server IP or DNS
-*/}}
-{{- define "analytics.server" -}}
-{{- if .Values.analyticsConfig.endpoint.server -}}
-{{- printf .Values.analyticsConfig.endpoint.server -}}
-{{- else -}}
-{{- printf "analytics.%s.svc.cluster.local" .Release.Namespace -}}
-{{- end -}}
-{{- end -}}
-
-
 {{- define "citrix-cpx-ingress-controller.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
 {{- end -}}

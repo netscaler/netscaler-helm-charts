@@ -195,6 +195,13 @@ spec:
           - name: "NAMESPACE_LABELS"
             value: {{ .Values.namespaceLabels | quote }}
 {{- end }}
+{{- if .Values.openshift }}
+          - name: "PLATFORM"
+            value: "OPENSHIFT"
+{{- else }}
+          - name: "PLATFORM"
+            value: "KUBERNETES"
+{{- end  }}
 {{- if .Values.cpxBgpRouter }}
 {{- if eq (upper .Values.nsProtocol) "HTTPS" }}
           - name: NS_PROTOCOL

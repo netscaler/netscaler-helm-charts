@@ -5,7 +5,7 @@
 # NetScaler Ingress Controller config details
 imageRegistry: quay.io
 imageRepository: citrix/citrix-k8s-ingress-controller
-imageTag: 1.43.7
+imageTag: 2.0.6
 image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
 pullPolicy: IfNotPresent
 imagePullSecrets: []
@@ -129,8 +129,10 @@ analyticsConfig:
     enable: false
     samplingrate: 100
   endpoint:
-    server:
-    service:
+    metrics:
+      service: ""
+    transactions:
+      service: ""
   timeseries:
     port: 30002
     metrics:

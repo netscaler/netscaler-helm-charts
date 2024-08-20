@@ -50,6 +50,13 @@ spec:
               key: password
 {{- end }}
 {{- end }}
+{{- if .Values.openshift }}
+        - name: "PLATFORM"
+          value: "OPENSHIFT"
+{{- else }}
+        - name: "PLATFORM"
+          value: "KUBERNETES"
+{{- end  }}
         - name: "CLEANUP_GSLB_SITE_CONFIG"
           value: {{ .Values.cleanup_gslb_site_config | default "false" | quote }}
         - name: "LOGLEVEL"

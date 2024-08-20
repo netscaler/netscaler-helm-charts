@@ -1,25 +1,5 @@
 {{/* vim: set filetype=mustache: */}}
 {{/*
-Analytics Server IP or DNS
-*/}}
-{{- define "analytics.server" -}}
-{{- if .Values.analyticsConfig.endpoint.server -}}
-{{- printf .Values.analyticsConfig.endpoint.server -}}
-{{- else -}}
-{{- $nodeList := (lookup "v1" "Node" "" "").items }}
-{{- if $nodeList }}
-{{- $nodeIPs := (first $nodeList).status.addresses }}
-{{- if $nodeIPs }}
-{{- $addresses := first $nodeIPs }}
-{{- printf "%s" ($addresses).address -}}
-{{- end -}}
-{{- end -}}
-{{- end -}}
-{{- end -}}
-
-
-{{/* vim: set filetype=mustache: */}}
-{{/*
 Expand the name of the chart.
 */}}
 {{- define "citrix-ingress-controller.name" -}}

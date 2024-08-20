@@ -171,10 +171,10 @@ The following components are installed:
 
    2. Deploy NetScaler CPX with NetScaler ingress controller using helm command:
 
-	helm install my-release netscaler/netscaler-cpx-with-ingress-controller --set license.accept=yes,analyticsConfig.required=true,analyticsConfig.timeseries.metrics.enable=true,analyticsConfig.distributedTracing.enable=true,analyticsConfig.endpoint.server=<ADM-Agent-IP>,ADMSettings.ADMIP=<ADM-Agent-IP>,ADMSettings.loginSecret=<Secret-for-ADM-Agent-credentials>
+	helm install my-release netscaler/netscaler-cpx-with-ingress-controller --set license.accept=yes,analyticsConfig.required=true,analyticsConfig.timeseries.metrics.enable=true,analyticsConfig.distributedTracing.enable=true,analyticsConfig.endpoint.metrics.service=<ADM-Agent-IP>,ADMSettings.ADMIP=<ADM-Agent-IP>,ADMSettings.loginSecret=<Secret-for-ADM-Agent-credentials>
 
 > **Note:**
-> If container agent is being used here for NetScaler ADM, please provide `svcIP` of container agent in the `analyticsConfig.endpoint.server` parameter.
+> If container agent is being used here for NetScaler ADM, please provide `svcIP` of container agent in the `analyticsConfig.endpoint.metrics.service` parameter.
 
 ## NetScaler CPX DaemonSet with NetScaler Ingress Controller as sidecar for BGP Advertisement
 
@@ -482,9 +482,9 @@ kubectl create secret generic admlogin --from-literal=username=<adm-agent-userna
 ```
 helm repo add netscaler https://netscaler.github.io/netscaler-helm-charts/
 
-helm install my-release netscaler/netscaler-cpx-with-ingress-controller  --set license.accept=yes,analyticsConfig.required=true,analyticsConfig.distributedTracing.enable=true,analyticsConfig.endpoint.service=<Namespace/ADM_ServiceName-logstream>,ADMSettings.ADMIP=<ADM-Agent-IP_OR_FQDN>,ADMSettings.loginSecret=<Secret-for-ADM-Agent-credentials>,analyticsConfig.transactions.enable=true,analyticsConfig.transactions.port=5557
+helm install my-release netscaler/netscaler-cpx-with-ingress-controller  --set license.accept=yes,analyticsConfig.required=true,analyticsConfig.distributedTracing.enable=true,analyticsConfig.endpoint.transactions.service=<Namespace/ADM_ServiceName-logstream>,ADMSettings.ADMIP=<ADM-Agent-IP_OR_FQDN>,ADMSettings.loginSecret=<Secret-for-ADM-Agent-credentials>,analyticsConfig.transactions.enable=true,analyticsConfig.transactions.port=5557
 ```
-|Note: For container based ADM agent, please provide the logstream service FQDN in `analyticsConfig.endpoint.service`. The `logstream` service will be running on port `5557`.
+|Note: For container based ADM agent, please provide the logstream service FQDN in `analyticsConfig.endpoint.transactions.service`. The `logstream` service will be running on port `5557`.
 
 #### Analytics Configuration required for NSOE
 
@@ -495,7 +495,7 @@ Deploy NetScaler CPX with NSIC using helm command:
 ```
 helm repo add netscaler https://netscaler.github.io/netscaler-helm-charts/
 
-helm install my-release netscaler/netscaler-cpx-with-ingress-controller  --set license.accept=yes,analyticsConfig.required=true,analyticsConfig.timeseries.metrics.enable=true,analyticsConfig.timeseries.port=5563,analyticsConfig.timeseries.metrics.mode=prometheus,analyticsConfig.transactions.enable=true,analyticsConfig.transactions.port=5557,analyticsConfig.distributedTracing.enable=true,analyticsConfig.endpoint.server=<NSOE_SERVICE_IP>,analyticsConfig.endpoint.service=<Namespace/NSOE_SERVICE_NAME>
+helm install my-release netscaler/netscaler-cpx-with-ingress-controller  --set license.accept=yes,analyticsConfig.required=true,analyticsConfig.timeseries.metrics.enable=true,analyticsConfig.timeseries.port=5563,analyticsConfig.timeseries.metrics.mode=prometheus,analyticsConfig.transactions.enable=true,analyticsConfig.transactions.port=5557,analyticsConfig.distributedTracing.enable=true,analyticsConfig.endpoint.metrics.service=<NSOE_SERVICE_IP>,analyticsConfig.endpoint.transactions.service=<Namespace/NSOE_SERVICE_NAME>
 ```
 
 #### Analytics Configuration required for export of metrics to Prometheus
@@ -612,7 +612,7 @@ The following table lists the configurable parameters of the NetScaler CPX with 
 | hostName | Optional | N/A | This entity will be used to set Hostname of the CPX |
 | nsic.imageRegistry                   | Mandatory  |  `quay.io`               |  The NetScaler ingress controller image registry             |  
 | nsic.imageRepository                 | Mandatory  |  `netscaler/netscaler-k8s-ingress-controller`              |   The NetScaler ingress controller image repository             | 
-| nsic.imageTag                  | Mandatory  |  `1.43.7`               |   The NetScaler ingress controller image tag            | 
+| nsic.imageTag                  | Mandatory  |  `2.0.6`               |   The NetScaler ingress controller image tag            | 
 | nsic.pullPolicy | Mandatory | IfNotPresent | The NetScaler ingress controller image pull policy. |
 | nsic.required | Mandatory | true | NSIC to be run as sidecar with NetScaler CPX |
 | nsic.enableLivenessProbe| Optional | True | Enable liveness probe settings for NetScaler Ingress Controller |
@@ -694,8 +694,8 @@ The following table lists the configurable parameters of the NetScaler CPX with 
  analyticsConfig.required | Mandatory | false | Set this to true if you want to configure NetScaler to send metrics and transaction records to analytics service. |
 | analyticsConfig.distributedTracing.enable | Optional | false | Set this value to true to enable OpenTracing in NetScaler. |
 | analyticsConfig.distributedTracing.samplingrate | Optional | 100 | Specifies the OpenTracing sampling rate in percentage. |
-| analyticsConfig.endpoint.server | Optional | N/A | Set this value as the IP address or DNS address of the  analytics server. |
-| analyticsConfig.endpoint.service | Optional | N/A | Set this value as the IP address or service name with namespace of the analytics service deployed in Kuberenetes. Format: namespace/servicename|
+| analyticsConfig.endpoint.metrics.service | Optional | N/A | Set this value as the IP address or DNS address of the  analytics server. Format: servicename.namespace, servicename.namespace.svc.cluster.local, namespace/servicename *** This value replaces the analyticsConfig.endpoint.server value used earlier. *** |
+| analyticsConfig.endpoint.transactions.service | Optional | N/A | Set this value as the IP address or service name with namespace of the analytics service deployed in k8s environment. Format: namespace/servicename *** This value replaces the analyticsConfig.endpoint.service value used earlier. *** |
 | analyticsConfig.timeseries.port | Optional | 5563 | Specify the port used to expose analytics service for timeseries endpoint. |
 | analyticsConfig.timeseries.metrics.enable | Optional | Set this value to true to enable sending metrics from NetScaler. |
 | analyticsConfig.timeseries.metrics.mode | Optional | avro |  Specifies the mode of metric endpoint. |
