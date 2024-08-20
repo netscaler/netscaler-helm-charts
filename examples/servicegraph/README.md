@@ -133,7 +133,7 @@ Download the consolidated YAML file which can deploy NetScaler ingress controlle
 
 Update `cic.nsIP` with the NetScaler device/management IP address in `values.yaml`.
 
-**Update**  `cic.analyticsConfig.endpoint.service` with the `NetScaler ADM service name with namespace as "namespace/service_name>" eg: default/adm-svc` in `values.yaml`.
+**Update**  `cic.analyticsConfig.endpoint.transactions.service` with the `NetScaler ADM service name with namespace as "namespace/service_name>" eg: default/adm-svc` in `values.yaml`.
 
 ## To configure the Tier-2 NetScaler CPX using NSIC:
 
@@ -143,7 +143,7 @@ Use the following command to list the service IP address for NetScaler ADM Agent
 
     kubectl get svc admagent -o wide 
 
-Update the `cpx.analyticsConfig.endpoint.service` with the `NetScaler ADM service name with namespace as "namespace/service_name>" eg: default/adm-svc` and `ADMIP` with the `Cluster IP` of NetScaler ADM agent in `values.yaml`.
+Update the `cpx.analyticsConfig.endpoint.transactions.service` with the `NetScaler ADM service name with namespace as "namespace/service_name>" eg: default/adm-svc` and `ADMIP` with the `Cluster IP` of NetScaler ADM agent in `values.yaml`.
 
 After updating the `values.yaml`, deploy NetScaler dual Tier deployment using the following commands:
   

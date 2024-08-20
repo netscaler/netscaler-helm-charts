@@ -128,6 +128,8 @@ spec:
 {{- end }}
         - name: "NS_APPS_NAME_PREFIX"
           value: {{ .Values.entityPrefix | default "k8s"| quote }}
+        - name: "NS_MC_PREFIX"
+          value: {{ .Values.multiClusterPrefix | default "mc"| quote }}
 {{- if .Values.kubernetesURL }}
         - name: "kubernetes_url"
           value: "{{ .Values.kubernetesURL }}"
@@ -162,6 +164,13 @@ spec:
 {{- end  }}
         - name: "BGP_ADVERTISEMENT"
           value: {{ .Values.bgpAdvertisement | quote }}
+{{- if .Values.openshift }}
+        - name: "PLATFORM"
+          value: "OPENSHIFT"
+{{- else }}
+        - name: "PLATFORM"
+          value: "KUBERNETES"
+{{- end  }}
         resources:
             {{- toYaml .Values.resources | nindent 12 }}
         {{- if ne (len .Values.extraVolumeMounts) 0 }}

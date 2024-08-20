@@ -84,7 +84,7 @@ servicePorts: []
 nsic:
   imageRegistry: quay.io
   imageRepository: netscaler/netscaler-k8s-ingress-controller
-  imageTag: 1.43.7
+  imageTag: 2.0.6
   image: "{{ .Values.nsic.imageRegistry }}/{{ .Values.nsic.imageRepository }}:{{ .Values.nsic.imageTag }}"
   pullPolicy: IfNotPresent
   required: true
@@ -205,8 +205,10 @@ analyticsConfig:
     enable: false
     samplingrate: 100
   endpoint:
-    server: ""
-    service: ""
+    metrics:
+      service: ""
+    transactions:
+      service: ""
   timeseries:
     port: 5563
     metrics:

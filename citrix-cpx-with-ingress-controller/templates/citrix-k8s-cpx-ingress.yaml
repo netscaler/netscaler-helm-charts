@@ -261,6 +261,13 @@ spec:
           - name: "OPTIMIZE_ENDPOINT_BINDING"
             value: "{{ .Values.optimizeEndpointBinding }}"
 {{- end }} 
+{{- if .Values.openshift }}
+          - name: "PLATFORM"
+            value: "OPENSHIFT"
+{{- else }}
+          - name: "PLATFORM"
+            value: "KUBERNETES"
+{{- end  }}
 {{- if .Values.cpxBgpRouter }}
           securityContext:
             runAsUser: 0

@@ -3,7 +3,7 @@ cic:
 
   imageRegistry: quay.io
   imageRepository: citrix/citrix-k8s-ingress-controller
-  imageTag: 1.43.7
+  imageTag: 2.0.6
   image: "{{ .Values.cic.imageRegistry }}/{{ .Values.cic.imageRepository }}:{{ .Values.cic.imageTag }}"
   pullPolicy: IfNotPresent
   imagePullSecrets: []
@@ -120,8 +120,10 @@ cic:
       enable: false
       samplingrate: 100
     endpoint:
-      server:
-      service:
+      metrics:
+        service: ""
+      transactions:
+        service: ""
     timeseries:
       port: 30002
       metrics:
@@ -218,7 +220,7 @@ gslb:
 
   imageRegistry: quay.io
   imageRepository: citrix/citrix-k8s-ingress-controller
-  imageTag: 1.43.8
+  imageTag: 2.0.6
   image: "{{ .Values.gslb.imageRegistry }}/{{ .Values.gslb.imageRepository }}:{{ .Values.gslb.imageTag }}"
   pullPolicy: IfNotPresent
   openshift: false
@@ -324,7 +326,7 @@ cpx:
   cic:
     imageRegistry: quay.io
     imageRepository: citrix/citrix-k8s-ingress-controller
-    imageTag: 1.43.7
+    imageTag: 2.0.6
     image: "{{ .Values.cpx.cic.imageRegistry }}/{{ .Values.cpx.cic.imageRepository }}:{{ .Values.cpx.cic.imageTag }}"
     pullPolicy: IfNotPresent
     required: true
@@ -367,6 +369,7 @@ cpx:
       failureThreshold: 3
       successThreshold: 1
   entityPrefix:
+  multiClusterPrefix:
   license:
     accept: no
   ingressClass:

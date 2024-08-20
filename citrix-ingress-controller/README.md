@@ -187,10 +187,10 @@ The following components are installed:
 
    2. Deploy NetScaler ingress controller using helm command:
 
-	helm install my-release citrix/citrix-ingress-controller --set nsIP=<NSIP>,nsVIP=<NSVIP>,license.accept=yes,adcCredentialSecret=<Secret-of-NetScaler-credentials>,analyticsConfig.required=true,analyticsConfig.timeseries.metrics.enable=true,analyticsConfig.timeseries.port=5563,analyticsConfig.distributedTracing.enable=true,analyticsConfig.transactions.enable=true,analyticsConfig.transactions.port=5557,analyticsConfig.endpoint.server=<ADM-Agent-IP>
+	helm install my-release citrix/citrix-ingress-controller --set nsIP=<NSIP>,nsVIP=<NSVIP>,license.accept=yes,adcCredentialSecret=<Secret-of-NetScaler-credentials>,analyticsConfig.required=true,analyticsConfig.timeseries.metrics.enable=true,analyticsConfig.timeseries.port=5563,analyticsConfig.distributedTracing.enable=true,analyticsConfig.transactions.enable=true,analyticsConfig.transactions.port=5557,analyticsConfig.endpoint.metrics.service=<ADM-Agent-IP>
 
 > **Note:**
-> If container agent is being used here for NetScaler ADM, please provide `podIP` of container agent in the `analyticsConfig.endpoint.server` parameter.
+> If container agent is being used here for NetScaler ADM, please provide `podIP` of container agent in the `analyticsConfig.endpoint.metrics.service` parameter.
 
 ## CRDs configuration
 
@@ -342,7 +342,7 @@ The following table lists the mandatory and optional parameters that you can con
 | license.accept | Mandatory | no | Set `yes` to accept the NSIC end user license agreement. |
 | imageRegistry                   | Mandatory  |  `quay.io`               |  The NetScaler ingress controller image registry             |  
 | imageRepository                 | Mandatory  |  `citrix/citrix-k8s-ingress-controller`              |   The NetScaler ingress controller image repository             | 
-| imageTag                  | Mandatory  |  `1.43.7`               |   The NetScaler ingress controller image tag            | 
+| imageTag                  | Mandatory  |  `2.0.6`               |   The NetScaler ingress controller image tag            | 
 | pullPolicy | Mandatory | IfNotPresent | The NSIC image pull policy. |
 | imagePullSecrets | Optional | N/A | Provide list of Kubernetes secrets to be used for pulling the images from a private Docker registry or repository. For more information on how to create this secret please see [Pull an Image from a Private Registry](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/). |
 | nameOverride | Optional | N/A | String to partially override deployment fullname template with a string (will prepend the release name) |
@@ -385,6 +385,7 @@ The following table lists the mandatory and optional parameters that you can con
 | disableAPIServerCertVerify | Optional | False | Set this parameter to True for disabling API Server certificate verification. |
 | logProxy | Optional | N/A | Provide Elasticsearch or Kafka or Zipkin endpoint for NetScaler observability exporter. |
 | entityPrefix | Optional | k8s | The prefix for the resources on the NetScaler VPX/MPX. |
+| multiClusterPrefix | Optional | mc | The prefix for the shared resources on the Citrix ADC VPX/MPX for multicluster ingress feature. Ingress Controllers that are collaboratively sharing the csvserver IP should be configured with same value for multiclusterPrefix. For more information see [this](https://docs.netscaler.com/en-us/netscaler-k8s-ingress-controller/deploy/multicluster-ingress) |
 | updateIngressStatus | Optional | True | Set this argurment if `Status.LoadBalancer.Ingress` field of the Ingress resources managed by the NetScaler ingress controller needs to be updated with allocated IP addresses. For more information see [this](https://github.com/netscaler/netscaler-k8s-ingress-controller/blob/master/docs/configure/ingress-classes.md#updating-the-ingress-status-for-the-ingress-resources-with-the-specified-ip-address). |
 | routeLabels | Optional | proxy in (<Release name of helm chart>) | You can use this parameter to provide the route labels selectors to be used by NetScaler Ingress Controller for routeSharding in OpenShift cluster. |
 | namespaceLabels | Optional | N/A | You can use this parameter to provide the namespace labels selectors to be used by NetScaler Ingress Controller for routeSharding in OpenShift cluster. |
@@ -407,8 +408,8 @@ The following table lists the mandatory and optional parameters that you can con
 | analyticsConfig.required | Mandatory | false | Set this to true if you want to configure NetScaler to send metrics and transaction records to analytics . |
 | analyticsConfig.distributedTracing.enable | Optional | false | Set this value to true to enable OpenTracing in NetScaler. |
 | analyticsConfig.distributedTracing.samplingrate | Optional | 100 | Specifies the OpenTracing sampling rate in percentage. |
-| analyticsConfig.endpoint.server | Optional | N/A | Set this value as the IP address or DNS address of the  analytics server. |
-| analyticsConfig.endpoint.service | Optional | N/A | Set this value as the IP address or service name with namespace of the analytics service deployed in k8s environment. Format: namespace/servicename |
+| analyticsConfig.endpoint.metrics.service | Optional | N/A | Set this value as the IP address or DNS address of the  analytics server. Format: servicename.namespace, servicename.namespace.svc.cluster.local, namespace/servicename *** This value replaces the analyticsConfig.endpoint.server value used earlier. *** |
+| analyticsConfig.endpoint.transactions.service | Optional | N/A | Set this value as the IP address or service name with namespace of the analytics service deployed in k8s environment. Format: namespace/servicename *** This value replaces the analyticsConfig.endpoint.service value used earlier. *** |
 | analyticsConfig.timeseries.port | Optional | 30002 | Specify the port used to expose analytics service outside cluster for timeseries endpoint. |
 | analyticsConfig.timeseries.metrics.enable | Optional | False | Set this value to true to enable sending metrics from NetScaler. |
 | analyticsConfig.timeseries.metrics.mode | Optional | avro |  Specifies the mode of metric endpoint. |
