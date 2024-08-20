@@ -242,7 +242,7 @@ The following table lists the configurable parameters of the NetScaler CPX with 
 | license.accept | Mandatory | no | Set `yes` to accept the NetScaler ingress controller end user license agreement. |
 | imageRegistry                   | Mandatory  |  `quay.io`               |  The NetScaler CPX image registry             |  
 | imageRepository                 | Mandatory  |  `citrix/citrix-k8s-cpx-ingress`              |   The NetScaler CPX image repository             | 
-| imageTag                  | Mandatory  |  `14.1-25.109`               |   The NetScaler CPX image tag            |
+| imageTag                  | Mandatory  |  `14.1-25.111`               |   The NetScaler CPX image tag            |
 | pullPolicy | Mandatory | IfNotPresent | The NetScaler CPX image pull policy. |
 | hostName | Optional | N/A | This entity will be used to set Hostname of the CPX |
 | cic.imageRegistry                   | Mandatory  |  `quay.io`               |  The NetScaler ingress controller image registry             |  
