@@ -4,7 +4,7 @@
 
 imageRegistry: quay.io
 imageRepository: citrix/citrix-observability-exporter
-imageTag: 1.9.001
+imageTag: 1.10.001
 image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
 pullPolicy: IfNotPresent
 fullnameOverride: ""
