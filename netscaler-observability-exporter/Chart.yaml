@@ -1,8 +1,8 @@
 apiVersion: v2
-appVersion: "1.9.001"
+appVersion: "1.10.001"
 description: A Helm chart for NetScaler Observability Exporter
 name: netscaler-observability-exporter
-version: 1.9.001
+version: 1.10.001
 icon: https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/gh-pages/netscaler.png 
 home: https://www.cloud.com
 sources:
