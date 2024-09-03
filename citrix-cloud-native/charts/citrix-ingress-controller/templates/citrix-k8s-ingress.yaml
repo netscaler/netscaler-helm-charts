@@ -9,8 +9,7 @@ spec:
 {{- if .Values.openshift }}
       router: {{ include "citrix-ingress-controller.fullname" . }}
 {{- else }}
-      app: {{ include "citrix-ingress-controller.
-      fullname" . }}
+      app: {{ include "citrix-ingress-controller.fullname" . }}
 {{- end }}
   replicas: 1
   template:
@@ -94,7 +93,7 @@ spec:
         - name: "NS_NITRO_READ_TIMEOUT"
           value: "{{ .Values.nitroReadTimeout }}"
 {{- end }}
-{{-f if .Values.enableLivenessProbe }}
+{{- if .Values.enableLivenessProbe }}
         - name: "LIVENESS_FILE_PATH"
           value: '/tmp/liveness_path.log'
 {{- end }}
@@ -162,8 +161,6 @@ spec:
         - name: "NODE_LABELS"
           value: "{{ .Values.nodeLabels }}"
 {{- end  }}
-        - name: "BGP_ADVERTISEMENT"
-          value: {{ .Values.bgpAdvertisement | quote }}
 {{- if .Values.openshift }}
         - name: "PLATFORM"
           value: "OPENSHIFT"
@@ -171,6 +168,8 @@ spec:
         - name: "PLATFORM"
           value: "KUBERNETES"
 {{- end  }}
+        - name: "BGP_ADVERTISEMENT"
+          value: {{ .Values.bgpAdvertisement | quote }}
         resources:
             {{- toYaml .Values.resources | nindent 12 }}
         {{- if ne (len .Values.extraVolumeMounts) 0 }}

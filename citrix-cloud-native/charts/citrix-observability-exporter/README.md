@@ -76,7 +76,7 @@ The following table lists the mandatory and optional parameters that you can con
 | coe.license.accept | Mandatory | no | Set `yes` to accept the NSIC end user license agreement. |
 | coe.imageRegistry                   | Mandatory  |  `quay.io`               |  The NSOE image registry             |  
 | coe.imageRepository                 | Mandatory  |  `citrix/citrix-observability-exporter`              |   The NSOE image repository             | 
-| coe.imageTag                  | Mandatory  |  `1.9.001`               |   The NSOE image tag            |
+| coe.imageTag                  | Mandatory  |  `1.10.001`               |   The NSOE image tag            |
 | coe.pullPolicy | Mandatory | IfNotPresent | The NSOE image pull policy. |
 | coe.nodePortRequired | Optional | false | Set true to create a nodeport NSOE service. |
 | coe.headless | Optional | false | Set true to create Headless service. |

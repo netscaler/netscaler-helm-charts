@@ -788,7 +788,7 @@ coe:
   enabled: False
   imageRegistry: quay.io
   imageRepository: citrix/citrix-observability-exporter
-  imageTag: 1.9.001
+  imageTag: 1.10.001
   image: "{{ .Values.coe.imageRegistry }}/{{ .Values.coe.imageRepository }}:{{ .Values.coe.imageTag }}"
   pullPolicy: IfNotPresent
   fullnameOverride: ""
