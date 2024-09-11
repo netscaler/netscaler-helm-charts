@@ -210,12 +210,21 @@ spec:
                                 - http
                                 - https
                                 description: "Type of probe to determine the health of GSLB endpoint"
-                              customHeader:
-                                type: string
-                                description: "Custom header for monitoring"
                               uri:
                                 type: string
                                 description: "Path to be probed for the health of GSLB endpoint in case of http and https"
+                              destinationPort:
+                                type: integer
+                                minimum: 0
+                                maximum: 65535
+                                description: "Destination port for monitoring"
+                              sni:
+                                type: boolean
+                              commonName:
+                                type: string
+                              customHeader:
+                                type: string
+                                description: "Custom header for monitoring"
                               respCode:
                                 x-kubernetes-int-or-string: true
                                 anyOf:

@@ -14,15 +14,15 @@ maintainers:
   email: subash.dangol@cloud.com
 dependencies:
   - name: citrix-ingress-controller
-    version: "2.0.6"
+    version: "2.1.4"
     condition: cic.enabled
     alias: cic
   - name: citrix-cpx-with-ingress-controller
-    version: "2.0.6"
+    version: "2.1.4"
     condition: cpx.enabled
     alias: cpx
   - name: citrix-gslb-controller
-    version: "2.0.6"
+    version: "2.1.4"
     condition: gslb.enabled
     alias: gslb
   - name: citrix-node-controller
