@@ -1,9 +1,10 @@
 apiVersion: v2
-appVersion: "2.0.6"
+appVersion: "2.1.4"
 kubeVersion: ">=v1.16.0-0"
 description: A Helm chart for NetScaler CPX with NetScaler ingress Controller running as sidecar.
 name: citrix-cpx-with-ingress-controller
-version: 2.0.6
+version: 2.1.4
+deprecated: true
 icon: https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/gh-pages/netscaler.png
 home: https://www.cloud.com
 sources:
