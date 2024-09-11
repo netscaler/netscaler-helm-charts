@@ -10,3 +10,4 @@ name: citrix-node-controller
 sources:
 - https://github.com/netscaler/netscaler-k8s-node-controller
 version: 2.2.12
+deprecated: true

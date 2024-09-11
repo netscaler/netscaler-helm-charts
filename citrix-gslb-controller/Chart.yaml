@@ -3,6 +3,7 @@ appVersion: "2.1.4"
 description: A Helm chart for NetScaler GSLB Controller configuring MPX/VPX.
 name: citrix-gslb-controller
 version: 2.1.4
+deprecated: true
 icon: https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/gh-pages/netscaler.png
 home: https://www.cloud.com
 maintainers:
