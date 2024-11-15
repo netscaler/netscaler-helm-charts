@@ -30,3 +30,47 @@ spec:
         - name: "REUSE_INGRESS_VIP"
           value: {{ .Values.reuseIngressVip | squote }}
 {{- end }}
+{{- if .Values.infoblox.enabled}}
+        # Cluster name is used to identify the cluster in which the IPAM controller is deployed. This is required
+        - name: "CLUSTER_NAME"
+          value: {{ required "Provide a Cluster name where IPAM Controller is deployed" .Values.cluster | squote }}
+        - name: "IPAM_PROVIDER"
+          value: "infoblox"
+        - name: "INFOBLOX_GRID_HOST"
+          value: {{ required "Provide Infoblox Grid Host IP or FQDN" .Values.infoblox.gridHost | squote }}
+        - name: "INFOBLOX_USERNAME"
+          valueFrom:
+            secretKeyRef:
+              name: {{ required "Provide Infoblox credential Secret" .Values.infoblox.credentialSecret }}
+              key: username
+        - name: "INFOBLOX_PASSWORD"
+          valueFrom:
+            secretKeyRef:
+              name: {{ required "Provide Infoblox credential Secret" .Values.infoblox.credentialSecret }}
+              key: password
+{{- if .Values.infoblox.httpTimeout }}
+        - name: "HTTP_TIMEOUT"
+          value: {{ .Values.infoblox.httpTimeout | squote }}
+{{ else }}
+        - name: "HTTP_TIMEOUT"
+          value: "10"
+{{- end }}
+{{- if .Values.infoblox.maxRetries }}
+        - name: "MAX_RETRIES"
+          value: {{ .Values.infoblox.maxRetries | squote }}
+{{ else }}
+        - name: "MAX_RETRIES"
+          value: "3"
+{{- end }}
+{{- if .Values.infoblox.netView }}
+        # InfoBlox NetView is used to identify the network view. If this is not given, the default network view is used
+        - name: "INFOBLOX_NETVIEW"
+          value: {{ .Values.infoblox.netView | squote }}
+{{ else }}
+        - name: "INFOBLOX_NETVIEW"
+          value: "default"
+{{- end }} 
+        # InfoBlox Network Range is used to identify the network range from where IPs will be assigned. There should not be a conflict with the existing IPs
+        - name: "INFOBLOX_NETWORKS"
+          value: {{ required "Provide IPs or IP range for Infoblox in CIDR form" .Values.infoblox.vipRange | squote }}
+{{- end }}

@@ -612,7 +612,7 @@ The following table lists the configurable parameters of the NetScaler CPX with 
 | hostName | Optional | N/A | This entity will be used to set Hostname of the CPX |
 | nsic.imageRegistry                   | Mandatory  |  `quay.io`               |  The NetScaler ingress controller image registry             |  
 | nsic.imageRepository                 | Mandatory  |  `netscaler/netscaler-k8s-ingress-controller`              |   The NetScaler ingress controller image repository             | 
-| nsic.imageTag                  | Mandatory  |  `2.1.4`               |   The NetScaler ingress controller image tag            | 
+| nsic.imageTag                  | Mandatory  |  `2.2.10`               |   The NetScaler ingress controller image tag            | 
 | nsic.pullPolicy | Mandatory | IfNotPresent | The NetScaler ingress controller image pull policy. |
 | nsic.required | Mandatory | true | NSIC to be run as sidecar with NetScaler CPX |
 | nsic.enableLivenessProbe| Optional | True | Enable liveness probe settings for NetScaler Ingress Controller |
@@ -653,7 +653,7 @@ The following table lists the configurable parameters of the NetScaler CPX with 
 | entityPrefix | Optional | k8s | The prefix for the resources on the NetScaler CPX. |
 | ingressClass | Optional | N/A | If multiple ingress load balancers are used to load balance different ingress resources. You can use this parameter to specify NetScaler ingress controller to configure NetScaler associated with specific ingress class. For more information on Ingress class, see [Ingress class support](https://docs.netscaler.com/en-us/citrix-k8s-ingress-controller/configure/ingress-classes/). For Kubernetes version >= 1.19, this will create an IngressClass object with the name specified here  |
 | setAsDefaultIngressClass | Optional | False | Set the IngressClass object as default. New Ingresses without an "ingressClassName" field specified will be assigned the class specified in ingressClass. Applicable only for kubernetes versions >= 1.19 |
-| updateIngressStatus | Optional | False | Set this argument if you want to update ingress status of the ingress resources exposed via CPX. This is only applicable if servicetype of CPX service is LoadBalancer. |
+| updateIngressStatus | Optional | False | Set this argument if you want to update ingress status of the ingress resources exposed via CPX. |
 | disableAPIServerCertVerify | Optional | False | Set this parameter to True for disabling API Server certificate verification. |
 | openshift | Optional | false | Set this argument if OpenShift environment is being used. |
 | disableOpenshiftRoutes | false | By default Openshift routes are processed in openshift environment, this variable can be used to disable Ingress controller processing the openshift routes. |

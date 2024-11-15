@@ -4,7 +4,7 @@
 
 imageRegistry: quay.io
 imageRepository: netscaler/netscaler-ipam-controller
-imageTag: 1.2.0
+imageTag: 2.0.1
 image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
 pullPolicy: IfNotPresent
 
@@ -12,6 +12,16 @@ vipRange:
 nameOverride: ""
 fullnameOverride: ""
 reuseIngressVip: "True"
+
+cluster: ""
+infoblox:
+  enabled: false
+  gridHost: ""
+  credentialSecret: ""
+  httpTimeout: ""
+  maxRetries: ""
+  netView: ""
+  vipRange:
 
 serviceAccount:
   # Specifies whether a service account should be created
