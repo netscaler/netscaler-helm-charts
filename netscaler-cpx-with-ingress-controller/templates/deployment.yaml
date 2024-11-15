@@ -158,6 +158,8 @@ spec:
           - name: "LIVENESS_FILE_PATH"
             value: '/tmp/liveness_path.log'
 {{- end }}
+          - name: "ENABLE_LIVENESS_PROBE"
+            value: {{ .Values.nsic.enableLivenessProbe | quote }}
 {{- if .Values.analyticsConfig.timeseries.metrics.enableNativeScrape }}
           - name: "PROM_USER"
             valueFrom:
@@ -305,13 +307,8 @@ spec:
               {{ .Release.Namespace }}/{{ .Values.defaultSSLSNICertSecret }}
 {{- end }}
 {{- if .Values.updateIngressStatus }}
-{{- if .Values.cpxBgpRouter }}
             - --update-ingress-status
               yes
-{{- else }}
-            - --cpx-service
-              {{ .Release.Namespace }}/{{ include "cpxservice.fullname" . }}
-{{- end }}
 {{- end }}
           volumeMounts:
             - mountPath: /var/deviceinfo
@@ -399,6 +396,7 @@ metadata:
   labels:
     app: cpx-service
     service-type: {{ include "cpxservicemonitorlabel" . }}
+    cpx: {{ include "netscaler-cpx-ingress-controller.fullname" . }}
 {{- if .Values.serviceAnnotations }}
   annotations:
 {{- with .Values.serviceAnnotations }}
@@ -406,15 +404,16 @@ metadata:
 {{- end }}
 {{- end }}
 spec:
-{{- if or .Values.serviceType.loadBalancer.enabled ( and (.Values.updateIngressStatus) (not .Values.cpxBgpRouter)) }}
+{{- if or .Values.serviceType.loadBalancer.enabled .Values.serviceType.nodePort.enabled }}
   externalTrafficPolicy: {{ .Values.serviceSpec.externalTrafficPolicy }}
+{{- end }}
+{{- if .Values.serviceType.loadBalancer.enabled }}
   type: LoadBalancer
 {{- if .Values.serviceSpec.loadBalancerIP }}
   loadBalancerIP: {{ .Values.serviceSpec.loadBalancerIP }}
 {{- end }}
 {{- else if .Values.serviceType.nodePort.enabled }}
   type: NodePort
-  externalTrafficPolicy: {{ .Values.serviceSpec.externalTrafficPolicy }}
 {{- end }}
 {{- if and .Values.serviceType.loadBalancer.enabled .Values.serviceSpec.loadBalancerSourceRanges }}
   loadBalancerSourceRanges:

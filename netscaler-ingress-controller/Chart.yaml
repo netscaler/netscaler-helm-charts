@@ -1,9 +1,9 @@
 apiVersion: v2
-appVersion: "2.1.4"
+appVersion: "2.2.10"
 kubeVersion: ">=v1.16.0-0"
 description: A Helm chart for NetScaler Ingress Controller configuring MPX/VPX.
 name: netscaler-ingress-controller
-version: 2.1.4
+version: 2.2.10
 icon: https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/gh-pages/netscaler.png
 home: https://www.netscaler.com
 sources:

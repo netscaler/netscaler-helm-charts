@@ -11,7 +11,7 @@ pullPolicy: IfNotPresent
 imagePullSecrets: []
 daemonSet: False
 nameOverride: ""
-replicaCount: 1
+replicaCount: 2 
 fullnameOverride: ""
 mgmtHttpPort: 9080
 mgmtHttpsPort: 9443
@@ -56,8 +56,6 @@ disableAPIServerCertVerify: False
 
 cpxLicenseAggregator: ""
 
-sslCertManagedByAWS: False
-
 nodeSelector:
   key: ""
   value: ""
@@ -84,7 +82,7 @@ servicePorts: []
 nsic:
   imageRegistry: quay.io
   imageRepository: netscaler/netscaler-k8s-ingress-controller
-  imageTag: 2.1.4
+  imageTag: 2.2.10
   image: "{{ .Values.nsic.imageRegistry }}/{{ .Values.nsic.imageRepository }}:{{ .Values.nsic.imageTag }}"
   pullPolicy: IfNotPresent
   required: true
@@ -127,10 +125,10 @@ nsic:
     failureThreshold: 3
     successThreshold: 1
 
-entityPrefix: ""
+entityPrefix: "sub"
 license:
-  accept: no
-ingressClass: []
+  accept: yes 
+ingressClass: ["readiness-cpx"]
 setAsDefaultIngressClass: False
 # nitroReadTimeout is timeout value in seconds for nitro api read timeout(default is 20)
 nitroReadTimeout: 20

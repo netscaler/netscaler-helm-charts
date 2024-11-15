@@ -93,10 +93,12 @@ spec:
         - name: "NS_NITRO_READ_TIMEOUT"
           value: "{{ .Values.nitroReadTimeout }}"
 {{- end }}
-{{- if .Values.enableLivenessProbe}}
+{{- if .Values.enableLivenessProbe }}
         - name: "LIVENESS_FILE_PATH"
           value: '/tmp/liveness_path.log'
 {{- end }}
+        - name: "ENABLE_LIVENESS_PROBE"
+          value: {{ .Values.enableLivenessProbe | quote }}
         - name: "NS_USER"
         {{- if and .Values.secretStore.enabled .Values.secretStore.username}}
         {{- toYaml .Values.secretStore.username | nindent 10 }}

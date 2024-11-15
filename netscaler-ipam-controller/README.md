@@ -52,10 +52,18 @@ The following table lists the configurable parameters of the NetScaler CPX with 
 | ---------- | --------------------- | ------------- | ----------- |
 | imageRegistry                   | Mandatory  |  `quay.io`               |  The NetScaler IPAM Contoller image registry             |  
 | imageRepository                 | Mandatory  |  `netscaler/netscaler-ipam-controller`              |   The NetScaler IPAM Contoller image repository             | 
-| imageTag                  | Mandatory  |  `1.2.0`               |  The NetScaler IPAM Contoller image tag            |
+| imageTag                  | Mandatory  |  `2.0.1`               |  The NetScaler IPAM Contoller image tag            |
 | pullPolicy | Mandatory | `IfNotPresent` | The NetScaler IPAM Contoller image pull policy. |
 | vipRange | Mandatory | N/A | This variable allows you to define the IP address range. You can either define IP address range or an IP address range associated with a unique name. NetScaler IPAM controller assigns the IP address from this IP address range to the service of type LoadBalancer. |
 | reuseIngressVip| Optional | True | This variable allows you to use same IP for all ingresses using the same vipRange. |
+| cluster| Mandatory if  infoblox.enabled is true| N/A | This variable allows you to provide cluster name thatis used to identify the cluster in which the IPAM controller is deployed. |
+| infoblox.enabled| Optional | false | Boolean value that allows yout to enable/disable infoblox IPAM. |
+| infoblox.gridHost| Mandatory if  infoblox.enabled is true| N/A | This variable allows yout to provide infoblox grid host IP or FQDN. |
+| infoblox.credentialSecret| Mandatory if  infoblox.enabled is true| N/A | This variable allows yout to provide infoblox grid host IP or FQDN. |
+| infoblox.httpTimeout| Optional | 10 | This variable allows yout to provide infoblox client HTTP Timeout in seconds. |
+| infoblox.maxRetries| Optional | 3 | This variable allows yout to provide infoblox client max retries in case of failure |
+| infoblox.netView| Optional | default | This variable allows yout to provide infoblox Netview |
+| infoblox.vipRange| Mandatory if  infoblox.enabled is true | N/A | This variable allows yout to provide infoblox IPAM VIP Range |
 
 Alternatively, you can define a YAML file with the values for the parameters and pass the values while installing the chart.
 
