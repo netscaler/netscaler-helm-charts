@@ -46,6 +46,7 @@ spec:
         {{- toYaml .Values.livenessProbe | nindent 10 }}
 {{- end }}
         args:
+        
           - --configmap
             {{ .Release.Namespace }}/{{ include "nsicconfigmap.fullname" . }}
 {{- if .Values.defaultSSLCertSecret }}
