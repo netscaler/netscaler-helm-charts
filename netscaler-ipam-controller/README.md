@@ -18,7 +18,7 @@ Please note that for services of type LoadBalancer, distinct IPs are allocated f
 
 ### Prerequisites
 
--  The [Kubernetes](https://kubernetes.io/) version is 1.6 or later if using Kubernetes environment.
+-  The [Kubernetes](https://kubernetes.io/) version is 1.24 or later if using Kubernetes environment.
 -  The [Openshift](https://www.openshift.com) version 4.8 or later if using OpenShift platform.
 -  The [Helm](https://helm.sh/) version 3.x or later. You can follow instruction given [here](https://github.com/netscaler/netscaler-helm-charts/blob/master/Helm_Installation_version_3.md) to install the same.
 
@@ -64,6 +64,8 @@ The following table lists the configurable parameters of the NetScaler CPX with 
 | infoblox.maxRetries| Optional | 3 | This variable allows yout to provide infoblox client max retries in case of failure |
 | infoblox.netView| Optional | default | This variable allows yout to provide infoblox Netview |
 | infoblox.vipRange| Mandatory if  infoblox.enabled is true | N/A | This variable allows yout to provide infoblox IPAM VIP Range |
+| serviceAccount.create | Mandatory | true | Create serviceAccount for NetScaler IPAM Controller |
+| serviceAccount.tokenExpirationSeconds | Mandatory | 31536000 | Time in seconds when the token of serviceAccount get expired |
 
 Alternatively, you can define a YAML file with the values for the parameters and pass the values while installing the chart.
 

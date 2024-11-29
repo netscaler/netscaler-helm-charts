@@ -97,6 +97,7 @@ kind: ServiceAccount
 metadata:
   name: {{ include "netscaler-ingress-controller.serviceAccountName" . }}
   namespace: {{ .Release.Namespace }}
+automountServiceAccountToken: false
 {{- if .Values.imagePullSecrets }}
 imagePullSecrets:
 {{- range .Values.imagePullSecrets }}

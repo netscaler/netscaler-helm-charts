@@ -8,7 +8,7 @@ imageTag: 2.0.1
 image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
 pullPolicy: IfNotPresent
 
-vipRange:
+vipRange:    #'[{"Prod": ["10.1.2.0 - 10.1.2.255"]}]'
 nameOverride: ""
 fullnameOverride: ""
 reuseIngressVip: "True"
@@ -28,3 +28,4 @@ serviceAccount:
   create: true
   # If not set and create is true, a name is generated using the fullname template
   name: ""
+  tokenExpirationSeconds: 31536000

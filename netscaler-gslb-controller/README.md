@@ -8,7 +8,7 @@
    ```
    helm repo add netscaler https://netscaler.github.io/netscaler-helm-charts/
 
-   helm install gslb-controller netscaler/netscaler-gslb-controller-ingress-controller --set localRegion=<local-cluster-region>,localCluster=<local-cluster-name>,sitedata[0].siteName=<site1-name>,sitedata[0].siteIp=<site1-ip-address>,sitedata[0].secretName=<site1-login-file>,sitedata[0].siteRegion=<site1-region-name>,sitedata[1].siteName=<site2-name>,sitedata[1].siteIp=<site2-ip-address>,sitedata[1].secretName=<site2-login-file>,sitedata[1].siteRegion=<site2-region-name>,license.accept=yes
+   helm install gslb-controller netscaler/netscaler-gslb-controller --set localRegion=<local-cluster-region>,localCluster=<local-cluster-name>,sitedata[0].siteName=<site1-name>,sitedata[0].siteIp=<site1-ip-address>,sitedata[0].secretName=<site1-login-file>,sitedata[0].siteRegion=<site1-region-name>,sitedata[1].siteName=<site2-name>,sitedata[1].siteIp=<site2-ip-address>,sitedata[1].secretName=<site2-login-file>,sitedata[1].siteRegion=<site2-region-name>,license.accept=yes
    ```
 
 ### For OpenShift
@@ -32,7 +32,7 @@ This Helm chart deploys NetScaler ingress controller in the [Kubernetes](https:/
 
 ### Prerequisites
 
--  The [Kubernetes](https://kubernetes.io/) version 1.16 or later if using Kubernetes environment.
+-  The [Kubernetes](https://kubernetes.io/) version 1.24 or later if using Kubernetes environment.
 -  The [Openshift](https://www.openshift.com) version 4.8 or later if using OpenShift platform.
 -  The [Helm](https://helm.sh/) version 3.x or later. You can follow instruction given [here](https://github.com/netscaler/netscaler-helm-charts/blob/master/Helm_Installation_version_3.md) to install the same.
 
@@ -133,7 +133,7 @@ Add the NetScaler GSLB Controller helm chart repository using command:
 #### 1. NetScaler GSLB Controller
 To install the chart with the release name, `my-release`, use the following command:
    ```
-   helm install my-release netscaler/netscaler-gslb-controller-ingress-controller --set localRegion=<local-cluster-region>,localCluster=<local-cluster-name>,sitedata[0].siteName=<site1-name>,sitedata[0].siteIp=<site1-ip-address>,sitedata[0].secretName=<site1-login-file>,sitedata[0].siteRegion=<site1-region-name>,sitedata[1].siteName=<site2-name>,sitedata[1].siteIp=<site2-ip-address>,sitedata[1].secretName=<site2-login-file>,sitedata[1].siteRegion=<site2-region-name>,license.accept=yes
+   helm install my-release netscaler/netscaler-gslb-controller --set localRegion=<local-cluster-region>,localCluster=<local-cluster-name>,sitedata[0].siteName=<site1-name>,sitedata[0].siteIp=<site1-ip-address>,sitedata[0].secretName=<site1-login-file>,sitedata[0].siteRegion=<site1-region-name>,sitedata[1].siteName=<site2-name>,sitedata[1].siteIp=<site2-ip-address>,sitedata[1].secretName=<site2-login-file>,sitedata[1].siteRegion=<site2-region-name>,license.accept=yes
 
    ```
 
@@ -216,6 +216,8 @@ The following table lists the mandatory and optional parameters that you can con
 | openshift | Optional | false | Set this argument if OpenShift environment is being used. |
 | localRegion | Mandatory | N/A | The region where this controller is deployed. |
 | localCluster | Mandatory | N/A | The Cluster Name where this controller is deployed. |
+| serviceAccount.create | Mandatory | true | Create serviceAccount for NetScaler GSLB Controller |
+| serviceAccount.tokenExpirationSeconds | Mandatory | 31536000 | Time in seconds when the token of serviceAccount get expired |
 | sitedata | Mandatory | N/A | The list containing NetScaler Site details like IP, Name, Region, Secret |
 | sitedata[0].siteName | Mandatory | N/A | The siteName of the first GSLB site |
 | sitedata[0].siteIp | Mandatory | N/A | The siteIp of the first GSLB Site |

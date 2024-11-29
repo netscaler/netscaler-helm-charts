@@ -32,7 +32,7 @@ This Helm chart deploys a NetScaler CPX with NetScaler ingress controller as a s
 
 ### Prerequisites
 
--  The [Kubernetes](https://kubernetes.io/) version should be 1.16 and above if using Kubernetes environment.
+-  The [Kubernetes](https://kubernetes.io/) version should be 1.24 and above if using Kubernetes environment.
 -  The [Openshift](https://www.openshift.com) version 4.8 or later if using OpenShift platform.
 -  The [Helm](https://helm.sh/) version 3.x or later. You can follow instruction given [here](https://github.com/netscaler/netscaler-helm-charts/blob/master/Helm_Installation_version_3.md) to install the same.
 -  You have installed [Prometheus Operator](https://github.com/coreos/prometheus-operator), if you want to view the metrics of the NetScaler CPX collected by the [metrics exporter](https://github.com/netscaler/netscaler-k8s-ingress-controller/tree/master/metrics-visualizer#visualization-of-metrics).
@@ -717,6 +717,8 @@ The following table lists the configurable parameters of the NetScaler CPX with 
 | enableLivenessProbe | Optional | True  | Enable livenessProbe settings for CPX |
 | startupProbe | Optional | N/A | Set startupProbe settings for CPX |
 | livenessProbe | Optional | N/A  | Set livenessProbe settings for CPX |
+| serviceAccount.create | Mandatory | true | Create serviceAccount for the pod. |
+| serviceAccount.tokenExpirationSeconds | Mandatory | 31536000 | Time in seconds when the token of serviceAccount get expired |
 
 > **Note:**
 >

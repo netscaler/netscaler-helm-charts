@@ -11,7 +11,7 @@ pullPolicy: IfNotPresent
 imagePullSecrets: []
 daemonSet: False
 nameOverride: ""
-replicaCount: 2 
+replicaCount: 1
 fullnameOverride: ""
 mgmtHttpPort: 9080
 mgmtHttpsPort: 9443
@@ -125,10 +125,10 @@ nsic:
     failureThreshold: 3
     successThreshold: 1
 
-entityPrefix: "sub"
+entityPrefix: ''
 license:
-  accept: yes 
-ingressClass: ["readiness-cpx"]
+  accept: no 
+ingressClass: []
 setAsDefaultIngressClass: False
 # nitroReadTimeout is timeout value in seconds for nitro api read timeout(default is 20)
 nitroReadTimeout: 20
@@ -249,6 +249,7 @@ nsLbHashAlgo:
 # Specifies whether a ServiceAccount should be created
 serviceAccount:
   create: true
+  tokenExpirationSeconds: 31536000
   # The name of the ServiceAccount to use.
   # If not set and `create` is true, a name is generated using the fullname template
   # name:
