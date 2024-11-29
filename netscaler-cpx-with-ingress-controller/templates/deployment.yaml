@@ -313,6 +313,9 @@ spec:
           volumeMounts:
             - mountPath: /var/deviceinfo
               name: shared-data
+            - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+              name: volume-for-service-account
+              readOnly: true
 {{- if .Values.nsic.enableReadinessProbe }}
           readinessProbe:
           {{- toYaml .Values.nsic.readinessProbe | nindent 12 }}
@@ -357,6 +360,23 @@ spec:
         - name: bootupconfig-volume
           configMap:
             name: {{ include "bootupconfigmap.fullname" . }}
+        - name: volume-for-service-account
+          projected:
+            sources:
+            - serviceAccountToken:
+                path: token
+                expirationSeconds: {{ .Values.serviceAccount.tokenExpirationSeconds }}
+            - configMap:
+                items:
+                  - key: ca.crt
+                    path: ca.crt
+                name: kube-root-ca.crt
+            - downwardAPI:
+                items:
+                  - fieldRef:
+                      apiVersion: v1
+                      fieldPath: metadata.namespace
+                    path: namespace
 {{- if and .Values.nodeSelector.key .Values.nodeSelector.value }}
       nodeSelector:
         {{ .Values.nodeSelector.key }}: {{ .Values.nodeSelector.value }}

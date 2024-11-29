@@ -32,7 +32,7 @@ This Helm chart deploys NetScaler ingress controller in the [Kubernetes](https:/
 
 ### Prerequisites
 
--  The [Kubernetes](https://kubernetes.io/) version should be 1.16 and above if using Kubernetes environment.
+-  The [Kubernetes](https://kubernetes.io/) version should be 1.24 and above if using Kubernetes environment.
 -  The [Openshift](https://www.openshift.com) version 4.8 or later if using OpenShift platform.
 -  The [Helm](https://helm.sh/) version 3.x or later. You can follow instruction given [here](https://github.com/netscaler/netscaler-helm-charts/blob/master/Helm_Installation_version_3.md) to install the same.
 -  You determine the NS_IP IP address needed by the controller to communicate with NetScaler. The IP address might be anyone of the following depending on the type of NetScaler deployment:
@@ -432,7 +432,12 @@ The following table lists the mandatory and optional parameters that you can con
 | enableReadinessProbe | Optional | True | Enable LivenessProbes settings for NetScaler Ingress Controller |
 | readinessProbe | Optional | N/A | Set readinessProbe settings NetScaler Ingress Controller  |
 | livenessProbe| Optional | N/A | Set livenessPorbe settings for NetScaler Ingress Controller |
-
+| serviceAccount.create | Mandatory | true | Create serviceAccount for NetScaler Ingress Controller |
+| serviceAccount.tokenExpirationSeconds | Mandatory | 31536000 | Time in seconds when the token of serviceAccount get expired |
+| nsValidateCert | Optional | false | Set to true if NetScaler Certificate validation is required. Please refer [this](https://docs.netscaler.com/en-us/netscaler-k8s-ingress-controller/certificate-management/adc-certificate-validation) for more info.  |
+| nsCertSecret | Optional | "" | Kubernetes Secret created for the CA certificate of NetScaler. Please refer [this](https://docs.netscaler.com/en-us/netscaler-k8s-ingress-controller/certificate-management/adc-certificate-validation) for more info.  |
+| hostAlias.ip | Optional | "" | Management IP of NetScaler. Please refer [this](https://docs.netscaler.com/en-us/netscaler-k8s-ingress-controller/certificate-management/adc-certificate-validation) for more info.  |
+| hostAlias.hostName | Optional | "" | HostName set on the NetScaler. Please refer [this](https://docs.netscaler.com/en-us/netscaler-k8s-ingress-controller/certificate-management/adc-certificate-validation) for more info.  |
 
 Alternatively, you can define a YAML file with the values for the parameters and pass the values while installing the chart.
 

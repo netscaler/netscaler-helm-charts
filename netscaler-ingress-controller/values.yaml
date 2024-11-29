@@ -159,6 +159,7 @@ nsLbHashAlgo:
 # Specifies whether a ServiceAccount should be created
 serviceAccount:
   create: true
+  tokenExpirationSeconds: 31536000
   # The name of the ServiceAccount to use.
   # If not set and `create` is true, a name is generated using the fullname template
   # name:
@@ -207,6 +208,20 @@ livenessProbe:
       [ -f "$FILE_PATH" ] && [ $(( $(date +%s) - $(stat -c %Y "$FILE_PATH") )) -lt 60 ] && exit 0 || exit 1
   initialDelaySeconds: 30
   periodSeconds: 60
+
+# to validate the NetScaler certificate set the nsValidateCert to true
+# and create the nsCertSecret with the CA Certificate of the NetScaler. 
+# Create nsCA.pem file with the CA Certificate of the NetScaler and run the below command.
+# kubectl create secret generic nscacert --from-file=nsCA.pem –namespace <namespace>
+# provide the secret name nscacert in nsCertSecret
+# to use feature run "set hostname <hostname>" on NetScaler
+# in hostAlias.ip give the NSIP and hostName as the hostname set on the NetScaler.
+# use this hostname in the nsIP field above.
+nsValidateCert: false
+nsCertSecret:
+hostAlias:
+  ip:
+  hostName:
 
 extraVolumeMounts: []
   # We usually recommend not to specify default resources and to leave this as a conscious

@@ -27,6 +27,12 @@ spec:
 {{- end }}
     spec:
       serviceAccountName: {{ include "netscaler-ingress-controller.serviceAccountName" . }}
+{{- if .Values.nsValidateCert }}
+      hostAliases:
+      - ip: {{ .Values.hostAlias.ip | quote }}
+        hostnames:
+          - {{ .Values.hostAlias.hostName | quote }}
+{{- end }}
       containers:
       - name: nsic
         image: "{{ tpl .Values.image . }}"
@@ -40,6 +46,7 @@ spec:
         {{- toYaml .Values.livenessProbe | nindent 10 }}
 {{- end }}
         args:
+        
           - --configmap
             {{ .Release.Namespace }}/{{ include "nsicconfigmap.fullname" . }}
 {{- if .Values.defaultSSLCertSecret }}
@@ -96,6 +103,12 @@ spec:
 {{- if .Values.enableLivenessProbe }}
         - name: "LIVENESS_FILE_PATH"
           value: '/tmp/liveness_path.log'
+{{- end }}
+{{- if .Values.nsValidateCert }}
+        - name: "NS_VALIDATE_CERT"
+          value: "yes"
+        - name: "NS_CACERT_PATH"
+          value: "/etc/cacerts/nsCA.pem"
 {{- end }}
         - name: "ENABLE_LIVENESS_PROBE"
           value: {{ .Values.enableLivenessProbe | quote }}
@@ -174,8 +187,16 @@ spec:
           value: {{ .Values.bgpAdvertisement | quote }}
         resources:
             {{- toYaml .Values.resources | nindent 12 }}
-        {{- if ne (len .Values.extraVolumeMounts) 0 }}
         volumeMounts:
+        - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+          name: volume-for-service-account
+          readOnly: true
+        {{- if .Values.nsValidateCert }}
+        - name: certs
+          mountPath: /etc/cacerts
+          readOnly: true
+        {{- end }}
+        {{- if ne (len .Values.extraVolumeMounts) 0 }}
 {{- toYaml .Values.extraVolumeMounts | nindent 8 }}
         {{- end }}
 {{- if .Values.exporter.required }}
@@ -211,9 +232,29 @@ spec:
         resources:
 {{- toYaml .Values.exporter.resources | nindent 12 }}
 {{- end }}
-{{- if or (and .Values.extraVolumeMounts .Values.extraVolumes) (and .Values.exporter.extraVolumeMounts .Values.extraVolumes) }}
       volumes:
-{{- end }}
+      - name: volume-for-service-account
+        projected:
+          sources:
+          - serviceAccountToken:
+              path: token
+              expirationSeconds: {{ .Values.serviceAccount.tokenExpirationSeconds }}
+          - configMap:
+              items:
+                - key: ca.crt
+                  path: ca.crt
+              name: kube-root-ca.crt
+          - downwardAPI:
+              items:
+                - fieldRef:
+                    apiVersion: v1
+                    fieldPath: metadata.namespace
+                  path: namespace
+      {{- if .Values.nsValidateCert }}
+      - name: certs
+        secret:
+          secretName: {{ .Values.nsCertSecret }}
+      {{- end }}
 {{- if ne (len .Values.extraVolumes) 0 }}
 {{ toYaml .Values.extraVolumes | indent 6 }}
 {{- end }}

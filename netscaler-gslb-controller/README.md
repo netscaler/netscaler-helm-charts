@@ -32,7 +32,7 @@ This Helm chart deploys NetScaler ingress controller in the [Kubernetes](https:/
 
 ### Prerequisites
 
--  The [Kubernetes](https://kubernetes.io/) version 1.16 or later if using Kubernetes environment.
+-  The [Kubernetes](https://kubernetes.io/) version 1.24 or later if using Kubernetes environment.
 -  The [Openshift](https://www.openshift.com) version 4.8 or later if using OpenShift platform.
 -  The [Helm](https://helm.sh/) version 3.x or later. You can follow instruction given [here](https://github.com/netscaler/netscaler-helm-charts/blob/master/Helm_Installation_version_3.md) to install the same.
 
@@ -216,6 +216,8 @@ The following table lists the mandatory and optional parameters that you can con
 | openshift | Optional | false | Set this argument if OpenShift environment is being used. |
 | localRegion | Mandatory | N/A | The region where this controller is deployed. |
 | localCluster | Mandatory | N/A | The Cluster Name where this controller is deployed. |
+| serviceAccount.create | Mandatory | true | Create serviceAccount for NetScaler GSLB Controller |
+| serviceAccount.tokenExpirationSeconds | Mandatory | 31536000 | Time in seconds when the token of serviceAccount get expired |
 | sitedata | Mandatory | N/A | The list containing NetScaler Site details like IP, Name, Region, Secret |
 | sitedata[0].siteName | Mandatory | N/A | The siteName of the first GSLB site |
 | sitedata[0].siteIp | Mandatory | N/A | The siteIp of the first GSLB Site |

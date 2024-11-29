@@ -249,6 +249,7 @@ nsLbHashAlgo:
 # Specifies whether a ServiceAccount should be created
 serviceAccount:
   create: true
+  tokenExpirationSeconds: 31536000
   # The name of the ServiceAccount to use.
   # If not set and `create` is true, a name is generated using the fullname template
   # name:
