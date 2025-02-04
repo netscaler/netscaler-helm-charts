@@ -75,6 +75,7 @@ spec:
           value: {{ required "Please provide localCluster name" .Values.localCluster }}
         - name: "SITENAMES"
           value: {{ include "netscaler-gslb-controller.sites" .}}
+{{- $namespace := .Release.Namespace -}}
 {{- range .Values.sitedata }}
         - name: {{ include "netscaler-gslb-controller.siteip" .}}
           value: {{ .siteIp }}
@@ -88,6 +89,14 @@ spec:
             secretKeyRef:
               name: {{ .secretName }}
               key: password
+{{- $secret := (lookup "v1" "Secret" $namespace .secretName) -}}
+{{- if hasKey $secret.data "sitesyncpassword" }}
+        - name: {{ include "netscaler-gslb-controller.sitesyncpassword" .}}
+          valueFrom:
+            secretKeyRef:
+              name: {{ .secretName }}
+              key: sitesyncpassword
+{{- end }}
         - name: {{ include "netscaler-gslb-controller.siteregion" .}}
           value: {{ .siteRegion }}
 {{- if .sitePublicip }}

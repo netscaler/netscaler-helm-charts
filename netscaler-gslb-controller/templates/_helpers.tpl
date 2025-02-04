@@ -32,6 +32,13 @@ Create keyname for sitepassword. Prefixed with sitename and postfixed with "_pas
 {{- end -}}
 
 {{/*
+Create keyname for sitesyncpassword. Prefixed with sitename and postfixed with "_mep_password"
+*/}}
+{{- define "netscaler-gslb-controller.sitesyncpassword" -}}
+{{ printf "%s_%s" .siteName "mep_password"}}
+{{- end -}}
+
+{{/*
 Create keyname for siteregion. Prefixed with sitename and postfixed with "_region"
 */}}
 {{- define "netscaler-gslb-controller.siteregion" -}}
