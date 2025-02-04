@@ -606,13 +606,13 @@ The following table lists the configurable parameters of the NetScaler CPX with 
 | license.accept | Mandatory | no | Set `yes` to accept the NetScaler ingress controller end user license agreement. |
 | imageRegistry                   | Mandatory  |  `quay.io`               |  The NetScaler CPX image registry             |  
 | imageRepository                 | Mandatory  |  `netscaler/netscaler-cpx`              |   The NetScaler CPX image repository             | 
-| imageTag                  | Mandatory  |  `14.1-25.111`               |   The NetScaler CPX image tag            |
+| imageTag                  | Mandatory  |  `14.1-38.53`               |   The NetScaler CPX image tag            |
 | pullPolicy | Mandatory | IfNotPresent | The NetScaler CPX image pull policy. |
 | daemonSet | Optional | False | Set this to true if NetScaler CPX needs to be deployed as DaemonSet. |
 | hostName | Optional | N/A | This entity will be used to set Hostname of the CPX |
 | nsic.imageRegistry                   | Mandatory  |  `quay.io`               |  The NetScaler ingress controller image registry             |  
 | nsic.imageRepository                 | Mandatory  |  `netscaler/netscaler-k8s-ingress-controller`              |   The NetScaler ingress controller image repository             | 
-| nsic.imageTag                  | Mandatory  |  `2.2.10`               |   The NetScaler ingress controller image tag            | 
+| nsic.imageTag                  | Mandatory  |  `2.3.15`               |   The NetScaler ingress controller image tag            | 
 | nsic.pullPolicy | Mandatory | IfNotPresent | The NetScaler ingress controller image pull policy. |
 | nsic.required | Mandatory | true | NSIC to be run as sidecar with NetScaler CPX |
 | nsic.enableLivenessProbe| Optional | True | Enable liveness probe settings for NetScaler Ingress Controller |
@@ -686,7 +686,7 @@ The following table lists the configurable parameters of the NetScaler CPX with 
 | exporter.required | Optional | false | Use the argument if you want to run the [Exporter for NetScaler Stats](https://github.com/netscaler/netscaler-adc-metrics-exporter) along with NetScaler ingress controller to pull metrics for the NetScaler CPX|
 | exporter.imageRegistry                   | Optional  |  `quay.io`               |  The Exporter for NetScaler Stats image registry             |  
 | exporter.imageRepository                 | Optional  |  `netscaler/netscaler-adc-metrics-exporter`              |   The Exporter for NetScaler Stats image repository             | 
-| exporter.imageTag                  | Optional  |  `1.4.9`               |  The Exporter for NetScaler Stats image tag            | 
+| exporter.imageTag                  | Optional  |  `1.5.0`               |  The Exporter for NetScaler Stats image tag            | 
 | exporter.pullPolicy | Optional | IfNotPresent | The Exporter for NetScaler Stats image pull policy. |
 | exporter.resources | Optional | {} |	CPU/Memory resource requests/limits for Metrics exporter container |
 | exporter.ports.containerPort | Optional | 8888 | The Exporter for NetScaler Stats container port. |

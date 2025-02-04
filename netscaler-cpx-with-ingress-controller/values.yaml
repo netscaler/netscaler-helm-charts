@@ -5,7 +5,7 @@
 # NetScaler CPX config details
 imageRegistry: quay.io
 imageRepository: netscaler/netscaler-cpx
-imageTag: 14.1-25.111
+imageTag: 14.1-38.53
 image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
 pullPolicy: IfNotPresent
 imagePullSecrets: []
@@ -82,7 +82,7 @@ servicePorts: []
 nsic:
   imageRegistry: quay.io
   imageRepository: netscaler/netscaler-k8s-ingress-controller
-  imageTag: 2.2.10
+  imageTag: 2.3.15
   image: "{{ .Values.nsic.imageRegistry }}/{{ .Values.nsic.imageRepository }}:{{ .Values.nsic.imageTag }}"
   pullPolicy: IfNotPresent
   required: true
@@ -178,7 +178,7 @@ exporter:
   required: false
   imageRegistry: quay.io
   imageRepository: netscaler/netscaler-adc-metrics-exporter
-  imageTag: 1.4.9
+  imageTag: 1.5.0
   image: "{{ .Values.exporter.imageRegistry }}/{{ .Values.exporter.imageRepository }}:{{ .Values.exporter.imageTag }}"
   pullPolicy: IfNotPresent
   ports:

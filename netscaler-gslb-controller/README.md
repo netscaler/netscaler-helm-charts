@@ -45,6 +45,20 @@ This Helm chart deploys NetScaler ingress controller in the [Kubernetes](https:/
     ```
     - The secrets with credentials needs to be created for all the NetScaler Nodes.
 
+- Creation of secrets is required for the GSLB controller to connect to GSLB devices and push the configuration from the GSLB controller.
+
+   ```
+      kubectl create secret generic <secretName for site> --from-literal=username=<username for gslb device> --from-literal=password=<password for gslb device>
+   ```
+    - The username and password in the above secret specifies the credentials (non-default) of a NetScaler GSLB device user. These secrets are provided as parameters while installing GSLB controller using helm install command for the respective sites and are required to be created in all clusters.
+
+>
+> **NOTE:**
+>
+> Starting from GSLB controller version 2.3.x, a password is required for GSLB site-to-site communication. To enhance security, it is recommended to add an additional key `sitesyncpassword` to the secret. If the `sitesyncpassword` key is not provided, the default `password` key will be used for site-to-site communication. 
+>
+>     kubectl create secret generic <secretName for site> --from-literal=username=<username for gslb device> --from-literal=password=<password for gslb device> --from-literal=sitesyncpassword=<password for secure site-to-site communication>
+
 - Following configurations needs to be done on the NetScaler's for manually provisioning GSLB sites
   - Add a SNIP (The subnet IP address). For more information, see [IP Addressing in NetScaler](https://docs.netscaler.com/en-us/citrix-adc/current-release/networking/ip-addressing.html).
     ```
@@ -198,7 +212,7 @@ The following table lists the mandatory and optional parameters that you can con
 | license.accept | Mandatory | no | Set `yes` to accept the NSIC end user license agreement. |
 | imageRegistry                   | Optional  |  `quay.io`               |  The NetScaler ingress controller image registry             |  
 | imageRepository                 | Optional  |  `netscaler/netscaler-k8s-ingress-controller`              |   The NetScaler ingress controller image repository             | 
-| imageTag                  | Optional  |  `2.2.10`               |   The NetScaler ingress controller image tag            | 
+| imageTag                  | Optional  |  `2.3.15`               |   The NetScaler ingress controller image tag            | 
 | pullPolicy | Optional | Always | The NSIC image pull policy. |
 | imagePullSecrets | Optional | N/A | Provide list of Kubernetes secrets to be used for pulling the images from a private Docker registry or repository. For more information on how to create this secret please see [Pull an Image from a Private Registry](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/). |
 | nsIP | Optional | N/A | The IP address of the NetScaler device. For details, see [Prerequisites](#prerequistes). |
