@@ -69,6 +69,7 @@ serviceAccount:
   # name:
   tokenExpirationSeconds: 31536000
 
+podAnnotations: {}
 resources:
   requests:
     cpu: 32m
@@ -77,3 +78,8 @@ resources:
   #   cpu: 1000m
   #   memory: 1000Mi
   limits: {}
+affinity: {}
+nodeSelector: {}
+tolerations: []
+extraVolumeMounts: []
+extraVolumes: []

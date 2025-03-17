@@ -21,6 +21,10 @@ spec:
 {{- else }}
         app: {{ include "netscaler-gslb-controller.fullname" . }}
 {{- end }}
+{{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+{{- end }}
     spec:
       serviceAccountName: {{ include "netscaler-gslb-controller.serviceAccountName" . }}
       containers:
@@ -129,6 +133,9 @@ spec:
         - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
           name: volume-for-service-account
           readOnly: true
+{{- if ne (len .Values.extraVolumeMounts) 0 }}
+{{- toYaml .Values.extraVolumeMounts | nindent 8 }}
+{{- end }}
       volumes:
       - name: volume-for-service-account
         projected:
@@ -147,3 +154,17 @@ spec:
                     apiVersion: v1
                     fieldPath: metadata.namespace
                   path: namespace
+{{- if ne (len .Values.extraVolumes) 0 }}
+{{ toYaml .Values.extraVolumes | indent 6 }}
+{{- end }}
+{{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+{{- end }}
+{{- if .Values.tolerations }}
+      tolerations: {{ .Values.tolerations | toYaml | nindent 8 }}
+{{- end }}
+{{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+{{- end }}
