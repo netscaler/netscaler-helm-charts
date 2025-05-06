@@ -119,6 +119,10 @@ spec:
         args:
         - --config-interface
           gslb-endpoints
+{{- if .Values.nsIP }}
+        - --configmap
+          {{ .Release.Namespace }}/{{ include "gslbconfigmap.fullname" . }}
+{{- end }}
 {{- if .Values.disableAPIServerCertVerify }}
         - --disable-apiserver-cert-verify
           {{ .Values.disableAPIServerCertVerify }}

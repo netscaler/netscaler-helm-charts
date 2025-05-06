@@ -5,7 +5,7 @@
 # image contains information needed to fetch NSIC image
 imageRegistry: quay.io
 imageRepository: netscaler/netscaler-k8s-ingress-controller
-imageTag: 2.3.15
+imageTag: 3.0.5
 image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
 pullPolicy: IfNotPresent
 imagePullSecrets: []
@@ -46,6 +46,8 @@ kubernetesURL: ""
 localRegion: ""
 # localCluster is the clustername of the k8s cluster
 localCluster: ""
+# localSiteSelection sets preference for local site when configuring the priority order for GSLB services.
+localSiteSelection: false
 # sitedata is list of dictionary containing site related information like name,IP, adcCredentialSecret for credentials.
 sitedata:
   - siteName: "site1"
