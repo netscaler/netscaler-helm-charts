@@ -1,0 +1,16 @@
+apiVersion: v1
+appVersion: "3.0.5"
+description: A Helm chart for NetScaler Kubernetes Gateway Controller configuring MPX/VPX.
+name: netscaler-kubernetes-gateway-controller
+version: 1.0.0
+icon: https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/gh-pages/netscaler.png
+home: https://www.cloud.com
+maintainers:
+- name: sivakumar-citrix
+  email: sivakumar.perumalla@cloud.com
+- name: apoorva-05
+  email: apoorva.kamath@cloud.com
+- name: subashd
+  email: subash.dangol@cloud.com
+- name: priyankash-citrix
+  email: priyanka.sharma@cloud.com
