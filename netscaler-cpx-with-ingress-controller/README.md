@@ -719,6 +719,8 @@ The following table lists the configurable parameters of the NetScaler CPX with 
 | livenessProbe | Optional | N/A  | Set livenessProbe settings for CPX |
 | serviceAccount.create | Mandatory | true | Create serviceAccount for the pod. |
 | serviceAccount.tokenExpirationSeconds | Mandatory | 31536000 | Time in seconds when the token of serviceAccount get expired |
+| serviceAccount.name | Optional | "" | Name of the ServiceAccount for the NetScaler CPX with Ingress Controller. If you want to use a ServiceAccount that you have already created and manage yourself, specify its name here and set serviceAccount.create to false. |
+| createClusterRoleAndBinding | Mandatory | true | If you want to use a ClusterRole and Cluster Role Binding that you have already created and manage yourself then set to false. Please make sure you have bound the serviceaccount with the cluster role properly.  |
 
 > **Note:**
 >

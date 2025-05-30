@@ -251,8 +251,10 @@ serviceAccount:
   create: true
   tokenExpirationSeconds: 31536000
   # The name of the ServiceAccount to use.
-  # If not set and `create` is true, a name is generated using the fullname template
-  # name:
+  # If not set and `serviceAccount.create` is true, a name is generated using the fullname template
+  # If you want to use pre-created serviceAccount, set the name and serviceAccount.create to false.
+  name: 
+createClusterRoleAndBinding: true
 
 podAnnotations: {}
 
@@ -270,26 +272,26 @@ affinity: {}
 
 enableStartupProbe: True
 startupProbe:
-  initialDelaySeconds: 30
-  periodSeconds: 5
+  exec:
+    command:
+    - ls
+    - /tmp/cpx_started
+  periodSeconds:  5
   failureThreshold: 20
+  initialDelaySeconds: 30
+  successThreshold: 1
+
+enableLivenessProbe: True
+livenessProbe:
+  initialDelaySeconds: 10
+  periodSeconds: 5
+  failureThreshold: 3
   successThreshold: 1
   exec:
     command:
     - /bin/ping
     - -c 1
     - 192.0.0.1
-
-enableLivenessProbe: True
-livenessProbe:
-  exec:
-    command:
-    - ls
-    - /tmp/cpx_started
-  periodSeconds:  5
-  failureThreshold: 3
-  successThreshold: 1
-
 
 
 # cpxCommands: to provide global config to be applied in CPX. The commands will be executed in order. For e.g.
