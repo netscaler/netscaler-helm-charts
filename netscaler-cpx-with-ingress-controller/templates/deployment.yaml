@@ -181,6 +181,10 @@ spec:
           - name: "NS_IP"
             value: "127.0.0.1"
 {{- end }}
+{{- if .Values.certBundle }}
+          - name: "CERT_BUNDLE"
+            value: "True"
+{{- end }}
 {{- if .Values.rbacRole }}
           - name: "SCOPE"
             value: "local"

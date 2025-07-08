@@ -1,3 +1,4 @@
+{{- if .Values.createClusterRoleAndBinding }}
 {{- if not .Values.rbacRole }}
 kind: ClusterRole
 {{- else }}
@@ -91,7 +92,8 @@ subjects:
   namespace: {{ .Release.Namespace }}
 
 ---
-
+{{- end }}
+{{- if .Values.serviceAccount.create }}
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -102,6 +104,7 @@ automountServiceAccountToken: false
 imagePullSecrets:
 {{- range .Values.imagePullSecrets }}
 - name: {{.}}
+{{- end }}
 {{- end }}
 {{- end }}
 

@@ -91,6 +91,10 @@ spec:
         - name: "NS_VIP"
           value: "{{ .Values.nsVIP }}"
 {{- end }}
+{{- if .Values.certBundle }}
+        - name: "CERT_BUNDLE"
+          value: "true"
+{{- end }}
 {{- if .Values.rbacRole }}
         - name: "SCOPE"
           value: "local"

@@ -5,7 +5,7 @@
 # NetScaler Ingress Controller config details
 imageRegistry: quay.io
 imageRepository: netscaler/netscaler-k8s-ingress-controller
-imageTag: 3.0.5
+imageTag: 3.1.34
 image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
 pullPolicy: IfNotPresent
 imagePullSecrets: []
@@ -161,8 +161,9 @@ serviceAccount:
   create: true
   tokenExpirationSeconds: 31536000
   # The name of the ServiceAccount to use.
-  # If not set and `create` is true, a name is generated using the fullname template
-  # name:
+  # If not set and `serviceAccount.create` is true, a name is generated using the fullname template
+  # If you want to use pre-created serviceAccount, set the name and serviceAccount.create to false.
+  name:
 
 podAnnotations: {}
 
@@ -243,3 +244,6 @@ extraVolumes: []
   #  secret:
   #    secretName: github-key
   #    defaultMode: 0744
+
+createClusterRoleAndBinding: true
+certBundle: false
