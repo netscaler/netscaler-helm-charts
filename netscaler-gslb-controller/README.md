@@ -212,7 +212,7 @@ The following table lists the mandatory and optional parameters that you can con
 | license.accept | Mandatory | no | Set `yes` to accept the NSIC end user license agreement. |
 | imageRegistry                   | Optional  |  `quay.io`               |  The NetScaler ingress controller image registry             |  
 | imageRepository                 | Optional  |  `netscaler/netscaler-k8s-ingress-controller`              |   The NetScaler ingress controller image repository             | 
-| imageTag                  | Optional  |  `3.0.5`               |   The NetScaler ingress controller image tag            | 
+| imageTag                  | Optional  |  `3.1.34`               |   The NetScaler ingress controller image tag            | 
 | pullPolicy | Optional | Always | The NSIC image pull policy. |
 | imagePullSecrets | Optional | N/A | Provide list of Kubernetes secrets to be used for pulling the images from a private Docker registry or repository. For more information on how to create this secret please see [Pull an Image from a Private Registry](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/). |
 | nsIP | Optional | N/A | The IP address of the NetScaler device. For details, see [Prerequisites](#prerequistes). |
@@ -233,6 +233,9 @@ The following table lists the mandatory and optional parameters that you can con
 | localSiteSelection | Optional | false | Set this parameter to prioritize the local site when configuring the priority order for GSLB services. Enabling this will create a ConfigMap to apply the configuration on the NetScaler. |
 | serviceAccount.create | Mandatory | true | Create serviceAccount for NetScaler GSLB Controller |
 | serviceAccount.tokenExpirationSeconds | Mandatory | 31536000 | Time in seconds when the token of serviceAccount get expired |
+| serviceAccount.name | Optional | "" | Name of the ServiceAccount for the NetScaler GSLB Controller. If you want to use a ServiceAccount that you have already created and manage yourself, specify its name here and set serviceAccount.create to false. |
+| serviceAccount.name | Optional | "" | Name of the ServiceAccount for the NetScaler GSLB Controller. If you want to use a ServiceAccount that you have already created and manage yourself, specify its name here and set serviceAccount.create to false. |
+| createClusterRoleAndBinding | Mandatory | true | If you want to use a ClusterRole and Cluster Role Binding that you have already created and manage yourself then set to false. Please make sure you have bound the serviceaccount with the cluster role properly.  |
 | sitedata | Mandatory | N/A | The list containing NetScaler Site details like IP, Name, Region, Secret |
 | sitedata[0].siteName | Mandatory | N/A | The siteName of the first GSLB site |
 | sitedata[0].siteIp | Mandatory | N/A | The siteIp of the first GSLB Site |

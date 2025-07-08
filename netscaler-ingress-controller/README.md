@@ -342,7 +342,7 @@ The following table lists the mandatory and optional parameters that you can con
 | license.accept | Mandatory | no | Set `yes` to accept the NSIC end user license agreement. |
 | imageRegistry                   | Mandatory  |  `quay.io`               |  The NetScaler ingress controller image registry             |  
 | imageRepository                 | Mandatory  |  `netscaler/netscaler-k8s-ingress-controller`              |   The NetScaler ingress controller image repository             | 
-| imageTag                  | Mandatory  |  `3.0.5`               |   The NetScaler ingress controller image tag            | 
+| imageTag                  | Mandatory  |  `3.1.34`               |   The NetScaler ingress controller image tag            | 
 | pullPolicy | Mandatory | IfNotPresent | The NSIC image pull policy. |
 | imagePullSecrets | Optional | N/A | Provide list of Kubernetes secrets to be used for pulling the images from a private Docker registry or repository. For more information on how to create this secret please see [Pull an Image from a Private Registry](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/). |
 | nameOverride | Optional | N/A | String to partially override deployment fullname template with a string (will prepend the release name) |
@@ -425,7 +425,7 @@ The following table lists the mandatory and optional parameters that you can con
 | nsLbHashAlgo.hashAlgorithm | Optional | 'default' | Specifies the supported algorithm. Supported algorithms are "default", "jarh", "prac", Default value is 'default' |
 | extraVolumeMounts  |  Optional |  [] |  Specify the Additional VolumeMounts to be mounted in NSIC container  |
 | extraVolumes  |  Optional |  [] |  Specify the Additional Volumes for additional volumeMounts  |
-| rbacRole  | Optional |  false  |  To deploy NSIC with RBAC Role set rbacRole=true; by default NSIC gets installed with RBAC ClusterRole(rbacRole=false)) |
+| rbacRole  | Optional |  false  |  To deploy NSIC with RBAC Role set rbacRole=true; by default NSIC gets installed with RBAC ClusterRole(rbacRole=false) |
 | nodeLabels | Optional | "" |  If there are pods on nodes in the nodes with this nodeLabels, NSIC will configure NetScaler to advertises the VIP using BGP |
 | bgpAdvertisement | Optional | False  | To advertise VIP using BGP from NetScaler |
 | enableLivenessProbe | Optional | True | Enable LivenessProbes settings for NetScaler Ingress Controller |
@@ -434,10 +434,14 @@ The following table lists the mandatory and optional parameters that you can con
 | livenessProbe| Optional | N/A | Set livenessPorbe settings for NetScaler Ingress Controller |
 | serviceAccount.create | Mandatory | true | Create serviceAccount for NetScaler Ingress Controller |
 | serviceAccount.tokenExpirationSeconds | Mandatory | 31536000 | Time in seconds when the token of serviceAccount get expired |
+| serviceAccount.name | Optional | "" | Name of the ServiceAccount for the NetScaler Ingress Controller. If you want to use a ServiceAccount that you have already created and manage yourself, specify its name here and set serviceAccount.create to false. |
+| createClusterRoleAndBinding | Mandatory | true | If you want to use a ClusterRole and Cluster Role Binding that you have already created and manage yourself then set to false. Please make sure you have bound the serviceaccount with the cluster role properly.  |
 | nsValidateCert | Optional | false | Set to true if NetScaler Certificate validation is required. Please refer [this](https://docs.netscaler.com/en-us/netscaler-k8s-ingress-controller/certificate-management/adc-certificate-validation) for more info.  |
 | nsCertSecret | Optional | "" | Kubernetes Secret created for the CA certificate of NetScaler. Please refer [this](https://docs.netscaler.com/en-us/netscaler-k8s-ingress-controller/certificate-management/adc-certificate-validation) for more info.  |
 | hostAlias.ip | Optional | "" | Management IP of NetScaler. Please refer [this](https://docs.netscaler.com/en-us/netscaler-k8s-ingress-controller/certificate-management/adc-certificate-validation) for more info.  |
 | hostAlias.hostName | Optional | "" | HostName set on the NetScaler. Please refer [this](https://docs.netscaler.com/en-us/netscaler-k8s-ingress-controller/certificate-management/adc-certificate-validation) for more info.  |
+| certBundle | Optional | false |When set to true this will bind certificate key bundle in frontend vservers. Please refer [this](https://docs.netscaler.com/en-us/citrix-adc/current-release/ssl/ssl-certificates/install-link-and-update-certificates.html#support-for-ssl-certificate-key-bundle).
+
 
 Alternatively, you can define a YAML file with the values for the parameters and pass the values while installing the chart.
 

@@ -2,7 +2,7 @@ license:
    accept: no
 imageRegistry: quay.io
 imageRepository: netscaler/netscaler-k8s-ingress-controller
-imageTag: 3.0.5
+imageTag: 3.1.34
 pullPolicy: IfNotPresent
 imagePullSecrets: []
 nameOverride: ""
@@ -14,9 +14,14 @@ gatewayController:
   entityPrefix: ""
   enableLivenessProbe: true
   enableReadinessProbe: true
+  createClusterRoleAndBinding: true
   serviceAccount:
     create: true
     tokenExpirationSeconds: 31536000
+    # The name of the ServiceAccount to use.
+    # If not set and `serviceAccount.create` is true, a name is generated using the fullname template
+    # If you want to use pre-created serviceAccount, set the name and serviceAccount.create to false.
+    name:
   jsonLog: false
   #kubernetesURL: url.com
   livenessProbe:
@@ -63,6 +68,7 @@ netscaler:
   nsVIP: 
   nsValidateCert: false
   nsCertSecret:
+  certBundle: false
   podIPsforServiceGroupMembers:
   hostAlias:
   secretStore:

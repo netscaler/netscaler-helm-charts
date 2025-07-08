@@ -34,7 +34,7 @@ spec:
           - {{ .Values.netscaler.hostAlias.hostName | quote }}
 {{- end }}
       containers:
-      - name: nsgc
+      - name: nskgwc
         image: "{{ tpl .Values.gatewayController.image . }}"
         imagePullPolicy: {{ .Values.gatewayController.pullPolicy }}
 {{- if .Values.gatewayController.enableReadinessProbe }}
@@ -65,6 +65,10 @@ spec:
         env:
         - name: "NS_IP"
           value: "{{ .Values.netscaler.nsIP }}"
+{{- if .Values.netscaler.certBundle }}
+        - name: "CERT_BUNDLE"
+          value: "true"
+{{- end }}
 {{- if .Values.netscaler.nsVIP }}
         - name: "NS_VIP"
           value: "{{ .Values.netscaler.nsVIP }}"

@@ -28,7 +28,7 @@ spec:
     spec:
       serviceAccountName: {{ include "netscaler-gslb-controller.serviceAccountName" . }}
       containers:
-      - name: {{ include "netscaler-gslb-controller.name" . }}
+      - name: nsgslbc
         image: "{{ tpl .Values.image . }}"
         imagePullPolicy: {{ .Values.pullPolicy }}
         env:

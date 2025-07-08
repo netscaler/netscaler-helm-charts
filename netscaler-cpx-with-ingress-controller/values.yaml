@@ -82,7 +82,7 @@ servicePorts: []
 nsic:
   imageRegistry: quay.io
   imageRepository: netscaler/netscaler-k8s-ingress-controller
-  imageTag: 3.0.5
+  imageTag: 3.1.34
   image: "{{ .Values.nsic.imageRegistry }}/{{ .Values.nsic.imageRepository }}:{{ .Values.nsic.imageTag }}"
   pullPolicy: IfNotPresent
   required: true
@@ -140,6 +140,7 @@ updateIngressStatus: False
 logProxy: ""
 kubernetesURL: ""
 disableOpenshiftRoutes: false
+certBundle: false
 profileSslFrontend: {}
   # preconfigured: my_ssl_profile
   #  OR
