@@ -234,7 +234,6 @@ The following table lists the mandatory and optional parameters that you can con
 | serviceAccount.create | Mandatory | true | Create serviceAccount for NetScaler GSLB Controller |
 | serviceAccount.tokenExpirationSeconds | Mandatory | 31536000 | Time in seconds when the token of serviceAccount get expired |
 | serviceAccount.name | Optional | "" | Name of the ServiceAccount for the NetScaler GSLB Controller. If you want to use a ServiceAccount that you have already created and manage yourself, specify its name here and set serviceAccount.create to false. |
-| serviceAccount.name | Optional | "" | Name of the ServiceAccount for the NetScaler GSLB Controller. If you want to use a ServiceAccount that you have already created and manage yourself, specify its name here and set serviceAccount.create to false. |
 | createClusterRoleAndBinding | Mandatory | true | If you want to use a ClusterRole and Cluster Role Binding that you have already created and manage yourself then set to false. Please make sure you have bound the serviceaccount with the cluster role properly.  |
 | sitedata | Mandatory | N/A | The list containing NetScaler Site details like IP, Name, Region, Secret |
 | sitedata[0].siteName | Mandatory | N/A | The siteName of the first GSLB site |
