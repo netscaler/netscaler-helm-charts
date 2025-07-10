@@ -68,7 +68,7 @@ subjects:
 
 ---
 {{- end }}
-{{ -if .Values.gatewayController.serviceAccount.create }}
+{{- if .Values.gatewayController.serviceAccount.create }}
 apiVersion: v1
 kind: ServiceAccount
 metadata:
