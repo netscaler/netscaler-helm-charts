@@ -88,7 +88,9 @@ The following components are installed:
 
 ## CRDs configuration
 
-CRDs are expected to be installed, its prerequisite.
+Kubernetes Gateway CRDs are expected to be installed, its prerequisite. Refer [Install Kubernetes Gateway CRD](https://gateway-api.sigs.k8s.io/guides/#install-standard-channel)
+
+Netscaler CRDs will be installed when we install NetScaler Kubernetes Gateway controller via Helm automatically if CRDs are not installed in cluster already. If you wish to skip the CRD installation step, you can pass the --skip-crds flag. For more information about this option in Helm please see [this](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/).
 
 ### Resource Quotas
 There are various use-cases when resource quotas are configured on the Kubernetes cluster. If quota is enabled in a namespace for compute resources like CPU and memory, users must specify requests or limits for those values; otherwise, the quota system may reject pod creation. The resource quotas for the Gateway Controller containers can be provided explicitly in the helm chart.
