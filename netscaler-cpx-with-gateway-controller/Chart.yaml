@@ -1,0 +1,19 @@
+apiVersion: v2
+appVersion: "3.2.22"
+kubeVersion: ">=v1.24.0-0"
+description: A Helm chart for NetScaler CPX with NetScaler Kubernetes Gateway Controller running as sidecar.
+name: netscaler-cpx-with-gateway-controller
+version: 1.2.0
+icon: https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/gh-pages/netscaler.png
+home: https://www.cloud.com
+sources:
+- https://github.com/netscaler/netscaler-k8s-ingress-controller
+maintainers:
+- name: sivakumar-citrix
+  email: sivakumar.perumalla@citrix.com
+- name: apoorva-05
+  email: apoorva.kamath@citrix.com
+- name: subashd
+  email: subash.dangol@citrix.com
+- name: priyankash-citrix
+  email: priyanka.sharma@citrix.com
