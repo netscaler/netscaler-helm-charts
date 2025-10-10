@@ -14,10 +14,14 @@ spec:
     metadata:
       labels:
         {{- include "netscaler-ipam-controller.selectorLabels" . | nindent 8}}
+{{- with .Values.podAnnotations }}
+      annotations:
+      {{- toYaml . | nindent 8 }}
+{{- end }}
     spec:
       serviceAccountName: {{ include "netscaler-ipam-controller.serviceAccountName" . }}
       containers:
-      - name: {{ include "netscaler-ipam-controller.name" . }}
+      - name: ipam
         image: "{{ tpl .Values.image . }}"
         imagePullPolicy: {{ .Values.pullPolicy }}
         env:
@@ -74,6 +78,8 @@ spec:
         - name: "INFOBLOX_NETWORKS"
           value: {{ required "Provide IPs or IP range for Infoblox in CIDR form" .Values.infoblox.vipRange | squote }}
 {{- end }}
+        resources:
+            {{- toYaml .Values.resources | nindent 10 }}
         volumeMounts:
         - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
           name: volume-for-service-account
@@ -96,3 +102,14 @@ spec:
                     apiVersion: v1
                     fieldPath: metadata.namespace
                   path: namespace
+{{- if and .Values.nodeSelector.key .Values.nodeSelector.value }}
+      nodeSelector:
+        {{ .Values.nodeSelector.key }}: {{ .Values.nodeSelector.value }}
+{{- end }}
+{{- if .Values.tolerations }}
+      tolerations: {{ .Values.tolerations | toYaml | nindent 8 }}
+{{- end }}
+{{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+{{- end }}

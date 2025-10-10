@@ -7,10 +7,10 @@ icon: https://raw.githubusercontent.com/netscaler/netscaler-helm-charts/gh-pages
 home: https://www.cloud.com
 maintainers:
 - name: sivakumar-citrix
-  email: sivakumar.perumalla@cloud.com
+  email: sivakumar.perumalla@citrix.com
 - name: apoorva-05
-  email: apoorva.kamath@cloud.com
+  email: apoorva.kamath@citrix.com
 - name: subashd
-  email: subash.dangol@cloud.com
+  email: subash.dangol@citrix.com
 - name: priyankash-citrix
-  email: priyanka.sharma@cloud.com
+  email: priyanka.sharma@citrix.com
