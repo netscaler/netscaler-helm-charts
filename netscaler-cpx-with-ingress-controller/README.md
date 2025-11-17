@@ -612,7 +612,7 @@ The following table lists the configurable parameters of the NetScaler CPX with 
 | hostName | Optional | N/A | This entity will be used to set Hostname of the CPX |
 | nsic.imageRegistry                   | Mandatory  |  `quay.io`               |  The NetScaler ingress controller image registry             |  
 | nsic.imageRepository                 | Mandatory  |  `netscaler/netscaler-k8s-ingress-controller`              |   The NetScaler ingress controller image repository             | 
-| nsic.imageTag                  | Mandatory  |  `3.2.22`               |   The NetScaler ingress controller image tag            | 
+| nsic.imageTag                  | Mandatory  |  `3.3.2`               |   The NetScaler ingress controller image tag            | 
 | nsic.pullPolicy | Mandatory | IfNotPresent | The NetScaler ingress controller image pull policy. |
 | nsic.required | Mandatory | true | NSIC to be run as sidecar with NetScaler CPX |
 | nsic.enableLivenessProbe| Optional | True | Enable liveness probe settings for NetScaler Ingress Controller |
@@ -620,7 +620,7 @@ The following table lists the configurable parameters of the NetScaler CPX with 
 | nsic.livenessProbe | Optional | N/A | Set livenessProbe settings for NSIC |
 | nsic.readinessProbe | Optional | N/A | Set readinessProbe settings|
 | nsic.resources | Optional | {} |	CPU/Memory resource requests/limits for NetScaler Ingress Controller container |
-| nsic.rbacRole  | Optional |  false  |  To deploy NSIC with RBAC Role set rbacRole=true; by default NSIC gets installed with RBAC ClusterRole(rbacRole=false)) |
+| nsic.rbacRole  | Optional |  false  |  To deploy NSIC with RBAC Role set rbacRole=true; by default NSIC gets installed with RBAC ClusterRole(rbacRole=false) |
 | nsic.prometheusCredentialSecret  | Optional |  N/A  |  The secret key required to create read only user for native export of metrics using Prometheus. |
 | imagePullSecrets | Optional | N/A | Provide list of Kubernetes secrets to be used for pulling the images from a private Docker registry or repository. For more information on how to create this secret please see [Pull an Image from a Private Registry](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/). |
 | nameOverride | Optional | N/A | String to partially override deployment fullname template with a string (will prepend the release name) |
@@ -683,6 +683,7 @@ The following table lists the configurable parameters of the NetScaler CPX with 
 | ADMSettings.vCPULicense | Optional | N/A | Set to true if you want to use vCPU based licensing for NetScaler CPX. |
 | ADMSettings.licenseEdition| Optional | PLATINUM | License edition that can be Standard, Platinum and Enterprise . By default, Platinum is selected.|
 | ADMSettings.cpxCores | Optional | 1 | Desired number of vCPU to be set for NetScaler CPX. |
+| ADMSettings.licensingMode | Optional | "" | Set the licensing mode as `pool` or `las`. For licensingMode `las`, set the ADMSettings.ADMIP, ADMSettings.loginSecret, ADMSettings.bandWidth and ADMSettings.licenseEdition. For `pool` licensing, set the ADMSettings.licenseServerIP and set either ADMSettings.bandWidthLicense or ADMSettings.vCPULicense. |
 | exporter.required | Optional | false | Use the argument if you want to run the [Exporter for NetScaler Stats](https://github.com/netscaler/netscaler-adc-metrics-exporter) along with NetScaler ingress controller to pull metrics for the NetScaler CPX|
 | exporter.imageRegistry                   | Optional  |  `quay.io`               |  The Exporter for NetScaler Stats image registry             |  
 | exporter.imageRepository                 | Optional  |  `netscaler/netscaler-adc-metrics-exporter`              |   The Exporter for NetScaler Stats image repository             | 

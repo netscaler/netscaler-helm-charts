@@ -18,7 +18,7 @@ gatewayController:
   entityPrefix: ""
   imageRegistry: quay.io
   imageRepository: netscaler/netscaler-k8s-ingress-controller
-  imageTag: 3.2.22
+  imageTag: 3.3.2
   image: "{{ .Values.gatewayController.imageRegistry }}/{{ .Values.gatewayController.imageRepository }}:{{ .Values.gatewayController.imageTag }}"
   pullPolicy: IfNotPresent
   ipam: false

@@ -173,7 +173,7 @@ The following table lists the configurable parameters of the NetScaler CPX with 
 | gatewayController.gatewayControllerName | Mandatory | N/A | Name of Gateway Controller . |
 | gatewayController.imageRegistry                   | Mandatory  |  `quay.io`               |  The NetScaler gateway controller image registry             |  
 | gatewayController.imageRepository                 | Mandatory  |  `netscaler/netscaler-k8s-ingress-controller`              |   The NetScaler gateway controller image repository             | 
-| gatewayController.imageTag                  | Mandatory  |  `3.2.22`               |   The NetScaler gateway controller image tag            |
+| gatewayController.imageTag                  | Mandatory  |  `3.3.2`               |   The NetScaler gateway controller image tag            |
 | gatewayController.pullPolicy | Mandatory | IfNotPresent | The NetScaler gateway controller image pull policy. |
 | gatewayController.required | Mandatory | true | NSGWC to be run as sidecar with NetScaler CPX |
 | gatewayController.enableLivenessProbe| Optional | False | Enable liveness probe settings for NetScaler Gateway Controller |

@@ -2,7 +2,7 @@ license:
    accept: no
 imageRegistry: quay.io
 imageRepository: netscaler/netscaler-k8s-ingress-controller
-imageTag: 3.2.22
+imageTag: 3.3.2
 pullPolicy: IfNotPresent
 imagePullSecrets: []
 nameOverride: ""

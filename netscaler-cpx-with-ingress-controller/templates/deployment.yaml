@@ -54,15 +54,17 @@ spec:
               fieldRef:
                 apiVersion: v1
                 fieldPath: metadata.namespace
-{{- if .Values.cpxLicenseAggregator }}
+{{- if ne .Values.ADMSettings.licensingMode "las" }}
+{{- if and .Values.cpxLicenseAggregator }}
           - name: "CLA"
             value: {{ .Values.cpxLicenseAggregator | quote }}
-{{- else if .Values.ADMSettings.licenseServerIP }}
+{{- else if eq ( lower .Values.ADMSettings.licensingMode) "pool" }}
           - name: "LS_IP"
-            value: {{ .Values.ADMSettings.licenseServerIP | quote }}
+            value: {{ required "please provide LicenseServer IP for pool licensing" .Values.ADMSettings.licenseServerIP | quote }}
           - name: "LS_PORT"
             value: {{ .Values.ADMSettings.licenseServerPort | quote }}
 {{- end }}
+{{-  end}}
           - name: "EULA"
             value: "{{ .Values.license.accept }}"
           - name: "KUBERNETES_TASK_ID"
@@ -85,16 +87,21 @@ spec:
             value: "{{ .Values.nsGateway }}"
 {{- end }}
 {{- end }}
-{{- if .Values.ADMSettings.ADMIP }}
+{{- if or .Values.ADMSettings.ADMIP ( eq (lower .Values.ADMSettings.licensingMode) "las" ) }}
           - name: "NS_MGMT_SERVER"
-            value: {{ .Values.ADMSettings.ADMIP | quote }}
+            value: {{ required "Provide the IP/FQDN for ADM" .Values.ADMSettings.ADMIP | quote }}
           - name: "NS_HTTP_PORT"
             value: {{ .Values.mgmtHttpPort | quote }}
           - name: "NS_HTTPS_PORT"
             value: {{ .Values.mgmtHttpsPort | quote }}
 {{- end }}
+{{- if eq .Values.ADMSettings.licensingMode "las"  }}
+          - name: "LAS_CPX_BANDWIDTH"
+            value: {{ .Values.ADMSettings.bandWidth | quote }}
+          - name: "LAS_CPX_EDITION"
+            value: {{ upper .Values.ADMSettings.licenseEdition }}
+{{- else if or .Values.ADMSettings.licenseServerIP .Values.cpxLicenseAggregator }}
 ##Need to set env var BANDWIDTH in order to provide Bandwidth license to NetScaler CPX from ADM or CPX License Aggregator
-{{- if or .Values.ADMSettings.licenseServerIP .Values.cpxLicenseAggregator }}
 {{- if .Values.ADMSettings.bandWidthLicense }}
           - name: "BANDWIDTH"
             value: {{ .Values.ADMSettings.bandWidth | quote }}
@@ -113,7 +120,7 @@ spec:
             value: "CP1000"
 {{- end }}
 {{- end }}
-{{- if or (.Values.ADMSettings.ADMIP) (.Values.ADMSettings.licenseServerIP) }}
+{{- if or ( or .Values.ADMSettings.ADMIP .Values.ADMSettings.licenseServerIP ) ( eq .Values.ADMSettings.licensingMode "las" ) }}
           - name: NS_MGMT_USER
             valueFrom:
               secretKeyRef:

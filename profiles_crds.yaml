@@ -1,0 +1,240 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: httpprofiles.citrix.com
+spec:
+  group: citrix.com
+  versions:
+    - name: v1
+      served: true
+      storage: true
+      subresources:
+        status: {}
+      additionalPrinterColumns:
+      - name: Status
+        type: string
+        description: "Current Status of the CRD"
+        jsonPath: .status.state
+      - name: Message
+        type: string
+        description: "Status Message"
+        jsonPath: .status.status_message
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            status:
+                type: object
+                properties:
+                  state:
+                    type: string
+                  status_message:
+                    type: string
+            spec:
+              type: object
+              x-kubernetes-validations:
+                - rule: "has(self.preconfigured) != has(self.config)"
+                  message: "preconfigured and config are mutually exclusive fields. Please specify exactly one of them."
+              properties:
+                gatewayClassName:
+                  type: string
+                  description: "Name of the GatewayClass that this HTTP profile should be applied to."
+                targetRef:
+                  type: array
+                  description: "A list of target resources where this profile will be applied."
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        description: "Name of the target resource."
+                      namespace:
+                        type: string
+                        description: "Namespace of the target resource."
+                      group:
+                        type: string
+                        description: "Group of the target resource."
+                      kind:
+                        type: string
+                        description: "Kind of the target resource."
+                      sectionName:
+                        type: string
+                        description: "Specific section within the target resource."
+                preconfigured:
+                  type: string
+                  description: "Mutually exclusive with 'config'. Name of a preconfigured, built-in HTTP profile on the NetScaler to use."
+                config:
+                  type: object
+                  description: "Mutually exclusive with 'preconfigured'. Contains all the parameters related to the NetScaler Nitro API for a fully custom profile. Customers can specify any valid Nitro HTTP profile parameters."
+                  additionalProperties: true
+                  maxProperties: 127
+  scope: Namespaced
+  names:
+    plural: httpprofiles
+    singular: httpprofile
+    kind: httpprofile
+    shortNames:
+    - httpp
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: tcpprofiles.citrix.com
+spec:
+  group: citrix.com
+  versions:
+    - name: v1
+      served: true
+      storage: true
+      subresources:
+        status: {}
+      additionalPrinterColumns:
+      - name: Status
+        type: string
+        description: "Current Status of the CRD"
+        jsonPath: .status.state
+      - name: Message
+        type: string
+        description: "Status Message"
+        jsonPath: .status.status_message
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            status:
+                type: object
+                properties:
+                  state:
+                    type: string
+                  status_message:
+                    type: string
+            spec:
+              type: object
+              x-kubernetes-validations:
+                - rule: "has(self.preconfigured) != has(self.config)"
+                  message: "preconfigured and config are mutually exclusive fields. Please specify exactly one of them."
+              properties:
+                gatewayClassName:
+                  type: string
+                  description: "Name of the GatewayClass that this TCP profile should be applied to."
+                targetRef:
+                  type: array
+                  description: "A list of target resources where this profile will be applied."
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        description: "Name of the target resource."
+                      namespace:
+                        type: string
+                        description: "Namespace of the target resource."
+                      group:
+                        type: string
+                        description: "Group of the target resource."
+                      kind:
+                        type: string
+                        description: "Kind of the target resource."
+                      sectionName:
+                        type: string
+                        description: "Specific section within the target resource."
+                preconfigured:
+                  type: string
+                  description: "Mutually exclusive with 'config'. Name of a preconfigured, built-in TCP profile on the NetScaler to use."
+                config:
+                  type: object
+                  description: "Mutually exclusive with 'preconfigured'. Contains all the parameters related to the NetScaler Nitro API for a fully custom profile. Customers can specify any valid Nitro TCP profile parameters."
+                  additionalProperties: true
+                  maxProperties: 127
+  scope: Namespaced
+  names:
+    plural: tcpprofiles
+    singular: tcpprofile
+    kind: tcpprofile
+    shortNames:
+    - tcpp
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: sslprofiles.citrix.com
+spec:
+  group: citrix.com
+  versions:
+    - name: v1
+      served: true
+      storage: true
+      subresources:
+        status: {}
+      additionalPrinterColumns:
+      - name: Status
+        type: string
+        description: "Current Status of the CRD"
+        jsonPath: .status.state
+      - name: Message
+        type: string
+        description: "Status Message"
+        jsonPath: .status.status_message
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            status:
+                type: object
+                properties:
+                  state:
+                    type: string
+                  status_message:
+                    type: string
+            spec:
+              type: object
+              x-kubernetes-validations:
+                - rule: "has(self.preconfigured) != has(self.config)"
+                  message: "preconfigured and config are mutually exclusive fields. Please specify exactly one of them."
+              properties:
+                gatewayClassName:
+                  type: string
+                  description: "Name of the GatewayClass that this SSL profile should be applied to."
+                targetRef:
+                  type: array
+                  description: "A list of target resources where this profile will be applied."
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        description: "Name of the target resource."
+                      namespace:
+                        type: string
+                        description: "Namespace of the target resource."
+                      group:
+                        type: string
+                        description: "Group of the target resource."
+                      kind:
+                        type: string
+                        description: "Kind of the target resource."
+                      sectionName:
+                        type: string
+                        description: "Specific section within the target resource."
+                sslciphers:
+                  type: array
+                  description: "List of ciphers to be bound to the ssl profile for the listener. Priority is as per the order in the list. A cipher suite, predefined cipher group or User created cipher group can be mentioned"
+                  minItems: 1
+                  items:
+                    type: string
+                    description: "Cipher suite, cipher group name"
+                preconfigured:
+                  type: string
+                  description: "Mutually exclusive with 'config'. Name of a preconfigured, built-in SSL profile on the NetScaler to use."
+                config:
+                  type: object
+                  description: "Mutually exclusive with 'preconfigured'. Contains all the parameters related to the NetScaler Nitro API for a fully custom profile. Customers can specify any valid Nitro SSL profile parameters."
+                  additionalProperties: true
+  scope: Namespaced
+  names:
+    plural: sslprofiles
+    singular: sslprofile
+    kind: sslprofile
+    shortNames:
+    - sslp
+---

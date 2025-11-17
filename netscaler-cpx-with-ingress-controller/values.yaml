@@ -82,7 +82,7 @@ servicePorts: []
 nsic:
   imageRegistry: quay.io
   imageRepository: netscaler/netscaler-k8s-ingress-controller
-  imageTag: 3.2.22
+  imageTag: 3.3.2
   image: "{{ .Values.nsic.imageRegistry }}/{{ .Values.nsic.imageRepository }}:{{ .Values.nsic.imageTag }}"
   pullPolicy: IfNotPresent
   required: true
@@ -173,6 +173,8 @@ ADMSettings:
   cpxCores: 1
   platform: false
   licenseEdition: PLATINUM
+  licensingMode: "" # "pool" or "las"
+# For licensingmode "las", set the ADMIP, loginSecret, licenseEdition and bandwidth
 
 # Exporter config details
 exporter:
