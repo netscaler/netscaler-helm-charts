@@ -53,7 +53,7 @@ spec:
           - --feature-node-watch
             {{ .Values.gatewayController.nodeWatch }}
           - --enable-cnc-pbr
-            {{ .Values.gatewayController.nsncPbr }}
+            {{ .Values.netscaler.nsncPbr }}
 {{- if .Values.gatewayController.ipam }}
           - --ipam
             citrix-ipam-controller

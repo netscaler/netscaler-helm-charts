@@ -2,7 +2,7 @@ license:
    accept: no
 imageRegistry: quay.io
 imageRepository: netscaler/netscaler-k8s-ingress-controller
-imageTag: 3.4.4
+imageTag: 4.0.16
 pullPolicy: IfNotPresent
 imagePullSecrets: []
 nameOverride: ""
@@ -36,7 +36,6 @@ gatewayController:
     periodSeconds: 60
   logLevel: info
   nodeWatch: false
-  nsncPbr: false
   openshift: false
   optimizeEndpointBinding: true
   pullPolicy: Always
@@ -65,6 +64,7 @@ netscaler:
   nsPort: 443
   nsProtocol: HTTPS
   nsSNIPs:
+  nsncPbr: false
   nsVIP: 
   nsValidateCert: false
   nsCertSecret:

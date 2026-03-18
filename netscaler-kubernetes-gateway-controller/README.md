@@ -109,6 +109,20 @@ Below is an example of the helm command that configures
 helm install my-release netscaler/netscaler-kubernetes-gateway-controller --set gatewayController.gatewayControllerName=citrix.com/nsgc-controller,license.accept=yes --set resources.requests.cpu=500m,resources.requests.memory=512Mi --set resources.limits.cpu=1000m,resources.limits.memory=1000Mi,gatewayController.entityPrefix=gwy
 ```
 
+## Route Addition in MPX/VPX
+
+For seamless connectivity of services deployed in the Kubernetes cluster, it is essential that NetScaler device should be able to reach the underlying overlay network over which Pods are running. `gatewayController.nodeWatch` knob of NetScaler Kubernetes Gateway Controller can be used for automatic route configuration on NetScaler towards the pod network. Refer [Static Route Configuration](https://github.com/netscaler/netscaler-k8s-ingress-controller/blob/master/docs/network/staticrouting.md) for further details regarding the same. By default, `gatewayController.nodeWatch` is false. It needs to be explicitly set to true if auto route configuration is required.
+
+This can also be achieved by deploying [NetScaler Node Controller](https://github.com/netscaler/netscaler-k8s-node-controller).
+
+If your deployment uses one single NetScaler Device to loadbalance between multiple k8s clusters, there is a possibilty of CNI subnets to overlap, causing the above mentioned static routing to fail due to route conflicts. In such deployments [Policy Based Routing(PBR)] (https://docs.citrix.com/en-us/citrix-adc/current-release/networking/ip-routing/configuring-policy-based-routes/configuring-policy-based-routes-pbrs-for-ipv4-traffic.html) can be used instead. This would require you to provide one or more subnet IP Addresses unique for each kubernetes cluster using nsSNIPs in values.yaml.
+
+   Use the following command to provide subnet IPAddresses(SNIPs) to configure Policy Based Routes(PBR) on the NetScaler
+
+   ```
+   helm install my-release netscaler/netscaler-kubernetes-gateway-controller --set gatewayController.gatewayControllerName=citrix.com/nsgc-controller,license.accept=yes,gatewayController.entityPrefix=gwy,netscaler.nsncPbr="true",netscaler.adcCredentialSecret=<Secret-for-ADC-credentials>,netscaler.nsSNIPs='[<NS_SNIP1>\, <NS_SNIP2>\, ...]'
+   ```
+
 ### Configuration
 
 The following table lists the mandatory and optional parameters that you can configure during installation:
@@ -118,7 +132,7 @@ The following table lists the mandatory and optional parameters that you can con
 | license.accept | Mandatory | no | Set `yes` to accept the NSIC end user license agreement. |
 | imageRegistry                   | Optional  |  `quay.io`               |  The NetScaler Kubernetes Gateway Controller image registry             |  
 | imageRepository                 | Optional  |  `netscaler/netscaler-k8s-ingress-controller`              |   The NetScaler ingress controller image repository             |
-| imageTag                  | Optional  |  `3.4.4`               |   The NetScaler Kubernetes Gateway Controller image tag            |
+| imageTag                  | Optional  |  `4.0.16`               |   The NetScaler Kubernetes Gateway Controller image tag            | 
 | pullPolicy | Optional | Always | The NSIC image pull policy. |
 | imagePullSecrets | Optional | N/A | Provide list of Kubernetes secrets to be used for pulling the images from a private Docker registry or repository. For more information on how to create this secret please see [Pull an Image from a Private Registry](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/). |
 | nameOverride | Optional | N/A | String to partially override deployment fullname template with a string (will prepend the release name) |
@@ -133,7 +147,8 @@ The following table lists the mandatory and optional parameters that you can con
 | netscaler.nsProtocol | Optional | HTTPS | The protocol used by NSIC to communicate with NetScaler. You can also use HTTP on port 80. |
 | netscaler.nitroReadTimeout | Optional | 20 | The nitro Read timeout in seconds, defaults to 20 |
 | netscaler.adcCredentialSecret | Mandatory | N/A | The Kubernetes secret containing login credentials for the NetScaler VPX or MPX. For information on how to create the secret keys, see [Prerequisites](#prerequistes). |
-| netscaler.nsSNIPS | Optional | N/A | The list of subnet IPAddresses on the NetScaler device, which will be used to create PBR Routes instead of Static Routes [PBR support](https://github.com/netscaler/netscaler-k8s-ingress-controller/tree/master/docs/how-to/pbr.md) |
+| netscaler.nsncPbr | Optional | False | Use this argument to inform NetScaler kubernetes gateway Controller that NetScaler Node Controller(NSNC) is configuring Policy Based Routes(PBR) on the NetScaler. For more information, see [NSNC-PBR-SUPPORT](https://github.com/netscaler/netscaler-k8s-ingress-controller/blob/master/docs/network/pbr.md#configure-pbr-using-the-netscaler-node-controller) |
+| netscaler.nsSNIPs | Optional | N/A | The list of subnet IPAddresses on the NetScaler device, which will be used to create PBR Routes instead of Static Routes [PBR support](https://docs.netscaler.com/en-us/netscaler-k8s-ingress-controller/how-to/pbr.html) |
 | netscaler.nsVIP | Optional | N/A | The Virtual IP address on the NetScaler device. |
 | netscaler.netscalernsValidateCert | Optional | false | Set to true if NetScaler Certificate validation is required. Please refer [this](https://docs.netscaler.com/en-us/netscaler-k8s-ingress-controller/certificate-management/adc-certificate-validation) for more info.  |
 | netscaler.podIPsforServiceGroupMembers | Optional | False |  By default NetScaler Ingress Controller will add NodeIP and NodePort as service group members while configuring type LoadBalancer Services and NodePort services. This variable if set to `True` will change the behaviour to add pod IP and Pod port instead of nodeIP and nodePort. Users can set this to `True` if there is a route between NetScaler and K8s clusters internal pods either using feature-node-watch argument or using NetScaler Node Controller. |
@@ -161,7 +176,6 @@ The following table lists the mandatory and optional parameters that you can con
 | gatewayController.livenessProbe | Optional | N/A | Set livenessProbe settings for NSIC |
 | gatewayController.readinessProbe | Optional | N/A | Set readinessProbe settings|
 | gatewayController.nodeWatch | Optional | false | Use the argument if you want to automatically configure network route from the NetScaler VPX or MPX to the pods in the Kubernetes cluster. For more information, see [Automatically configure route on the NetScaler instance](https://docs.netscaler.com/en-us/netscaler-k8s-ingress-controller/network/staticrouting/#automatically-configure-route-on-the-netscaler-adc-instance). |
-| gatewayController.nsncPbr | Optional | False | Use this argument to inform NetScaler kubernetes gateway Controller about configuring Policy Based Routes(PBR) on the NetScaler. For more information, see [NSNC-PBR-SUPPORT](https://github.com/netscaler/netscaler-k8s-ingress-controller/blob/master/docs/network/pbr.md#configure-pbr-using-the-netscaler-node-controller) |
 | gatewayController.optimizeEndpointBinding | Optional | false | To enable/disable binding of backend endpoints to servicegroup in a single API-call. Recommended when endpoints(pods) per application are large in number. Applicable only for NetScaler Version >=13.0-45.7  |
 | gatewayController.pullPolicy | Mandatory | IfNotPresent | The NSIC image pull policy. |
 | gatewayController.extraVolumeMounts  |  Optional |  [] |  Specify the Additional VolumeMounts to be mounted in Exporter container. Specify the volumes in `extraVolumes`  |

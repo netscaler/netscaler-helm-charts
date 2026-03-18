@@ -11,6 +11,9 @@ data:
 {{- if .Values.netscaler.podIPsforServiceGroupMembers }}
   POD_IPS_FOR_SERVICEGROUP_MEMBERS: {{ .Values.netscaler.podIPsforServiceGroupMembers | quote }}
 {{- end }}
+{{- if .Values.netscaler.nsSNIPs }}
+  NS_SNIPS: {{ .Values.netscaler.nsSNIPs | toJson | quote }}
+{{- end }}
 {{- if .Values.netscaler.ignoreNodeExternalIP }}
   IGNORE_NODE_EXTERNAL_IP: {{ .Values.netscaler.ignoreNodeExternalIP | quote }}
 {{- end }}

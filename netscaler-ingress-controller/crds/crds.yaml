@@ -1176,6 +1176,9 @@ spec:
           spec:
             type: object
             required: [protocol]
+            x-kubernetes-validations:
+              - rule: "!(has(self.passthrough) && self.passthrough == true && has(self.routes))"
+                message: "passthrough cannot be used with routes. Passthrough is only available when listener is referenced in ingress annotation."
             properties:
               ingressclass:
                 type: string
@@ -1183,6 +1186,9 @@ spec:
               multicluster:
                 description: "The setting of this indicates that the VIP/csvserver IP address is shared by multiple netscaler ingress controllers on the VPX/MPX. For CPX, this field is not applicable"
                 type: boolean
+              passthrough:
+                type: boolean
+                description: "Enables SSL Passthrough. Traffic is forwarded without decryption to the backend. Only available when listener is referenced in ingress annotation."
               protocol:
                 type: string
                 enum: ["udp", "tcp", "https", "http"]
