@@ -19,17 +19,26 @@ Please note that for services of type LoadBalancer, distinct IPs are allocated f
 ### Prerequisites
 
 -  The [Kubernetes](https://kubernetes.io/) version is 1.24 or later if using Kubernetes environment.
+-  [Kubernetes](https://kubernetes.io/) version 1.29 or later is required to enable API Priority and Fairness (`apiPriorityAndFairness.enabled=true`).
 -  The [Openshift](https://www.openshift.com) version 4.8 or later if using OpenShift platform.
+-  [Openshift](https://www.openshift.com) version 4.16 or later is required to enable API Priority and Fairness (`apiPriorityAndFairness.enabled=true`).
 -  The [Helm](https://helm.sh/) version 3.x or later. You can follow instruction given [here](https://github.com/netscaler/netscaler-helm-charts/blob/master/Helm_Installation_version_3.md) to install the same.
 -  For Infoblox integration, ensure that you create a user role in Infoblox with the following permissions:
    - Allocate and manage IP addresses.
    - Create, update, and delete host records.
    - Create, update, and delete extensible attributes.
    - Create, update, and delete Network Views.
+- For binddns setup TSIG (Transaction SIGnatures) and provide access controls in binddns following the documentation [here](https://bind9.readthedocs.io/en/v9.18.27/chapter7.html#tsig). Keep the TSIG KEY and TSIG Secret which will be used later.
+
+Deploy the IPAM controller with the following configurations for enabling BIND DNS:
 - Create generic secret in Kubernetes for the Infoblox User:
   ```
   kubectl create secret generic infobloxsecret --from-literal=username=<Infoblox Username> --from-literal=password=<Infoblox Password> -n <namespace>
   ```
+-  For BindDNS integration, create a Kubernetes Secret containing the TSIG key name and secret:
+   ```
+   kubectl create secret generic binddns-tsig-secret --from-literal=tsigKey=<TSIG Key Name> --from-literal=tsigSecret=<Base64-encoded HMAC Secret> -n <namespace>
+   ```
 
 ## Installing the Chart
 Add the NetScaler IPAM Controller helm chart repository using command:
@@ -61,7 +70,7 @@ The following table lists the configurable parameters of the NetScaler CPX with 
 | ---------- | --------------------- | ------------- | ----------- |
 | imageRegistry                   | Mandatory  |  `quay.io`               |  The NetScaler IPAM Controller image registry             |  
 | imageRepository                 | Mandatory  |  `netscaler/netscaler-ipam-controller`              |   The NetScaler IPAM Controller image repository             | 
-| imageTag                  | Mandatory  |  `2.1.2`               |  The NetScaler IPAM Controller image tag            |
+| imageTag                  | Mandatory  |  `2.2.1`               |  The NetScaler IPAM Controller image tag            |
 | pullPolicy | Mandatory | `IfNotPresent` | The NetScaler IPAM Controller image pull policy. |
 | vipRange | Mandatory | N/A | This variable allows you to define the IP address range. You can either define IP address range or an IP address range associated with a unique name. NetScaler IPAM controller assigns the IP address from this IP address range to the service of type LoadBalancer. |
 | reuseIngressVip| Optional | True | This variable allows you to use same IP for all ingresses using the same vipRange. |
@@ -82,11 +91,39 @@ The following table lists the configurable parameters of the NetScaler CPX with 
 | nodeSelector.key | Optional | N/A | Node label key to be used for nodeSelector option in IPAM controller deployment. |
 | nodeSelector.value | Optional | N/A | Node label value to be used for nodeSelector option in IPAM controller deployment. |
 | tolerations | Optional | N/A | Specify the tolerations for the IPAM Controller deployment. |
-Alternatively, you can define a YAML file with the values for the parameters and pass the values while installing the chart.
 | resources | Optional | {} |	CPU/Memory resource requests/limits for NetScaler IPAM Controller container |
+| apiPriorityAndFairness.enabled | Optional | false | Enable API Priority and Fairness flow control for the controller's API server requests. Creates a PriorityLevelConfiguration and FlowSchema. |
+| apiPriorityAndFairness.priorityLevelConfiguration.nominalConcurrencyShares | Optional | 40 | Relative weight of this priority level vs other levels (default workload gets 30). |
+| apiPriorityAndFairness.priorityLevelConfiguration.lendablePercent | Optional | 25 | Percentage of seats that can be lent to other priority levels when idle. |
+| apiPriorityAndFairness.priorityLevelConfiguration.limitResponse.type | Optional | Queue | Type of limit response. |
+| apiPriorityAndFairness.priorityLevelConfiguration.limitResponse.queuing.queues | Optional | 16 | Number of shuffle-sharded queues. |
+| apiPriorityAndFairness.priorityLevelConfiguration.limitResponse.queuing.handSize | Optional | 4 | Spread factor per flow. |
+| apiPriorityAndFairness.priorityLevelConfiguration.limitResponse.queuing.queueLengthLimit | Optional | 50 | Max pending requests per queue. |
+| apiPriorityAndFairness.flowSchema.matchingPrecedence | Optional | 1000 | Matching precedence for the FlowSchema (lower = higher priority; system uses 0-999). |
+| apiPriorityAndFairness.flowSchema.distinguisherMethod.type | Optional | ByNamespace | Method to distinguish flows. Supported values: ByNamespace, ByUser. |
+| dns.enabled | Optional | false | Boolean value that allows you to enable/disable DNS integration. |
+| dns.type | Mandatory if dns.enabled is true | `binddns` | DNS provider type.|
+| dns.binddns.server | Mandatory if dns.type is `binddns` | N/A | IP address of the BIND DNS server. |
+| dns.binddns.zone | Mandatory if dns.type is `binddns` | N/A | DNS zone managed by the BIND server. |
+| dns.binddns.tsigKeySecret | Mandatory if dns.type is `binddns` | N/A | Name of a Kubernetes Secret containing TSIG credentials. Required keys: `tsigKey` (key name), `tsigSecret` (base64-encoded HMAC secret). |
+| dns.binddns.fudge | Optional | `300` | TSIG clock skew tolerance in seconds. Increase if clocks are out of sync. |
+
+Alternatively, you can define a YAML file with the values for the parameters and pass the values while installing the chart.
 For example:
    ```
    helm install my-release netscaler/netscaler-ipam-controller -f values.yaml
+   ```
+
+### Example: Installing with BindDNS
+
+   ```
+   helm install my-release netscaler/netscaler-ipam-controller \
+     --set vipRange='[{"Prod":["10.1.2.0/24"]}]' \
+     --set dns.enabled=true \
+     --set dns.type=binddns \
+     --set dns.binddns.server=10.106.166.228 \
+     --set dns.binddns.zone=example.com \
+     --set dns.binddns.tsigKeySecret=binddns-tsig-secret
    ```
 
 > **Tip:**

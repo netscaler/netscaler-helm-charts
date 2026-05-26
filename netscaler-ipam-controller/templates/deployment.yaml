@@ -78,6 +78,45 @@ spec:
         - name: "INFOBLOX_NETWORKS"
           value: {{ required "Provide IPs or IP range for Infoblox in CIDR form" .Values.infoblox.vipRange | squote }}
 {{- end }}
+{{- if and .Values.dns.enabled (eq (.Values.dns.type | default "") "binddns") }}
+        - name: "DNS_TYPE"
+          value: "binddns"
+        - name: "BIND_SERVER"
+          value: {{ required "Provide BIND DNS server IP" .Values.dns.binddns.server | squote }}
+        - name: "BIND_ZONE"
+          value: {{ required "Provide BIND DNS zone" .Values.dns.binddns.zone | squote }}
+        - name: "TSIG_KEY"
+          valueFrom:
+            secretKeyRef:
+              name: {{ required "Provide TSIG key secret name" .Values.dns.binddns.tsigKeySecret }}
+              key: tsigKey
+        - name: "TSIG_SECRET"
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.dns.binddns.tsigKeySecret }}
+              key: tsigSecret
+        - name: "BIND_TSIG_FUDGE"
+          value: {{ .Values.dns.binddns.fudge | default "300" | squote }}
+{{- else if and .Values.dns.enabled (eq (.Values.dns.type | default "") "universal") }}
+        - name: "DNS_TYPE"
+          value: "universal"
+        - name: "UDNS_SERVER"
+          value: {{ required "Provide UniversalDNS server host:port" .Values.dns.universal.server | squote }}
+        - name: "UDNS_USERNAME"
+          valueFrom:
+            secretKeyRef:
+              name: {{ required "Provide UDNS credential secret name" .Values.dns.universal.credentialSecret }}
+              key: username
+        - name: "UDNS_PASSWORD"
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.dns.universal.credentialSecret }}
+              key: password
+        - name: "UDNS_DNS_VIEW"
+          value: {{ .Values.dns.universal.dnsView | default "default" | squote }}
+        - name: "UDNS_WAPI_VERSION"
+          value: {{ .Values.dns.universal.wapiVersion | default "v2.5" | squote }}
+{{- end }}
         resources:
             {{- toYaml .Values.resources | nindent 10 }}
         volumeMounts:

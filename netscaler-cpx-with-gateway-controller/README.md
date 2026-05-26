@@ -28,7 +28,9 @@ This Helm chart deploys a NetScaler CPX with NetScaler gateway controller as a s
 ### Prerequisites
 
 -  The [Kubernetes](https://kubernetes.io/) version should be 1.24 and above if using Kubernetes environment.
+-  [Kubernetes](https://kubernetes.io/) version 1.29 or later is required to enable API Priority and Fairness (`apiPriorityAndFairness.enabled=true`).
 -  The [Openshift](https://www.openshift.com) version 4.8 or later if using OpenShift platform.
+-  [Openshift](https://www.openshift.com) version 4.16 or later is required to enable API Priority and Fairness (`apiPriorityAndFairness.enabled=true`).
 -  The [Helm](https://helm.sh/) version 3.x or later. You can follow instruction given [here](https://github.com/netscaler/netscaler-helm-charts/blob/master/Helm_Installation_version_3.md) to install the same.
 -  You have installed [Prometheus Operator](https://github.com/coreos/prometheus-operator), if you want to view the metrics of the NetScaler CPX collected by the [metrics exporter](https://github.com/netscaler/netscaler-k8s-gateway-controller/tree/master/metrics-visualizer#visualization-of-metrics).
 - Registration of NetScaler CPX in ADM: You may want to register your CPX in ADM for licensing or to obtain [servicegraph](https://docs.netscaler.com/en-us/citrix-application-delivery-management-service/application-analytics-and-management/service-graph.html). For this you will have to create a Kubernetes secret using ADM credentials and provide it while install the chart. Create a Kubernetes secret for the user name and password using the following command:
@@ -173,7 +175,7 @@ The following table lists the configurable parameters of the NetScaler CPX with 
 | gatewayController.gatewayControllerName | Mandatory | N/A | Name of Gateway Controller . |
 | gatewayController.imageRegistry                   | Mandatory  |  `quay.io`               |  The NetScaler gateway controller image registry             |  
 | gatewayController.imageRepository                 | Mandatory  |  `netscaler/netscaler-k8s-ingress-controller`              |   The NetScaler gateway controller image repository             | 
-| gatewayController.imageTag                  | Mandatory  |  `4.0.16`               |   The NetScaler gateway controller image tag            |
+| gatewayController.imageTag                  | Mandatory  |  `4.1.17`               |   The NetScaler gateway controller image tag            |
 | gatewayController.pullPolicy | Mandatory | IfNotPresent | The NetScaler gateway controller image pull policy. |
 | gatewayController.required | Mandatory | true | NSGWC to be run as sidecar with NetScaler CPX |
 | gatewayController.enableLivenessProbe| Optional | False | Enable liveness probe settings for NetScaler Gateway Controller |
@@ -221,7 +223,7 @@ The following table lists the configurable parameters of the NetScaler CPX with 
 | createClusterRoleAndBinding | Mandatory | true | If you want to use a ClusterRole and Cluster Role Binding that you have already created and manage yourself then set to false. Please make sure you have bound the serviceaccount with the cluster role properly.  |
 | netscalerCpx.imageRegistry                   | Mandatory  |  `quay.io`               |  The NetScaler CPX image registry             |  
 | netscalerCpx.imageRepository                 | Mandatory  |  `netscaler/netscaler-cpx`              |   The NetScaler CPX image repository             | 
-| netscalerCpx.imageTag                  | Mandatory  |  `14.1-60.52`               |   The NetScaler CPX image tag            |
+| netscalerCpx.imageTag                  | Mandatory  |  `14.1-66.59`               |   The NetScaler CPX image tag            |
 | netscalerCpx.pullPolicy | Mandatory | IfNotPresent | The NetScaler CPX image pull policy. |
 | netscalerCpx.hostName | Optional | N/A | This entity will be used to set Hostname of the CPX |
 | netscalerCpx.nsLbHashAlgo.required | Optional | false | Set this value to set the LB consistent hashing Algorithm |
@@ -252,6 +254,16 @@ The following table lists the configurable parameters of the NetScaler CPX with 
 | exporter.resources | Optional | {} |	CPU/Memory resource requests/limits for Metrics exporter container |
 | exporter.ports.containerPort | Optional | 8888 | The Exporter for NetScaler Stats container port. |
 | exporter.serviceMonitorExtraLabels | Optional |  | Extra labels for service monitor whem NetScaler-adc-metrics-exporter is enabled. |
+| apiPriorityAndFairness.enabled | Optional | false | Enable API Priority and Fairness flow control for the controller's API server requests. Creates a PriorityLevelConfiguration and FlowSchema. |
+| apiPriorityAndFairness.priorityLevelConfiguration.nominalConcurrencyShares | Optional | 40 | Relative weight of this priority level vs other levels (default workload gets 30). |
+| apiPriorityAndFairness.priorityLevelConfiguration.lendablePercent | Optional | 25 | Percentage of seats that can be lent to other priority levels when idle. |
+| apiPriorityAndFairness.priorityLevelConfiguration.limitResponse.type | Optional | Queue | Type of limit response. |
+| apiPriorityAndFairness.priorityLevelConfiguration.limitResponse.queuing.queues | Optional | 16 | Number of shuffle-sharded queues. |
+| apiPriorityAndFairness.priorityLevelConfiguration.limitResponse.queuing.handSize | Optional | 4 | Spread factor per flow. |
+| apiPriorityAndFairness.priorityLevelConfiguration.limitResponse.queuing.queueLengthLimit | Optional | 50 | Max pending requests per queue. |
+| apiPriorityAndFairness.flowSchema.matchingPrecedence | Optional | 1000 | Matching precedence for the FlowSchema (lower = higher priority; system uses 0-999). |
+| apiPriorityAndFairness.flowSchema.distinguisherMethod.type | Optional | ByNamespace | Method to distinguish flows. Supported values: ByNamespace, ByUser. |
+
 Alternatively, you can define a YAML file with the values for the parameters and pass the values while installing the chart.
 
 For example:

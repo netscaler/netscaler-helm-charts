@@ -5,7 +5,7 @@
 # NetScaler CPX config details
 imageRegistry: quay.io
 imageRepository: netscaler/netscaler-cpx
-imageTag: 14.1-60.52
+imageTag: 14.1-66.59
 image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
 pullPolicy: IfNotPresent
 imagePullSecrets: []
@@ -82,7 +82,7 @@ servicePorts: []
 nsic:
   imageRegistry: quay.io
   imageRepository: netscaler/netscaler-k8s-ingress-controller
-  imageTag: 4.0.16
+  imageTag: 4.1.17
   image: "{{ .Values.nsic.imageRegistry }}/{{ .Values.nsic.imageRepository }}:{{ .Values.nsic.imageTag }}"
   pullPolicy: IfNotPresent
   required: true
@@ -310,3 +310,25 @@ cpxCommands: |
 # echo "this is the file" >> /etc/a.txt
 # ls >> /etc/a.txt
 cpxShellCommands: |
+
+# Enable CPX config persistence across pod restarts.
+# When true, adds init container, preStop hook, rolling update strategy, and mounts the
+# external ConfigMap "nsic-reboot-overflow-config" (auto-created by the preStop hook at runtime).
+cpxConfigPersistenceEnabled: false
+
+# API Priority and Fairness configuration for the ingress controller's API server requests
+apiPriorityAndFairness:
+  enabled: false
+  priorityLevelConfiguration:
+    nominalConcurrencyShares: 40
+    lendablePercent: 25
+    limitResponse:
+      type: Queue
+      queuing:
+        queues: 16
+        handSize: 4
+        queueLengthLimit: 50
+  flowSchema:
+    matchingPrecedence: 1000
+    distinguisherMethod:
+      type: ByNamespace

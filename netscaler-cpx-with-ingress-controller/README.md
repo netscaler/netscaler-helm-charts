@@ -33,7 +33,9 @@ This Helm chart deploys a NetScaler CPX with NetScaler ingress controller as a s
 ### Prerequisites
 
 -  The [Kubernetes](https://kubernetes.io/) version should be 1.24 and above if using Kubernetes environment.
+-  [Kubernetes](https://kubernetes.io/) version 1.29 or later is required to enable API Priority and Fairness (`apiPriorityAndFairness.enabled=true`).
 -  The [Openshift](https://www.openshift.com) version 4.8 or later if using OpenShift platform.
+-  [Openshift](https://www.openshift.com) version 4.16 or later is required to enable API Priority and Fairness (`apiPriorityAndFairness.enabled=true`).
 -  The [Helm](https://helm.sh/) version 3.x or later. You can follow instruction given [here](https://github.com/netscaler/netscaler-helm-charts/blob/master/Helm_Installation_version_3.md) to install the same.
 -  You have installed [Prometheus Operator](https://github.com/coreos/prometheus-operator), if you want to view the metrics of the NetScaler CPX collected by the [metrics exporter](https://github.com/netscaler/netscaler-k8s-ingress-controller/tree/master/metrics-visualizer#visualization-of-metrics).
 - Registration of NetScaler CPX in ADM: You may want to register your CPX in ADM for licensing or to obtain [servicegraph](https://docs.netscaler.com/en-us/citrix-application-delivery-management-service/application-analytics-and-management/service-graph.html). For this you will have to create a Kubernetes secret using ADM credentials and provide it while install the chart. Create a Kubernetes secret for the user name and password using the following command:
@@ -606,13 +608,13 @@ The following table lists the configurable parameters of the NetScaler CPX with 
 | license.accept | Mandatory | no | Set `yes` to accept the NetScaler ingress controller end user license agreement. |
 | imageRegistry                   | Mandatory  |  `quay.io`               |  The NetScaler CPX image registry             |  
 | imageRepository                 | Mandatory  |  `netscaler/netscaler-cpx`              |   The NetScaler CPX image repository             | 
-| imageTag                  | Mandatory  |  `14.1-60.52`               |   The NetScaler CPX image tag            |
+| imageTag                  | Mandatory  |  `14.1-66.59`               |   The NetScaler CPX image tag            |
 | pullPolicy | Mandatory | IfNotPresent | The NetScaler CPX image pull policy. |
 | daemonSet | Optional | False | Set this to true if NetScaler CPX needs to be deployed as DaemonSet. |
 | hostName | Optional | N/A | This entity will be used to set Hostname of the CPX |
 | nsic.imageRegistry                   | Mandatory  |  `quay.io`               |  The NetScaler ingress controller image registry             |  
 | nsic.imageRepository                 | Mandatory  |  `netscaler/netscaler-k8s-ingress-controller`              |   The NetScaler ingress controller image repository             | 
-| nsic.imageTag                  | Mandatory  |  `4.0.16`               |   The NetScaler ingress controller image tag            | 
+| nsic.imageTag                  | Mandatory  |  `4.1.17`               |   The NetScaler ingress controller image tag            | 
 | nsic.pullPolicy | Mandatory | IfNotPresent | The NetScaler ingress controller image pull policy. |
 | nsic.required | Mandatory | true | NSIC to be run as sidecar with NetScaler CPX |
 | nsic.enableLivenessProbe| Optional | True | Enable liveness probe settings for NetScaler Ingress Controller |
@@ -723,6 +725,15 @@ The following table lists the configurable parameters of the NetScaler CPX with 
 | serviceAccount.name | Optional | "" | Name of the ServiceAccount for the NetScaler CPX with Ingress Controller. If you want to use a ServiceAccount that you have already created and manage yourself, specify its name here and set serviceAccount.create to false. |
 | createClusterRoleAndBinding | Mandatory | true | If you want to use a ClusterRole and Cluster Role Binding that you have already created and manage yourself then set to false. Please make sure you have bound the serviceaccount with the cluster role properly.  |
 | certBundle | Optional | false |When set to true this will bind certificate key bundle in frontend vservers. Please refer [this](https://docs.netscaler.com/en-us/citrix-adc/current-release/ssl/ssl-certificates/install-link-and-update-certificates.html#support-for-ssl-certificate-key-bundle).
+| apiPriorityAndFairness.enabled | Optional | false | Enable API Priority and Fairness flow control for the controller's API server requests. Creates a PriorityLevelConfiguration and FlowSchema. |
+| apiPriorityAndFairness.priorityLevelConfiguration.nominalConcurrencyShares | Optional | 40 | Relative weight of this priority level vs other levels (default workload gets 30). |
+| apiPriorityAndFairness.priorityLevelConfiguration.lendablePercent | Optional | 25 | Percentage of seats that can be lent to other priority levels when idle. |
+| apiPriorityAndFairness.priorityLevelConfiguration.limitResponse.type | Optional | Queue | Type of limit response. |
+| apiPriorityAndFairness.priorityLevelConfiguration.limitResponse.queuing.queues | Optional | 16 | Number of shuffle-sharded queues. |
+| apiPriorityAndFairness.priorityLevelConfiguration.limitResponse.queuing.handSize | Optional | 4 | Spread factor per flow. |
+| apiPriorityAndFairness.priorityLevelConfiguration.limitResponse.queuing.queueLengthLimit | Optional | 50 | Max pending requests per queue. |
+| apiPriorityAndFairness.flowSchema.matchingPrecedence | Optional | 1000 | Matching precedence for the FlowSchema (lower = higher priority; system uses 0-999). |
+| apiPriorityAndFairness.flowSchema.distinguisherMethod.type | Optional | ByNamespace | Method to distinguish flows. Supported values: ByNamespace, ByUser. |
 
 > **Note:**
 >

@@ -8,6 +8,12 @@ spec:
     matchLabels:
       app: {{ include "netscaler-cpx-gateway-controller.fullname" . }}
   replicas: {{ .Values.replicaCount }}
+{{- if and (eq (toString .Values.cpxConfigPersistenceEnabled) "true") (lt (div (mul (.Values.replicaCount | int) 25) 100) 1) }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+{{- end }}
   template:
     metadata:
       name: {{ include "netscaler-cpx-gateway-controller.fullname" . }}
@@ -23,6 +29,33 @@ spec:
 {{- if .Values.netscalerCpx.hostName }}
       hostname: {{ .Values.netscalerCpx.hostName }}-{{ .Release.Namespace }}
 {{- end }}
+{{- if eq (toString .Values.cpxConfigPersistenceEnabled) "true" }}
+      terminationGracePeriodSeconds: 180
+{{- end }}
+      initContainers:
+        - name: wait-for-config
+          image: "{{ tpl .Values.gatewayController.image . }}"
+          imagePullPolicy: {{ .Values.gatewayController.pullPolicy }}
+          env:
+          - name: CPX_CONFIG_PERSISTENCE_ENABLED
+            value: {{ .Values.cpxConfigPersistenceEnabled | default "false" | quote }}
+          - name: CPX_BOOTUP_CONFIGMAP_NAME
+            value: {{ include "bootupconfigmap.fullname" . | quote }}
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          command: ["/bin/bash", "-c", "[ -f /usr/src/triton/cpx_init_wait.py ] && python3 /usr/src/triton/cpx_init_wait.py || true"]
+          volumeMounts:
+            - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+              name: volume-for-service-account
+              readOnly: true
       containers:
         - name: cpx-ingress
           image: "{{ tpl .Values.netscalerCpx.image . }}"
@@ -117,6 +150,16 @@ spec:
           - name: "METRICS_EXPORTER_PORT"
             value: {{ .Values.exporter.ports.containerPort | quote }}
 {{- end }}
+{{- if eq (toString .Values.cpxConfigPersistenceEnabled) "true" }}
+          - name: "CPX_CONFIG_PERSISTENCE_ENABLED"
+            value: {{ .Values.cpxConfigPersistenceEnabled | quote }}
+          - name: "CPX_BOOTUP_CONFIGMAP_NAME"
+            value: {{ include "bootupconfigmap.fullname" . | quote }}
+          - name: "CPX_REBOOT_OVERFLOW_CM_NAME"
+            value: {{ printf "%s-reboot-overflow-config" (default "nsic" .Release.Name) | quote }}
+          - name: "NS_APPS_NAME_PREFIX"
+            value: {{ .Values.gatewayController.entityPrefix | default "k8s"| quote }}
+{{- end }}
           resources:
             {{- toYaml .Values.netscalerCpx.resources | nindent 12 }}
           volumeMounts:
@@ -128,6 +171,19 @@ spec:
               name: cpx-volume-conf
             - mountPath: /cpx/bootup_conf
               name: bootupconfig-volume
+{{- if eq (toString .Values.cpxConfigPersistenceEnabled) "true" }}
+            - mountPath: /cpx/reboot_overflow
+              name: reboot-overflow-volume
+            - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+              name: volume-for-service-account
+              readOnly: true
+{{- end }}
+{{- if eq (toString .Values.cpxConfigPersistenceEnabled) "true" }}
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/bash", "-c", "[ -f /cpx/cpx_prestop_hook.py ] && python3 /cpx/cpx_prestop_hook.py || true"]
+{{- end }}
 {{- if .Values.netscalerCpx.enableStartupProbe }}
           startupProbe:
           {{- toYaml .Values.netscalerCpx.startupProbe | nindent 12 }}
@@ -150,6 +206,10 @@ spec:
             value: {{ .Values.gatewayController.enableLivenessProbe | quote }}
           - name: "EULA"
             value: "{{ .Values.license.accept }}"
+{{- if eq (toString .Values.cpxConfigPersistenceEnabled) "true" }}
+          - name: "CPX_CONFIG_PERSISTENCE_ENABLED"
+            value: {{ .Values.cpxConfigPersistenceEnabled | quote }}
+{{- end }}
           - name: "NS_IP"
             value: "127.0.0.1"
 {{- if .Values.gatewayController.certBundle }}
@@ -226,6 +286,10 @@ spec:
           volumeMounts:
             - mountPath: /var/deviceinfo
               name: shared-data
+{{- if eq (toString .Values.cpxConfigPersistenceEnabled) "true" }}
+            - mountPath: /cpx/
+              name: cpx-volume
+{{- end }}
             - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
               name: volume-for-service-account
               readOnly: true
@@ -269,6 +333,12 @@ spec:
         - name: bootupconfig-volume
           configMap:
             name: {{ include "bootupconfigmap.fullname" . }}
+{{- if eq (toString .Values.cpxConfigPersistenceEnabled) "true" }}
+        - name: reboot-overflow-volume
+          configMap:
+            name: {{ printf "%s-reboot-overflow-config" (default "nsic" .Release.Name) }}
+            optional: true
+{{- end }}
         - name: volume-for-service-account
           projected:
             sources:

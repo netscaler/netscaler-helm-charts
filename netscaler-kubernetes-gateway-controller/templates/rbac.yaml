@@ -1,8 +1,15 @@
 {{- if .Values.gatewayController.createClusterRoleAndBinding }}
+{{- if not .Values.gatewayController.rbacRole }}
 kind: ClusterRole
+{{- else }}
+kind: Role
+{{- end }}
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: {{ include "netscaler-kubernetes-gateway-controller.serviceAccountName" . }}
+{{- if .Values.gatewayController.rbacRole }}
+  namespace: {{ .Release.Namespace }}
+{{- end }}
 rules:
   - apiGroups: [""]
 {{- if .Values.gatewayController.openshift }}
@@ -35,10 +42,10 @@ rules:
     resources: ["vips"]
     verbs: ["get", "list", "watch", "create", "delete"]
   - apiGroups: ["citrix.com"]
-    resources: ["rewritepolicies", "ratelimits", "wafs", "bots", "appqoepolicies", "sslprofiles", "tcpprofiles", "httpprofiles"]
+    resources: ["rewritepolicies", "ratelimits", "wafs", "bots", "appqoepolicies", "sslprofiles", "tcpprofiles", "httpprofiles", "owasppolicies"]
     verbs: ["get", "list", "watch", "patch"]
   - apiGroups: ["citrix.com"]
-    resources: ["rewritepolicies/status", "ratelimits/status", "wafs/status", "bots/status", "appqoepolicies/status", "sslprofiles/status", "tcpprofiles/status", "httpprofiles/status"]
+    resources: ["rewritepolicies/status", "ratelimits/status", "wafs/status", "bots/status", "appqoepolicies/status", "sslprofiles/status", "tcpprofiles/status", "httpprofiles/status", "owasppolicies/status"]
     verbs: ["patch"]
   - apiGroups: ["crd.projectcalico.org"]
     resources: ["ipamblocks"]
@@ -53,13 +60,24 @@ rules:
 {{- end }}
 ---
 
+{{- if not .Values.gatewayController.rbacRole }}
 kind: ClusterRoleBinding
+{{- else }}
+kind: RoleBinding
+{{- end }}
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: {{ include "netscaler-kubernetes-gateway-controller.serviceAccountName" . }}
+{{- if .Values.gatewayController.rbacRole }}
+  namespace: {{ .Release.Namespace }}
+{{- end }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
+{{- if not .Values.gatewayController.rbacRole }}
   kind: ClusterRole
+{{- else }}
+  kind: Role
+{{- end }}
   name: {{ include "netscaler-kubernetes-gateway-controller.serviceAccountName" . }}
 subjects:
 - kind: ServiceAccount

@@ -4,7 +4,7 @@
 
 imageRegistry: quay.io
 imageRepository: netscaler/netscaler-ipam-controller
-imageTag: 2.1.2
+imageTag: 2.2.1
 image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
 pullPolicy: IfNotPresent
 
@@ -22,6 +22,33 @@ infoblox:
   maxRetries: ""
   netView: ""
   vipRange:
+
+dns:
+  enabled: false
+  # DNS provider type: "binddns" or "universal"
+  type: ""
+  # ── BindDNS provider config ──
+  binddns:
+    # IP address of the BIND DNS server
+    server: ""
+    # DNS zone managed by this BIND server
+    zone: ""
+    # Name of a Kubernetes Secret containing TSIG credentials
+    # Required keys: tsigKey (key name), tsigSecret (base64-encoded HMAC secret)
+    tsigKeySecret: ""
+    # TSIG clock skew tolerance in seconds (default 300)
+    fudge: "300"
+  # ── UniversalDNS provider config ──
+  universal:
+    # Host:port of the UDNS server
+    server: ""
+    # Name of a Kubernetes Secret containing UDNS credentials
+    # Required keys: username, password
+    credentialSecret: ""
+    # DNS view name passed to the WAPI host-record lookup
+    dnsView: "default"
+    # WAPI version string used in /wapi/{version}/record:host URLs
+    wapiVersion: "v2.5"
 
 serviceAccount:
   # Specifies whether a service account should be created
@@ -56,3 +83,20 @@ nodeSelector:
   key: ""
   value: ""
 tolerations: []
+
+# API Priority and Fairness configuration for the IPAM controller's API server requests
+apiPriorityAndFairness:
+  enabled: false
+  priorityLevelConfiguration:
+    nominalConcurrencyShares: 40
+    lendablePercent: 25
+    limitResponse:
+      type: Queue
+      queuing:
+        queues: 16
+        handSize: 4
+        queueLengthLimit: 50
+  flowSchema:
+    matchingPrecedence: 1000
+    distinguisherMethod:
+      type: ByNamespace

@@ -5,7 +5,7 @@
 # NetScaler Ingress Controller config details
 imageRegistry: quay.io
 imageRepository: netscaler/netscaler-k8s-ingress-controller
-imageTag: 4.0.16
+imageTag: 4.1.17
 image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
 pullPolicy: IfNotPresent
 imagePullSecrets: []
@@ -247,3 +247,20 @@ extraVolumes: []
 
 createClusterRoleAndBinding: true
 certBundle: false
+
+# API Priority and Fairness configuration for the ingress controller's API server requests
+apiPriorityAndFairness:
+  enabled: false
+  priorityLevelConfiguration:
+    nominalConcurrencyShares: 40
+    lendablePercent: 25
+    limitResponse:
+      type: Queue
+      queuing:
+        queues: 16
+        handSize: 4
+        queueLengthLimit: 50
+  flowSchema:
+    matchingPrecedence: 1000
+    distinguisherMethod:
+      type: ByNamespace
