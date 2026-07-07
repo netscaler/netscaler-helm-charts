@@ -4,7 +4,7 @@
 
 imageRegistry: quay.io
 imageRepository: netscaler/netscaler-ipam-controller
-imageTag: 2.2.1
+imageTag: 2.3.1
 image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
 pullPolicy: IfNotPresent
 
