@@ -166,6 +166,7 @@ serviceAccount:
   name:
 
 podAnnotations: {}
+podLabels: {}
 
 resources:
   requests:

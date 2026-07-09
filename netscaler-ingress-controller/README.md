@@ -392,6 +392,7 @@ The following table lists the mandatory and optional parameters that you can con
 | routeLabels | Optional | proxy in (<Release name of helm chart>) | You can use this parameter to provide the route labels selectors to be used by NetScaler Ingress Controller for routeSharding in OpenShift cluster. |
 | namespaceLabels | Optional | N/A | You can use this parameter to provide the namespace labels selectors to be used by NetScaler Ingress Controller for routeSharding in OpenShift cluster. |
 | podAnnotations | Optional | N/A | Map of annotations to add to the pods. |
+| podLabels | Optional | N/A | Map of labels to add to the pods. |
 | affinity | Optional | N/A | Affinity labels for pod assignment. |
 | exporter.required | Optional | false | Use the argument, if you want to run the [Exporter for NetScaler Stats](https://github.com/netscaler/netscaler-adc-metrics-exporter) along with NSIC to pull metrics for the NetScaler VPX or MPX|
 | exporter.imageRegistry                   | Optional  |  `quay.io`               |  The Exporter for NetScaler Stats image registry             |  
