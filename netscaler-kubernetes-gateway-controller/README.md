@@ -94,6 +94,10 @@ Kubernetes Gateway CRDs are expected to be installed, its prerequisite. Refer [I
 
 Netscaler CRDs will be installed when we install NetScaler Kubernetes Gateway controller via Helm automatically if CRDs are not installed in cluster already. If you wish to skip the CRD installation step, you can pass the --skip-crds flag. For more information about this option in Helm please see [this](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/).
 
+> **NOTE:**
+>
+> Helm installs CRDs under `crds/` only when they are absent from the cluster; it does not create or update them during `helm upgrade`. If `vips.citrix.com` already exists in the cluster from an earlier NetScaler chart (for example NSIC or the CPX chart), it may carry an older `spec.kind` enum that does not accept `gateway`, and IPAM VIP allocation for Gateways will silently fail. Before enabling `gatewayController.ipam`, apply the updated CRD manually: `kubectl apply -f crds/crds.yaml`.
+
 ### Resource Quotas
 There are various use-cases when resource quotas are configured on the Kubernetes cluster. If quota is enabled in a namespace for compute resources like CPU and memory, users must specify requests or limits for those values; otherwise, the quota system may reject pod creation. The resource quotas for the Gateway Controller containers can be provided explicitly in the helm chart.
 
@@ -134,7 +138,7 @@ The following table lists the mandatory and optional parameters that you can con
 | license.accept | Mandatory | no | Set `yes` to accept the NSIC end user license agreement. |
 | imageRegistry                   | Optional  |  `quay.io`               |  The NetScaler Kubernetes Gateway Controller image registry             |  
 | imageRepository                 | Optional  |  `netscaler/netscaler-k8s-ingress-controller`              |   The NetScaler ingress controller image repository             |
-| imageTag                  | Optional  |  `4.1.17`               |   The NetScaler Kubernetes Gateway Controller image tag            | 
+| imageTag                  | Optional  |  `4.2.26`               |   The NetScaler Kubernetes Gateway Controller image tag            | 
 | pullPolicy | Optional | Always | The NSIC image pull policy. |
 | imagePullSecrets | Optional | N/A | Provide list of Kubernetes secrets to be used for pulling the images from a private Docker registry or repository. For more information on how to create this secret please see [Pull an Image from a Private Registry](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/). |
 | nameOverride | Optional | N/A | String to partially override deployment fullname template with a string (will prepend the release name) |
@@ -168,6 +172,7 @@ The following table lists the mandatory and optional parameters that you can con
 | gatewayController.clusterName | Optional | N/A | Unique identifier for the Kubernetes cluster. When set, it is exposed to the controller via the `CLUSTER_NAME` environment variable and is used to uniquely identify resources configured on the NetScaler when the same NetScaler is shared across multiple clusters. |
 | gatewayController.openshift | Optional | false | Set this argument if OpenShift environment is being used. |
 | gatewayController.gatewayControllerName | Mandatory | N/A | Name of Gateway Controller . |
+| gatewayController.ipam | Optional | false | Set this to true to enable IPAM support for automatic VIP allocation from the Netscaler IPAM controller. When enabled, Gateways without a static IP in `spec.addresses` will get a VIP allocated automatically. Requires the Netscaler IPAM controller to be deployed separately, and requires the cluster's `vips.citrix.com` CRD to accept `gateway` in `spec.kind` — see [CRDs configuration](#crds-configuration). |
 | gatewayController.serviceAccount.create | Mandatory | true | Create serviceAccount for NetScaler Kubernetes Gateway Controller |
 | gatewayController.serviceAccount.tokenExpirationSeconds | Mandatory | 31536000 | Time in seconds when the token of serviceAccount gets expired |
 | gatewayController.serviceAccount.name | Optional | "" | Name of the ServiceAccount for the Gateway Controller. If you want to use a ServiceAccount that you have already created and manage yourself, specify its name here and set gatewayController.serviceAccount.create to false. |
@@ -180,6 +185,7 @@ The following table lists the mandatory and optional parameters that you can con
 | gatewayController.livenessProbe | Optional | N/A | Set livenessProbe settings for NSIC |
 | gatewayController.readinessProbe | Optional | N/A | Set readinessProbe settings|
 | gatewayController.nodeWatch | Optional | false | Use the argument if you want to automatically configure network route from the NetScaler VPX or MPX to the pods in the Kubernetes cluster. For more information, see [Automatically configure route on the NetScaler instance](https://docs.netscaler.com/en-us/netscaler-k8s-ingress-controller/network/staticrouting/#automatically-configure-route-on-the-netscaler-adc-instance). |
+| gatewayController.nodeWatchLabelSelector | Optional | `{}` | Label selector (key/value map) that filters which Kubernetes nodes `gatewayController.nodeWatch` programs routes for on the NetScaler. When empty (default `{}`), routes are programmed for all nodes — current behavior is preserved. When non-empty, only nodes whose labels match every key/value pair in the selector have their routes programmed; all other nodes (for example Windows worker nodes in OpenShift clusters that do not expose a usable podCIDR) are skipped. Takes effect only when `gatewayController.nodeWatch` is true. Example: `gatewayController.nodeWatchLabelSelector: {kubernetes.io/os: linux}`. Distinct from the chart's pod-scheduling `nodeSelector`, which controls where the gateway controller pod itself runs. |
 | gatewayController.optimizeEndpointBinding | Optional | false | To enable/disable binding of backend endpoints to servicegroup in a single API-call. Recommended when endpoints(pods) per application are large in number. Applicable only for NetScaler Version >=13.0-45.7  |
 | gatewayController.pullPolicy | Mandatory | IfNotPresent | The NSIC image pull policy. |
 | gatewayController.extraVolumeMounts  |  Optional |  [] |  Specify the Additional VolumeMounts to be mounted in Exporter container. Specify the volumes in `extraVolumes`  |

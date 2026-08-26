@@ -131,6 +131,10 @@ spec:
         - name: "NODE_LABELS"
           value: "{{ .Values.nodeLabels }}"
 {{- end  }}
+{{- if and .Values.gatewayController.nodeWatch .Values.gatewayController.nodeWatchLabelSelector }}
+        - name: "NODE_WATCH_LABEL_SELECTOR"
+          value: {{ include "nsgcc.nodeWatchLabelSelectorToString" .Values.gatewayController.nodeWatchLabelSelector | quote }}
+{{- end }}
 {{- if .Values.gatewayController.openshift }}
         - name: "PLATFORM"
           value: "OPENSHIFT"

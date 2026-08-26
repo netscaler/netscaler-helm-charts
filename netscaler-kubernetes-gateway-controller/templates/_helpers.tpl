@@ -25,6 +25,15 @@ If release name contains chart name it will be used as a full name.
 {{- end -}}
 
 
+{{- define "nsgcc.nodeWatchLabelSelectorToString" -}}
+{{- $m := . -}}
+{{- $parts := list -}}
+{{- range $k := (keys $m | sortAlpha) -}}
+{{- $parts = append $parts (printf "%s=%s" $k (toString (index $m $k))) -}}
+{{- end -}}
+{{- join "," $parts -}}
+{{- end -}}
+
 {{- define "nsgcconfigmap.fullname" -}}
 {{- $name := default .Chart.Name "nsgc-configmap" .Values.nameOverride -}}
 {{- if contains $name .Release.Name -}}

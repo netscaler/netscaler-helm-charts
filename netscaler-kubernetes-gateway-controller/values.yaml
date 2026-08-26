@@ -2,7 +2,7 @@ license:
    accept: no
 imageRegistry: quay.io
 imageRepository: netscaler/netscaler-k8s-ingress-controller
-imageTag: 4.1.17
+imageTag: 4.2.26
 pullPolicy: IfNotPresent
 imagePullSecrets: []
 nameOverride: ""
@@ -19,6 +19,8 @@ gatewayController:
   # Enable RBAC role (so called local role), by default deployed with ClusterRole.
   # below variable to deploy with RBAC role, only ingress service supported with this config
   rbacRole: false
+  # Enable IPAM support for automatic VIP allocation from Netscaler IPAM controller
+  ipam: false
   serviceAccount:
     create: true
     tokenExpirationSeconds: 31536000
@@ -36,13 +38,23 @@ gatewayController:
       - |
         FILE_PATH="$LIVENESS_FILE_PATH"
         [ -f "$FILE_PATH" ] && [ $(( $(date +%s) - $(stat -c %Y "$FILE_PATH") )) -lt 60 ] && exit 0 || exit 1
-    initialDelaySeconds: 30
+    initialDelaySeconds: 50
     periodSeconds: 60
-  logLevel: info
+    failureThreshold: 3
+    successThreshold: 1
+  logLevel: INFO
   nodeWatch: false
+  # nodeWatchLabelSelector is optional. When set, only nodes matching all the
+  # specified labels will have routes programmed on NetScaler via nodeWatch.
+  # If empty or unset (default `{}`), routes are programmed for all nodes
+  # (current/default behavior). Takes effect only when nodeWatch is true.
+  # Example:
+  #   nodeWatchLabelSelector:
+  #     kubernetes.io/os: linux
+  nodeWatchLabelSelector: {}
   openshift: false
   optimizeEndpointBinding: true
-  pullPolicy: Always
+  pullPolicy: IfNotPresent
   extraVolumeMounts: []
   extraVolumes: []
   readinessProbe:
@@ -50,17 +62,17 @@ gatewayController:
       command:
       - cat
       - /tmp/readiness
-    initialDelaySeconds: 10
+    initialDelaySeconds: 50
     periodSeconds: 60
     failureThreshold: 3
     successThreshold: 1
   resources:
     requests:
       cpu: 32m
-      memory: 128Mi
+      memory: 256Mi
     limits:
       cpu: 100m
-      memory: 200Mi
+      memory: 512Mi
 netscaler:
   adcCredentialSecret: nslogin
   nitroReadTimeout: 40

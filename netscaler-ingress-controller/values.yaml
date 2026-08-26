@@ -5,7 +5,7 @@
 # NetScaler Ingress Controller config details
 imageRegistry: quay.io
 imageRepository: netscaler/netscaler-k8s-ingress-controller
-imageTag: 4.1.17
+imageTag: 4.2.26
 image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
 pullPolicy: IfNotPresent
 imagePullSecrets: []
@@ -54,12 +54,22 @@ ipam: False
 disableAPIServerCertVerify: False
 logProxy: ""
 nodeWatch: false
+# nodeWatchLabelSelector is optional. When set, only nodes matching all the
+# specified labels will have routes programmed on NetScaler via nodeWatch.
+# If empty or unset (default `{}`), routes are programmed for all nodes
+# (current/default behavior).
+# Note: this is distinct from `nodeLabels` (NODE_LABELS env var) which is used
+# by BGP advertise to identify nodes; the two settings are independent.
+# Example:
+#   nodeWatchLabelSelector:
+#     kubernetes.io/os: linux
+nodeWatchLabelSelector: {}
 nsncPbr: False
 nodeSelector:
   key: ""
   value: ""
 tolerations: []
-updateIngressStatus: True
+updateIngressStatus: true
 nsHTTP2ServerSide: "OFF"
 nsCookieVersion: "0"
 nsConfigDnsRec: False
@@ -104,10 +114,10 @@ exporter:
     # resources, such as Minikube. If you do want to specify resources, uncomment the following
     # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
     # limits:
-    #   cpu: 100m
+    #   cpu: "1"
     #   memory: 128Mi
     # requests:
-    #   cpu: 100m
+    #   cpu: "1"
     #   memory: 128Mi
   extraVolumeMounts: []
   # We usually recommend not to specify default resources and to leave this as a conscious
@@ -170,7 +180,7 @@ podAnnotations: {}
 resources:
   requests:
     cpu: 32m
-    memory: 128Mi
+    memory: 256Mi
   # Following values depends on no of ingresses configured by Ingress Controllers, so it is
   # advised to test with maximum no of ingresses to set these values.
   # limits:
@@ -193,7 +203,7 @@ readinessProbe:
     command:
     - cat
     - /tmp/readiness
-  initialDelaySeconds: 10
+  initialDelaySeconds: 50
   periodSeconds: 60
   failureThreshold: 3
   successThreshold: 1
@@ -207,8 +217,10 @@ livenessProbe:
     - |
       FILE_PATH="$LIVENESS_FILE_PATH"
       [ -f "$FILE_PATH" ] && [ $(( $(date +%s) - $(stat -c %Y "$FILE_PATH") )) -lt 60 ] && exit 0 || exit 1
-  initialDelaySeconds: 30
+  initialDelaySeconds: 50
   periodSeconds: 60
+  failureThreshold: 3
+  successThreshold: 1
 
 # to validate the NetScaler certificate set the nsValidateCert to true
 # and create the nsCertSecret with the CA Certificate of the NetScaler. 
