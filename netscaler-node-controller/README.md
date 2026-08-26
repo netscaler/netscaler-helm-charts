@@ -17,6 +17,16 @@ In Kubernetes environments, sometimes the services are exposed for external acce
 ## Introduction
 This Helm chart deploys NetScaler node controller in the [Kubernetes](https://kubernetes.io) or in the [Openshift](https://www.openshift.com) cluster using [Helm](https://helm.sh) package manager.
 
+### Self-healing and health checks (3.1.0)
+
+From chart `3.1.0` the Node Controller self-heals the per-node `kube-nsnc-router` pods and exposes Kubernetes-native health checks:
+
+- **Per-node self-healing** — if a router pod is deleted, fails, or hangs in `Pending`, the controller recreates only that node's pod, on its existing VXLAN endpoint IP. Healthy nodes are untouched (no fleet-wide restart).
+- **Durable VTEP IP** — each node's overlay IP is persisted and reused across pod recreates and controller restarts, so the NetScaler PBR next-hop is not churned on upgrade.
+- **Health probes** — controller and router pods carry liveness/readiness probes, gated by `healthProbes.enabled` (default `true`; requires controller image `3.1.0+`). See the `healthProbes` values and **note 4** below on partial rollback.
+- **VXLAN port** — choose a `vxlan.port` that does not collide with the cluster CNI (Calico uses `4789`; use e.g. `4790`). A collision parks the router pod (Running/NotReady) instead of crash-looping.
+- **Router image** — defaults to `quay.io/netscaler/nsnc-router:2.1.0`; override with `nsncRouterImage` for air-gapped/internal registries.
+
 ### Prerequisites
 
 -  The [Kubernetes](https://kubernetes.io/) version 1.24 or later if using Kubernetes environment.
@@ -113,7 +123,7 @@ The following table lists the mandatory and optional parameters that you can con
 | license.accept | Mandatory | no | Set `yes` to accept the NSNC end user license agreement. |
 | imageRegistry                   | Mandatory  |  `quay.io`               |  The NSNC image registry             |  
 | imageRepository                 | Mandatory  |  `netscaler/netscaler-k8s-node-controller`              |   The NSNC image repository             | 
-| imageTag                  | Mandatory  |  `3.0.0`               |  The NSNC image tag            | 
+| imageTag                  | Mandatory  |  `3.1.0`               |  The NSNC image tag            | 
 | pullPolicy | Mandatory | IfNotPresent | The NSNC image pull policy. |
 | nameOverride | Optional | N/A | String to partially override deployment fullname template with a string (will prepend the release name) |
 | fullNameOverride | Optional | N/A | String to fully override deployment fullname template with a string |
@@ -132,6 +142,9 @@ The following table lists the mandatory and optional parameters that you can con
 | nsncRouterName | Optional | N/A | The name to be used for ServiceAccount/RBAC/ConfigMap and even as prefix for kube-nsnc-router helper pods. If not set, it will be auto-generated. |
 | serviceAccount.create | Mandatory | true | Create serviceAccount for NetScaler Node Controller |
 | serviceAccount.tokenExpirationSeconds | Mandatory | 31536000 | Time in seconds when the token of serviceAccount get expired |
+| healthProbes.enabled | Optional | true | Enable Kubernetes liveness/readiness probes on the Node Controller pod. Requires controller image 3.1.0+ (which writes `/tmp/cnc-ready` and `/tmp/cnc-alive`); set `false` if pinning an older image. |
+| healthProbes.liveness | Optional | See `values.yaml` | Liveness probe tunables: `initialDelaySeconds`, `periodSeconds`, `timeoutSeconds`, `failureThreshold`, `stalenessThresholdSeconds`. |
+| healthProbes.readiness | Optional | See `values.yaml` | Readiness probe tunables: `initialDelaySeconds`, `periodSeconds`, `timeoutSeconds`, `failureThreshold`. |
 
 Alternatively, you can define a YAML file with the values for the parameters and pass the values while installing the chart.
 
@@ -139,7 +152,8 @@ Alternatively, you can define a YAML file with the values for the parameters and
 >
 > 1. Ensure that the subnet that you provide in "network" is different from your Kubernetes cluster
 > 2. Ensure that the VXLAN ID that you use in vxlan.id does not conflict with the Kubernetes cluster or NetScaler VXLAN VNID
-> 3. Ensure that the VXLAN PORT that you use in vxlan.port does not conflict with the Kubernetes cluster or NetScaler VXLAN PORT.
+> 3. Ensure that the VXLAN PORT that you use in vxlan.port does not conflict with the Kubernetes cluster or NetScaler VXLAN PORT. For example, Calico in VXLAN mode uses UDP port `4789` by default, so on such clusters set `vxlan.port` to a different value such as `4790`.
+> 4. **Partial rollback:** the liveness/readiness probes require a controller image `3.1.0+` (which writes `/tmp/cnc-alive` and `/tmp/cnc-ready`). If you roll back to this chart but pin an older controller image, also roll the chart back or set `healthProbes.enabled=false`, otherwise the liveness probe restarts the pod (CrashLoopBackOff) and blocks the rollback.
 
 For example:
 ```
@@ -210,10 +224,10 @@ helm install nsnc netscaler/netscaler-node-controller --set license.accept=yes,n
 | `network` | VTEP overlay subnet — must not overlap with pod/node CIDRs | `172.16.3.0/24` |
 | `vtepIP` | NetScaler SNIP used as VTEP endpoint | `10.10.10.2` |
 | `vxlan.id` | VXLAN VNI — must not conflict with existing VXLANs on NetScaler | `175` |
-| `vxlan.port` | VXLAN UDP port — must not conflict with existing VXLANs on NetScaler | `8472` |
+| `vxlan.port` | VXLAN UDP port — must not conflict with existing VXLANs on NetScaler or the cluster CNI (Calico uses `4789`; see note 3) | `4790` |
 | `cniType` | **Set to `ovn` for OpenShift OVN-Kubernetes** | `ovn` |
-| `nsncRouterImage` | Node Controller Router Image | `quay.io/netscaler/nsnc-router:2.0.0` |
-| `image` | Node Controller Image | `quay.io/netscaler/netscaler-k8s-node-controller/3.0.0` |
+| `nsncRouterImage` | Node Controller Router Image | `quay.io/netscaler/nsnc-router:2.1.0` |
+| `image` | Node Controller Image | `quay.io/netscaler/netscaler-k8s-node-controller:3.1.0` |
 
 ### Step 4: Verify the deployment
 

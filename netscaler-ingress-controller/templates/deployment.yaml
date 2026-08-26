@@ -179,6 +179,10 @@ spec:
         - name: "NODE_LABELS"
           value: "{{ .Values.nodeLabels }}"
 {{- end  }}
+{{- if and .Values.nodeWatch .Values.nodeWatchLabelSelector }}
+        - name: "NODE_WATCH_LABEL_SELECTOR"
+          value: {{ include "nsic.nodeWatchLabelSelectorToString" .Values.nodeWatchLabelSelector | quote }}
+{{- end }}
 {{- if .Values.openshift }}
         - name: "PLATFORM"
           value: "OPENSHIFT"

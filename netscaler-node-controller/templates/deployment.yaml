@@ -65,6 +65,28 @@ spec:
         - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
           name: volume-for-service-account
           readOnly: true
+        {{- if .Values.healthProbes.enabled }}
+        # NSHELP-43567: file-based health checks for the Node Controller. Requires a
+        # controller image that writes /tmp/cnc-ready (once informer caches sync) and
+        # heartbeats /tmp/cnc-alive. See values.yaml -> healthProbes.
+        livenessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - '[ -f /tmp/cnc-alive ] && [ $(( $(date +%s) - $(stat -c %Y /tmp/cnc-alive) )) -lt {{ .Values.healthProbes.liveness.stalenessThresholdSeconds }} ]'
+          initialDelaySeconds: {{ .Values.healthProbes.liveness.initialDelaySeconds }}
+          periodSeconds: {{ .Values.healthProbes.liveness.periodSeconds }}
+          timeoutSeconds: {{ .Values.healthProbes.liveness.timeoutSeconds }}
+          failureThreshold: {{ .Values.healthProbes.liveness.failureThreshold }}
+        readinessProbe:
+          exec:
+            command: ["/bin/sh", "-c", "test -f /tmp/cnc-ready"]
+          initialDelaySeconds: {{ .Values.healthProbes.readiness.initialDelaySeconds }}
+          periodSeconds: {{ .Values.healthProbes.readiness.periodSeconds }}
+          timeoutSeconds: {{ .Values.healthProbes.readiness.timeoutSeconds }}
+          failureThreshold: {{ .Values.healthProbes.readiness.failureThreshold }}
+        {{- end }}
       volumes:
       - name: volume-for-service-account
         projected:

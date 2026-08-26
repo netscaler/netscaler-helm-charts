@@ -12,12 +12,18 @@ metadata:
 {{- end }}
 rules:
   - apiGroups: [""]
-{{- if .Values.openshift }}
-    resources: ["endpoints", "pods", "secrets", "routes", "tokenreviews", "subjectaccessreviews", "nodes", "namespaces", "configmaps", "services"]
-{{- else }}
-    resources: ["endpoints", "pods", "secrets", "routes", "nodes", "namespaces", "configmaps", "services"]
-{{- end }}
+    resources: ["endpoints", "pods", "secrets", "nodes", "namespaces", "configmaps", "services"]
     verbs: ["get", "list", "watch"]
+{{- if .Values.openshift }}
+  # tokenreviews/subjectaccessreviews live in the authentication/authorization API groups (not the
+  # core "" group) and require the "create" verb for OpenShift delegated authentication.
+  - apiGroups: ["authentication.k8s.io"]
+    resources: ["tokenreviews"]
+    verbs: ["create"]
+  - apiGroups: ["authorization.k8s.io"]
+    resources: ["subjectaccessreviews"]
+    verbs: ["create"]
+{{- end }}
   # services/status is needed to update the loadbalancer IP in service status for integrating
   # service of type LoadBalancer with external-dns
   - apiGroups: [""]
