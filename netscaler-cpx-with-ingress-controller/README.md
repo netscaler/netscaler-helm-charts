@@ -30,6 +30,10 @@ In a [Kubernetes](https://kubernetes.io/) or [OpenShift](https://www.openshift.c
 ## Introduction
 This Helm chart deploys a NetScaler CPX with NetScaler ingress controller as a sidecar in the [Kubernetes](https://kubernetes.io/) or in the [Openshift](https://www.openshift.com) cluster using the [Helm](https://helm.sh/) package manager.
 
+> **Important:**
+>
+> For CPX deployments, download the NetScaler CPX image from [Citrix Downloads](https://www.citrix.com/downloads/citrix-adc/) and update the `image` value in [values.yaml](https://github.com/netscaler/netscaler-helm-charts/blob/master/netscaler-cpx-with-ingress-controller/values.yaml) to point to the downloaded image before installing the chart.
+
 ### Prerequisites
 
 -  The [Kubernetes](https://kubernetes.io/) version should be 1.24 and above if using Kubernetes environment.
@@ -608,7 +612,7 @@ The following table lists the configurable parameters of the NetScaler CPX with 
 | license.accept | Mandatory | no | Set `yes` to accept the NetScaler ingress controller end user license agreement. |
 | imageRegistry                   | Mandatory  |  `quay.io`               |  The NetScaler CPX image registry             |  
 | imageRepository                 | Mandatory  |  `netscaler/netscaler-cpx`              |   The NetScaler CPX image repository             | 
-| imageTag                  | Mandatory  |  `14.1-66.59`               |   The NetScaler CPX image tag            |
+| imageTag                  | Mandatory  |  `14.1-73.30`               |   The NetScaler CPX image tag            |
 | pullPolicy | Mandatory | IfNotPresent | The NetScaler CPX image pull policy. |
 | daemonSet | Optional | False | Set this to true if NetScaler CPX needs to be deployed as DaemonSet. |
 | hostName | Optional | N/A | This entity will be used to set Hostname of the CPX |

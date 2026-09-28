@@ -62,7 +62,7 @@ gatewayController:
 netscalerCpx:
   imageRegistry: quay.io
   imageRepository: netscaler/netscaler-cpx
-  imageTag: 14.1-66.59
+  imageTag: 14.1-73.30
   image: "{{ .Values.netscalerCpx.imageRegistry }}/{{ .Values.netscalerCpx.imageRepository }}:{{ .Values.netscalerCpx.imageTag }}"
   pullPolicy: IfNotPresent
   nsProtocol: "http"

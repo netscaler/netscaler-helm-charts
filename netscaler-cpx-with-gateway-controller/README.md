@@ -25,6 +25,10 @@
 ## Introduction
 This Helm chart deploys a NetScaler CPX with NetScaler gateway controller as a sidecar in the [Kubernetes](https://kubernetes.io/) or in the [Openshift](https://www.openshift.com) cluster using the [Helm](https://helm.sh/) package manager.
 
+> **Important:**
+>
+> For CPX deployments, download the NetScaler CPX image from [Citrix Downloads](https://www.citrix.com/downloads/citrix-adc/) and update the `netscalerCpx.image` value in [values.yaml](https://github.com/netscaler/netscaler-helm-charts/blob/master/netscaler-cpx-with-gateway-controller/values.yaml) to point to the downloaded image before installing the chart.
+
 ### Prerequisites
 
 -  The [Kubernetes](https://kubernetes.io/) version should be 1.24 and above if using Kubernetes environment.
@@ -223,7 +227,7 @@ The following table lists the configurable parameters of the NetScaler CPX with 
 | createClusterRoleAndBinding | Mandatory | true | If you want to use a ClusterRole and Cluster Role Binding that you have already created and manage yourself then set to false. Please make sure you have bound the serviceaccount with the cluster role properly.  |
 | netscalerCpx.imageRegistry                   | Mandatory  |  `quay.io`               |  The NetScaler CPX image registry             |  
 | netscalerCpx.imageRepository                 | Mandatory  |  `netscaler/netscaler-cpx`              |   The NetScaler CPX image repository             | 
-| netscalerCpx.imageTag                  | Mandatory  |  `14.1-66.59`               |   The NetScaler CPX image tag            |
+| netscalerCpx.imageTag                  | Mandatory  |  `14.1-73.30`               |   The NetScaler CPX image tag            |
 | netscalerCpx.pullPolicy | Mandatory | IfNotPresent | The NetScaler CPX image pull policy. |
 | netscalerCpx.hostName | Optional | N/A | This entity will be used to set Hostname of the CPX |
 | netscalerCpx.nsLbHashAlgo.required | Optional | false | Set this value to set the LB consistent hashing Algorithm |
