@@ -207,6 +207,10 @@ spec:
           startupProbe:
           {{- toYaml .Values.startupProbe | nindent 12 }}
 {{- end }}
+{{- if and .Values.enableReadinessProbe (eq (lower .Values.ADMSettings.licensingMode) "las") }}
+          readinessProbe:
+          {{- toYaml .Values.readinessProbe | nindent 12 }}
+{{- end }}
 {{- if .Values.enableLivenessProbe }}
           livenessProbe:
           {{- toYaml .Values.livenessProbe | nindent 12 }}

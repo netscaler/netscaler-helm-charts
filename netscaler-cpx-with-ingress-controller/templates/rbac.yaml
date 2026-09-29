@@ -12,15 +12,15 @@ metadata:
 {{- end }}
 rules:
   - apiGroups: [""]
-    resources: ["endpoints", "pods", "secrets", "routes", "nodes", "namespaces", "services"]
+    resources: ["endpoints", "pods", "secrets", "nodes", "namespaces", "services"]
     verbs: ["get", "list", "watch"]
 {{- if .Values.openshift }}
   - apiGroups: ["authentication.k8s.io"]
     resources: ["tokenreviews"]
-    verbs: ["get", "list", "watch"]
+    verbs: ["create"]
   - apiGroups: ["authorization.k8s.io"]
     resources: ["subjectaccessreviews"]
-    verbs: ["get", "list", "watch"]
+    verbs: ["create"]
 {{- end }}
   - apiGroups: [""]
     resources: ["configmaps"]

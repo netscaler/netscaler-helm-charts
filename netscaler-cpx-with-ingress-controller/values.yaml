@@ -5,7 +5,7 @@
 # NetScaler CPX config details
 imageRegistry: quay.io
 imageRepository: netscaler/netscaler-cpx
-imageTag: 14.1-66.59
+imageTag: 14.1-73.30
 image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
 pullPolicy: IfNotPresent
 imagePullSecrets: []
@@ -82,14 +82,14 @@ servicePorts: []
 nsic:
   imageRegistry: quay.io
   imageRepository: netscaler/netscaler-k8s-ingress-controller
-  imageTag: 4.1.17
+  imageTag: 4.2.26
   image: "{{ .Values.nsic.imageRegistry }}/{{ .Values.nsic.imageRepository }}:{{ .Values.nsic.imageTag }}"
   pullPolicy: IfNotPresent
   required: true
   resources:
     requests:
       cpu: 32m
-      memory: 128Mi
+      memory: 256Mi
     # Following values depends on no of ingresses configured by Ingress Controllers, so it is
     # advised to test with maximum no of ingresses to set these values.
     # limits:
@@ -111,8 +111,10 @@ nsic:
       - |
         FILE_PATH="$LIVENESS_FILE_PATH"
         [ -f "$FILE_PATH" ] && [ $(( $(date +%s) - $(stat -c %Y "$FILE_PATH") )) -lt 60 ] && exit 0 || exit 1
-    initialDelaySeconds: 30
+    initialDelaySeconds: 50
     periodSeconds: 60
+    failureThreshold: 3
+    successThreshold: 1
   
   enableReadinessProbe: True
   readinessProbe:
@@ -136,7 +138,7 @@ logLevel: INFO
 jsonLog: false 
 defaultSSLCertSecret: ""
 defaultSSLSNICertSecret: ""
-updateIngressStatus: False
+updateIngressStatus: true
 logProxy: ""
 kubernetesURL: ""
 disableOpenshiftRoutes: false
@@ -192,10 +194,10 @@ exporter:
     # resources, such as Minikube. If you do want to specify resources, uncomment the following
     # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
     # limits:
-    #   cpu: 100m
+    #   cpu: "1"
     #   memory: 128Mi
     # requests:
-    #   cpu: 100m
+    #   cpu: "1"
     #   memory: 128Mi
   serviceMonitorExtraLabels: {}
 
@@ -284,9 +286,21 @@ startupProbe:
   initialDelaySeconds: 30
   successThreshold: 1
 
+# enableReadinessProbe is effective only when ADMSettings.licensingMode is set to "las"
+enableReadinessProbe: True
+readinessProbe:
+  exec:
+    command:
+    - /bin/ls
+    - /tmp/cpx_ready
+  failureThreshold: 15
+  initialDelaySeconds: 60
+  periodSeconds: 30
+  successThreshold: 1
+
 enableLivenessProbe: True
 livenessProbe:
-  initialDelaySeconds: 10
+  initialDelaySeconds: 50
   periodSeconds: 5
   failureThreshold: 3
   successThreshold: 1

@@ -30,6 +30,10 @@ In a [Kubernetes](https://kubernetes.io/) or [OpenShift](https://www.openshift.c
 ## Introduction
 This Helm chart deploys a NetScaler CPX with NetScaler ingress controller as a sidecar in the [Kubernetes](https://kubernetes.io/) or in the [Openshift](https://www.openshift.com) cluster using the [Helm](https://helm.sh/) package manager.
 
+> **Important:**
+>
+> For CPX deployments, download the NetScaler CPX latest image for 14.1 (`14.1-73.30`) from [Citrix Downloads for 14.1](https://www.citrix.com/downloads/citrix-adc/container-based-adc/cpx-14-1-73-37.html) or the NetScaler CPX latest image for 13.1 (`13.1-64-24`) from [Citrix Downloads for 13.1](https://www.citrix.com/downloads/citrix-adc/container-based-adc/cpx-13-1-64-24.html). After downloading the NetScaler CPX image follow the instructions on the download page and update the `image` value in [values.yaml](https://github.com/netscaler/netscaler-helm-charts/blob/master/netscaler-cpx-with-ingress-controller/values.yaml) to point to the downloaded image before installing the chart.
+
 ### Prerequisites
 
 -  The [Kubernetes](https://kubernetes.io/) version should be 1.24 and above if using Kubernetes environment.
@@ -608,13 +612,13 @@ The following table lists the configurable parameters of the NetScaler CPX with 
 | license.accept | Mandatory | no | Set `yes` to accept the NetScaler ingress controller end user license agreement. |
 | imageRegistry                   | Mandatory  |  `quay.io`               |  The NetScaler CPX image registry             |  
 | imageRepository                 | Mandatory  |  `netscaler/netscaler-cpx`              |   The NetScaler CPX image repository             | 
-| imageTag                  | Mandatory  |  `14.1-66.59`               |   The NetScaler CPX image tag            |
+| imageTag                  | Mandatory  |  `14.1-73.30`               |   The NetScaler CPX image tag            |
 | pullPolicy | Mandatory | IfNotPresent | The NetScaler CPX image pull policy. |
 | daemonSet | Optional | False | Set this to true if NetScaler CPX needs to be deployed as DaemonSet. |
 | hostName | Optional | N/A | This entity will be used to set Hostname of the CPX |
 | nsic.imageRegistry                   | Mandatory  |  `quay.io`               |  The NetScaler ingress controller image registry             |  
 | nsic.imageRepository                 | Mandatory  |  `netscaler/netscaler-k8s-ingress-controller`              |   The NetScaler ingress controller image repository             | 
-| nsic.imageTag                  | Mandatory  |  `4.1.17`               |   The NetScaler ingress controller image tag            | 
+| nsic.imageTag                  | Mandatory  |  `4.2.26`               |   The NetScaler ingress controller image tag            | 
 | nsic.pullPolicy | Mandatory | IfNotPresent | The NetScaler ingress controller image pull policy. |
 | nsic.required | Mandatory | true | NSIC to be run as sidecar with NetScaler CPX |
 | nsic.enableLivenessProbe| Optional | True | Enable liveness probe settings for NetScaler Ingress Controller |
@@ -717,8 +721,10 @@ The following table lists the configurable parameters of the NetScaler CPX with 
 | cpxCommands| Optional | N/A | This argument accepts user-provided NetScaler bootup config that is applied as soon as the CPX is instantiated. Please note that this is not a dynamic config, and any subsequent changes to the configmap don't reflect in the CPX config unless the pod is restarted. For more info, please refer the [documentation](https://docs.netscaler.com/en-us/citrix-adc-cpx/current-release/configure-cpx-kubernetes-using-configmaps.html).  |
 | cpxShellCommands| Optional | N/A | This argument accepts user-provided bootup config that is applied as soon as the CPX is instantiated. Please note that this is not a dynamic config, and any subsequent changes to the configmap don't reflect in the CPX config unless the pod is restarted. For more info, please refer the [documentation](https://docs.netscaler.com/en-us/citrix-adc-cpx/current-release/configure-cpx-kubernetes-using-configmaps.html). |
 | enableStartupProbe | Optional | True | Enable startupProbe settings for CPX |
+| enableReadinessProbe | Optional | True | Enable readinessProbe settings for CPX. Effective only when `ADMSettings.licensingMode` is set to `"las"` |
 | enableLivenessProbe | Optional | True  | Enable livenessProbe settings for CPX |
 | startupProbe | Optional | N/A | Set startupProbe settings for CPX |
+| readinessProbe | Optional | N/A | Set readinessProbe settings for CPX. Effective only when `ADMSettings.licensingMode` is set to `"las"` |
 | livenessProbe | Optional | N/A  | Set livenessProbe settings for CPX |
 | serviceAccount.create | Mandatory | true | Create serviceAccount for the pod. |
 | serviceAccount.tokenExpirationSeconds | Mandatory | 31536000 | Time in seconds when the token of serviceAccount get expired |

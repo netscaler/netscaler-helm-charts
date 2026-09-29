@@ -188,6 +188,10 @@ spec:
           startupProbe:
           {{- toYaml .Values.netscalerCpx.startupProbe | nindent 12 }}
 {{- end }}
+{{- if and .Values.netscalerCpx.enableReadinessProbe (eq (lower .Values.netscalerCpx.ADMSettings.licensingMode) "las") }}
+          readinessProbe:
+          {{- toYaml .Values.netscalerCpx.readinessProbe | nindent 12 }}
+{{- end }}
 {{- if .Values.netscalerCpx.enableLivenessProbe }}
           livenessProbe:
           {{- toYaml .Values.netscalerCpx.livenessProbe | nindent 12 }}
@@ -275,10 +279,6 @@ spec:
               gateway-controller
             - --configmap
               {{ .Release.Namespace }}/{{ include "cpxconfigmap.fullname" . }}
-{{- if .Values.gatewayController.ipam }}
-            - --ipam
-              citrix-ipam-controller
-{{- end }}
 {{- if .Values.gatewayController.disableAPIServerCertVerify }}
             - --disable-apiserver-cert-verify
               {{ .Values.gatewayController.disableAPIServerCertVerify }}
@@ -387,13 +387,26 @@ spec:
 {{- if .Values.service.spec }}
 {{ toYaml .Values.service.spec | indent 2 }}
 {{- end }}
+  selector:
+    app: {{ include "netscaler-cpx-gateway-controller.fullname" . }}
 {{- if .Values.exporter.required }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "cpxexporter.fullname" . }}
+  labels:
+    app: {{ include "cpxexporter.fullname" . }}
+    service-type: {{ include "cpxservicemonitorlabel" . }}
+spec:
+  type: ClusterIP
+  ports:
   - port: {{ .Values.exporter.ports.containerPort }}
     targetPort: {{ .Values.exporter.ports.containerPort }}
     name: exporter-port
-{{- end }}
   selector:
     app: {{ include "netscaler-cpx-gateway-controller.fullname" . }}
+{{- end }}
 ---
 
 {{- if .Values.exporter.required }}
