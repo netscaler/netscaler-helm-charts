@@ -18,10 +18,9 @@ gatewayController:
   entityPrefix: ""
   imageRegistry: quay.io
   imageRepository: netscaler/netscaler-k8s-ingress-controller
-  imageTag: 4.1.17
+  imageTag: 4.2.26
   image: "{{ .Values.gatewayController.imageRegistry }}/{{ .Values.gatewayController.imageRepository }}:{{ .Values.gatewayController.imageTag }}"
   pullPolicy: IfNotPresent
-  ipam: false
   jsonLog: false
   kubernetesURL: ""
   enableLivenessProbe: true
@@ -33,8 +32,10 @@ gatewayController:
       - |
         FILE_PATH="$LIVENESS_FILE_PATH"
         [ -f "$FILE_PATH" ] && [ $(( $(date +%s) - $(stat -c %Y "$FILE_PATH") )) -lt 60 ] && exit 0 || exit 1
-    initialDelaySeconds: 30
+    initialDelaySeconds: 50
     periodSeconds: 60
+    failureThreshold: 3
+    successThreshold: 1
   logLevel: INFO
   logProxy: ""
   namespaceLabels: ""
@@ -46,18 +47,17 @@ gatewayController:
       command:
       - cat
       - /tmp/readiness
-    initialDelaySeconds: 30
+    initialDelaySeconds: 50
     periodSeconds: 60
-    failureThreshold: 5
+    failureThreshold: 3
     successThreshold: 1
   resources:
     requests:
       cpu: 32m
-      memory: 128Mi
+      memory: 256Mi
     limits:
       cpu: 100m
-      memory: 200Mi  
-
+      memory: 512Mi
 # NetScaler CPX configuration
 netscalerCpx:
   imageRegistry: quay.io
@@ -111,11 +111,23 @@ netscalerCpx:
     initialDelaySeconds: 30
     successThreshold: 1
   
+  # enableReadinessProbe is effective only when ADMSettings.licensingMode is set to "las"
+  enableReadinessProbe: true
+  readinessProbe:
+    exec:
+      command:
+      - /bin/ls
+      - /tmp/cpx_ready
+    failureThreshold: 15
+    initialDelaySeconds: 60
+    periodSeconds: 30
+    successThreshold: 1
+
   enableLivenessProbe: true
   livenessProbe:
-    initialDelaySeconds: 30
+    initialDelaySeconds: 50
     periodSeconds: 5
-    failureThreshold: 5
+    failureThreshold: 3
     successThreshold: 1
     exec:
       command:
@@ -188,10 +200,10 @@ exporter:
     # resources, such as Minikube. If you do want to specify resources, uncomment the following
     # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
     # limits:
-    #   cpu: 100m
+    #   cpu: "1"
     #   memory: 128Mi
     # requests:
-    #   cpu: 100m
+    #   cpu: "1"
     #   memory: 128Mi
   serviceMonitorExtraLabels: {}
 
@@ -211,4 +223,3 @@ apiPriorityAndFairness:
     matchingPrecedence: 1000
     distinguisherMethod:
       type: ByNamespace
-

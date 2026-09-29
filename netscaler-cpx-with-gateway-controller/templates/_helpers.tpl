@@ -29,6 +29,24 @@ If release name contains chart name it will be used as a full name.
 {{- end -}}
 {{- end -}}
 
+{{- define "cpxexporter.fullname" -}}
+{{- $name := default .Chart.Name "exporter" .Values.nameOverride -}}
+{{- if contains $name .Release.Name -}}
+{{- .Release.Name | trunc 63 | trimSuffix "-" -}}
+{{- else -}}
+{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "cpxservicemonitor.fullname" -}}
+{{- $name := default .Chart.Name "cpx-servicemonitor" .Values.nameOverride -}}
+{{- if contains $name .Release.Name -}}
+{{- .Release.Name | trunc 63 | trimSuffix "-" -}}
+{{- else -}}
+{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "cpxconfigmap.fullname" -}}
 {{- $name := default .Chart.Name "cpx-nsgwc-configmap" .Values.nameOverride -}}
 {{- if contains $name .Release.Name -}}

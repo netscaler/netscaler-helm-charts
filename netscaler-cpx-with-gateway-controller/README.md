@@ -179,7 +179,7 @@ The following table lists the configurable parameters of the NetScaler CPX with 
 | gatewayController.gatewayControllerName | Mandatory | N/A | Name of Gateway Controller . |
 | gatewayController.imageRegistry                   | Mandatory  |  `quay.io`               |  The NetScaler gateway controller image registry             |  
 | gatewayController.imageRepository                 | Mandatory  |  `netscaler/netscaler-k8s-ingress-controller`              |   The NetScaler gateway controller image repository             | 
-| gatewayController.imageTag                  | Mandatory  |  `4.1.17`               |   The NetScaler gateway controller image tag            |
+| gatewayController.imageTag                  | Mandatory  |  `4.2.26`               |   The NetScaler gateway controller image tag            |
 | gatewayController.pullPolicy | Mandatory | IfNotPresent | The NetScaler gateway controller image pull policy. |
 | gatewayController.required | Mandatory | true | NSGWC to be run as sidecar with NetScaler CPX |
 | gatewayController.enableLivenessProbe| Optional | False | Enable liveness probe settings for NetScaler Gateway Controller |
@@ -236,8 +236,10 @@ The following table lists the configurable parameters of the NetScaler CPX with 
 | netscalerCpx.commands| Optional | N/A | This argument accepts user-provided NetScaler bootup config that is applied as soon as the CPX is instantiated. Please note that this is not a dynamic config, and any subsequent changes to the configmap don't reflect in the CPX config unless the pod is restarted. For more info, please refer the [documentation](https://docs.netscaler.com/en-us/citrix-adc-cpx/current-release/configure-cpx-kubernetes-using-configmaps.html).  |
 | netscalerCpx.shellCommands| Optional | N/A | This argument accepts user-provided bootup config that is applied as soon as the CPX is instantiated. Please note that this is not a dynamic config, and any subsequent changes to the configmap don't reflect in the CPX config unless the pod is restarted. For more info, please refer the [documentation](https://docs.netscaler.com/en-us/citrix-adc-cpx/current-release/configure-cpx-kubernetes-using-configmaps.html). |
 | netscalerCpx.enableStartupProbe | Optional | True | Enable startupProbe settings for CPX |
+| netscalerCpx.enableReadinessProbe | Optional | True | Enable readinessProbe settings for CPX. Effective only when `ADMSettings.licensingMode` is set to `"las"` |
 | netscalerCpx.enableLivenessProbe | Optional | True  | Enable livenessProbe settings for CPX |
 | netscalerCpx.startupProbe | Optional | N/A | Set startupProbe settings for CPX |
+| netscalerCpx.readinessProbe | Optional | N/A | Set readinessProbe settings for CPX. Effective only when `ADMSettings.licensingMode` is set to `"las"` |
 | netscalerCpx.livenessProbe | Optional | N/A  | Set livenessProbe settings for CPX |
 | netscalerCpx.cpxLicenseAggregator | Optional | N/A | IP/FQDN of the CPX License Aggregator if it is being used to license the CPX. |
 | netscalerCpx.ADMSettings.licenseServerIP | Optional | N/A | Provide the NetScaler Application Delivery Management (ADM) IP address to license NetScaler CPX. For more information, see [Licensing]( https://docs.netscaler.com/en-us/citrix-k8s-ingress-controller/licensing/). |
