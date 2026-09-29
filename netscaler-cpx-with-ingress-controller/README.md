@@ -30,6 +30,10 @@ In a [Kubernetes](https://kubernetes.io/) or [OpenShift](https://www.openshift.c
 ## Introduction
 This Helm chart deploys a NetScaler CPX with NetScaler ingress controller as a sidecar in the [Kubernetes](https://kubernetes.io/) or in the [Openshift](https://www.openshift.com) cluster using the [Helm](https://helm.sh/) package manager.
 
+> **Important:**
+>
+> For CPX deployments, download the NetScaler CPX latest image for 14.1 (`14.1-73.30`) from [Citrix Downloads for 14.1](https://www.citrix.com/downloads/citrix-adc/container-based-adc/cpx-14-1-73-37.html) or the NetScaler CPX latest image for 13.1 (`13.1-64-24`) from [Citrix Downloads for 13.1](https://www.citrix.com/downloads/citrix-adc/container-based-adc/cpx-13-1-64-24.html), and update the `image` value in [values.yaml](https://github.com/netscaler/netscaler-helm-charts/blob/master/netscaler-cpx-with-ingress-controller/values.yaml) to point to the downloaded image before installing the chart.
+
 ### Prerequisites
 
 -  The [Kubernetes](https://kubernetes.io/) version should be 1.24 and above if using Kubernetes environment.
