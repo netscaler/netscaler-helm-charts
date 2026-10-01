@@ -73,6 +73,29 @@ gatewayController:
     limits:
       cpu: 100m
       memory: 512Mi
+  # Analytics configuration processed by the Gateway Controller. When required is
+  # set to true the NS_ANALYTICS_CONFIG block is rendered into the ConfigMap.
+  analyticsConfig:
+    required: false
+    logAllJsonFields: false
+    distributedTracing:
+      enable: false
+      samplingrate: 100
+    splunk:
+      enable: false
+      servers:
+        - name: <name of the Splunk server>
+          endpoint: <IP address or DNS name of the Splunk HEC endpoint>
+          port: <port of the Splunk HEC endpoint>
+          authToken:
+            name: <name of the Kubernetes secret holding the Splunk HEC token>
+            namespace: <namespace of the secret>
+          profiles:
+            timeseries: {}
+            tcpinsight: {}
+            webinsight: {}
+            streaminsight: {}
+            udpinsight: {}
 netscaler:
   adcCredentialSecret: nslogin
   nitroReadTimeout: 40

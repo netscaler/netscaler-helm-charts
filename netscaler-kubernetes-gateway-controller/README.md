@@ -191,6 +191,18 @@ The following table lists the mandatory and optional parameters that you can con
 | gatewayController.extraVolumeMounts  |  Optional |  [] |  Specify the Additional VolumeMounts to be mounted in Exporter container. Specify the volumes in `extraVolumes`  |
 | gatewayController.extraVolumes  |  Optional |  [] |  Specify the Additional Volumes for additional volumeMounts  |
 | gatewayController.eresources | Optional | {} |	CPU/Memory resource requests/limits for NetScaler Ingress Controller container |
+| gatewayController.analyticsConfig.required | Optional | false | Set this to true to configure NetScaler to export analytics data to the various endpoints. |
+| gatewayController.analyticsConfig.logAllJsonFields | Optional | false | Set this value to true to export all JSON fields in the analytics records from NetScaler. |
+| gatewayController.analyticsConfig.distributedTracing.enable | Optional | false | Set this value to true to enable distributed tracing in NetScaler. |
+| gatewayController.analyticsConfig.distributedTracing.samplingrate | Optional | 100 | Specifies the distributed tracing sampling rate in percentage. |
+| gatewayController.analyticsConfig.splunk.enable | Optional | false | Set this value to true to export analytics data from NetScaler to Splunk. |
+| gatewayController.analyticsConfig.splunk.servers | Optional | [] | List of Splunk servers to which NetScaler exports analytics data. Each server supports the fields described below. |
+| gatewayController.analyticsConfig.splunk.servers[].name | Optional | N/A | Name to identify the Splunk server. |
+| gatewayController.analyticsConfig.splunk.servers[].endpoint | Mandatory | N/A | IP address or FQDN of the Splunk HTTP Event Collector (HEC) endpoint. |
+| gatewayController.analyticsConfig.splunk.servers[].port | Optional | N/A | Port of the Splunk HEC endpoint. |
+| gatewayController.analyticsConfig.splunk.servers[].authToken.name | Mandatory | N/A | Name of the Kubernetes secret that holds the Splunk HEC authentication token. |
+| gatewayController.analyticsConfig.splunk.servers[].authToken.namespace | Optional | N/A | Namespace of the Kubernetes secret that holds the Splunk HEC authentication token. |
+| gatewayController.analyticsConfig.splunk.servers[].profiles | Optional | N/A | Analytics profiles that NetScaler applies for this Splunk server, keyed by profile type. The supported profile types are `timeseries`, `tcpinsight`, `webinsight`, `streaminsight` and `udpinsight`. Each profile type takes the NetScaler analytics profile attributes to be configured. The attributes that can be set within a profile can be referred to from [this document](https://developer-docs.netscaler.com/en-us/adc-nitro-api/current-release/configuration/analytics/analyticsprofile.html). |
 | apiPriorityAndFairness.enabled | Optional | false | Enable API Priority and Fairness flow control for the controller's API server requests. Creates a PriorityLevelConfiguration and FlowSchema. |
 | apiPriorityAndFairness.priorityLevelConfiguration.nominalConcurrencyShares | Optional | 40 | Relative weight of this priority level vs other levels (default workload gets 30). |
 | apiPriorityAndFairness.priorityLevelConfiguration.lendablePercent | Optional | 25 | Percentage of seats that can be lent to other priority levels when idle. |
