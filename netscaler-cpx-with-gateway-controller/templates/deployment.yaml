@@ -171,6 +171,9 @@ spec:
               name: cpx-volume-conf
             - mountPath: /cpx/bootup_conf
               name: bootupconfig-volume
+{{- if ne (len .Values.netscalerCpx.extraVolumeMounts) 0 }}
+{{- toYaml .Values.netscalerCpx.extraVolumeMounts | nindent 12 }}
+{{- end }}
 {{- if eq (toString .Values.cpxConfigPersistenceEnabled) "true" }}
             - mountPath: /cpx/reboot_overflow
               name: reboot-overflow-volume
@@ -333,6 +336,9 @@ spec:
         - name: bootupconfig-volume
           configMap:
             name: {{ include "bootupconfigmap.fullname" . }}
+{{- if ne (len .Values.netscalerCpx.extraVolumes) 0 }}
+{{- toYaml .Values.netscalerCpx.extraVolumes | nindent 8 }}
+{{- end }}
 {{- if eq (toString .Values.cpxConfigPersistenceEnabled) "true" }}
         - name: reboot-overflow-volume
           configMap:
