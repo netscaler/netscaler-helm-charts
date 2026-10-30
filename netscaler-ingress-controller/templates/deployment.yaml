@@ -12,6 +12,13 @@ spec:
       app: {{ include "netscaler-ingress-controller.fullname" . }}
 {{- end }}
   replicas: 1
+{{- if and (has (lower (toString .Values.clearStaleServiceStatus)) (list "true" "yes" "on" "1")) (has (lower (toString .Values.updateServiceStatus)) (list "false" "no" "off" "0")) }}
+  # Stop the old pod before the new one starts while clearing stale service status.
+  strategy:
+    type: Recreate
+    # Clears the default rollingUpdate settings so helm upgrade succeeds.
+    rollingUpdate: null
+{{- end }}
   template:
     metadata:
       name: nsic
@@ -29,9 +36,13 @@ spec:
       serviceAccountName: {{ include "netscaler-ingress-controller.serviceAccountName" . }}
 {{- if .Values.nsValidateCert }}
       hostAliases:
-      - ip: {{ .Values.hostAlias.ip | quote }}
+      - ip: {{ required "hostAlias.ip is mandatory when nsValidateCert is true: set it to the NetScaler management IP." .Values.hostAlias.ip | quote }}
         hostnames:
-          - {{ .Values.hostAlias.hostName | quote }}
+          - {{ required "hostAlias.hostName is mandatory when nsValidateCert is true: set it to the hostname present in the NetScaler certificate, and use that hostname in nsIP." .Values.hostAlias.hostName | quote }}
+{{- end }}
+{{- if .Values.initContainers }}
+      initContainers:
+{{- toYaml .Values.initContainers | nindent 6 }}
 {{- end }}
       containers:
       - name: nsic
@@ -84,6 +95,14 @@ spec:
           - --update-ingress-status
             yes
 {{- end }}
+{{- if has (lower (toString .Values.updateServiceStatus)) (list "false" "no" "off" "0") }}
+          - --update-service-status
+            no
+{{- end }}
+{{- if has (lower (toString .Values.clearStaleServiceStatus)) (list "true" "yes" "on" "1") }}
+          - --clear-stale-service-status
+            yes
+{{- end }}
         env:
         - name: "NS_IP"
           value: "{{ .Values.nsIP }}"
@@ -115,6 +134,18 @@ spec:
 {{- end }}
         - name: "ENABLE_LIVENESS_PROBE"
           value: {{ .Values.enableLivenessProbe | quote }}
+{{- if .Values.vaultCredentials.enabled }}
+        - name: "NS_CRED_HOTRELOAD"
+          value: "yes"
+        - name: "NS_CREDENTIAL_WAIT_SECONDS"
+          value: {{ if kindIs "invalid" .Values.vaultCredentials.credentialWaitSeconds }}"120"{{ else }}{{ .Values.vaultCredentials.credentialWaitSeconds | quote }}{{ end }}
+        - name: "NS_SECRET_DIR"
+          value: {{ .Values.vaultCredentials.mountPath | quote }}
+{{- else }}
+        - name: "NS_CRED_HOTRELOAD"
+          value: "no"
+{{- end }}
+{{- if not (and .Values.vaultCredentials.enabled .Values.vaultCredentials.suppressEnvCredentials) }}
         - name: "NS_USER"
         {{- if and .Values.secretStore.enabled .Values.secretStore.username}}
         {{- toYaml .Values.secretStore.username | nindent 10 }}
@@ -133,6 +164,7 @@ spec:
               name: {{ .Values.adcCredentialSecret }}
               key: password
         {{- end }}
+{{- end }}
         - name: "EULA"
           value: "{{ .Values.license.accept }}"
 {{- if and .Values.openshift .Values.routeLabels }}
@@ -192,12 +224,19 @@ spec:
 {{- end  }}
         - name: "BGP_ADVERTISEMENT"
           value: {{ .Values.bgpAdvertisement | quote }}
+{{- if .Values.extraEnv }}
+{{- toYaml .Values.extraEnv | nindent 8 }}
+{{- end }}
         resources:
             {{- toYaml .Values.resources | nindent 12 }}
         volumeMounts:
         - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
           name: volume-for-service-account
           readOnly: true
+        {{- if .Values.vaultCredentials.enabled }}
+        - name: citrix-creds
+          mountPath: {{ .Values.vaultCredentials.mountPath }}
+        {{- end }}
         {{- if .Values.nsValidateCert }}
         - name: certs
           mountPath: /etc/cacerts
@@ -207,13 +246,40 @@ spec:
 {{- toYaml .Values.extraVolumeMounts | nindent 8 }}
         {{- end }}
 {{- if .Values.exporter.required }}
+{{- $exporterValidateCert := .Values.exporter.validateCert | toString | lower }}
+{{- if .Values.nsValidateCert }}
+{{- $exporterValidateCert = "yes" }}
+{{- else if has $exporterValidateCert (list "auto" "yes" "true" "y" "on" "1") }}
+{{- $exporterValidateCert = "auto" }}
+{{- else if has $exporterValidateCert (list "no" "false" "n" "off" "0") }}
+{{- $exporterValidateCert = "no" }}
+{{- else }}
+{{- fail "exporter.validateCert must be set explicitly when exporter.required is true. Set it to \"auto\" so the exporter validates the NetScaler certificate, or set nsValidateCert=true together with nsCertSecret and hostAlias to validate against your own CA, or set it to \"no\" to turn validation off (not recommended). \"auto\" needs exporter 1.7.0 or later, which exporter.imageTag pins by default; with an older image, use nsValidateCert=true instead." }}
+{{- end }}
+{{- if .Values.nsValidateCert }}
+{{- range .Values.exporter.extraVolumeMounts }}
+{{- if eq (toString .mountPath) "/etc/cacerts" }}
+{{- fail "exporter.extraVolumeMounts declares a mount at /etc/cacerts, which nsValidateCert=true already uses for the NetScaler CA. Kubernetes rejects two volumeMounts sharing a mountPath in one container, and were it accepted the CA at /etc/cacerts/nsCA.pem would be shadowed and the exporter would exit 3 into CrashLoopBackOff. Move your mount to another path, or leave nsValidateCert unset and mount the CA yourself." }}
+{{- end }}
+{{- end }}
+{{- end }}
       - name: exporter
         image: "{{ tpl .Values.exporter.image . }}"
         imagePullPolicy: {{ .Values.exporter.pullPolicy }}
         args:
+          # The exporter always uses HTTPS on port 443.
+          - "--secure=yes"
           - "--target-nsip={{ .Values.nsIP }}"
           - "--port={{ .Values.exporter.ports.containerPort }}"
         env:
+        - name: "NS_VALIDATE_CERT"
+          value: {{ $exporterValidateCert | quote }}
+{{- if .Values.nsValidateCert }}
+        - name: "NS_CACERT_PATH"
+          value: "/etc/cacerts/nsCA.pem"
+{{- end }}
+{{- /* Skip env credentials only when the exporter gets the shared credential files. */}}
+{{- if not (and .Values.vaultCredentials.enabled .Values.vaultCredentials.suppressEnvCredentials .Values.vaultCredentials.shareWithExporter) }}
         - name: "NS_USER"
         {{- if and .Values.secretStore.enabled .Values.secretStore.username}}
         {{- toYaml .Values.secretStore.username | nindent 10 }}
@@ -232,12 +298,27 @@ spec:
               name: {{ .Values.adcCredentialSecret }}
               key: password
         {{- end }}
-        {{- if ne (len .Values.exporter.extraVolumeMounts) 0 }}
+{{- end }}
+        {{- if or .Values.nsValidateCert (ne (len .Values.exporter.extraVolumeMounts) 0) (and .Values.vaultCredentials.enabled .Values.vaultCredentials.shareWithExporter) }}
         volumeMounts:
+        {{- if .Values.nsValidateCert }}
+        - name: certs
+          mountPath: /etc/cacerts
+          readOnly: true
+        {{- end }}
+        {{- if and .Values.vaultCredentials.enabled .Values.vaultCredentials.shareWithExporter }}
+        - name: citrix-creds
+          mountPath: /mnt/nslogin
+        {{- end }}
+        {{- if ne (len .Values.exporter.extraVolumeMounts) 0 }}
         {{- toYaml .Values.exporter.extraVolumeMounts | nindent 8 }}
+        {{- end }}
         {{- end }}
         resources:
 {{- toYaml .Values.exporter.resources | nindent 12 }}
+{{- end }}
+{{- if .Values.extraContainers }}
+{{- toYaml .Values.extraContainers | nindent 6 }}
 {{- end }}
       volumes:
       - name: volume-for-service-account
@@ -260,7 +341,12 @@ spec:
       {{- if .Values.nsValidateCert }}
       - name: certs
         secret:
-          secretName: {{ .Values.nsCertSecret }}
+          secretName: {{ required "nsCertSecret is mandatory when nsValidateCert is true: create a secret holding the NetScaler CA certificate as nsCA.pem and set nsCertSecret to its name." .Values.nsCertSecret }}
+      {{- end }}
+      {{- if .Values.vaultCredentials.enabled }}
+      - name: citrix-creds
+        emptyDir:
+          medium: Memory
       {{- end }}
 {{- if ne (len .Values.extraVolumes) 0 }}
 {{ toYaml .Values.extraVolumes | indent 6 }}

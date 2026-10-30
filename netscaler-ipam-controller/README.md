@@ -70,7 +70,7 @@ The following table lists the configurable parameters of the NetScaler CPX with 
 | ---------- | --------------------- | ------------- | ----------- |
 | imageRegistry                   | Mandatory  |  `quay.io`               |  The NetScaler IPAM Controller image registry             |  
 | imageRepository                 | Mandatory  |  `netscaler/netscaler-ipam-controller`              |   The NetScaler IPAM Controller image repository             | 
-| imageTag                  | Mandatory  |  `2.4.0`               |  The NetScaler IPAM Controller image tag            |
+| imageTag                  | Mandatory  |  `2.5.2`               |  The NetScaler IPAM Controller image tag            |
 | pullPolicy | Mandatory | `IfNotPresent` | The NetScaler IPAM Controller image pull policy. |
 | vipRange | Mandatory | N/A | This variable allows you to define the IP address range. You can either define IP address range or an IP address range associated with a unique name. NetScaler IPAM controller assigns the IP address from this IP address range to the service of type LoadBalancer. |
 | reuseIngressVip| Optional | True | This variable allows you to use same IP for all ingresses using the same vipRange. |
@@ -82,6 +82,8 @@ The following table lists the configurable parameters of the NetScaler CPX with 
 | infoblox.maxRetries| Optional | 3 | This variable allows you to provide infoblox client max retries in case of failure. |
 | infoblox.netView| Optional | default | This variable allows you to provide infoblox Network View. If the Network View is not present it will be created. |
 | infoblox.vipRange| Mandatory if  infoblox.enabled is true | N/A | Infoblox IPAM VIP Range that will be managed by the controller. All IPs in this range will be managed in Infoblox by the controller and should not be conflicting for any other processes. IP range should be in CIDR format a.b.c.d/n. Example: "[{"infoblox-range": ["1.1.1.0/24"]}]" |
+| infoblox.sslVerify| Optional | true | Verify the Infoblox Grid Master's TLS certificate on WAPI calls. Secure by default. Set to `false` to disable verification (use only for testing). |
+| infoblox.caBundleSecret| Optional | "" | Name of a Kubernetes Secret (same namespace) holding the CA bundle that signed the Infoblox Grid Master certificate. Required when the Grid Master uses a self-signed or private-CA certificate. The Secret must contain a key `ca.crt`; it is mounted read-only and used for verification. |
 | serviceAccount.create | Mandatory | true | Create serviceAccount for NetScaler IPAM Controller |
 | serviceAccount.tokenExpirationSeconds | Mandatory | 31536000 | Time in seconds when the token of serviceAccount get expired |
 | serviceAccount.name | Optional | "" | Name of the ServiceAccount for the IPAM Controller. If you want to use a ServiceAccount that you have already created and manage yourself, specify its name here and set serviceAccount.create to false. |

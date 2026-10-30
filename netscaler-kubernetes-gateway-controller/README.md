@@ -30,6 +30,19 @@
 ## Introduction
 This Helm chart deploys NetScaler Kubernetes Gateway Controller in the [Kubernetes](https://kubernetes.io) or in the [Openshift](https://www.openshift.com) cluster using [Helm](https://helm.sh) package manager.
 
+### NetScaler credential hot-reload with HashiCorp Vault
+
+This chart can source the NetScaler (ADC) login credentials from HashiCorp Vault and hot-reload them when they rotate, without restarting the Gateway controller. The feature is opt-in: set `vaultCredentials.enabled=true` (top-level) and add a Vault Agent sidecar (via `extraContainers`) that renders the `username` and `password` files into the shared credential volume the chart mounts at `vaultCredentials.mountPath` (default `/etc/citrix`); `netscaler.adcCredentialSecret` then becomes optional. Any rotated credential is validated against the NetScaler before the controller switches to it, and the controller keeps the last-good credential if a rotation is invalid. But if you already changed the password on the NetScaler, the last-good credential no longer works either, and the controller cannot log in, so fix the value in Vault right away. Requires NetScaler Kubernetes Gateway Controller 2.3.0 or later (controller image 4.3.x or later). Vault (files) and `netscaler.adcCredentialSecret` are **not mutually exclusive**: the controller resolves each field file-first (IP-keyed file → flat file → `NS_USER`/`NS_PASSWORD` from the secret), so a file always takes precedence and the secret is used only as a fallback for a missing/empty file — and only the file source is hot-reloaded. `vaultCredentials.suppressEnvCredentials` (default `true`) omits the secret env entirely for a Vault-only deployment (making `netscaler.adcCredentialSecret` optional); set it `false` to keep the secret as a static start-up fallback. The chart sets the `NS_CRED_HOTRELOAD` environment variable from this flag in both directions, so hot-reload is armed only when you ask for it: an existing `/etc/citrix/username`/`password` secret-as-file mount — supported long before this feature — does not turn it on by itself on upgrade. The chart also accepts `initContainers` (default `[]`; Kubernetes runs init containers to completion before it starts the other containers of the pod), but a Vault Agent init container is optional here: the Gateway controller waits for the credential files at start-up (`vaultCredentials.credentialWaitSeconds`, default `120`), so the sidecar alone is enough (a metrics exporter that you run in its own pod does need one; see the guide linked below). For step-by-step instructions and the full list of `vaultCredentials.*` and sidecar hook variables, see [Use NetScaler credentials stored in a Vault server with NetScaler Kubernetes Gateway Controller](https://docs.netscaler.com/us/en/netscaler-kubernetes-gateway-controller/traffic-security/use-vault-stored-credentials.html).
+
+```yaml
+# optional: the Gateway controller also waits for the credential files at start-up
+initContainers:
+  - name: vault-agent-init
+    image: hashicorp/vault:1.21   # the same image as the sidecar, run as a Vault Agent, not a Vault server
+    args: ["agent", "-config=/etc/vault/vault-agent-config.hcl", "-exit-after-auth"]   # write the files once, then exit
+    # env and volumeMounts: the same as your vault-agent sidecar in extraContainers
+```
+
 ### Prerequisites
 
 -  The [Kubernetes](https://kubernetes.io/) version 1.24 or later if using Kubernetes environment.
@@ -94,6 +107,16 @@ Kubernetes Gateway CRDs are expected to be installed, its prerequisite. Refer [I
 
 Netscaler CRDs will be installed when we install NetScaler Kubernetes Gateway controller via Helm automatically if CRDs are not installed in cluster already. If you wish to skip the CRD installation step, you can pass the --skip-crds flag. For more information about this option in Helm please see [this](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/).
 
+The following CRDs enable the MCP (Model Context Protocol) gateway use case and are installed with this chart:
+
+- `mcpprofiles.citrix.com` — upstream MCP profile (token/header injection, URL replacement).
+- `aigatewayroutes.citrix.com` — AI/MCP umbrella route that attaches policies (rewrite, ratelimit, profiles, auth) via `ExtensionRef`.
+- `mcproutes.citrix.com` — MCP content-switching route: matches the `x-netscaler-target-mcp-server` header (`BEFORE_STR("/").CONTAINS(...)`) with a `default: true` catch-all and a `policyExpression` passthrough for arbitrary NetScaler routing.
+- `aigatewayprofiles.citrix.com` — frontend/backend AI gateway profile.
+- `authpolicies.citrix.com` — OAuth/OIDC authentication used by MCP tool-filtering and rate-limiting.
+
+The MCP gateway needs NetScaler 14.1 or later (VPX, MPX or BLX), or a NetScaler CPX image based on 14.1 or later.
+
 > **NOTE:**
 >
 > Helm installs CRDs under `crds/` only when they are absent from the cluster; it does not create or update them during `helm upgrade`. If `vips.citrix.com` already exists in the cluster from an earlier NetScaler chart (for example NSIC or the CPX chart), it may carry an older `spec.kind` enum that does not accept `gateway`, and IPAM VIP allocation for Gateways will silently fail. Before enabling `gatewayController.ipam`, apply the updated CRD manually: `kubectl apply -f crds/crds.yaml`.
@@ -138,7 +161,7 @@ The following table lists the mandatory and optional parameters that you can con
 | license.accept | Mandatory | no | Set `yes` to accept the NSIC end user license agreement. |
 | imageRegistry                   | Optional  |  `quay.io`               |  The NetScaler Kubernetes Gateway Controller image registry             |  
 | imageRepository                 | Optional  |  `netscaler/netscaler-k8s-ingress-controller`              |   The NetScaler ingress controller image repository             |
-| imageTag                  | Optional  |  `4.2.26`               |   The NetScaler Kubernetes Gateway Controller image tag            | 
+| imageTag                  | Optional  |  `4.3.22`               |   The NetScaler Kubernetes Gateway Controller image tag            | 
 | pullPolicy | Optional | Always | The NSIC image pull policy. |
 | imagePullSecrets | Optional | N/A | Provide list of Kubernetes secrets to be used for pulling the images from a private Docker registry or repository. For more information on how to create this secret please see [Pull an Image from a Private Registry](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/). |
 | nameOverride | Optional | N/A | String to partially override deployment fullname template with a string (will prepend the release name) |
@@ -152,7 +175,7 @@ The following table lists the mandatory and optional parameters that you can con
 | netscaler.nsPort | Optional | 443 | The port used by NSIC to communicate with NetScaler. You can use port 80 for HTTP. |
 | netscaler.nsProtocol | Optional | HTTPS | The protocol used by NSIC to communicate with NetScaler. You can also use HTTP on port 80. |
 | netscaler.nitroReadTimeout | Optional | 20 | The nitro Read timeout in seconds, defaults to 20 |
-| netscaler.adcCredentialSecret | Mandatory | N/A | The Kubernetes secret containing login credentials for the NetScaler VPX or MPX. For information on how to create the secret keys, see [Prerequisites](#prerequistes). |
+| netscaler.adcCredentialSecret | Mandatory unless `vaultCredentials.enabled` and `vaultCredentials.suppressEnvCredentials` are true | N/A | The Kubernetes secret containing login credentials for the NetScaler VPX or MPX. For information on how to create the secret keys, see [Prerequisites](#prerequistes). |
 | netscaler.nsncPbr | Optional | False | Use this argument to inform NetScaler kubernetes gateway Controller that NetScaler Node Controller(NSNC) is configuring Policy Based Routes(PBR) on the NetScaler. For more information, see [NSNC-PBR-SUPPORT](https://github.com/netscaler/netscaler-k8s-ingress-controller/blob/master/docs/network/pbr.md#configure-pbr-using-the-netscaler-node-controller) |
 | netscaler.nsSNIPs | Optional | N/A | The list of subnet IPAddresses on the NetScaler device, which will be used to create PBR Routes instead of Static Routes [PBR support](https://docs.netscaler.com/en-us/netscaler-k8s-ingress-controller/how-to/pbr.html) |
 | netscaler.nsVIP | Optional | N/A | The Virtual IP address on the NetScaler device. |
@@ -203,6 +226,13 @@ The following table lists the mandatory and optional parameters that you can con
 | gatewayController.analyticsConfig.splunk.servers[].authToken.name | Mandatory | N/A | Name of the Kubernetes secret that holds the Splunk HEC authentication token. |
 | gatewayController.analyticsConfig.splunk.servers[].authToken.namespace | Optional | N/A | Namespace of the Kubernetes secret that holds the Splunk HEC authentication token. |
 | gatewayController.analyticsConfig.splunk.servers[].profiles | Optional | N/A | Analytics profiles that NetScaler applies for this Splunk server, keyed by profile type. The supported profile types are `timeseries`, `tcpinsight`, `webinsight`, `streaminsight` and `udpinsight`. Each profile type takes the NetScaler analytics profile attributes to be configured. The attributes that can be set within a profile can be referred to from [this document](https://developer-docs.netscaler.com/en-us/adc-nitro-api/current-release/configuration/analytics/analyticsprofile.html). |
+| vaultCredentials.enabled | Optional | false | Read the NetScaler credentials from files that a Vault Agent sidecar, added via `extraContainers`, writes under `vaultCredentials.mountPath`, and hot-reload them when they rotate. See [NetScaler credential hot-reload with HashiCorp Vault](#netscaler-credential-hot-reload-with-hashicorp-vault). |
+| vaultCredentials.mountPath | Optional | /etc/citrix | Where the shared in-memory credential volume (`citrix-creds`) is mounted in the gateway controller container. Your sidecar mounts the same volume and writes the `username` and `password` files there. |
+| vaultCredentials.credentialWaitSeconds | Optional | 120 | Seconds the gateway controller waits at start-up for the credential files before it fails. `0` means no wait. |
+| vaultCredentials.suppressEnvCredentials | Optional | true | With `vaultCredentials.enabled`, leave out the `NS_USER`/`NS_PASSWORD` env of the gateway controller container, so it uses only the files. Set to `false` to keep that env as a start-up fallback. |
+| initContainers | Optional | [] | Init containers to add to the pod. Kubernetes runs them to completion before it starts the other containers. |
+| extraContainers | Optional | [] | Extra containers to add to the pod, for example a Vault Agent sidecar that writes the credential files. |
+| extraEnv | Optional | [] | Extra environment variables to add to the gateway controller container. |
 | apiPriorityAndFairness.enabled | Optional | false | Enable API Priority and Fairness flow control for the controller's API server requests. Creates a PriorityLevelConfiguration and FlowSchema. |
 | apiPriorityAndFairness.priorityLevelConfiguration.nominalConcurrencyShares | Optional | 40 | Relative weight of this priority level vs other levels (default workload gets 30). |
 | apiPriorityAndFairness.priorityLevelConfiguration.lendablePercent | Optional | 25 | Percentage of seats that can be lent to other priority levels when idle. |

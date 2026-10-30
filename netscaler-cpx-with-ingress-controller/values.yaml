@@ -82,7 +82,7 @@ servicePorts: []
 nsic:
   imageRegistry: quay.io
   imageRepository: netscaler/netscaler-k8s-ingress-controller
-  imageTag: 4.2.26
+  imageTag: 4.3.22
   image: "{{ .Values.nsic.imageRegistry }}/{{ .Values.nsic.imageRepository }}:{{ .Values.nsic.imageTag }}"
   pullPolicy: IfNotPresent
   required: true
@@ -139,6 +139,9 @@ jsonLog: false
 defaultSSLCertSecret: ""
 defaultSSLSNICertSecret: ""
 updateIngressStatus: true
+# Set to False to stop publishing the VIP in the service status (EXTERNAL-IP stays <pending>).
+# Needs a 4.3.x or later ingress controller image.
+updateServiceStatus: True
 logProxy: ""
 kubernetesURL: ""
 disableOpenshiftRoutes: false
@@ -183,7 +186,7 @@ exporter:
   required: false
   imageRegistry: quay.io
   imageRepository: netscaler/netscaler-adc-metrics-exporter
-  imageTag: 1.5.0
+  imageTag: 1.7.0
   image: "{{ .Values.exporter.imageRegistry }}/{{ .Values.exporter.imageRepository }}:{{ .Values.exporter.imageTag }}"
   pullPolicy: IfNotPresent
   ports:

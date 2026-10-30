@@ -27,6 +27,10 @@ spec:
 {{- end }}
     spec:
       serviceAccountName: {{ include "netscaler-gslb-controller.serviceAccountName" . }}
+{{- if .Values.initContainers }}
+      initContainers:
+{{- toYaml .Values.initContainers | nindent 6 }}
+{{- end }}
       containers:
       - name: nsgslbc
         image: "{{ tpl .Values.image . }}"
@@ -35,6 +39,7 @@ spec:
 {{- if .Values.nsIP }}
         - name: "NS_IP"
           value: "{{ .Values.nsIP }}"
+{{- if not (and .Values.vaultCredentials.enabled .Values.vaultCredentials.suppressEnvCredentials) }}
         - name: "NS_USER"
 {{- if and .Values.secretStore.enabled .Values.secretStore.username}}
         {{- toYaml .Values.secretStore.username | nindent 10 }}
@@ -54,6 +59,7 @@ spec:
               key: password
 {{- end }}
 {{- end }}
+{{- end }}
 {{- if .Values.openshift }}
         - name: "PLATFORM"
           value: "OPENSHIFT"
@@ -63,6 +69,8 @@ spec:
 {{- end  }}
         - name: "CLEANUP_GSLB_SITE_CONFIG"
           value: {{ .Values.cleanup_gslb_site_config | default "false" | quote }}
+        - name: "GSE_AUTOCREATION"
+          value: {{ if kindIs "invalid" .Values.gseAutoCreation }}"true"{{ else }}{{ .Values.gseAutoCreation | toString | lower | default "true" | quote }}{{ end }}
         - name: "LOGLEVEL"
           value: {{ .Values.logLevel | default "INFO" | quote }}
         - name: "NS_PROTOCOL"
@@ -82,6 +90,7 @@ spec:
 {{- range .Values.sitedata }}
         - name: {{ include "netscaler-gslb-controller.siteip" .}}
           value: {{ .siteIp }}
+{{- if not (and $.Values.vaultCredentials.enabled $.Values.vaultCredentials.suppressEnvCredentials) }}
         - name: {{ include "netscaler-gslb-controller.siteusername" .}}
           valueFrom:
             secretKeyRef:
@@ -98,6 +107,7 @@ spec:
               name: {{ .secretName }}
               key: sitesyncpassword
               optional: true
+{{- end }}
         - name: {{ include "netscaler-gslb-controller.siteregion" .}}
           value: {{ .siteRegion }}
 {{- if .sitePublicip }}
@@ -113,6 +123,20 @@ spec:
           value: "{{ .Values.license.accept }}"
         - name: "NS_APPS_NAME_PREFIX"
           value: {{ .Values.entityPrefix | default "k8s"| quote }}
+{{- if .Values.vaultCredentials.enabled }}
+        - name: "NS_CRED_HOTRELOAD"
+          value: "yes"
+        - name: "NS_CREDENTIAL_WAIT_SECONDS"
+          value: {{ if kindIs "invalid" .Values.vaultCredentials.credentialWaitSeconds }}"120"{{ else }}{{ .Values.vaultCredentials.credentialWaitSeconds | quote }}{{ end }}
+        - name: "NS_SECRET_DIR"
+          value: {{ .Values.vaultCredentials.mountPath | quote }}
+{{- else }}
+        - name: "NS_CRED_HOTRELOAD"
+          value: "no"
+{{- end }}
+{{- if .Values.extraEnv }}
+{{- toYaml .Values.extraEnv | nindent 8 }}
+{{- end }}
         args:
         - --config-interface
           gslb-endpoints
@@ -134,8 +158,15 @@ spec:
         - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
           name: volume-for-service-account
           readOnly: true
+        {{- if .Values.vaultCredentials.enabled }}
+        - name: citrix-creds
+          mountPath: {{ .Values.vaultCredentials.mountPath }}
+        {{- end }}
 {{- if ne (len .Values.extraVolumeMounts) 0 }}
 {{- toYaml .Values.extraVolumeMounts | nindent 8 }}
+{{- end }}
+{{- if .Values.extraContainers }}
+{{- toYaml .Values.extraContainers | nindent 6 }}
 {{- end }}
       volumes:
       - name: volume-for-service-account
@@ -155,6 +186,11 @@ spec:
                     apiVersion: v1
                     fieldPath: metadata.namespace
                   path: namespace
+      {{- if .Values.vaultCredentials.enabled }}
+      - name: citrix-creds
+        emptyDir:
+          medium: Memory
+      {{- end }}
 {{- if ne (len .Values.extraVolumes) 0 }}
 {{ toYaml .Values.extraVolumes | indent 6 }}
 {{- end }}

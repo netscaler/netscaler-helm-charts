@@ -10,6 +10,11 @@ spec:
     matchLabels:
       {{- include "netscaler-ipam-controller.selectorLabels" . | nindent 6}}
   replicas: 1
+  # Run only one pod at a time during upgrades.
+  strategy:
+    type: Recreate
+    # Clears rollingUpdate left by older chart versions so helm upgrade works.
+    rollingUpdate: null
   template:
     metadata:
       labels:
@@ -77,6 +82,12 @@ spec:
         # InfoBlox Network Range is used to identify the network range from where IPs will be assigned. There should not be a conflict with the existing IPs
         - name: "INFOBLOX_NETWORKS"
           value: {{ required "Provide IPs or IP range for Infoblox in CIDR form" .Values.infoblox.vipRange | squote }}
+        - name: "INFOBLOX_SSL_VERIFY"
+          value: {{ .Values.infoblox.sslVerify | squote }}
+{{- if .Values.infoblox.caBundleSecret }}
+        - name: "INFOBLOX_CA_BUNDLE"
+          value: "/etc/netscaler-ipam/infoblox-ca/ca.crt"
+{{- end }}
 {{- end }}
 {{- if and .Values.dns.enabled (eq (.Values.dns.type | default "") "binddns") }}
         - name: "DNS_TYPE"
@@ -116,6 +127,12 @@ spec:
           value: {{ .Values.dns.universal.dnsView | default "default" | squote }}
         - name: "UDNS_WAPI_VERSION"
           value: {{ .Values.dns.universal.wapiVersion | default "v2.5" | squote }}
+        - name: "UDNS_SSL_VERIFY"
+          value: {{ .Values.dns.universal.sslVerify | squote }}
+{{- if .Values.dns.universal.caBundleSecret }}
+        - name: "UDNS_CA_BUNDLE"
+          value: "/etc/netscaler-ipam/udns-ca/ca.crt"
+{{- end }}
 {{- end }}
         resources:
             {{- toYaml .Values.resources | nindent 10 }}
@@ -123,6 +140,16 @@ spec:
         - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
           name: volume-for-service-account
           readOnly: true
+{{- if and .Values.infoblox.enabled .Values.infoblox.caBundleSecret }}
+        - mountPath: /etc/netscaler-ipam/infoblox-ca
+          name: infoblox-ca-bundle
+          readOnly: true
+{{- end }}
+{{- if and .Values.dns.enabled (eq (.Values.dns.type | default "") "universal") .Values.dns.universal.caBundleSecret }}
+        - mountPath: /etc/netscaler-ipam/udns-ca
+          name: udns-ca-bundle
+          readOnly: true
+{{- end }}
       volumes:
       - name: volume-for-service-account
         projected:
@@ -141,6 +168,22 @@ spec:
                     apiVersion: v1
                     fieldPath: metadata.namespace
                   path: namespace
+{{- if and .Values.infoblox.enabled .Values.infoblox.caBundleSecret }}
+      - name: infoblox-ca-bundle
+        secret:
+          secretName: {{ .Values.infoblox.caBundleSecret }}
+          items:
+            - key: ca.crt
+              path: ca.crt
+{{- end }}
+{{- if and .Values.dns.enabled (eq (.Values.dns.type | default "") "universal") .Values.dns.universal.caBundleSecret }}
+      - name: udns-ca-bundle
+        secret:
+          secretName: {{ .Values.dns.universal.caBundleSecret }}
+          items:
+            - key: ca.crt
+              path: ca.crt
+{{- end }}
 {{- if and .Values.nodeSelector.key .Values.nodeSelector.value }}
       nodeSelector:
         {{ .Values.nodeSelector.key }}: {{ .Values.nodeSelector.value }}

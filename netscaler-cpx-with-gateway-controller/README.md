@@ -122,6 +122,16 @@ service:
 
 CRDs will be installed when we install NetScaler gateway controller via Helm automatically if CRDs are not installed in cluster already. If you wish to skip the CRD installation step, you can pass the --skip-crds flag. For more information about this option in Helm please see [this](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/).
 
+The following CRDs enable the MCP (Model Context Protocol) gateway use case and are installed with this chart:
+
+- `mcpprofiles.citrix.com` — upstream MCP profile (token/header injection, URL replacement).
+- `aigatewayroutes.citrix.com` — AI/MCP umbrella route that attaches policies (rewrite, ratelimit, profiles, auth) via `ExtensionRef`.
+- `mcproutes.citrix.com` — MCP content-switching route: matches the `x-netscaler-target-mcp-server` header (`BEFORE_STR("/").CONTAINS(...)`) with a `default: true` catch-all and a `policyExpression` passthrough for arbitrary NetScaler routing.
+- `aigatewayprofiles.citrix.com` — frontend/backend AI gateway profile.
+- `authpolicies.citrix.com` — OAuth/OIDC authentication used by MCP tool-filtering and rate-limiting.
+
+The MCP gateway needs NetScaler 14.1 or later (VPX, MPX or BLX), or a NetScaler CPX image based on 14.1 or later.
+
 ### Tolerations
 
 Taints are applied on cluster nodes whereas tolerations are applied on pods. Tolerations enable pods to be scheduled on node with matching taints. For more information see [Taints and Tolerations in Kubernetes](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/).
@@ -179,7 +189,7 @@ The following table lists the configurable parameters of the NetScaler CPX with 
 | gatewayController.gatewayControllerName | Mandatory | N/A | Name of Gateway Controller . |
 | gatewayController.imageRegistry                   | Mandatory  |  `quay.io`               |  The NetScaler gateway controller image registry             |  
 | gatewayController.imageRepository                 | Mandatory  |  `netscaler/netscaler-k8s-ingress-controller`              |   The NetScaler gateway controller image repository             | 
-| gatewayController.imageTag                  | Mandatory  |  `4.2.26`               |   The NetScaler gateway controller image tag            |
+| gatewayController.imageTag                  | Mandatory  |  `4.3.22`               |   The NetScaler gateway controller image tag            |
 | gatewayController.pullPolicy | Mandatory | IfNotPresent | The NetScaler gateway controller image pull policy. |
 | gatewayController.required | Mandatory | true | NSGWC to be run as sidecar with NetScaler CPX |
 | gatewayController.enableLivenessProbe| Optional | False | Enable liveness probe settings for NetScaler Gateway Controller |
@@ -267,7 +277,7 @@ The following table lists the configurable parameters of the NetScaler CPX with 
 | exporter.required | Optional | false | Use the argument if you want to run the [Exporter for NetScaler Stats](https://github.com/netscaler/netscaler-adc-metrics-exporter) along with NetScaler ingress controller to pull metrics for the NetScaler CPX|
 | exporter.imageRegistry                   | Optional  |  `quay.io`               |  The Exporter for NetScaler Stats image registry             |  
 | exporter.imageRepository                 | Optional  |  `netscaler/netscaler-adc-metrics-exporter`              |   The Exporter for NetScaler Stats image repository             | 
-| exporter.imageTag                  | Optional  |  `1.5.0`               |  The Exporter for NetScaler Stats image tag            | 
+| exporter.imageTag                  | Optional  |  `1.7.0`               |  The Exporter for NetScaler Stats image tag            | 
 | exporter.pullPolicy | Optional | IfNotPresent | The Exporter for NetScaler Stats image pull policy. |
 | exporter.resources | Optional | {} |	CPU/Memory resource requests/limits for Metrics exporter container |
 | exporter.ports.containerPort | Optional | 8888 | The Exporter for NetScaler Stats container port. |

@@ -2,7 +2,7 @@ license:
    accept: no
 imageRegistry: quay.io
 imageRepository: netscaler/netscaler-k8s-ingress-controller
-imageTag: 4.2.26
+imageTag: 4.3.22
 pullPolicy: IfNotPresent
 imagePullSecrets: []
 nameOverride: ""
@@ -10,7 +10,7 @@ fullnameOverride: ""
 gatewayController:
   clusterName: ""
   gatewayControllerName:
-  disableAPIServerCertVerify: true
+  disableAPIServerCertVerify: false
   image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
   entityPrefix: ""
   enableLivenessProbe: true
@@ -126,6 +126,23 @@ podAnnotations: {}
 nodeSelector: {}
 affinity: {}
 tolerations: []
+
+# Read ADC credentials from <mountPath>/username and <mountPath>/password, written by a
+# Vault agent sidecar (add it via extraContainers), and reload them on rotation without a restart.
+vaultCredentials:
+  enabled: false
+  mountPath: /etc/citrix
+  # Seconds to wait at startup for the credential files (0 = do not wait).
+  credentialWaitSeconds: 120
+  suppressEnvCredentials: true
+
+initContainers: []
+  # Example (remove the [] above; env and volumeMounts as in your vault-agent sidecar):
+  # - name: vault-agent-init
+  #   image: hashicorp/vault:1.21   # run as a Vault Agent, not a Vault server
+  #   args: ["agent", "-config=/etc/vault/vault-agent-config.hcl", "-exit-after-auth"]
+extraContainers: []
+extraEnv: []
 
 # API Priority and Fairness configuration for the gateway controller's API server requests
 apiPriorityAndFairness:

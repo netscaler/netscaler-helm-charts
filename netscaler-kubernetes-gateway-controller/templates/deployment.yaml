@@ -33,6 +33,10 @@ spec:
         hostnames:
           - {{ .Values.netscaler.hostAlias.hostName | quote }}
 {{- end }}
+{{- if .Values.initContainers }}
+      initContainers:
+{{- toYaml .Values.initContainers | nindent 6 }}
+{{- end }}
       containers:
       - name: nskgwc
         image: "{{ tpl .Values.gatewayController.image . }}"
@@ -89,6 +93,18 @@ spec:
 {{- end }}
         - name: "ENABLE_LIVENESS_PROBE"
           value: {{ .Values.gatewayController.enableLivenessProbe | quote }}
+{{- if .Values.vaultCredentials.enabled }}
+        - name: "NS_CRED_HOTRELOAD"
+          value: "yes"
+        - name: "NS_CREDENTIAL_WAIT_SECONDS"
+          value: {{ if kindIs "invalid" .Values.vaultCredentials.credentialWaitSeconds }}"120"{{ else }}{{ .Values.vaultCredentials.credentialWaitSeconds | quote }}{{ end }}
+        - name: "NS_SECRET_DIR"
+          value: {{ .Values.vaultCredentials.mountPath | quote }}
+{{- else }}
+        - name: "NS_CRED_HOTRELOAD"
+          value: "no"
+{{- end }}
+{{- if not (and .Values.vaultCredentials.enabled .Values.vaultCredentials.suppressEnvCredentials) }}
         - name: "NS_USER"
         {{- if and .Values.netscaler.secretStore.enabled .Values.netscaler.secretStore.username}}
         {{- toYaml .Values.netscaler.secretStore.username | nindent 10 }}
@@ -107,6 +123,7 @@ spec:
               name: {{ .Values.netscaler.adcCredentialSecret }}
               key: password
         {{- end }}
+{{- end }}
         - name: "EULA"
           value: "{{ .Values.license.accept }}"
 {{- if and .Values.gatewayController.openshift .Values.gatewayController.namespaceLabels }}
@@ -144,6 +161,9 @@ spec:
 {{- end  }}
         - name: "GATEWAY_CONTROLLER_NAME"
           value: {{ required "please provide unique controller name" .Values.gatewayController.gatewayControllerName | quote }}
+{{- if .Values.extraEnv }}
+{{- toYaml .Values.extraEnv | nindent 8 }}
+{{- end }}
         resources:
             {{- toYaml .Values.gatewayController.resources | nindent 12 }}
         volumeMounts:
@@ -155,9 +175,16 @@ spec:
           mountPath: /etc/cacerts
           readOnly: true
         {{- end }}
+        {{- if .Values.vaultCredentials.enabled }}
+        - name: citrix-creds
+          mountPath: {{ .Values.vaultCredentials.mountPath }}
+        {{- end }}
         {{- if ne (len .Values.gatewayController.extraVolumeMounts) 0 }}
 {{- toYaml .Values.gatewayController.extraVolumeMounts | nindent 8 }}
         {{- end }}
+{{- if .Values.extraContainers }}
+{{- toYaml .Values.extraContainers | nindent 6 }}
+{{- end }}
       volumes:
       - name: volume-for-service-account
         projected:
@@ -180,6 +207,11 @@ spec:
       - name: certs
         secret:
           secretName: {{ .Values.netscaler.nsCertSecret }}
+      {{- end }}
+      {{- if .Values.vaultCredentials.enabled }}
+      - name: citrix-creds
+        emptyDir:
+          medium: Memory
       {{- end }}
 {{- if ne (len .Values.gatewayController.extraVolumes) 0 }}
 {{ toYaml .Values.gatewayController.extraVolumes | indent 6 }}

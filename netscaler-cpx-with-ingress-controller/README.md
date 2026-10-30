@@ -618,7 +618,7 @@ The following table lists the configurable parameters of the NetScaler CPX with 
 | hostName | Optional | N/A | This entity will be used to set Hostname of the CPX |
 | nsic.imageRegistry                   | Mandatory  |  `quay.io`               |  The NetScaler ingress controller image registry             |  
 | nsic.imageRepository                 | Mandatory  |  `netscaler/netscaler-k8s-ingress-controller`              |   The NetScaler ingress controller image repository             | 
-| nsic.imageTag                  | Mandatory  |  `4.2.26`               |   The NetScaler ingress controller image tag            | 
+| nsic.imageTag                  | Mandatory  |  `4.3.22`               |   The NetScaler ingress controller image tag            | 
 | nsic.pullPolicy | Mandatory | IfNotPresent | The NetScaler ingress controller image pull policy. |
 | nsic.required | Mandatory | true | NSIC to be run as sidecar with NetScaler CPX |
 | nsic.enableLivenessProbe| Optional | True | Enable liveness probe settings for NetScaler Ingress Controller |
@@ -659,7 +659,8 @@ The following table lists the configurable parameters of the NetScaler CPX with 
 | entityPrefix | Optional | k8s | The prefix for the resources on the NetScaler CPX. |
 | ingressClass | Optional | N/A | If multiple ingress load balancers are used to load balance different ingress resources. You can use this parameter to specify NetScaler ingress controller to configure NetScaler associated with specific ingress class. For more information on Ingress class, see [Ingress class support](https://docs.netscaler.com/en-us/citrix-k8s-ingress-controller/configure/ingress-classes/). For Kubernetes version >= 1.19, this will create an IngressClass object with the name specified here  |
 | setAsDefaultIngressClass | Optional | False | Set the IngressClass object as default. New Ingresses without an "ingressClassName" field specified will be assigned the class specified in ingressClass. Applicable only for kubernetes versions >= 1.19 |
-| updateIngressStatus | Optional | False | Set this argument if you want to update ingress status of the ingress resources exposed via CPX. |
+| updateIngressStatus | Optional | True | Set this argument if you want to update ingress status of the ingress resources exposed via CPX. |
+| updateServiceStatus | Optional | True | Controls whether the NetScaler LoadBalancer VIP is published into the `status.loadBalancer.ingress` field (the `EXTERNAL-IP` column) of a type `LoadBalancer` service managed by the NetScaler ingress controller sidecar. Set it to `False` in clusters where the CNI (for example OVN-Kubernetes) short-circuits in-cluster traffic destined to that address straight to the backend pod instead of sending it to the NetScaler. Requires a NetScaler ingress controller image of 4.3.x or later; on an older image the argument is silently ignored. See [Disabling the service status update](#disabling-the-service-status-update) for the side effects. |
 | disableAPIServerCertVerify | Optional | False | Set this parameter to True for disabling API Server certificate verification. |
 | openshift | Optional | false | Set this argument if OpenShift environment is being used. |
 | disableOpenshiftRoutes | false | By default Openshift routes are processed in openshift environment, this variable can be used to disable Ingress controller processing the openshift routes. |
@@ -693,7 +694,7 @@ The following table lists the configurable parameters of the NetScaler CPX with 
 | exporter.required | Optional | false | Use the argument if you want to run the [Exporter for NetScaler Stats](https://github.com/netscaler/netscaler-adc-metrics-exporter) along with NetScaler ingress controller to pull metrics for the NetScaler CPX|
 | exporter.imageRegistry                   | Optional  |  `quay.io`               |  The Exporter for NetScaler Stats image registry             |  
 | exporter.imageRepository                 | Optional  |  `netscaler/netscaler-adc-metrics-exporter`              |   The Exporter for NetScaler Stats image repository             | 
-| exporter.imageTag                  | Optional  |  `1.5.0`               |  The Exporter for NetScaler Stats image tag            | 
+| exporter.imageTag                  | Optional  |  `1.7.0`               |  The Exporter for NetScaler Stats image tag            | 
 | exporter.pullPolicy | Optional | IfNotPresent | The Exporter for NetScaler Stats image pull policy. |
 | exporter.resources | Optional | {} |	CPU/Memory resource requests/limits for Metrics exporter container |
 | exporter.ports.containerPort | Optional | 8888 | The Exporter for NetScaler Stats container port. |
@@ -768,3 +769,107 @@ To uninstall/delete the ```my-release``` deployment:
 - [NetScaler ingress controller Documentation](https://docs.netscaler.com/en-us/citrix-k8s-ingress-controller/)
 - [NetScaler ingress controller GitHub](https://github.com/netscaler/netscaler-k8s-ingress-controller)
 - [BGP advertisement for External IPs with CPX](https://github.com/netscaler/netscaler-k8s-ingress-controller/blob/master/docs/network/bgp-enhancement.md)
+
+## Disabling the service status update
+
+By default the NetScaler ingress controller writes the VIP it has programmed on the NetScaler into
+`status.loadBalancer.ingress[].ip` of every type `LoadBalancer` service it manages, which is what
+populates the `EXTERNAL-IP` column. In some clusters that write is harmful: OVN-Kubernetes installs a
+node-local DNAT rule for any address that appears in a service's load balancer status, so pods on the
+same cluster go to the backend pods directly instead of through NetScaler.
+
+Setting `updateServiceStatus: False` stops that write. The NetScaler is still programmed exactly as
+before; what changes on the Kubernetes side is listed below.
+
+> **Version requirement.** `updateServiceStatus` is understood by NetScaler ingress controller `4.3.x` and later only; an older image parses the argument list leniently, silently ignores the unknown flag and keeps publishing the VIP. If you also run GSLB, move the `netscaler-gslb-controller` release to `imageTag: 4.3.x` or later **at the same time** -- the status-independent VIP resolution described below runs inside that controller, and an older GSLB controller stops generating `GlobalServiceEntry` objects entirely once the service status is empty.
+
+### What changes when it is disabled
+
+| Area | Effect |
+| ----- | ----- |
+| `kubectl get svc` | The `EXTERNAL-IP` column stays `<pending>`. The VIP is unchanged on the NetScaler. |
+| Argo CD | The built-in health check for a `Service` reports `Healthy` only when `status.loadBalancer.ingress` is non-empty, so such services are reported as `Progressing` and a sync can time out. See below. |
+| external-dns | Will not source records from the service status. Annotate each affected service with `external-dns.alpha.kubernetes.io/target: <VIP>`; external-dns reads neither `spec.loadBalancerIP` nor `service.citrix.com/frontend-ip`. |
+| GSLB | Endpoint auto-generation falls back to `spec.loadBalancerIP`, then the `service.citrix.com/frontend-ip` annotation, then the `service.citrix.com/lb-ip` annotation that a tier-1 ingress controller records on the service in place of the status write. If none of these is set, the `GlobalServiceEntry` is not generated and must be supplied manually. **The fallback executes in the NetScaler GSLB controller, not here**, so the `netscaler-gslb-controller` release must also run image `4.3.x` or later. An older GSLB controller has no fallback at all: with the service status empty it silently stops generating `GlobalServiceEntry` objects. |
+| Ingress resources | Ingress status is governed independently by `updateIngressStatus`, which this chart defaults to `true`. While it is enabled (the default), the status this sidecar writes is derived from the CPX exposure service's `status.loadBalancer.ingress`, so it stops being updated unless that service carries `spec.loadBalancerIP` or the `service.citrix.com/frontend-ip` annotation. |
+| Stale entries | An address this sidecar published before the setting was turned off is **not** retracted. The controller's one-time cleanup runs only for a tier-1 (non-sidecar) deployment, so it is not offered by this chart; clear such an entry manually with `kubectl patch svc <name> --subresource=status --type=merge -p '{"status":{"loadBalancer":{}}}'`. |
+| Cloud providers | Unaffected. On a cloud-managed `LoadBalancer` service the cloud controller manager owns the status field and continues to write it; this setting only suppresses the ingress controller's own write. |
+
+### Argo CD
+
+If the services concerned are managed by Argo CD, register a health override so that a service with an
+empty load balancer status is not reported as `Progressing` forever. In the `argocd-cm` ConfigMap:
+
+```yaml
+data:
+  resource.customizations.health.Service: |
+    hs = {}
+    if obj.metadata ~= nil and obj.metadata.annotations ~= nil and
+       obj.metadata.annotations["netscaler.com/skip-lb-status-health"] == "true" then
+      hs.status = "Healthy"
+      hs.message = "EXTERNAL-IP not published (updateServiceStatus is disabled)"
+      return hs
+    end
+    if obj.spec ~= nil and obj.spec.type == "LoadBalancer" then
+      if obj.status ~= nil and obj.status.loadBalancer ~= nil and
+         obj.status.loadBalancer.ingress ~= nil and
+         #obj.status.loadBalancer.ingress > 0 then
+        hs.status = "Healthy"
+        return hs
+      end
+      hs.status = "Progressing"
+      hs.message = "Waiting for the load balancer to report an external address"
+      return hs
+    end
+    hs.status = "Healthy"
+    return hs
+```
+
+and annotate only the services whose status the ingress controller no longer publishes:
+
+```yaml
+metadata:
+  annotations:
+    netscaler.com/skip-lb-status-health: "true"
+```
+
+Registering this key replaces the built-in `Service` health check for **every** service on the Argo CD
+instance, which is why the snippet above re-implements the built-in behaviour for services that do not
+carry the annotation. A snippet that unconditionally returns `Healthy` would also hide a cloud load
+balancer that is genuinely stuck in `<pending>`.
+
+The override runs in a sandboxed Lua interpreter with the standard libraries disabled, so it must stay
+within core language constructs; `string.*`, `os.*` and `io.*` are not available.
+
+The key naming for core (group-less) kinds differs between Argo CD versions: some accept the bare
+`resource.customizations.health.Service`, others expect the group-qualified
+`resource.customizations.health._Service`. Do not guess. Render the override against a real service
+manifest first and only disable the setting once it reports `Healthy`:
+
+```
+argocd admin settings resource-overrides health ./my-service.yaml --argocd-cm-path ./argocd-cm.yaml
+```
+
+Register the override **before** the ingress controller is restarted with `updateServiceStatus: False`,
+otherwise the affected applications go to `Progressing` and any sync wave or hook waiting on them
+stalls. The alternative, annotating each service with `argocd.argoproj.io/ignore-healthcheck: "true"`,
+is evaluated against the live resource, so it only takes effect once the annotation has actually been
+applied to the cluster; whether it also releases a blocked sync wave depends on the Argo CD version, so
+verify that on a test application before relying on it.
+
+### Migrating an existing cluster
+
+A VIP that was published by an earlier run of the sidecar stays in the service status after the
+setting is turned off, because nothing removes it. The ingress controller's one-time retraction
+(`clearStaleServiceStatus`) is reachable only on the tier-1 code path, which a sidecar deployment
+never takes, so this chart does not offer it. Clear each affected entry once, by hand:
+
+```
+kubectl patch svc <name> -n <namespace> --subresource=status --type=merge \
+  -p '{"status":{"loadBalancer":{}}}'
+```
+
+Do this after the sidecar has been restarted with `updateServiceStatus: False`, otherwise it
+republishes the address on the next service event. If a tier-1
+`netscaler-ingress-controller` release also manages the same service, use that chart's
+`clearStaleServiceStatus` instead -- see its README.

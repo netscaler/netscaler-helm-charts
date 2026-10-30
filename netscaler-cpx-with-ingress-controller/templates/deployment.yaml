@@ -385,6 +385,10 @@ spec:
             - --update-ingress-status
               yes
 {{- end }}
+{{- if has (lower (toString .Values.updateServiceStatus)) (list "false" "no" "off" "0") }}
+            - --update-service-status
+              no
+{{- end }}
           volumeMounts:
             - mountPath: /var/deviceinfo
               name: shared-data
