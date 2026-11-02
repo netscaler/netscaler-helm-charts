@@ -25,7 +25,20 @@ From chart `3.1.0` the Node Controller self-heals the per-node `kube-nsnc-router
 - **Durable VTEP IP** — each node's overlay IP is persisted and reused across pod recreates and controller restarts, so the NetScaler PBR next-hop is not churned on upgrade.
 - **Health probes** — controller and router pods carry liveness/readiness probes, gated by `healthProbes.enabled` (default `true`; requires controller image `3.1.0+`). See the `healthProbes` values and **note 4** below on partial rollback.
 - **VXLAN port** — choose a `vxlan.port` that does not collide with the cluster CNI (Calico uses `4789`; use e.g. `4790`). A collision parks the router pod (Running/NotReady) instead of crash-looping.
-- **Router image** — defaults to `quay.io/netscaler/nsnc-router:2.1.0`; override with `nsncRouterImage` for air-gapped/internal registries.
+- **Router image** — defaults to `quay.io/netscaler/nsnc-router:2.2.9`; override with `nsncRouterImage` for air-gapped/internal registries.
+
+### NetScaler credential hot-reload with HashiCorp Vault (3.2.13)
+
+This chart can source the NetScaler (ADC) login credentials from HashiCorp Vault and hot-reload them when they rotate, without restarting the Node Controller. The feature is opt-in: set `vaultCredentials.enabled=true` and add a Vault Agent sidecar (via `extraContainers`) that renders the `username` and `password` files into the shared credential volume the chart mounts at `vaultCredentials.mountPath` (default `/etc/citrix`); `adcCredentialSecret` then becomes optional. Because the Node Controller authenticates to the NetScaler per request, a rotated credential — validated against the NetScaler before it is adopted — takes effect on the next request, and the controller keeps using the last-good credential if a rotation is invalid. But if you already changed the password on the NetScaler, the last-good credential no longer works either, and the Node Controller cannot configure the NetScaler, so fix the value in Vault right away. Requires NetScaler Node Controller 3.2.13 or later. Vault (files) and `adcCredentialSecret` are **not mutually exclusive**: the controller resolves each field file-first (IP-keyed file → flat file → `NS_USER`/`NS_PASSWORD` from `adcCredentialSecret`), so a file always takes precedence and the secret is used only as a fallback for a missing/empty file — and only the file source is hot-reloaded. `vaultCredentials.suppressEnvCredentials` (default `true`) omits the `adcCredentialSecret` env entirely for a Vault-only deployment (making `adcCredentialSecret` optional); set it `false` to keep the secret as a static start-up fallback. The chart also accepts `initContainers` (default `[]`; Kubernetes runs init containers to completion before it starts the other containers of the pod). With the default `vaultCredentials.suppressEnvCredentials: true`, a Vault Agent init container is optional: the Node Controller waits for the credential files at start-up (`vaultCredentials.credentialWaitSeconds`, default `120`), so the sidecar alone is enough. If you set it to `false`, the Node Controller starts with the secret and checks for the files only once, at start-up, so also add a one-shot Vault Agent init container (the same as the sidecar, plus `-exit-after-auth`); otherwise hot-reload stays off. For step-by-step instructions and the full list of `vaultCredentials.*` and sidecar hook variables, see [Use NetScaler credentials stored in a Vault server with NetScaler Node Controller](https://docs.netscaler.com/us/en/netscaler-k8s-ingress-controller/configure/network/node-controller-vault-credentials.html).
+
+```yaml
+# needed when vaultCredentials.suppressEnvCredentials is false
+initContainers:
+  - name: vault-agent-init
+    image: hashicorp/vault:1.21   # the same image as the sidecar, run as a Vault Agent, not a Vault server
+    args: ["agent", "-config=/etc/vault/vault-agent-config.hcl", "-exit-after-auth"]   # write the files once, then exit
+    # env and volumeMounts: the same as your vault-agent sidecar in extraContainers
+```
 
 ### Prerequisites
 
@@ -123,11 +136,15 @@ The following table lists the mandatory and optional parameters that you can con
 | license.accept | Mandatory | no | Set `yes` to accept the NSNC end user license agreement. |
 | imageRegistry                   | Mandatory  |  `quay.io`               |  The NSNC image registry             |  
 | imageRepository                 | Mandatory  |  `netscaler/netscaler-k8s-node-controller`              |   The NSNC image repository             | 
-| imageTag                  | Mandatory  |  `3.1.0`               |  The NSNC image tag            | 
+| imageTag                  | Mandatory  |  `3.2.13`              |  The NSNC image tag            | 
 | pullPolicy | Mandatory | IfNotPresent | The NSNC image pull policy. |
 | nameOverride | Optional | N/A | String to partially override deployment fullname template with a string (will prepend the release name) |
 | fullNameOverride | Optional | N/A | String to fully override deployment fullname template with a string |
-| adcCredentialSecret | Mandatory | N/A | The secret key to log on to the NetScaler VPX or MPX. For information on how to create the secret keys, see [Prerequisites](#prerequistes). |
+| adcCredentialSecret | Mandatory unless `vaultCredentials.enabled` and `vaultCredentials.suppressEnvCredentials` are true | N/A | The secret key to log on to the NetScaler VPX or MPX. For information on how to create the secret keys, see [Prerequisites](#prerequistes). |
+| vaultCredentials.enabled | Optional | false | Read the NetScaler credentials from files that a Vault Agent sidecar, added via `extraContainers`, writes under `vaultCredentials.mountPath`, and hot-reload them when they rotate. See [NetScaler credential hot-reload with HashiCorp Vault](#netscaler-credential-hot-reload-with-hashicorp-vault-3213). |
+| vaultCredentials.mountPath | Optional | /etc/citrix | Where the shared in-memory credential volume (`citrix-creds`) is mounted in the NSNC container. Your sidecar mounts the same volume and writes the `username` and `password` files there. |
+| vaultCredentials.credentialWaitSeconds | Optional | 120 | Seconds NSNC waits at start-up for the credential files before it fails. `0` means no wait. |
+| vaultCredentials.suppressEnvCredentials | Optional | true | With `vaultCredentials.enabled`, leave out the `NS_USER`/`NS_PASSWORD` env from `adcCredentialSecret`, so NSNC uses only the files. Set to `false` to keep the secret as a start-up fallback; then also add a one-shot Vault Agent init container (see the Vault section above). |
 | nsIP | Mandatory | N/A | The IPaddress or Hostname of the NetScaler device. For details, see [Prerequisites](#prerequistes). |
 | vtepIP | Mandatory | N/A | The NetScaler SNIP. |
 | network | Mandatory | N/A | The IP address range that NSNC uses to configure the VTEP overlay end points on the Kubernetes nodes. |
@@ -140,6 +157,11 @@ The following table lists the mandatory and optional parameters that you can con
 | nsncConfigMap.tolerationsInJson | Optional | N/A | Tolerations to be associated with the Kube-nsnc-router pods. Provide in the appropriate JSON format `--set-json nsncConfigMap.tolerationsInJson='[{"key": "first","operator": "Equal","value": "one","effect": "NoExecute"},{"key": "second","operator": "Equal","value": "true","effect": "NoExecute"}]'` |
 | nsncRouterImage | Optional | N/A | The Internal Repo Image to be used for kube-nsnc-router helper pods when internet access is disabled on cluster nodes. For more details, see [running-nsnc-without-internet-access](https://github.com/netscaler/netscaler-k8s-node-controller/blob/master/deploy/README.md#running-citrix-node-controller-without-internet-access) |
 | nsncRouterName | Optional | N/A | The name to be used for ServiceAccount/RBAC/ConfigMap and even as prefix for kube-nsnc-router helper pods. If not set, it will be auto-generated. |
+| initContainers | Optional | [] | Init containers to add to the pod. Kubernetes runs them to completion before it starts the other containers. |
+| extraContainers | Optional | [] | Extra containers to add to the pod, for example a Vault Agent sidecar that writes the credential files. |
+| extraEnv | Optional | [] | Extra environment variables to add to the NSNC container. |
+| extraVolumes | Optional | [] | Extra volumes to add to the pod, for example the projected ServiceAccount token and the configuration for the Vault Agent sidecar. |
+| extraVolumeMounts | Optional | [] | Extra volume mounts to add to the NSNC container. Specify the volumes in `extraVolumes`. |
 | serviceAccount.create | Mandatory | true | Create serviceAccount for NetScaler Node Controller |
 | serviceAccount.tokenExpirationSeconds | Mandatory | 31536000 | Time in seconds when the token of serviceAccount get expired |
 | healthProbes.enabled | Optional | true | Enable Kubernetes liveness/readiness probes on the Node Controller pod. Requires controller image 3.1.0+ (which writes `/tmp/cnc-ready` and `/tmp/cnc-alive`); set `false` if pinning an older image. |
@@ -226,8 +248,8 @@ helm install nsnc netscaler/netscaler-node-controller --set license.accept=yes,n
 | `vxlan.id` | VXLAN VNI — must not conflict with existing VXLANs on NetScaler | `175` |
 | `vxlan.port` | VXLAN UDP port — must not conflict with existing VXLANs on NetScaler or the cluster CNI (Calico uses `4789`; see note 3) | `4790` |
 | `cniType` | **Set to `ovn` for OpenShift OVN-Kubernetes** | `ovn` |
-| `nsncRouterImage` | Node Controller Router Image | `quay.io/netscaler/nsnc-router:2.1.0` |
-| `image` | Node Controller Image | `quay.io/netscaler/netscaler-k8s-node-controller:3.1.0` |
+| `nsncRouterImage` | Node Controller Router Image | `quay.io/netscaler/nsnc-router:2.2.9` |
+| `image` | Node Controller Image | `quay.io/netscaler/netscaler-k8s-node-controller:3.2.13` |
 
 ### Step 4: Verify the deployment
 

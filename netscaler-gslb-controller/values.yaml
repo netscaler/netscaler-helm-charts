@@ -5,7 +5,7 @@
 # image contains information needed to fetch NSIC image
 imageRegistry: quay.io
 imageRepository: netscaler/netscaler-k8s-ingress-controller
-imageTag: 4.2.26
+imageTag: 4.3.22
 image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
 pullPolicy: IfNotPresent
 imagePullSecrets: []
@@ -36,6 +36,9 @@ nsProtocol: HTTPS
 nitroReadTimeout: 20
 # logLevel is to set level of NSIC Logs
 logLevel: INFO
+# gseAutoCreation lets the controller create and manage the GSEs of GTP targets.
+# Set to false if you create all GSEs yourself.
+gseAutoCreation: true
 # entityPrefix is the prefix for the resources on the NetScaler
 entityPrefix: ""
 # API server Cert verification can be disabled, while communicating with API Server, if disableAPIServerCertVerify set to True
@@ -86,7 +89,30 @@ nodeSelector: {}
 tolerations: []
 extraVolumeMounts: []
 extraVolumes: []
+
+# vaultCredentials reads ADC credentials from files written by a Vault agent sidecar
+# and reloads them when they change. Add the sidecar via extraContainers.
+vaultCredentials:
+  enabled: false
+  mountPath: /etc/citrix
+  credentialWaitSeconds: 120
+  suppressEnvCredentials: true
+
+# Extra init containers, sidecar containers, and env vars for the controller pod.
+initContainers: []
+  # Example (remove the [] above; env and volumeMounts as in your vault-agent sidecar):
+  # - name: vault-agent-init
+  #   image: hashicorp/vault:1.21   # run as a Vault Agent, not a Vault server
+  #   args: ["agent", "-config=/etc/vault/vault-agent-config.hcl", "-exit-after-auth"]
+extraContainers: []
+extraEnv: []
+
 createClusterRoleAndBinding: true
+
+# gatewayAPI gives the controller read-only access to Gateway API objects
+# so it can create GlobalServiceEntries for Gateway-routed services.
+gatewayAPI:
+  enabled: true
 
 # API Priority and Fairness configuration for the GSLB controller's API server requests
 apiPriorityAndFairness:
@@ -99,7 +125,7 @@ apiPriorityAndFairness:
       queuing:
         queues: 16
         handSize: 4
-        queueLengthLimit: 50
+        queueLengthLimit: 100
   flowSchema:
     matchingPrecedence: 1000
     distinguisherMethod:

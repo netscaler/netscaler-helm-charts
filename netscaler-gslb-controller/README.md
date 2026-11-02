@@ -30,6 +30,19 @@
 ## Introduction
 This Helm chart deploys NetScaler ingress controller in the [Kubernetes](https://kubernetes.io) or in the [Openshift](https://www.openshift.com) cluster using [Helm](https://helm.sh) package manager.
 
+### NetScaler credential hot-reload with HashiCorp Vault
+
+This chart can source the NetScaler (ADC) login credentials — both the local ADC and each GSLB site — from HashiCorp Vault and hot-reload them when they rotate, without restarting the GSLB controller. The feature is opt-in: set `vaultCredentials.enabled=true` and add a Vault Agent sidecar (via `extraContainers`) that renders the credential files into the shared volume the chart mounts at `vaultCredentials.mountPath` (default `/etc/citrix`) — local creds at `username`/`password` and each site's creds under `auth/<siteName>/username|password|mep_password`. Any rotated credential is validated against the target ADC before the controller switches to it, and the controller keeps the last-good credential if a rotation is invalid. But if you already changed the password on that ADC, the last-good credential no longer works either, and the controller cannot log in to that ADC, so fix the value in Vault right away. Requires NetScaler GSLB controller 4.3.x or later. Vault (files) and the Kubernetes secrets (`adcCredentialSecret` for the local ADC, per-site `secretName` for each site) are **not mutually exclusive**: the controller resolves each field file-first (file → `NS_USER`/`NS_PASSWORD` env for the local ADC, and `auth/<siteName>/…` file → `<site>` env per site), so a file always takes precedence and the secret is used only as a fallback for a missing/empty file — and only the file source is hot-reloaded. `vaultCredentials.suppressEnvCredentials` (default `true`) omits the secret env entirely for a Vault-only deployment; set it `false` to keep the secrets as a static start-up fallback. The chart sets the `NS_CRED_HOTRELOAD` environment variable from this flag in both directions, so hot-reload is armed only when you ask for it: an existing `/etc/citrix/username`/`password` secret-as-file mount — supported long before this feature — does not turn it on by itself on upgrade. The chart also accepts `initContainers` (default `[]`; Kubernetes runs init containers to completion before it starts the other containers of the pod), but a Vault Agent init container is optional here: the GSLB controller waits for the credential files at start-up (`vaultCredentials.credentialWaitSeconds`, default `120`), so the sidecar alone is enough. For step-by-step instructions and the full list of `vaultCredentials.*` and sidecar hook variables, see [Use NetScaler credentials stored in a Vault server with NetScaler GSLB controller](https://docs.netscaler.com/us/en/netscaler-k8s-ingress-controller/deployment-solutions/netscaler-gslb-controller/gslb-vault-credentials.html).
+
+```yaml
+# optional: the GSLB controller also waits for the credential files at start-up
+initContainers:
+  - name: vault-agent-init
+    image: hashicorp/vault:1.21   # the same image as the sidecar, run as a Vault Agent, not a Vault server
+    args: ["agent", "-config=/etc/vault/vault-agent-config.hcl", "-exit-after-auth"]   # write the files once, then exit
+    # env and volumeMounts: the same as your vault-agent sidecar in extraContainers
+```
+
 ### Prerequisites
 
 -  The [Kubernetes](https://kubernetes.io/) version 1.24 or later if using Kubernetes environment.
@@ -214,7 +227,7 @@ The following table lists the mandatory and optional parameters that you can con
 | license.accept | Mandatory | no | Set `yes` to accept the NSIC end user license agreement. |
 | imageRegistry                   | Optional  |  `quay.io`               |  The NetScaler ingress controller image registry             |  
 | imageRepository                 | Optional  |  `netscaler/netscaler-k8s-ingress-controller`              |   The NetScaler ingress controller image repository             | 
-| imageTag                  | Optional  |  `4.2.26`               |   The NetScaler ingress controller image tag            | 
+| imageTag                  | Optional  |  `4.3.22`               |   The NetScaler ingress controller image tag            | 
 | pullPolicy | Optional | Always | The NSIC image pull policy. |
 | imagePullSecrets | Optional | N/A | Provide list of Kubernetes secrets to be used for pulling the images from a private Docker registry or repository. For more information on how to create this secret please see [Pull an Image from a Private Registry](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/). |
 | nsIP | Optional | N/A | The IP address of the NetScaler device. For details, see [Prerequisites](#prerequistes). |
@@ -226,6 +239,7 @@ The following table lists the mandatory and optional parameters that you can con
 | secretStore.password | Optional | N/A | if `secretStore.enabled`, `password` of NetScaler will be fetched from the Secret Provider  |
 | nitroReadTimeout | Optional | 20 | The nitro Read timeout in seconds, defaults to 20 |
 | logLevel | Optional | INFO | The loglevel to control the logs generated by NSIC. The supported loglevels are: CRITICAL, ERROR, WARNING, INFO, DEBUG, TRACE and NONE. For more information, see [Logging](https://github.com/netscaler/netscaler-k8s-ingress-controller/blob/master/docs/configure/log-levels.md).|
+| gseAutoCreation | Optional | true | Sets the `GSE_AUTOCREATION` environment variable of the GSLB controller. When `true`, the controller creates and updates the GlobalServiceEntries (GSEs) of the local GlobalTrafficPolicy targets from Ingresses, Services of type LoadBalancer, and Gateway API routes. It also deletes these GSEs, even GSEs that you created yourself, for example, when a GlobalTrafficPolicy no longer uses a target. Set it to `false` if you create all the GSEs yourself: the controller then does not create, update, or delete any GSE, and does not list or watch Ingresses. Only `true` and `false` are valid, in any letter case, and an empty value means `true`. Any other value is rejected, and the controller does not start. Requires a NetScaler GSLB controller image of version 4.3.x or later; an older image ignores this value. For more information, see [Turn off automatic GSE creation](https://docs.netscaler.com/us/en/netscaler-k8s-ingress-controller/deployment-solutions/netscaler-gslb-controller/gslb.html#turn-off-automatic-gse-creation). |
 | disableAPIServerCertVerify | Optional | False | Set this parameter to True for disabling API Server certificate verification. |
 | kubernetesURL | Optional | N/A | The kube-apiserver url that NSIC uses to register the events. If the value is not specified, NSIC uses the [internal kube-apiserver IP address](https://kubernetes.io/docs/tasks/access-application-cluster/access-cluster/#accessing-the-api-from-a-pod). |
 | entityPrefix | Optional | k8s | The prefix for the resources on the NetScaler VPX/MPX. |
@@ -244,13 +258,21 @@ The following table lists the mandatory and optional parameters that you can con
 | sitedata[0].secretName | Mandatory | N/A | The secret containing login credentials of first site |
 | sitedata[0].siteRegion | Mandatory | N/A | The SiteRegion of the first site |
 | sitedata[0].sitePublicip | Optional | siteIp | The site public IP of the first GSLB Site |
+| vaultCredentials.enabled | Optional | false | Read the NetScaler credentials of the local NetScaler and of each site from files that a Vault Agent sidecar, added via `extraContainers`, writes under `vaultCredentials.mountPath`, and hot-reload them when they rotate. See [NetScaler credential hot-reload with HashiCorp Vault](#netscaler-credential-hot-reload-with-hashicorp-vault). |
+| vaultCredentials.mountPath | Optional | /etc/citrix | Where the shared in-memory credential volume (`citrix-creds`) is mounted in the GSLB controller container. Your sidecar mounts the same volume and writes the credential files there. |
+| vaultCredentials.credentialWaitSeconds | Optional | 120 | Seconds the GSLB controller waits at start-up for the credential files before it fails. `0` means no wait. |
+| vaultCredentials.suppressEnvCredentials | Optional | true | With `vaultCredentials.enabled`, leave out the `NS_USER`/`NS_PASSWORD` env and the credential env of each site, so the controller uses only the files. Set to `false` to keep that env as a start-up fallback. |
+| initContainers | Optional | [] | Init containers to add to the pod. Kubernetes runs them to completion before it starts the other containers. |
+| extraContainers | Optional | [] | Extra containers to add to the pod, for example a Vault Agent sidecar that writes the credential files. |
+| extraEnv | Optional | [] | Extra environment variables to add to the GSLB controller container. |
+| gatewayAPI.enabled | Optional | true | Adds a read-only rule (get, list, watch) on `gateways`, `httproutes`, `tcproutes` and `udproutes` in `gateway.networking.k8s.io` to the GSLB controller's ClusterRole, so that a GTP host with a `routeRef` can resolve its Gateway endpoint. Set to `false` to leave the rule out, for example on clusters that run another Gateway API implementation. |
 | apiPriorityAndFairness.enabled | Optional | false | Enable API Priority and Fairness flow control for the controller's API server requests. Creates a PriorityLevelConfiguration and FlowSchema. |
 | apiPriorityAndFairness.priorityLevelConfiguration.nominalConcurrencyShares | Optional | 40 | Relative weight of this priority level vs other levels (default workload gets 30). |
 | apiPriorityAndFairness.priorityLevelConfiguration.lendablePercent | Optional | 25 | Percentage of seats that can be lent to other priority levels when idle. |
 | apiPriorityAndFairness.priorityLevelConfiguration.limitResponse.type | Optional | Queue | Type of limit response. |
 | apiPriorityAndFairness.priorityLevelConfiguration.limitResponse.queuing.queues | Optional | 16 | Number of shuffle-sharded queues. |
 | apiPriorityAndFairness.priorityLevelConfiguration.limitResponse.queuing.handSize | Optional | 4 | Spread factor per flow. |
-| apiPriorityAndFairness.priorityLevelConfiguration.limitResponse.queuing.queueLengthLimit | Optional | 50 | Max pending requests per queue. |
+| apiPriorityAndFairness.priorityLevelConfiguration.limitResponse.queuing.queueLengthLimit | Optional | 100 | Max pending requests per queue. |
 | apiPriorityAndFairness.flowSchema.matchingPrecedence | Optional | 1000 | Matching precedence for the FlowSchema (lower = higher priority; system uses 0-999). |
 | apiPriorityAndFairness.flowSchema.distinguisherMethod.type | Optional | ByNamespace | Method to distinguish flows. Supported values: ByNamespace, ByUser. |
 

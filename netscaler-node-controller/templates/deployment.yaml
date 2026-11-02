@@ -16,6 +16,10 @@ spec:
         {{- include "netscaler-k8s-node-controller.selectorLabels" . | nindent 8}}
     spec:
       serviceAccountName: {{ include "netscaler-k8s-node-controller.serviceAccountName" . }}
+{{- if .Values.initContainers }}
+      initContainers:
+      {{- toYaml .Values.initContainers | nindent 6 }}
+{{- end }}
       containers:
       - name: {{ include "netscaler-k8s-node-controller.name" . }}
         image: "{{ tpl .Values.image . }}"
@@ -25,6 +29,7 @@ spec:
           value: {{ required "Please set license.accept=yes for accepting NetScaler License" .Values.license.accept | quote }}
         - name: NS_IP
           value: {{ required "Provide NetScaler VPX/MPX IP" .Values.nsIP | quote }}
+{{- if not (and .Values.vaultCredentials.enabled .Values.vaultCredentials.suppressEnvCredentials) }}
         - name: NS_USER
           valueFrom:
             secretKeyRef:
@@ -35,6 +40,7 @@ spec:
             secretKeyRef:
               name: {{ required "Please provide secret for NetScaler NetScaler credential" .Values.adcCredentialSecret }}
               key: password
+{{- end }}
         - name: NETWORK
           value: {{ required "Please provide network for VTEP overlay" .Values.network | quote }}
         - name: REMOTE_VTEPIP
@@ -61,12 +67,29 @@ spec:
           value: {{ include "netscaler-k8s-node-controller.nsncRouterName" . }} 
         - name: "CNC_CONFIGMAP"
           value: {{ include "netscaler-k8s-node-controller.nsncConfigMap" . }}
+{{- if .Values.vaultCredentials.enabled }}
+        - name: "NS_CREDENTIAL_WAIT_SECONDS"
+          {{- /* Keep an explicit 0; "default" would turn it into 120. */}}
+          value: {{ if kindIs "invalid" .Values.vaultCredentials.credentialWaitSeconds }}"120"{{ else }}{{ .Values.vaultCredentials.credentialWaitSeconds | quote }}{{ end }}
+        - name: "NS_SECRET_DIR"
+          value: {{ .Values.vaultCredentials.mountPath | quote }}
+{{- end }}
+{{- if .Values.extraEnv }}
+        {{- toYaml .Values.extraEnv | nindent 8 }}
+{{- end }}
         volumeMounts:
         - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
           name: volume-for-service-account
           readOnly: true
+{{- if .Values.vaultCredentials.enabled }}
+        - name: citrix-creds
+          mountPath: {{ .Values.vaultCredentials.mountPath }}
+{{- end }}
+{{- if .Values.extraVolumeMounts }}
+        {{- toYaml .Values.extraVolumeMounts | nindent 8 }}
+{{- end }}
         {{- if .Values.healthProbes.enabled }}
-        # NSHELP-43567: file-based health checks for the Node Controller. Requires a
+        # CUST-43567: file-based health checks for the Node Controller. Requires a
         # controller image that writes /tmp/cnc-ready (once informer caches sync) and
         # heartbeats /tmp/cnc-alive. See values.yaml -> healthProbes.
         livenessProbe:
@@ -87,6 +110,9 @@ spec:
           timeoutSeconds: {{ .Values.healthProbes.readiness.timeoutSeconds }}
           failureThreshold: {{ .Values.healthProbes.readiness.failureThreshold }}
         {{- end }}
+{{- if .Values.extraContainers }}
+      {{- toYaml .Values.extraContainers | nindent 6 }}
+{{- end }}
       volumes:
       - name: volume-for-service-account
         projected:
@@ -105,3 +131,11 @@ spec:
                     apiVersion: v1
                     fieldPath: metadata.namespace
                   path: namespace
+{{- if .Values.vaultCredentials.enabled }}
+      - name: citrix-creds
+        emptyDir:
+          medium: Memory
+{{- end }}
+{{- if .Values.extraVolumes }}
+      {{- toYaml .Values.extraVolumes | nindent 6 }}
+{{- end }}

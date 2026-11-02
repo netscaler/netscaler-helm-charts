@@ -30,6 +30,19 @@
 ## Introduction
 This Helm chart deploys NetScaler ingress controller in the [Kubernetes](https://kubernetes.io) or in the [Openshift](https://www.openshift.com) cluster using [Helm](https://helm.sh) package manager.
 
+### NetScaler credential hot-reload with HashiCorp Vault
+
+This chart can source the NetScaler (ADC) login credentials from HashiCorp Vault and hot-reload them when they rotate, without restarting the controller. The feature is opt-in: set `vaultCredentials.enabled=true` and add a Vault Agent sidecar (via `extraContainers`) that renders the `username` and `password` files into the shared credential volume the chart mounts at `vaultCredentials.mountPath` (default `/etc/citrix`); `adcCredentialSecret` then becomes optional. Any rotated credential is validated against the NetScaler before the controller switches to it, and the controller keeps the last-good credential if a rotation is invalid. But if you already changed the password on the NetScaler, the last-good credential no longer works either, and the controller cannot log in, so fix the value in Vault right away. Requires NetScaler Ingress Controller 4.3.x or later. Vault (files) and `adcCredentialSecret` are **not mutually exclusive**: the controller resolves each field file-first (IP-keyed file → flat file → `NS_USER`/`NS_PASSWORD` from `adcCredentialSecret`), so a file always takes precedence and the secret is used only as a fallback for a missing/empty file — and only the file source is hot-reloaded. `vaultCredentials.suppressEnvCredentials` (default `true`) omits the `adcCredentialSecret` env entirely for a Vault-only deployment (making `adcCredentialSecret` optional); set it `false` to keep the secret as a static start-up fallback. The chart sets the `NS_CRED_HOTRELOAD` environment variable from this flag in both directions, so hot-reload is armed only when you ask for it: an existing `/etc/citrix/username`/`password` secret-as-file mount — supported long before this feature — does not turn it on by itself on upgrade. `vaultCredentials.shareWithExporter` (default `true`) mounts the same credential volume into the metrics exporter, which reads it from a fixed `/mnt/nslogin`; set it `false` if your exporter takes its credentials from a separate secret, and the chart keeps the exporter's `NS_USER`/`NS_PASSWORD` env. If you run the metrics exporter (`exporter.required=true`) and it shares the volume, also add a one-shot Vault Agent init container via `initContainers` (default `[]`). An init container is a container that Kubernetes runs to completion before it starts the other containers of the pod, so the files exist before the controller and the exporter start. This init container runs the HashiCorp Vault image (`hashicorp/vault`) with the `agent` command, so it is a Vault client, not a Vault server; it logs in to Vault with the pod's service account token. The chart does not add it for you. Give it the same image, environment, and volume mounts as the sidecar, plus the `-exit-after-auth` flag so that it writes the files once and exits, and keep the sidecar: it rewrites the files after each rotation so the controller can hot-reload them. This is needed because the exporter reads the files only once, at start-up, and the sidecar usually writes them too late; for the same reason, after each rotation, once the controller logs `Credential hot-reload: promoted`, restart the pod so that the exporter gets the new password too. For step-by-step instructions and the full list of `vaultCredentials.*` and sidecar hook variables, see [Use Vault-stored credentials](https://docs.netscaler.com/us/en/netscaler-k8s-ingress-controller/use-cases/use-vault-stored-credentials-for-cic.html).
+
+```yaml
+# only when the metrics exporter shares the credential volume
+initContainers:
+  - name: vault-agent-init
+    image: hashicorp/vault:1.21   # the same image as the sidecar, run as a Vault Agent, not a Vault server
+    args: ["agent", "-config=/etc/vault/vault-agent-config.hcl", "-exit-after-auth"]   # write the files once, then exit
+    # env and volumeMounts: the same as your vault-agent sidecar in extraContainers
+```
+
 ### Prerequisites
 
 -  The [Kubernetes](https://kubernetes.io/) version should be 1.24 and above if using Kubernetes environment.
@@ -144,8 +157,10 @@ The command deploys NetScaler ingress controller on Kubernetes cluster with the 
 
 Use the following command for this:
    ```
-   helm install my-release netscaler/netscaler-ingress-controller --set nsIP=<NSIP>,license.accept=yes,adcCredentialSecret=<Secret-for-NetScaler-credentials>,ingressClass[0]=<ingressClassName>,exporter.required=true
+   helm install my-release netscaler/netscaler-ingress-controller --set nsIP=<NSIP>,license.accept=yes,adcCredentialSecret=<Secret-for-NetScaler-credentials>,ingressClass[0]=<ingressClassName>,exporter.required=true,exporter.validateCert=auto
    ```
+
+> **Note:** `exporter.validateCert` is mandatory whenever `exporter.required=true`, and `helm upgrade` from chart 4.2.26 or earlier fails until you set it. `auto` makes the exporter validate the NetScaler certificate against its image trust store. `auto` needs exporter 1.7.0 or later, which this chart pins by default. With an older exporter image, use `nsValidateCert=true` with `nsCertSecret` (a secret holding the CA as `nsCA.pem`) and `hostAlias.ip`/`hostAlias.hostName` instead. **Upgrade impact:** with `auto`, the exporter does not connect to a NetScaler that presents its default self-signed certificate, so metrics collection stops (the exporter stays up and reports `citrixadc_probe_success 0`). Install a trusted certificate on NetScaler, or use `nsValidateCert=true` with your own CA. `no` turns validation off (not recommended).
 
 ### For Openshift:
 Add the name of the service account created when the chart is deployed to the privileged Security Context Constraints of OpenShift:
@@ -170,8 +185,10 @@ The command deploys NetScaler ingress controller on your Openshift cluster in th
 
 Use the following command for this:
    ```
-   helm install my-release netscaler/netscaler-ingress-controller --set nsIP=<NSIP>,license.accept=yes,adcCredentialSecret=<Secret-for-NetScaler-credentials>,openshift=true,exporter.required=true
+   helm install my-release netscaler/netscaler-ingress-controller --set nsIP=<NSIP>,license.accept=yes,adcCredentialSecret=<Secret-for-NetScaler-credentials>,openshift=true,exporter.required=true,exporter.validateCert=auto
    ```
+
+> **Note:** `exporter.validateCert` is mandatory whenever `exporter.required=true`. See the upgrade note in the section above.
 
 ### Installed components
 
@@ -344,21 +361,26 @@ The following table lists the mandatory and optional parameters that you can con
 | license.accept | Mandatory | no | Set `yes` to accept the NSIC end user license agreement. |
 | imageRegistry                   | Mandatory  |  `quay.io`               |  The NetScaler ingress controller image registry             |  
 | imageRepository                 | Mandatory  |  `netscaler/netscaler-k8s-ingress-controller`              |   The NetScaler ingress controller image repository             | 
-| imageTag                  | Mandatory  |  `4.2.26`               |   The NetScaler ingress controller image tag            | 
+| imageTag                  | Mandatory  |  `4.3.22`               |   The NetScaler ingress controller image tag            | 
 | pullPolicy | Mandatory | IfNotPresent | The NSIC image pull policy. |
 | imagePullSecrets | Optional | N/A | Provide list of Kubernetes secrets to be used for pulling the images from a private Docker registry or repository. For more information on how to create this secret please see [Pull an Image from a Private Registry](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/). |
 | nameOverride | Optional | N/A | String to partially override deployment fullname template with a string (will prepend the release name) |
 | fullNameOverride | Optional | N/A | String to fully override deployment fullname template with a string |
 | resources | Optional | {} |	CPU/Memory resource requests/limits for NetScaler Ingress Controller container |
-| adcCredentialSecret | Mandatory | N/A | The secret key to log on to the NetScaler VPX or MPX. For information on how to create the secret keys, see [Prerequisites](#prerequistes). |
+| adcCredentialSecret | Mandatory unless `vaultCredentials.enabled` and `vaultCredentials.suppressEnvCredentials` are true (with `exporter.required`, `vaultCredentials.shareWithExporter` must also be true) | N/A | The secret key to log on to the NetScaler VPX or MPX. For information on how to create the secret keys, see [Prerequisites](#prerequistes). |
 | secretStore.enabled | Optional | False | Set to "True" for deploying other Secret Provider classes  |
 | secretStore.username | Optional | N/A | if `secretStore.enabled`, `username` of NetScaler will be fetched from the Secret Provider  |
 | secretStore.password | Optional | N/A | if `secretStore.enabled`, `password` of NetScaler will be fetched from the Secret Provider  |
+| vaultCredentials.enabled | Optional | false | Read the NetScaler credentials from files that a Vault Agent sidecar, added via `extraContainers`, writes under `vaultCredentials.mountPath`, and hot-reload them when they rotate. See [NetScaler credential hot-reload with HashiCorp Vault](#netscaler-credential-hot-reload-with-hashicorp-vault). |
+| vaultCredentials.mountPath | Optional | /etc/citrix | Where the shared in-memory credential volume (`citrix-creds`) is mounted in the NSIC container. Your sidecar mounts the same volume and writes the `username` and `password` files there. |
+| vaultCredentials.credentialWaitSeconds | Optional | 120 | Seconds NSIC waits at start-up for the credential files before it fails. `0` means no wait. |
+| vaultCredentials.suppressEnvCredentials | Optional | true | With `vaultCredentials.enabled`, leave out the `NS_USER`/`NS_PASSWORD` env of the NSIC container, so NSIC uses only the files. Set to `false` to keep that env as a start-up fallback. |
+| vaultCredentials.shareWithExporter | Optional | true | With `vaultCredentials.enabled` and `exporter.required`, also mount the credential volume into the metrics exporter at the fixed path `/mnt/nslogin`. When `suppressEnvCredentials` is also true, the exporter's `NS_USER`/`NS_PASSWORD` env is left out too. Set to `false` if the exporter takes its credentials from a separate secret. |
 | nsIP | Mandatory | N/A | The IP address of the NetScaler device. For details, see [Prerequisites](#prerequistes). |
 | nsVIP | Optional | N/A | The Virtual IP address on the NetScaler device. |
 | nsSNIPS | Optional | N/A | The list of subnet IPAddresses on the NetScaler device, which will be used to create PBR Routes instead of Static Routes [PBR support](https://github.com/netscaler/netscaler-k8s-ingress-controller/tree/master/docs/how-to/pbr.md) |
-| nsPort | Optional | 443 | The port used by NSIC to communicate with NetScaler. You can use port 80 for HTTP. |
-| nsProtocol | Optional | HTTPS | The protocol used by NSIC to communicate with NetScaler. You can also use HTTP on port 80. |
+| nsPort | Optional | 443 | The port used by NSIC to communicate with NetScaler. You can use port 80 for HTTP. This configures the NSIC container only: the metrics exporter sidecar always uses port 443 and does not follow this setting. |
+| nsProtocol | Optional | HTTPS | The protocol used by NSIC to communicate with NetScaler. You can also use HTTP on port 80 (not recommended). This configures the NSIC container only: the metrics exporter sidecar always uses HTTPS on port 443 and does not follow this setting. |
 | nsEnableLabel | Optional | True | Set to true for plotting Servicegraph. Ensure `analyticsConfig` are set.  |
 | nitroReadTimeout | Optional | 20 | The nitro Read timeout in seconds, defaults to 20 |
 | logLevel | Optional | INFO | The loglevel to control the logs generated by NSIC. The supported loglevels are: CRITICAL, ERROR, WARNING, INFO, DEBUG, TRACE and NONE. For more information, see [Logging](https://github.com/netscaler/netscaler-k8s-ingress-controller/blob/master/docs/configure/log-levels.md).|
@@ -390,15 +412,18 @@ The following table lists the mandatory and optional parameters that you can con
 | entityPrefix | Optional | k8s | The prefix for the resources on the NetScaler VPX/MPX. |
 | multiClusterPrefix | Optional | mc | The prefix for the shared resources on the NetScaler VPX/MPX for multicluster ingress feature. Ingress Controllers that are collaboratively sharing the csvserver IP should be configured with same value for multiclusterPrefix. For more information see [this](https://docs.netscaler.com/en-us/netscaler-k8s-ingress-controller/deploy/multicluster-ingress) |
 | updateIngressStatus | Optional | True | Set this argurment if `Status.LoadBalancer.Ingress` field of the Ingress resources managed by the NetScaler ingress controller needs to be updated with allocated IP addresses. For more information see [this](https://github.com/netscaler/netscaler-k8s-ingress-controller/blob/master/docs/configure/ingress-classes.md#updating-the-ingress-status-for-the-ingress-resources-with-the-specified-ip-address). |
+| updateServiceStatus | Optional | True | Controls whether the NetScaler LoadBalancer VIP is published into the `status.loadBalancer.ingress` field (the `EXTERNAL-IP` column) of a type `LoadBalancer` service managed by the NetScaler ingress controller. Set it to `False` in clusters where the CNI (for example OVN-Kubernetes) short-circuits in-cluster traffic destined to that address straight to the backend pod instead of sending it to the NetScaler. Requires a NetScaler ingress controller image of 4.3.x or later; on an older image the argument is silently ignored. See [Disabling the service status update](#disabling-the-service-status-update) for the side effects. |
+| clearStaleServiceStatus | Optional | False | One-time cleanup, performed at controller startup, of a service status entry that this controller published before `updateServiceStatus` was set to `False`. Migration aid only, and it must be combined with `updateServiceStatus: False` -- on its own it does nothing, because the retraction is reachable only on the code path taken when publication is off. Each service is retracted at most once per controller run: if another writer republishes the address the controller leaves it alone rather than patching against it. Setting both values also switches the Deployment to `strategy: Recreate`, so the rollout has a brief gap with no controller running. Set it back to `False` once the retraction has taken place. |
 | routeLabels | Optional | proxy in (<Release name of helm chart>) | You can use this parameter to provide the route labels selectors to be used by NetScaler Ingress Controller for routeSharding in OpenShift cluster. |
 | namespaceLabels | Optional | N/A | You can use this parameter to provide the namespace labels selectors to be used by NetScaler Ingress Controller for routeSharding in OpenShift cluster. |
 | podAnnotations | Optional | N/A | Map of annotations to add to the pods. |
 | affinity | Optional | N/A | Affinity labels for pod assignment. |
-| exporter.required | Optional | false | Use the argument, if you want to run the [Exporter for NetScaler Stats](https://github.com/netscaler/netscaler-adc-metrics-exporter) along with NSIC to pull metrics for the NetScaler VPX or MPX|
+| exporter.required | Optional | false | Use the argument, if you want to run the [Exporter for NetScaler Stats](https://github.com/netscaler/netscaler-adc-metrics-exporter) along with NSIC to pull metrics for the NetScaler VPX or MPX. The exporter always reaches the NetScaler over HTTPS on port 443. That target is fixed in the chart and is deliberately not derived from `nsPort`/`nsProtocol`, which configure the NSIC container only. A NetScaler that does not serve NITRO over TLS on port 443 cannot be scraped by this sidecar; the exporter stays up and reports `citrixadc_probe_success 0` for it.|
 | exporter.imageRegistry                   | Optional  |  `quay.io`               |  The Exporter for NetScaler Stats image registry             |  
 | exporter.imageRepository                 | Optional  |  `netscaler/netscaler-adc-metrics-exporter`              |   The Exporter for NetScaler Stats image repository             | 
-| exporter.imageTag                  | Optional  |  `1.5.0`               |  The Exporter for NetScaler Stats image tag            | 
+| exporter.imageTag                  | Optional  |  `1.7.0`               |  The Exporter for NetScaler Stats image tag. `exporter.validateCert` needs `1.7.0` or later.            | 
 | exporter.pullPolicy | Optional | IfNotPresent | The Exporter image pull policy. |
+| exporter.validateCert | Mandatory when `exporter.required` is true and `nsValidateCert` is false | "" | Accepted values: `auto`, `yes`, `true`, `y`, `on`, `1` make the exporter validate the NetScaler certificate against its image trust store; `no`, `false`, `n`, `off`, `0` turn validation off (not recommended). Any other value, or leaving it unset, fails `helm install`/`helm upgrade` with an explanatory error. Needs exporter `1.7.0` or later, which this chart pins by default; with an older image, use `nsValidateCert=true` instead. Ignored (forced to `yes`, with `NS_CACERT_PATH` set) when `nsValidateCert` is true. |
 | exporter.ports.containerPort | Optional | 8888 | The Exporter container port. |
 | exporter.resources | Optional | {} |	CPU/Memory resource requests/limits for Metrics exporter container |
 | exporter.extraVolumeMounts  |  Optional |  [] |  Specify the Additional VolumeMounts to be mounted in Exporter container. Specify the volumes in `extraVolumes`  |
@@ -428,6 +453,9 @@ The following table lists the mandatory and optional parameters that you can con
 | nsLbHashAlgo.hashAlgorithm | Optional | 'default' | Specifies the supported algorithm. Supported algorithms are "default", "jarh", "prac", Default value is 'default' |
 | extraVolumeMounts  |  Optional |  [] |  Specify the Additional VolumeMounts to be mounted in NSIC container  |
 | extraVolumes  |  Optional |  [] |  Specify the Additional Volumes for additional volumeMounts  |
+| initContainers | Optional | [] | Init containers to add to the pod. Kubernetes runs them to completion before it starts the other containers. When the metrics exporter shares the Vault credential volume, add a one-shot Vault Agent here (see the Vault section above). |
+| extraContainers | Optional | [] | Extra containers to add to the pod, for example a Vault Agent sidecar that writes the credential files. |
+| extraEnv | Optional | [] | Extra environment variables to add to the NSIC container. |
 | rbacRole  | Optional |  false  |  To deploy NSIC with RBAC Role set rbacRole=true; by default NSIC gets installed with RBAC ClusterRole(rbacRole=false) |
 | nodeLabels | Optional | "" |  If there are pods on nodes in the nodes with this nodeLabels, NSIC will configure NetScaler to advertises the VIP using BGP |
 | bgpAdvertisement | Optional | False  | To advertise VIP using BGP from NetScaler |
@@ -439,10 +467,10 @@ The following table lists the mandatory and optional parameters that you can con
 | serviceAccount.tokenExpirationSeconds | Mandatory | 31536000 | Time in seconds when the token of serviceAccount get expired |
 | serviceAccount.name | Optional | "" | Name of the ServiceAccount for the NetScaler Ingress Controller. If you want to use a ServiceAccount that you have already created and manage yourself, specify its name here and set serviceAccount.create to false. |
 | createClusterRoleAndBinding | Mandatory | true | If you want to use a ClusterRole and Cluster Role Binding that you have already created and manage yourself then set to false. Please make sure you have bound the serviceaccount with the cluster role properly.  |
-| nsValidateCert | Optional | false | Set to true if NetScaler Certificate validation is required. Please refer [this](https://docs.netscaler.com/en-us/netscaler-k8s-ingress-controller/certificate-management/adc-certificate-validation) for more info.  |
-| nsCertSecret | Optional | "" | Kubernetes Secret created for the CA certificate of NetScaler. Please refer [this](https://docs.netscaler.com/en-us/netscaler-k8s-ingress-controller/certificate-management/adc-certificate-validation) for more info.  |
-| hostAlias.ip | Optional | "" | Management IP of NetScaler. Please refer [this](https://docs.netscaler.com/en-us/netscaler-k8s-ingress-controller/certificate-management/adc-certificate-validation) for more info.  |
-| hostAlias.hostName | Optional | "" | HostName set on the NetScaler. Please refer [this](https://docs.netscaler.com/en-us/netscaler-k8s-ingress-controller/certificate-management/adc-certificate-validation) for more info.  |
+| nsValidateCert | Optional | false | Set to true if NetScaler Certificate validation is required. This applies to both the NSIC container and the metrics exporter container: both mount `nsCertSecret` (which must contain the CA certificate under the key `nsCA.pem`) at `/etc/cacerts` and require `hostAlias` plus an `nsIP` that matches the hostname in the NetScaler certificate. For the exporter this sets `NS_VALIDATE_CERT=yes` and `NS_CACERT_PATH`, which every exporter image honours, and it overrides `exporter.validateCert`. On exporter images older than `1.7.0` this is the only way to make the exporter actually validate the NetScaler certificate. Please refer [this](https://docs.netscaler.com/us/en/netscaler-k8s-ingress-controller/configure/certificate-management/adc-certificate-validation.html) for more info.  |
+| nsCertSecret | Mandatory when nsValidateCert is true | "" | Kubernetes Secret created for the CA certificate of NetScaler. Please refer [this](https://docs.netscaler.com/us/en/netscaler-k8s-ingress-controller/configure/certificate-management/adc-certificate-validation.html) for more info.  |
+| hostAlias.ip | Mandatory when nsValidateCert is true | "" | Management IP of NetScaler. Please refer [this](https://docs.netscaler.com/us/en/netscaler-k8s-ingress-controller/configure/certificate-management/adc-certificate-validation.html) for more info.  |
+| hostAlias.hostName | Mandatory when nsValidateCert is true | "" | HostName set on the NetScaler. Please refer [this](https://docs.netscaler.com/us/en/netscaler-k8s-ingress-controller/configure/certificate-management/adc-certificate-validation.html) for more info.  |
 | certBundle | Optional | false |When set to true this will bind certificate key bundle in frontend vservers. Please refer [this](https://docs.netscaler.com/en-us/citrix-adc/current-release/ssl/ssl-certificates/install-link-and-update-certificates.html#support-for-ssl-certificate-key-bundle).
 | apiPriorityAndFairness.enabled | Optional | false | Enable API Priority and Fairness flow control for the controller's API server requests. Creates a PriorityLevelConfiguration and FlowSchema. |
 | apiPriorityAndFairness.priorityLevelConfiguration.nominalConcurrencyShares | Optional | 40 | Relative weight of this priority level vs other levels (default workload gets 30). |
@@ -552,3 +580,117 @@ The command removes all the Kubernetes components associated with the chart and 
 
 - [NetScaler ingress controller Documentation](https://docs.netscaler.com/en-us/citrix-k8s-ingress-controller/)
 - [NetScaler ingress controller GitHub](https://github.com/netscaler/netscaler-k8s-ingress-controller)
+
+## Disabling the service status update
+
+By default the NetScaler ingress controller writes the VIP it has programmed on the NetScaler into
+`status.loadBalancer.ingress[].ip` of every type `LoadBalancer` service it manages, which is what
+populates the `EXTERNAL-IP` column. In some clusters that write is harmful: OVN-Kubernetes installs a
+node-local DNAT rule for any address that appears in a service's load balancer status, so pods on the
+same cluster go to the backend pods directly instead of through NetScaler.
+
+Setting `updateServiceStatus: False` stops that write. The NetScaler is still programmed exactly as
+before; what changes on the Kubernetes side is listed below.
+
+> **Version requirement.** `updateServiceStatus` is understood by NetScaler ingress controller `4.3.x` and later only; an older image parses the argument list leniently, silently ignores the unknown flag and keeps publishing the VIP. If you also run GSLB, move the `netscaler-gslb-controller` release to `imageTag: 4.3.x` or later **at the same time** -- the status-independent VIP resolution described below runs inside that controller, and an older GSLB controller stops generating `GlobalServiceEntry` objects entirely once the service status is empty.
+
+### What changes when it is disabled
+
+| Area | Effect |
+| ----- | ----- |
+| `kubectl get svc` | The `EXTERNAL-IP` column stays `<pending>`. The VIP is unchanged on the NetScaler. |
+| Argo CD | The built-in health check for a `Service` reports `Healthy` only when `status.loadBalancer.ingress` is non-empty, so such services are reported as `Progressing` and a sync can time out. See below. |
+| external-dns | Will not source records from the service status. Annotate each affected service with `external-dns.alpha.kubernetes.io/target: <VIP>`; external-dns reads neither `spec.loadBalancerIP` nor `service.citrix.com/frontend-ip`. |
+| GSLB | Endpoint auto-generation falls back to `spec.loadBalancerIP`, then the `service.citrix.com/frontend-ip` annotation, then the `service.citrix.com/lb-ip` annotation that the ingress controller records on the service in place of the status write. If none of these is set, the `GlobalServiceEntry` is not generated and must be supplied manually. **The fallback executes in the NetScaler GSLB controller, not here**, so the `netscaler-gslb-controller` release must also run image `4.3.x` or later. An older GSLB controller has no fallback at all: with the service status empty it silently stops generating `GlobalServiceEntry` objects. |
+| Ingress resources | Tier-1 Ingress status is unaffected -- it is governed independently by `updateIngressStatus`. In a dual-tier deployment (this chart in front of `netscaler-cpx-with-ingress-controller`) the tier-2 Ingress status is derived from the tier-1-managed CPX service's `status.loadBalancer.ingress`, so it stops being updated unless that service carries `spec.loadBalancerIP` or the `service.citrix.com/frontend-ip` annotation. |
+| Anthos | On `environment == anthos` the controller writes `spec.loadBalancerIP` rather than the status, and this setting suppresses that write too. There is no retraction for it, and `clearStaleServiceStatus` does not apply. |
+| Cloud providers | Unaffected. On a cloud-managed `LoadBalancer` service the cloud controller manager owns the status field and continues to write it; this setting only suppresses the ingress controller's own write. |
+
+### Argo CD
+
+If the services concerned are managed by Argo CD, register a health override so that a service with an
+empty load balancer status is not reported as `Progressing` forever. In the `argocd-cm` ConfigMap:
+
+```yaml
+data:
+  resource.customizations.health.Service: |
+    hs = {}
+    if obj.metadata ~= nil and obj.metadata.annotations ~= nil and
+       obj.metadata.annotations["netscaler.com/skip-lb-status-health"] == "true" then
+      hs.status = "Healthy"
+      hs.message = "EXTERNAL-IP not published (updateServiceStatus is disabled)"
+      return hs
+    end
+    if obj.spec ~= nil and obj.spec.type == "LoadBalancer" then
+      if obj.status ~= nil and obj.status.loadBalancer ~= nil and
+         obj.status.loadBalancer.ingress ~= nil and
+         #obj.status.loadBalancer.ingress > 0 then
+        hs.status = "Healthy"
+        return hs
+      end
+      hs.status = "Progressing"
+      hs.message = "Waiting for the load balancer to report an external address"
+      return hs
+    end
+    hs.status = "Healthy"
+    return hs
+```
+
+and annotate only the services whose status the ingress controller no longer publishes:
+
+```yaml
+metadata:
+  annotations:
+    netscaler.com/skip-lb-status-health: "true"
+```
+
+Registering this key replaces the built-in `Service` health check for **every** service on the Argo CD
+instance, which is why the snippet above re-implements the built-in behaviour for services that do not
+carry the annotation. A snippet that unconditionally returns `Healthy` would also hide a cloud load
+balancer that is genuinely stuck in `<pending>`.
+
+The override runs in a sandboxed Lua interpreter with the standard libraries disabled, so it must stay
+within core language constructs; `string.*`, `os.*` and `io.*` are not available.
+
+The key naming for core (group-less) kinds differs between Argo CD versions: some accept the bare
+`resource.customizations.health.Service`, others expect the group-qualified
+`resource.customizations.health._Service`. Do not guess. Render the override against a real service
+manifest first and only disable the setting once it reports `Healthy`:
+
+```
+argocd admin settings resource-overrides health ./my-service.yaml --argocd-cm-path ./argocd-cm.yaml
+```
+
+Register the override **before** the ingress controller is restarted with `updateServiceStatus: False`,
+otherwise the affected applications go to `Progressing` and any sync wave or hook waiting on them
+stalls. The alternative, annotating each service with `argocd.argoproj.io/ignore-healthcheck: "true"`,
+is evaluated against the live resource, so it only takes effect once the annotation has actually been
+applied to the cluster; whether it also releases a blocked sync wave depends on the Argo CD version, so
+verify that on a test application before relying on it.
+
+### Migrating an existing cluster
+
+A VIP that was published by an earlier run of the controller stays in the service status after the
+setting is turned off, because nothing removes it. To have the controller take it back once, install
+with both values set:
+
+```
+--set updateServiceStatus=False --set clearStaleServiceStatus=True
+```
+
+The controller retracts at most one status entry per service per process, and only when the address
+currently in the status is the address it is programming itself and that address was not itself read
+out of the status. If a foreign writer -- a cloud controller manager, MetalLB, an operator --
+publishes the *same* address that you configured in `spec.loadBalancerIP` or in the
+`service.citrix.com/frontend-ip` annotation, the controller cannot tell the two apart and will retract
+that entry once. Set `clearStaleServiceStatus` back to `False` afterwards.
+
+Both values are required: `clearStaleServiceStatus` on its own does nothing, because the retraction is
+reachable only on the code path taken when publication is off. Setting both also switches the
+Deployment to `strategy: Recreate` for the duration, so that a publishing pod and a retracting pod
+never overlap and PATCH the service against each other; that means a brief gap with no controller
+running during the rollout. Revert `clearStaleServiceStatus` to `False` to get the default rolling
+update back.
+
+This section does not apply to `environment: anthos`, where the suppressed write is
+`spec.loadBalancerIP` rather than the status, and to which no retraction applies.

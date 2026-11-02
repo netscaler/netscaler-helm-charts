@@ -4,7 +4,7 @@
 
 imageRegistry: quay.io
 imageRepository: netscaler/netscaler-ipam-controller
-imageTag: 2.4.0
+imageTag: 2.5.2
 image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
 pullPolicy: IfNotPresent
 
@@ -22,6 +22,10 @@ infoblox:
   maxRetries: ""
   netView: ""
   vipRange:
+  # Verify the Infoblox server's TLS certificate. Set false only for testing.
+  sslVerify: true
+  # Optional Secret with key 'ca.crt' holding the CA that signed the Infoblox certificate.
+  caBundleSecret: ""
 
 dns:
   enabled: false
@@ -49,6 +53,10 @@ dns:
     dnsView: "default"
     # WAPI version string used in /wapi/{version}/record:host URLs
     wapiVersion: "v2.5"
+    # Verify the UDNS server's TLS certificate. Set false only for testing.
+    sslVerify: true
+    # Optional Secret with key 'ca.crt' holding the CA that signed the UDNS server certificate.
+    caBundleSecret: ""
 
 serviceAccount:
   # Specifies whether a service account should be created

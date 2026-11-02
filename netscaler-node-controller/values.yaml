@@ -4,7 +4,7 @@
 
 imageRegistry: quay.io
 imageRepository: netscaler/netscaler-k8s-node-controller
-imageTag: 3.1.0
+imageTag: 3.2.13
 image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
 pullPolicy: IfNotPresent
 nameOverride: ""
@@ -13,6 +13,14 @@ license:
   accept: no
 nsIP:
 adcCredentialSecret:
+
+# Read ADC credentials from files written by a Vault agent sidecar; reloaded on change.
+# Requires Node Controller 3.2.13 or later.
+vaultCredentials:
+  enabled: false
+  mountPath: /etc/citrix
+  credentialWaitSeconds: 120
+  suppressEnvCredentials: true
 network:
 vtepIP:
 vxlan:
@@ -28,8 +36,19 @@ deploymentTolerations:
   - key:
     effect:
     operator:
-nsncRouterImage: quay.io/netscaler/nsnc-router:2.1.0
+nsncRouterImage: quay.io/netscaler/nsnc-router:2.2.9
 nsncRouterName:
+
+# Extra init containers, sidecars, env vars, volumes and volume mounts for the controller pod.
+initContainers: []
+  # Example (remove the [] above; env and volumeMounts as in your vault-agent sidecar):
+  # - name: vault-agent-init
+  #   image: hashicorp/vault:1.21   # run as a Vault Agent, not a Vault server
+  #   args: ["agent", "-config=/etc/vault/vault-agent-config.hcl", "-exit-after-auth"]
+extraContainers: []
+extraEnv: []
+extraVolumes: []
+extraVolumeMounts: []
 
 # CUST-43567: Kubernetes-native health checks for the Node Controller pod.
 # These are file-based exec probes:

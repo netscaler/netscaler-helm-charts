@@ -5,7 +5,7 @@
 # NetScaler Ingress Controller config details
 imageRegistry: quay.io
 imageRepository: netscaler/netscaler-k8s-ingress-controller
-imageTag: 4.2.26
+imageTag: 4.3.22
 image: "{{ .Values.imageRegistry }}/{{ .Values.imageRepository }}:{{ .Values.imageTag }}"
 pullPolicy: IfNotPresent
 imagePullSecrets: []
@@ -26,11 +26,26 @@ secretStore:
     #  configMapKeyRef:
     #    name: test1
     #    key: password
+
+# Read ADC credentials from files under mountPath (written by a Vault sidecar
+# added via extraContainers) and reload them on rotation without a pod restart.
+vaultCredentials:
+  enabled: false
+  mountPath: /etc/citrix
+  # Seconds to wait at startup for the credential files (0 = no wait).
+  credentialWaitSeconds: 120
+  # Do not set NS_USER/NS_PASSWORD from adcCredentialSecret; use only the files.
+  suppressEnvCredentials: true
+  # Also mount the credential files into the metrics exporter at /mnt/nslogin.
+  # The exporter reads them only at start-up; see initContainers below.
+  shareWithExporter: true
 nsIP: ""
 nsVIP: ""
 nsSNIPS: []
 license:
    accept: no
+# nsPort and nsProtocol apply to the controller only. The metrics exporter
+# always connects to nsIP over HTTPS on port 443.
 nsPort: 443
 nsProtocol: HTTPS
 nsEnableLabel: true
@@ -70,6 +85,12 @@ nodeSelector:
   value: ""
 tolerations: []
 updateIngressStatus: true
+# Publish the VIP as the EXTERNAL-IP of type LoadBalancer services. Needs image 4.3.x or later.
+# See 'Disabling the service status update' in README.md before setting this to False.
+updateServiceStatus: True
+# With updateServiceStatus: False, clear the VIP this controller published earlier.
+# Uses a Recreate rollout; set it back to False once the cleanup is done.
+clearStaleServiceStatus: False
 nsHTTP2ServerSide: "OFF"
 nsCookieVersion: "0"
 nsConfigDnsRec: False
@@ -103,9 +124,12 @@ exporter:
   required: false
   imageRegistry: quay.io
   imageRepository: netscaler/netscaler-adc-metrics-exporter
-  imageTag: 1.5.0
+  imageTag: 1.7.0
   image: "{{ .Values.exporter.imageRegistry }}/{{ .Values.exporter.imageRepository }}:{{ .Values.exporter.imageTag }}"
   pullPolicy: IfNotPresent
+  # Required when exporter.required is true: "auto" validates the NetScaler
+  # certificate (needs exporter 1.7.0+), "no" skips validation (not recommended).
+  validateCert: ""
   ports:
     containerPort: 8888
   resources: {}
@@ -256,6 +280,16 @@ extraVolumes: []
   #  secret:
   #    secretName: github-key
   #    defaultMode: 0744
+
+# Extra init containers, sidecars and controller env vars for the pod.
+# With the exporter sharing vaultCredentials, add a one-shot Vault agent init container here.
+initContainers: []
+  # Example (remove the [] above; env and volumeMounts as in your vault-agent sidecar):
+  # - name: vault-agent-init
+  #   image: hashicorp/vault:1.21   # run as a Vault Agent, not a Vault server
+  #   args: ["agent", "-config=/etc/vault/vault-agent-config.hcl", "-exit-after-auth"]
+extraContainers: []
+extraEnv: []
 
 createClusterRoleAndBinding: true
 certBundle: false

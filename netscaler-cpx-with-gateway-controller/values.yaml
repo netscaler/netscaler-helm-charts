@@ -18,7 +18,7 @@ gatewayController:
   entityPrefix: ""
   imageRegistry: quay.io
   imageRepository: netscaler/netscaler-k8s-ingress-controller
-  imageTag: 4.2.26
+  imageTag: 4.3.22
   image: "{{ .Values.gatewayController.imageRegistry }}/{{ .Values.gatewayController.imageRepository }}:{{ .Values.gatewayController.imageTag }}"
   pullPolicy: IfNotPresent
   jsonLog: false
@@ -102,12 +102,13 @@ netscalerCpx:
   mgmtHttpsPort: 9443
   cpxLicenseAggregator: ""
   resources:
+    # The CPX packet engine can use about 700-830Mi under load, so the limit is 1536Mi.
     requests:
       cpu: 128m
       memory: 500Mi
     limits:
       cpu: 500m
-      memory: 512Mi
+      memory: 1536Mi
 
   nitroReadTimeout: 20
   ADMSettings:
@@ -225,7 +226,7 @@ exporter:
   required: false
   imageRegistry: quay.io
   imageRepository: netscaler/netscaler-adc-metrics-exporter
-  imageTag: 1.5.0
+  imageTag: 1.7.0
   image: "{{ .Values.exporter.imageRegistry }}/{{ .Values.exporter.imageRepository }}:{{ .Values.exporter.imageTag }}"
   pullPolicy: IfNotPresent
   ports:

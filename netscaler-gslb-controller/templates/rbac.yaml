@@ -49,6 +49,12 @@ rules:
   - apiGroups: ["route.openshift.io"]
     resources: ["routes"]
     verbs: ["get", "list", "watch"]
+{{- if .Values.gatewayAPI.enabled }}
+  # Read-only access to Gateway API objects.
+  - apiGroups: ["gateway.networking.k8s.io"]
+    resources: ["gateways", "httproutes", "tcproutes", "udproutes"]
+    verbs: ["get", "list", "watch"]
+{{- end }}
 
 ---
 
